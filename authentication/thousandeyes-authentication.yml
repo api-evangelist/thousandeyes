@@ -1,0 +1,69 @@
+generated: '2026-08-19'
+method: searched
+source: openapi/thousandeyes-*-openapi.yml (26 documents) + https://api.thousandeyes.com/.well-known/oauth-authorization-server
+docs: https://developer.cisco.com/docs/thousandeyes/authentication/
+summary:
+  types:
+  - http
+  - oauth2
+  http_schemes:
+  - bearer
+  oauth2_flows:
+  - authorizationCode
+  - deviceCode
+  - refreshToken
+  api_key_in: []
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: 'ThousandEyes user API token passed as `Authorization: Bearer <token>`. Declared 26 times
+    across the harvested specs, once per API area (Tests_API_BearerAuth, Alerts_API_BearerAuth, ...).
+    Tokens are created in Manage > Account Settings > Users and Roles > Profile > User API Tokens and
+    are shown only once.'
+  sources:
+  - openapi/thousandeyes-tests-openapi.yml
+  - openapi/thousandeyes-alerts-openapi.yml
+  - and 24 further specs
+  rotation: Revoke-and-create in the UI, or call the Regenerate API token operation (openapi/thousandeyes-api-token-management-openapi.yml).
+    After regeneration the previous token stays valid for 14 days or until its scheduled expiry, whichever
+    is first.
+- name: OAuth2
+  type: oauth2
+  description: Not declared in the OpenAPI documents but served live as RFC 8414 authorization-server
+    metadata. Used by the ThousandEyes MCP server and by OAuth clients that want their own rate-limit
+    bucket.
+  source: https://api.thousandeyes.com/.well-known/oauth-authorization-server
+  issuer: https://api.thousandeyes.com
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://app.thousandeyes.com/oauth2/authorize
+    tokenUrl: https://api.thousandeyes.com/v7/oauth2/token
+    pkce:
+    - S256
+  - flow: deviceCode
+    deviceAuthorizationUrl: https://api.thousandeyes.com/v7/oauth2/device/authorization
+    tokenUrl: https://api.thousandeyes.com/v7/oauth2/token
+  - flow: refreshToken
+    tokenUrl: https://api.thousandeyes.com/v7/oauth2/token
+  dynamic_client_registration: https://api.thousandeyes.com/v7/oauth2/clients
+  jwks_uri: https://api.thousandeyes.com/v7/oauth2/provider/keys
+  userinfo_endpoint: https://api.thousandeyes.com/v7/oauth2/userinfo
+  token_endpoint_auth_methods:
+  - client_secret_post
+  - none
+  scopes:
+  - mcp:manage
+  - offline_access
+authorization_model:
+  style: role-based access control with per-operation permissions, plus an account-group tenancy dimension
+  permission_examples:
+  - API Access
+  - Settings Tests Read
+  - Settings Tests Update
+  - View organization usage
+  tenancy: Requests run in an account-group context. Users in multiple account groups select one with
+    the `aid` query parameter; otherwise the login account group is used.
+  docs: https://developer.cisco.com/docs/thousandeyes/account-group-context/
+account_lockout: Repeated failed authentication attempts lock the account; a correct credential then still
+  returns 401.

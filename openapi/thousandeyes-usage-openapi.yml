@@ -1,0 +1,1160 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  version: 7.0.100
+  title: Usage API
+  description: "These usage endpoints define the following operations:\n\n* **Usage**: Retrieve usage data for the specified\
+    \ time period (default is one month).\n    \n    * Users must have the `View organization usage` permission to access\
+    \ this endpoint.\n    * This operation offers visibility across all account groups within the organization.\n    * Users\
+    \ with `View organization usage` permission in multiple organizations should query the operation with the `aid` query\
+    \ string parameter (see optional parameters) for each organization.\n    * The `agentId` field in enterprise agent unit\
+    \ responses may be omitted when not available.\n\n* **Quotas**: Obtain organization and account usage quotas. Additionally,\
+    \ users with the appropriate permissions can create, update, or delete these quotas.\n    \n    * Users must have the\
+    \ necessary permissions to perform quota-related actions.\n\nRefer to the Usage API operations for detailed usage instructions\
+    \ and optional parameters.\n"
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+externalDocs:
+  description: Find out more about the usage model
+  url: https://docs.thousandeyes.com/product-documentation/user-management/usage-and-billing/how-unit-consumption-works#what-is-the-projected-usage
+tags:
+- name: Usage
+  description: Usage GET Operation
+- name: Quotas
+  description: Quota CRUD Operation
+paths:
+  /usage:
+    get:
+      tags:
+      - Usage
+      summary: Get usage information for the last month
+      operationId: getUsage
+      description: 'This operation returns usage for the current period. It provides visibility across all account groups
+        within an organization. To access this endpoint, you need the `View Billing` permission (a management permission).
+        If you have access to view billing in multiple organizations, query the endpoint using an `aid` querystring parameter
+        (see optional parameters, below) from each organization.
+
+        **Note:** Access to billing information older than one month is not supported by this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandUsage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Usage'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /usage/units/enterprise-agents:
+    get:
+      tags:
+      - Usage
+      summary: Get enterprise agent usage
+      operationId: getEnterpriseAgentsUnitsUsage
+      description: 'This operation returns the organization''s enterprise agents usage for a specific time period, or the
+        curent billing cycle if no time period is specified.
+
+        In the `/v7/usage` API, a shared enterprise agent''s usage is reported in the account group where the agent was created
+        (i.e Primary Account Group).  However in this API, the shared agent''s usage is distributed among all the account
+        groups where the tests are running on the particular agent. This API is also only available to customers on usage
+        based pricing model.'
+      parameters:
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseAgentsUsage'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /usage/units/tests:
+    get:
+      tags:
+      - Usage
+      summary: Get cloud and enterprise agents units usage
+      operationId: getTestsUnitsUsage
+      description: 'This operation returns the cloud and enterprise agents usage for all the tests for a specific time period,
+        or the curent billing cycle if no time period is specified.
+
+        In the `/v7/usage` API, an enterprise agent''s usage is reported in the account group where the agent was created
+        (i.e Primary Account Group).  However in this API, the agent''s usage is distributed among all the account groups
+        where the tests are running on the particular agent. This API is also only available to customers on usage based pricing
+        model.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/TestsUsage'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas:
+    get:
+      tags:
+      - Quotas
+      summary: Get organization and account group usage quota
+      operationId: getQuotas
+      description: This operation retrieves usage quotas for both organization and account groups. To use this endpoint, you
+        need the `Edit organization and account group quotas` permission, which is a management-level permission. If a user
+        has quota update permission in multiple organizations, the API returns data from all such organizations.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Quotas'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas/assign:
+    post:
+      tags:
+      - Quotas
+      summary: Create or update organizations quotas
+      operationId: assignOrganizationsQuotas
+      description: This operation recieves a list of organization quotas to create or update. If there's no specific `orgId`
+        defined for a quota, it defaults to using the authenticated organization. To use this endpoint, you need the `Edit
+        organization and account group quotas` permission, which is a management-level permission. This operation follows
+        cumulative behavior––This means that the quotas are assigned to the specified organizations, and any previous assignments
+        remain unchanged; no unassignments occur.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotasAssignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/QuotasAssignResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas/unassign:
+    post:
+      tags:
+      - Quotas
+      summary: Remove organization quotas
+      operationId: unassignOrganizationsQuotas
+      description: This operation recieves a list of organization IDs to remove their current quota. To use this endpoint,
+        you need the `Edit organization and account group quotas` permission, which is a management-level permission.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotasUnassign'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas/account-groups/assign:
+    post:
+      tags:
+      - Quotas
+      summary: Create or update accout group quotas
+      operationId: assignOrganizationsAccountGroupsQuotas
+      description: This operation assigns quota values to multiple account groups across multiple organizations. To use this
+        endpoint, you need the `Edit organization and account group quotas` permission, which is a management-level permission.
+        This operation follows a cumulative behavior––This means that the quotas are assigned to the designated account groups,
+        and any previous assignments remain in place without any unassignment occurring.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationsQuotasAssign'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/OrganizationsQuotasAssign'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /quotas/account-groups/unassign:
+    post:
+      tags:
+      - Quotas
+      summary: Remove account group quotas from organizations
+      operationId: unassignOrganizationsAccountGroupsQuotas
+      description: This operation removes quotas from multiple account groups across multiple organizations. To use this endpoint,
+        you need the `Edit organization and account group quotas` permission, which is a management-level permission.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationsQuotasUnassign'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  parameters:
+    ExpandUsage:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: Expands the available resources. By default, no expansion takes place if the  `expand` query parameter
+        is not passed. For example, to expand the "tests"  resource, pass the query '?expand=test'.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandUsageOptions'
+        example:
+        - test
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone,
+        following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used
+        with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete
+        time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for
+        reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of
+        this parameter.
+      schema:
+        type: string
+        example: null
+  schemas:
+    ExpandUsageOptions:
+      type: string
+      enum:
+      - test
+      - enterprise-agent
+      - enterprise-agent-unit
+      - endpoint-agent
+      - endpoint-agent-essential
+      - endpoint-agent-embedded
+    OrganizationQuota:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: integer
+          format: int64
+          description: Value of the quota for the given Organization.
+          example: 22500
+        orgId:
+          type: string
+          description: Unique ID of the organization.
+          example: '10'
+    AccountGroupQuota:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+          description: Value of the quota for the given Account Group.
+          example: 12000
+        aid:
+          type: string
+          description: Unique ID of the account group.
+          example: '1234'
+    Quota:
+      type: object
+      properties:
+        organizationQuota:
+          $ref: '#/components/schemas/OrganizationQuota'
+        accountGroupQuotas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountGroupQuota'
+          example:
+          - value: 12000
+            aid: '1234'
+          - value: 10000
+            aid: '12345'
+    Quotas:
+      type: object
+      properties:
+        quotas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Quota'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    UsageQuota:
+      type: object
+      properties:
+        monthStart:
+          type: string
+          format: date-time
+          description: Beginning of usage period in UTC (ISO date-time format).
+          example: '2020-01-05T08:00:00Z'
+        monthEnd:
+          type: string
+          format: date-time
+          description: End of usage period in UTC (ISO date-time format)..
+          example: '2020-02-05T08:00:00Z'
+        cloudUnitsIncluded:
+          type: integer
+          format: int64
+          example: 4320000000
+          description: Monthly number of cloud units allocated, as part of the contract.
+        deviceAgentsIncluded:
+          type: integer
+          format: int64
+          example: 100
+          description: Number of device agents (connected devices product) allocated monthly, as specified in the contract.
+        endpointAgentsIncluded:
+          type: integer
+          format: int64
+          example: 200
+          description: Monthly number of endpoint agents allocated, as part of the contract.
+        endpointAgentsEssentialsIncluded:
+          type: integer
+          format: int64
+          example: 10
+          description: Monthly number of endpoint agents essentials allocated, as part of the contract.
+        endpointAgentsEmbeddedIncluded:
+          type: integer
+          format: int64
+          example: 10
+          description: Number of embedded endpoint agents allocated monthly, as specified in the contract.
+        enterpriseAgentsIncluded:
+          type: integer
+          format: int64
+          example: 25
+          description: Monthly number of enterprise agents allocated, as part of the contract. Returns non-zero value only
+            for organizations with legacy billing.
+    Usage:
+      type: object
+      properties:
+        usage:
+          $ref: '#/components/schemas/UsageDetails'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    UsageDetails:
+      type: object
+      properties:
+        quota:
+          $ref: '#/components/schemas/UsageQuota'
+        cloudUnitsUsed:
+          type: integer
+          format: int64
+          example: 8500489
+          description: Number of cloud units consumed thus far in the usage period.
+        cloudUnitsProjected:
+          type: integer
+          format: int64
+          example: 20993812
+          description: Number of cloud units projected in the current usage period, based on units consumed to date and configuration
+            of enabled tests. This value is updated hourly.
+        cloudUnitsNextBillingPeriod:
+          type: integer
+          format: int64
+          example: 25123456
+          description: Number of cloud units projected in the upcoming usage period, based on configuration of enabled tests.
+            This value is updated hourly.
+        enterpriseUnitsUsed:
+          type: integer
+          format: int64
+          example: 79640902
+          description: Number of enterprise units consumed in the usage period. Returns non-zero value only for organizations
+            with metered billing.
+        enterpriseUnitsProjected:
+          type: integer
+          format: int64
+          example: 108016317
+          description: Number of enterprise units projected in the current usage period, based on units consumed to date and
+            configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with
+            metered billing.
+        enterpriseUnitsNextBillingPeriod:
+          type: integer
+          format: int64
+          example: 0
+          description: Projected number of enterprise units for the upcoming usage period, based on the configuration of enabled
+            tests. This value is updated hourly and returns a non-zero value only for organizations with metered billing.
+        connectedDevicesUnitsUsed:
+          type: integer
+          format: int64
+          example: 79640902
+          description: Number of connected device units consumed in the usage period.
+        connectedDevicesUnitsProjected:
+          type: integer
+          format: int64
+          example: 108016317
+          description: Projected number of connected device units for the current usage period. This projection is based on
+            the units consumed to date and the configuration of enabled tests. The value is updated hourly.
+        connectedDevicesUnitsNextBillingPeriod:
+          type: integer
+          format: int64
+          example: 0
+          description: Projected number of connected device units for the upcoming usage period. This projection is based
+            on the configuration of enabled tests and is updated hourly.
+        endpointAgentsUsed:
+          type: integer
+          format: int64
+          example: 42
+          description: Number of endpoint agents used in the current usage period. This number is calculated by taking the
+            maximum number of agents enabled for any one-hour period in the usage period. Disabled agents are excluded from
+            this calculation.
+        endpointAgentsEssentialsUsed:
+          type: integer
+          format: int64
+          example: 5
+          description: Number of endpoint agents essentials used in the current usage period. This number is calculated by
+            taking the maximum number of agents enabled for any one-hour period in the usage period. Disabled agents are excluded
+            from this calculation.
+        endpointAgentsEmbeddedUsed:
+          type: integer
+          format: int64
+          example: 5
+          description: Number of embedded endpoint agents used in the current usage period. This number is calculated by taking
+            the maximum number of agents enabled for any one-hour period in the usage period. Disabled agents are excluded
+            from this calculation.
+        enterpriseAgentsUsed:
+          type: integer
+          format: int64
+          example: 58
+          description: Number of enterprise agents used in the current usage period. This number is calculated by taking the
+            maximum number of agents enabled for any one-hour period in the usage period. Disabled agents are excluded from
+            this calculation.
+        enterpriseAgentUnits:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseAgentUnits'
+          example:
+          - aid: '1234'
+            agentId: '123456'
+            accountGroupName: Support
+            agentName: TEVA-test-agent
+            enterpriseUnitsUsed: 599878
+            enterpriseUnitsProjected: 597808
+          - aid: '315'
+            agentId: '789'
+            accountGroupName: Documentation
+            agentName: lab-physical-appliance-1
+            enterpriseUnitsUsed: 597123
+            enterpriseUnitsProjected: 597808
+          description: A breakdown of enterprise unit consumption for each agent during the current monthly period. Each entry
+            provides data for both the current actual usage and the projected usage. Returns non-zero values for organizations
+            with metered billing.
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestUsage'
+          example:
+          - aid: '1234'
+            testId: '1158'
+            accountGroupName: Documentation
+            testName: https://app.thousandeyes.com
+            testType: Web-Page Load
+            cloudUnitsUsed: 14050
+            cloudUnitsProjected: 340674
+          - aid: '12345'
+            testId: '1159'
+            accountGroupName: Documentation
+            testName: https://support.thousandeyes.com
+            testType: Web - HTTP Server
+            cloudUnitsUsed: 64390
+            cloudUnitsProjected: 164457
+          description: A breakdown of unit consumption for each test during the current monthly period. Each entry provides
+            information about both the current actual usage and the projected usage.
+        endpointAgents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentsUsage'
+          example:
+          - aid: '1234'
+            accountGroupName: Support
+            endpointAgentsUsed: 22
+          - aid: '12345'
+            accountGroupName: Documentation
+            endpointAgentsUsed: 14
+          description: Endpoint agents used by account group.
+        endpointAgentsEssentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentsEssentials'
+          example:
+          - aid: '1234'
+            accountGroupName: Support
+            endpointAgentsEssentialsUsed: 2
+          - aid: '12345'
+            accountGroupName: Documentation
+            endpointAgentsEssentialsUsed: 3
+          description: Endpoint agents essentials used by account group.
+        endpointAgentsEmbedded:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentsEmbedded'
+          example:
+          - aid: '1234'
+            accountGroupName: Support
+            endpointAgentsEmbeddedUsed: 2
+          - aid: '12345'
+            accountGroupName: Documentation
+            endpointAgentsEmbeddedUsed: 3
+          description: Endpoint agents embedded used by account group.
+        enterpriseAgents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseAgents'
+          example:
+          - aid: '1234'
+            accountGroupName: Support
+            enterpriseAgentsUsed: 7
+          - aid: '12345'
+            accountGroupName: Documentation
+            enterpriseAgentsUsed: 1
+          description: Enterprise agents used by account group.
+        allocations:
+          $ref: '#/components/schemas/UnitAllocationSummary'
+          description: Summary of allocations
+    TestsUsage:
+      type: object
+      properties:
+        breakdowns:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitsByTests'
+          example:
+          - testId: '1158'
+            testName: https://app.thousandeyes.com
+            testType: Web-Page Load
+            enterpriseUnitsUsed: 14050
+            enterpriseUnitsProjected: 340674
+            cloudUnitsUsed: 10000
+            cloudUnitsProjected: 12000
+            aid: '1234'
+            accountGroupName: Support
+          - testId: '1221'
+            testName: https://app.thousandeyes.com
+            testType: Web - HTTP Server
+            enterpriseUnitsUsed: 194051
+            enterpriseUnitsProjected: 30622
+            cloudUnitsUsed: 12000
+            cloudUnitsProjected: 13000
+            aid: '1234'
+            accountGroupName: Support
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    UnitsByTests:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Unique ID of the account group owning the test that is generating units
+          example: '1234'
+        accountGroupName:
+          type: string
+          description: Name of the account group which owns the test that is generating the units
+          example: Account A
+        enterpriseUnitsUsed:
+          type: integer
+          description: Units generated by the by the enterprise agents running the test
+        enterpriseUnitsProjected:
+          type: integer
+          description: Enterprise Units projected in the current usage period, based on units consumed to date and configuration
+            of the test
+        cloudUnitsUsed:
+          type: integer
+          description: Units generated by the by the cloud agents running the test
+        cloudUnitsProjected:
+          type: integer
+          description: Cloud Units projected in the current usage period, based on units consumed to date and configuration
+            of the test
+        testId:
+          type: string
+          description: Unique ID of the test generating usage
+        testName:
+          type: string
+          description: Name of the test generating usage
+        testType:
+          type: string
+          description: Type of test generating usage. Note that this is a friendly testType entry (so it shouldn’t be parsed
+            to discover the correct operation to query for configuration details).
+        isInstantTest:
+          type: boolean
+          description: Indicates whether the test is scheduled or instant
+    EnterpriseAgents:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: A unique identifier that specifies the account group that owns the enterprise agents.
+          example: '1234'
+        accountGroupName:
+          type: string
+          description: Name of the account group which owns the enterprise agents.
+          example: Account A
+        enterpriseAgentsUsed:
+          type: integer
+          format: int64
+          description: Number of enterprise agents owned by the specific account group in the usage period.
+    EnterpriseAgentsUsage:
+      type: object
+      properties:
+        breakdowns:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseAgentUnitsByTestOwnerAccountGroup'
+          example:
+          - aid: '1234'
+            agentId: '123456'
+            accountGroupName: Support
+            agentName: TEVA-test-agent
+            enterpriseUnitsUsed: 599878
+            enterpriseUnitsProjected: 597808
+          - aid: '315'
+            agentId: '789'
+            accountGroupName: Documentation
+            agentName: lab-physical-appliance-1
+            enterpriseUnitsUsed: 597123
+            enterpriseUnitsProjected: 597808
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    EnterpriseAgentUnitsByTestOwnerAccountGroup:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group where some tests are incurring the enterprise agent units.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the tests that are incurring enterprise agent units.
+          type: string
+          example: Account A
+        agentId:
+          type: string
+          description: Unique identifier of the enterprise agent generating usage. This field may be omitted when not available.
+        agentName:
+          type: string
+          description: Name of the enterprise agent generating usage.
+        enterpriseUnitsUsed:
+          type: integer
+          format: int64
+          description: Number of enterprise agent units owned by the specific account group in the usage period.
+        enterpriseUnitsProjected:
+          type: integer
+          format: int64
+          description: Number of enterprise units projected in the current usage period, based on units consumed to date and
+            configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with
+            metered billing.
+    EnterpriseAgentUnits:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group owning the enterprise agent units.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the enterprise agent units.
+          type: string
+          example: Account A
+        agentId:
+          type: string
+          description: Unique identifier of the enterprise agent generating usage. This field may be omitted when not available.
+        agentName:
+          type: string
+          description: Name of the enterprise agent generating usage.
+        enterpriseUnitsUsed:
+          type: integer
+          format: int64
+          description: Number of enterprise agent units owned by the specific account group in the usage period.
+        enterpriseUnitsProjected:
+          type: integer
+          format: int64
+          description: Number of enterprise units projected in the current usage period, based on units consumed to date and
+            configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with
+            metered billing.
+    TestUsage:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Unique identifier of the account group which owns the test.
+          example: '1234'
+        accountGroupName:
+          type: string
+          description: Name of the account group which owns the test.
+          example: Account A
+        testId:
+          type: string
+          description: Unique identifier of the test generating usage.
+        testName:
+          type: string
+          description: Name of the test generating usage.
+        testType:
+          type: string
+          description: The type of test that generated the usage data. Note that this parameter provides a user-friendly description
+            of the test type and should not be parsed to determine the endpoint for querying configuration details.
+        cloudUnitsUsed:
+          type: integer
+          format: int64
+          description: Number of cloud units that the test has consumed in the usage period.
+        cloudUnitsProjected:
+          type: integer
+          format: int64
+          description: The estimated number of cloud units that the test is expected to consume during the usage period. This
+            estimate is determined by considering the units consumed up to the current time and the test's configuration.
+            It's important to note that this value is updated every hour. For new tests, the `cloudUnitsProjected` parameter
+            is absent until the projection is calculated.
+    EndpointAgentsUsage:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group owning the endpoint agents.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the endpoint agents.
+          type: string
+          example: Account A
+        endpointAgentsUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents owned by the specific account group in the usage period.
+    EndpointAgentsEssentials:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group owning the endpoint agents essentials.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the endpoint agents essentials.
+          type: string
+          example: Account A
+        endpointAgentsEssentialsUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents essentials owned by the specific account group in the usage period.
+    EndpointAgentsEmbedded:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group that owns the embedded endpoint agents.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group that owns the embedded endpoint agents.
+          type: string
+          example: Account A
+        endpointAgentsEmbeddedUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents embedded owned by the specific account group in the usage period.
+    QuotasAssignRequest:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationQuota'
+          example:
+          - value: 12000
+          - orgId: '1234'
+            value: 10000
+    QuotasAssignResponse:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationQuota'
+          example:
+          - orgId: '1234'
+            value: 12000
+          - orgId: '12345'
+            value: 10000
+    QuotasUnassign:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            type: string
+          example:
+          - '1234'
+          - '12345'
+    OrganizationsQuotasAssign:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationQuotaAssignment'
+    OrganizationQuotaAssignment:
+      type: object
+      properties:
+        orgId:
+          type: string
+          description: Unique identifier of the organization.
+          example: '1234'
+        accountGroups:
+          type: array
+          description: List of account groups quotas.
+          items:
+            $ref: '#/components/schemas/AccountGroupQuota'
+    OrganizationsQuotasUnassign:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationQuotaUnassignment'
+    OrganizationQuotaUnassignment:
+      type: object
+      properties:
+        orgId:
+          type: string
+          description: Unique identifier of the organization.
+          example: '1234'
+        accountGroups:
+          $ref: '#/components/schemas/AccountGroupIds'
+    AccountGroupIds:
+      type: array
+      description: List of account group IDs.
+      items:
+        type: string
+      example:
+      - '1234'
+      - '12345'
+    UnitAllocationSummary:
+      type: object
+      properties:
+        used:
+          type: integer
+          format: int64
+          example: 1234
+          description: The total number of allocation units used.
+        projected:
+          type: integer
+          format: int64
+          example: 1234
+          description: The total number of projected allocation units.
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationUnitUsageBreakdown'
+      example:
+        used: 1000
+        projected: 1000
+        allocations:
+        - productName: Some Product Name
+          allocatedUnits: 600
+    AllocationUnitUsageBreakdown:
+      type: object
+      properties:
+        productName:
+          type: string
+          description: The product name of the allocation.
+        allocatedUnits:
+          type: integer
+          format: int64
+          example: 1599
+          description: The number of allocated units for the product.
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7

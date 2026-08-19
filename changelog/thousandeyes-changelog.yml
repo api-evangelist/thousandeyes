@@ -1,0 +1,79 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/api-changelog/
+also: https://docs.thousandeyes.com/whats-new/changelog (product changelog)
+scheme: dated releases with a semantic API version (7.0.N); a handful of entries are dated but unversioned
+  (SDK/tooling announcements)
+current_version: 7.0.100
+current_version_date: '2026-08-14'
+cadence: roughly weekly
+entry_count: 16
+entries:
+- version: 7.0.100
+  date: '2026-08-14'
+  breaking: false
+  additions:
+  - POST /v7/dashboards/{dashboardId}/clone
+  - PUT /dashboards/{dashboardId}/actions/schedule
+  - DELETE /dashboards/{dashboardId}/actions/schedule
+  highlights:
+  - ThousandEyes for OpenTelemetry data streams gained an optional durable `name`; duplicate-name updates
+    return 409 Conflict
+  - Dashboard responses now carry a read-only `schedule` field when a snapshot schedule exists
+  - Web Transaction ConsoleLogs.timestamp redefined as integer/int64 Unix epoch milliseconds
+- version: null
+  date: '2026-08-05'
+  breaking: false
+  highlights:
+  - ThousandEyes Go SDK v3.0.0 — first GA release for API v7, with cursor pagination, automatic retries
+    and error handling
+- version: 7.0.99
+  date: '2026-08-03'
+  breaking: false
+  additions:
+  - GET/POST /v7/connectors/panorama
+  - GET/PUT/DELETE /v7/connectors/panorama/{id}
+  - GET/PUT /v7/connectors/panorama/{id}/operations
+  highlights:
+  - Palo Alto Networks Panorama connectors added to the Integrations API
+  - OpenTelemetry streams can carry Connected Devices metric data via inputConfig.metric.connectedDevices
+    (not on ThousandEyes for Government)
+  - Network test results gained an optional errorDetails object
+  - Dashboards gained showZoomSlider on Timeseries widgets and a refreshRate field (off, 2m, 5m, 10m,
+    15m, 30m, 60m)
+- version: 7.0.98
+  date: '2026-07-28'
+  breaking: false
+- version: 7.0.97
+  date: '2026-07-23'
+  breaking: false
+- version: 7.0.96
+  date: '2026-07-22'
+  breaking: false
+- version: 7.0.94
+  date: '2026-07-01'
+  breaking: false
+- version: null
+  date: '2026-06-25'
+  breaking: false
+- version: 7.0.92
+  date: '2026-06-18'
+  breaking: false
+- version: 7.0.91
+  date: '2026-06-11'
+  breaking: false
+- version: 7.0.90
+  date: '2026-06-04'
+  breaking: false
+- version: 7.0.89
+  date: '2026-05-28'
+  breaking: false
+- version: 7.0.88
+  date: '2026-05-14'
+  breaking: false
+- version: 7.0.87
+  date: '2026-05-13'
+  breaking: false
+note: Only the three most recent releases are transcribed in detail; the remaining entries record version
+  and date as published. Every dated entry links to its own release notes on the API changelog page. No
+  breaking change appears in the visible window — the release notes are additive.

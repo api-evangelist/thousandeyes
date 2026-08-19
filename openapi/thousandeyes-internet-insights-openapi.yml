@@ -1,0 +1,967 @@
+openapi: 3.0.1
+info:
+  title: Internet Insights API
+  version: 7.0.100
+  description: '**Note:** All Internet Insights APIs are not available for ThousandEyes for Government instance.
+
+
+    We are happy to announce the release of the Internet Insights API set. This limited release includes endpoints that:
+
+
+    * Make our catalog provider and Internet outage data accessible to API users.
+
+    * Provide access to advanced filtering, which is part of our next-generation API efforts to allow API users to fine-tune
+    queries across all of our APIs in a consistent manner.
+
+
+    Internet Insights provide visibility into core Internet infrastructure, including ISPs, DNS providers, IaaS, CDNs , and
+    SaaS providers.
+
+    It tracks the macro-level impact of Internet events on individual users and enterprise networks connecting at the edge
+    of the Internet. These events include Outages, Routing hijacks and leaks, DDoS attacks, And political interference, among
+    others.
+
+
+    Future releases of the Internet Insights API set will further unlock access to core Internet Insights functionality, unlocking
+    potential integrations to enrich customer process flows.
+
+
+    For more information about Internet Insights, see the [Internet Insights](https://docs.thousandeyes.com/product-documentation/internet-insights).
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+tags:
+- name: Internet Insights Catalog Providers
+- name: Internet Insights Outages
+paths:
+  /internet-insights/catalog/providers/filter:
+    post:
+      tags:
+      - Internet Insights Catalog Providers
+      summary: List catalog providers
+      description: 'Returns a list of catalog providers using the specified filters. Returns high-level information about
+        each catalog provider. For more details about a specific provider, call the Get a catalog provider endpoint.
+
+
+        <b>Note:</b> Support for pagination will be added in the future.
+
+        '
+      operationId: filterCatalogProviders
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiCatalogProviderFilter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiCatalogProviderResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /internet-insights/catalog/providers/{providerId}:
+    get:
+      tags:
+      - Internet Insights Catalog Providers
+      summary: Retrieve a catalog provider
+      description: 'Returns the details of a catalog provider.
+
+        '
+      operationId: getCatalogProvider
+      parameters:
+      - name: providerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 85602a0a-54a7-4e97-946e-67492ef1fa26
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiCatalogProviderDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /internet-insights/outages/filter:
+    post:
+      tags:
+      - Internet Insights Outages
+      summary: List network and application outages
+      description: "Returns a list of network and application outages using a filter object. Advanced Filter persistance is\
+        \ not currently supported.\n\n<b>Note:</b> Support for pagination will be added in the future.\n\n ## Samples Queries\
+        \ with Different Filter Permutations\n\n ### Window\n ```\n curl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        --header 'Authorization: Bearer $token\n--header 'Accept-Encoding: application/gzip'\n--header 'Content-Type: application/json'\n\
+        --data-raw '{\n  \"window\" : \"1d\"\n  }'\n```\n\n### Date Range\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        --header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n    \"startDate\"\
+        : \"2022-03-01T01:30:00Z\",\n    \"endDate\"  : \"2022-03-01T23:30:15Z\"\n  }'\n```\n\n### Date Range with Scope\n\
+        ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n--header 'Authorization:\
+        \ Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n    \"startDate\": \"2022-03-01T01:30:00Z\"\
+        ,\n    \"endDate\"  : \"2022-03-01T23:30:15Z\",\n    \"outageScope\": \"with-affected-test\"\n  }'\n```\n### Date\
+        \ Range with Network\n```\n  curl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        \  --header 'Authorization: Bearer $token'\n  --header 'Content-Type: application/json'\n  --data-raw '{\n      \"\
+        startDate\": \"2022-03-01T01:30:00Z\",\n      \"endDate\"  : \"2022-03-01T23:30:15Z\",\n      \"interfaceNetwork\"\
+        :  [\"Telianet\"]\n    }'\n```\n\n### Date Range with Application\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        \  --header 'Authorization: Bearer $token'\n  --header 'Content-Type: application/json'\n  --data-raw '{\n      \"\
+        startDate\": \"2022-03-01T01:30:00Z\",\n      \"endDate\"  : \"2022-03-01T23:30:15Z\",\n      \"applicationName\"\
+        : [\"Google\"]\n  }'\n```\n### Date Range with Provider\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        --header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n      \"startDate\"\
+        : \"2022-03-01T01:30:00Z\",\n      \"endDate\"  : \"2022-03-01T23:30:15Z\",\n      \"providerName\": [\"Century Link\"\
+        , \"Microsoft\"]\n  }'\n\n```\n### Date Range with Application and Scope\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/internet-insights/outages/filter'\n\
+        --header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n    \"startDate\"\
+        : \"2022-03-01T01:30:00Z\",\n    \"endDate\"  : \"2022-03-01T23:30:15Z\",\n    \"outageScope\": \"all\",\n    \"applicationName\"\
+        : [\"Google\"]\n}'\n```\n"
+      operationId: filterOutages
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiOutageFilter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiOutagesResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /internet-insights/outages/net/{outageId}:
+    get:
+      tags:
+      - Internet Insights Outages
+      summary: Retrieve network outage
+      description: 'Returns the details of a network outage.
+
+        '
+      operationId: getNetworkOutage
+      parameters:
+      - name: outageId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 694D8656960F34F76489BCE5E9BCD58EC53027462740D75F
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiNetworkOutageDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /internet-insights/outages/app/{outageId}:
+    get:
+      tags:
+      - Internet Insights Outages
+      summary: Retrieve application outage
+      description: 'Returns the details of an application outage.
+
+        '
+      operationId: getAppOutage
+      parameters:
+      - name: outageId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: F73E24F17E4996923196826A208BB572508A8EB13BEE14B0
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiApplicationOutageDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  schemas:
+    ApiAsn:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ASN (Autonomous Systems Number)
+          example: 1
+        name:
+          type: string
+          description: ASN (Autonomous Systems Number) name
+          example: LVLT-1 - Level 3 Communications, Inc.
+    InternetInsightsApiAffectedTest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 5
+        name:
+          type: string
+          example: amazon-test2
+    InternetInsightsApiAffectedAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 11
+        name:
+          type: string
+          example: London, England
+    ApiApplicationOutageAffectedServer:
+      type: object
+      properties:
+        domain:
+          type: string
+          example: amazon.com
+        prefix:
+          type: string
+          example: 123.176.185.0/23
+    ApiApplicationOutageAffectedLocation:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/OutageLocation'
+        affectedServers:
+          type: array
+          description: The number of affected servers in this location.
+          items:
+            $ref: '#/components/schemas/ApiApplicationOutageAffectedServer'
+    ApiNetworkOutageAffectedLocation:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/OutageLocation'
+        affectedInterfaces:
+          type: array
+          description: The affected interfaces in this location.
+          items:
+            type: string
+            example: 50.51.52.53
+    ApiNetworkOutageDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the outage.
+          example: 8EF2760862C705783A2F8BCBAAABB44F28DBC670DBA3B610
+        providerName:
+          type: string
+          description: The name of the affected provider.
+          example: Rackspace
+        providerType:
+          type: string
+          description: The type of the affected provider.
+          example: IAAS
+        networkName:
+          type: string
+          description: The affected network.
+          example: Rackspace Hosting
+        asn:
+          type: integer
+          description: ASN number
+          example: 19994
+        startDate:
+          type: string
+          description: Date and time when the outage started.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2023-01-27T20:50:51.256Z'
+        startRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage started.
+          format: int64
+          example: 1674852600
+        endDate:
+          type: string
+          description: Date and time when the outage ended.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2023-01-27T20:53:51.256Z'
+        endRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage ended.
+          format: int64
+          example: 1674852600
+        duration:
+          type: integer
+          description: Duration of the outage in seconds.
+          format: int64
+          example: 180
+        affectedTests:
+          uniqueItems: true
+          type: array
+          description: List of affected tests.
+          items:
+            $ref: '#/components/schemas/InternetInsightsApiAffectedTest'
+        affectedDomains:
+          uniqueItems: true
+          type: array
+          description: List of affected domains.
+          items:
+            type: string
+            example: periodic-failure.com
+        affectedAgents:
+          uniqueItems: true
+          type: array
+          description: List of affected agents.
+          items:
+            $ref: '#/components/schemas/InternetInsightsApiAffectedAgent'
+        affectedLocations:
+          uniqueItems: true
+          type: array
+          description: List of affected locations.
+          items:
+            $ref: '#/components/schemas/ApiNetworkOutageAffectedLocation'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiApplicationOutageDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the outage.
+          example: 0CC4C4209887126DE42E92252FB43962CBB3193147F318EA
+        providerName:
+          type: string
+          description: The name of the affected provider.
+          example: Amazon Web Services
+        providerType:
+          type: string
+          description: The type of the affected provider.
+          example: SAAS
+        applicationName:
+          type: string
+          description: The name of the affected application.
+          example: Amazon Web Services
+        startDate:
+          type: string
+          description: Date and time when the outage started.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2023-01-27T20:50:51.256Z'
+        startRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage started.
+          format: int64
+          example: 1674852600
+        endDate:
+          type: string
+          description: Date and time when the outage ended.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2023-01-27T20:53:51.256Z'
+        endRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage ended.
+          format: int64
+          example: 1674852600
+        duration:
+          type: integer
+          description: Duration of the outage in seconds.
+          format: int64
+          example: 180
+        affectedTests:
+          uniqueItems: true
+          type: array
+          description: List of affected tests.
+          items:
+            $ref: '#/components/schemas/InternetInsightsApiAffectedTest'
+        affectedDomains:
+          uniqueItems: true
+          type: array
+          description: List of affected domains.
+          items:
+            type: string
+            example: amazon.com
+        affectedAgents:
+          uniqueItems: true
+          type: array
+          description: List of affected agents.
+          items:
+            $ref: '#/components/schemas/InternetInsightsApiAffectedAgent'
+        errors:
+          uniqueItems: true
+          type: array
+          description: List of errors.
+          items:
+            type: string
+            example: HTTP_SERVER_TIMEOUT
+        affectedLocations:
+          uniqueItems: true
+          type: array
+          description: List of affected locations.
+          items:
+            $ref: '#/components/schemas/ApiApplicationOutageAffectedLocation'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiOutageFilter:
+      description: 'Advanced filter query used to filter the response. Can filter on: - outageScope (all, affected tests (e.g.
+        my tests only)). - providerName - interfaceNetwork - applicationName - startDate, endDate - window'
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: Start of the time range. Must be paired with `endDate`.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T01:30:00Z'
+        endDate:
+          type: string
+          description: End of the time range. Must be paired with `startDate`.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T23:30:15Z'
+        window:
+          type: string
+          description: Specify a time period in the past for which to retrieve data. Alternative to specifying `startDate`
+            and `endDate`.
+          format: ^[0-9]+[smhdw]?
+          example: 1d
+        outageScope:
+          $ref: '#/components/schemas/OutageScope'
+        providerName:
+          type: array
+          description: The name used to identify the provider.
+          example:
+          - Telia
+          - Amazon
+          items:
+            type: string
+        applicationName:
+          type: array
+          description: The name to identify the application.
+          example:
+          - slack
+          - facebook
+          items:
+            type: string
+        interfaceNetwork:
+          type: array
+          description: The name of the ASN (Interface Network).
+          items:
+            type: string
+      example:
+        startDate: '2022-03-01T01:30:00Z'
+        endDate: '2022-03-01T23:30:15Z'
+        outageScope: all
+        providerName:
+        - Telia
+        - Amazon
+        interfaceNetwork:
+        - Telianet
+        - Cloudflare
+        applicationName:
+        - slack
+        - facebook
+    OutageScope:
+      type: string
+      description: Scope of the outage
+      enum:
+      - all
+      - with-affected-test
+    ApiOutage:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the outage.
+          example: xxxxxxxxxxxxxxxxxx1
+        type:
+          type: string
+          description: The type of outage e.g. app.
+          example: app
+        providerName:
+          type: string
+          description: The name of the affected provider.
+          example: Google
+        providerType:
+          type: string
+          description: The type of the affected provider.
+          example: SAAS
+        name:
+          type: string
+          description: The name of the affected application.
+          example: Google
+        startDate:
+          type: string
+          description: Date and time when the outage started.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T23:31:11Z'
+        startRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage started.
+          format: int64
+          example: 1646177400
+        endDate:
+          type: string
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          description: Date and time when the outage ended.
+          example: '2022-03-01T23:31:11Z'
+        endRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage ended.
+          format: int64
+          example: 1646177700
+        duration:
+          type: integer
+          description: Duration of the outage (seconds)
+          format: int64
+          example: 214
+        affectedTestsCount:
+          type: integer
+          description: The number of affected tests
+          format: int32
+          example: 1
+        affectedServersCount:
+          type: integer
+          description: The number of affected servers
+          format: int32
+          example: 2
+        affectedLocationsCount:
+          type: integer
+          description: The number of affected locations.
+          format: int32
+          example: 1
+        affectedInterfacesCount:
+          type: integer
+          description: The number of affected interfaces.
+          format: int32
+          example: 1
+        asn:
+          type: integer
+          description: ASN number.
+          example: 19994
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+      description: List of outages.
+    ApiOutagesResponse:
+      type: object
+      properties:
+        outages:
+          type: array
+          description: List of application outages.
+          items:
+            $ref: '#/components/schemas/ApiOutage'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiCatalogProviderFilter:
+      description: 'Advanced filter query used to filter the response. The provider name, location, asn can be partial names.
+        Can filter on: - Provider name - Provider type - Region - Location - ASN - included'
+      type: object
+      properties:
+        providerName:
+          type: string
+          description: The name of the catalog provider.
+          example: Amazon Web Services
+        providerType:
+          type: string
+          description: The type of catalog provider.
+          example: IAAS
+        region:
+          type: string
+          description: The catalog provider region.
+          example: North America
+        location:
+          type: string
+          description: Location of the catalog provider.
+          example: San Jose, US
+        asn:
+          type: string
+          description: Name of the ASN (Autonomous Systems Number) covered by providers.
+          example: Amazon.com, Inc.
+        included:
+          type: boolean
+          description: Indicates whether the catalog provider is included in the licensed packages. true returns providers
+            covered by licensed packages, false returns providers not covered by licensed packages.
+          example: true
+      example:
+        providerName: Amazon Web Services
+        providerType: IAAS
+        region: North America
+        location: San Jose, US
+        asn: Amazon.com, Inc.
+        included: true
+    ApiCatalogProvider:
+      type: object
+      description: Catalog provider
+      properties:
+        id:
+          $ref: '#/components/schemas/CatalogId'
+        providerName:
+          $ref: '#/components/schemas/ProviderName'
+        providerType:
+          $ref: '#/components/schemas/ProviderType'
+        region:
+          $ref: '#/components/schemas/Region'
+        dataType:
+          $ref: '#/components/schemas/DataType'
+        asnsCount:
+          type: integer
+          description: The number of ASN's covered by the provider.
+          example: 10
+        countriesCount:
+          type: integer
+          description: The number of countries covered by the provider.
+          example: 2
+        locationsCount:
+          type: integer
+          description: The number of locations covered by the provider.
+          example: 50
+        interfacesCount:
+          type: integer
+          description: The number of interfaces covered by the provider.
+          example: 15
+        included:
+          type: boolean
+          description: Indicates whether the catalog provider is included in the licensed packages.
+          example: true
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiCatalogProviderResponse:
+      type: object
+      properties:
+        providers:
+          type: array
+          description: List of catalog providers.
+          items:
+            $ref: '#/components/schemas/ApiCatalogProvider'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiCatalogProviderDetails:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/CatalogId'
+        providerName:
+          $ref: '#/components/schemas/ProviderName'
+        providerType:
+          $ref: '#/components/schemas/ProviderType'
+        region:
+          $ref: '#/components/schemas/Region'
+        dataType:
+          $ref: '#/components/schemas/DataType'
+        asns:
+          uniqueItems: true
+          type: array
+          description: List of ASN's covered by the Provider.
+          items:
+            $ref: '#/components/schemas/ApiAsn'
+        locations:
+          uniqueItems: true
+          type: array
+          description: List of locations covered by the Provider.
+          items:
+            $ref: '#/components/schemas/ProviderLocation'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    CatalogId:
+      type: string
+      format: uuid
+      description: The catalog provider ID.
+      example: 85602a0a-54a7-4e97-946e-67492ef1fa26
+    ProviderLocation:
+      type: object
+      properties:
+        location:
+          type: string
+          description: The location covered by the Provider.
+          example: San Jose, US
+        interfacesCount:
+          type: integer
+          description: The number of interfaces covered by the Provider at this location.
+          example: 5
+    ProviderName:
+      type: string
+      description: The name of the catalog provider.
+      example: Amazon Web Services
+    ProviderType:
+      type: string
+      description: The type of catalog provider.
+      example: IAAS
+    Region:
+      type: string
+      description: The catalog provider region.
+      example: North America
+    DataType:
+      type: string
+      description: The type of data produced by the provider.
+      example: Application
+    OutageLocation:
+      type: string
+      description: The affected location.
+      example: Chicago, Illinois, US
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred

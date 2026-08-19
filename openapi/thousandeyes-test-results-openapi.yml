@@ -1,0 +1,3358 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  version: 7.0.100
+  title: Test Results API
+  description: Get test result metrics for Network and Application Synthetics tests.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+externalDocs:
+  description: Find out more about Test Results
+  url: https://docs.thousandeyes.com/product-documentation/getting-started/getting-started-with-cloud-and-enterprise-agent-tests#interpreting-test-results
+tags:
+- name: Network Test Results
+- name: Web HTTP Server Test Results
+- name: Web Page Load Test Results
+- name: Web Transactions Test Results
+- name: API Test Results
+- name: Web FTP Server Test Results
+- name: DNS Trace Test Results
+- name: DNS Server Test Results
+- name: DNSSEC Test Results
+- name: Voice SIP Server Test Results
+- name: Voice RTP Server Test Results
+- name: Network BGP Test Results
+paths:
+  /test-results/{testId}/network:
+    get:
+      tags:
+      - Network Test Results
+      summary: Get network test results
+      description: 'Returns network test results for every agent and round. If no window, start time, or end time is specified,
+        data for the most recent round is returned. If a window or start time is specified, the results might include a round
+        that started just before the specified start time.
+
+        '
+      operationId: getTestNetworkResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/Direction'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/NetworkTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/path-vis:
+    get:
+      tags:
+      - Network Test Results
+      summary: Get path visualization network test results
+      description: "Returns a summary of the path trace data collected during path visualization for a given time range. With\
+        \ each attempt, three tries are made to reach the destination. The entire path is displayed in order. If you do not\
+        \ specify a window or a start and end date, data is displayed for the most recent testing round. \n\nBidirectional\
+        \ agent-to-agent tests also support the `direction` parameter. For example, if agents A, B, and C are testing agent\
+        \ D bidirectionally, and you want results from the route from agent A to agent D, you can use the query `direction=to-target`.\
+        \ For results from agent D to agent A, you can use `direction=from-target`. To get both results for both routes, query\
+        \ without the direction parameter. The source will always be agent A and the destination will be agent D, but the\
+        \ direction field will indicate which trace direction you want test results from.\n"
+      operationId: getTestPathVisResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/PathVisDirection'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PathVisTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/path-vis/agent/{agentId}/round/{roundId}:
+    get:
+      tags:
+      - Network Test Results
+      summary: Get path visualization test results by agent and round
+      description: 'Returns a summary of the path trace data collected during path visualization for a given agent and round.
+        With each attempt, three tries are made to reach the destination. The entire path is displayed in order.
+
+
+        Bidirectional agent-to-agent tests also support the `direction` parameter. For example, if agents A, B, and C are
+        testing agent D bidirectionally, and you want results from the route from agent A to agent D, you can use the query
+        `direction=to-target`. For results from agent D to agent A, you can use `direction=from-target`. To get both results
+        for both routes, query without the direction parameter. The source will always be agent A and the destination will
+        be agent D, but the direction field will indicate which trace direction you want test results from.
+
+        '
+      operationId: getTestPathVisAgentRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/PathVisDirection'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PathVisDetailTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/http-server:
+    get:
+      tags:
+      - Web HTTP Server Test Results
+      summary: Get HTTP server test results
+      description: 'Returns results for requests made over HTTP. Components include DNS, Connect, Wait, Receive, and Fetch.
+
+
+        When DNS server measurement data is available for a round, each result includes a `dnsServerMeasurement`
+
+        object describing the DNS response used to resolve the target and any additional DNS responses observed
+
+        during resolution.
+
+        '
+      operationId: getTestHttpServerResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/HttpServerExpand'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/page-load:
+    get:
+      tags:
+      - Web Page Load Test Results
+      summary: Get page load server test results
+      description: 'Returns results for page load server tests with a focus on page load times and DOM for a web page.
+
+        '
+      operationId: getTestPageLoadResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/page-load/agent/{agentId}/round/{roundId}:
+    get:
+      tags:
+      - Web Page Load Test Results
+      summary: Get page load server test results by agent and round
+      description: 'Returns test results for a given agent and round in [HAR (http archive)](http://www.softwareishard.com/blog/har-12-spec/)
+        format. These results contain a list of components and their load times in a page load test, similar to the waterfall
+        view for a page load test.
+
+        '
+      operationId: getTestPageLoadAgentRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadDetailTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/web-transactions:
+    get:
+      tags:
+      - Web Transactions Test Results
+      summary: Get web transactions test results
+      description: 'Returns test results for web transactions. If no window, start time, or end time is specified, data for
+        the most recent round is returned. If a window or start time is specified, the results might include a round that
+        started just before the specified start time.
+
+        '
+      operationId: getTestWebTransactionResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/web-transactions/agent/{agentId}/round/{roundId}:
+    get:
+      tags:
+      - Web Transactions Test Results
+      summary: Get web transactions test results by agent and round
+      description: 'Returns test results for web transactions for a given agent and round.
+
+        '
+      operationId: getTestWebTransactionAgentRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionDetailTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/web-transactions/agent/{agentId}/round/{roundId}/page/{pageId}:
+    get:
+      tags:
+      - Web Transactions Test Results
+      summary: Get detailed web transactions test result by agent, round, and page
+      description: 'Returns a page of web transaction test results for an agent and round.
+
+        '
+      operationId: getTestWebTransactionAgentRoundPageResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/PageIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionPageDetailTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/web-transactions/agent/{agentId}/round/{roundId}/console-logs:
+    get:
+      tags:
+      - Web Transactions Test Results
+      summary: Get console logs test results by agent and round
+      description: 'Returns console logs for the specified test, agent, and round ID.
+
+        '
+      operationId: getTestConsoleLogsAgentRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConsoleLogsTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/api:
+    get:
+      tags:
+      - API Test Results
+      summary: Get API test results
+      description: 'Returns test results for API. If no window, start time, or end time is specified, data for the most recent
+        round is returned. If a window or start time is specified, the results might include a round that started just before
+        the specified start time.
+
+        '
+      operationId: getTestApiResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/api/agent/{agentId}/round/{roundId}:
+    get:
+      tags:
+      - API Test Results
+      summary: Get API test results by agent and round
+      description: 'Returns test results for API for a given agent and round.
+
+        '
+      operationId: getTestApiAgentRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AgentIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiDetailTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/ftp-server:
+    get:
+      tags:
+      - Web FTP Server Test Results
+      summary: Get FTP server test results
+      description: 'Returns test results for FTP server requests. If no window, start time, or end time is specified, data
+        for the most recent round is returned. If a window or start time is specified, the results might include a round that
+        started just before the specified start time.
+
+        '
+      operationId: getTestFtpServerResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FtpServerTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/dns-trace:
+    get:
+      tags:
+      - DNS Trace Test Results
+      summary: Get DNS trace test results
+      description: 'Returns a DNS record from the requesting agent''s point of view. This is similar to dig +trace.
+
+        '
+      operationId: getTestDnsTraceResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/dns-server/{serverId}:
+    get:
+      tags:
+      - DNS Server Test Results
+      summary: Get DNS server test results by server
+      description: 'Returns mappings for a DNS record and resolution time to the specified server, measured from the requesting
+        agent''s point of view. This is similar to dig @server.
+
+        '
+      operationId: getTestDnsServerResult
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/ServerIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/dns-server:
+    get:
+      tags:
+      - DNS Server Test Results
+      summary: Get DNS server test results
+      description: 'Returns the mappings for a DNS record, along with the resolution time to each authoritative server, measured
+        from the agent''s point of view. Similar to dig @server.
+
+        '
+      operationId: getTestDnsServersResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/dnssec:
+    get:
+      tags:
+      - DNSSEC Test Results
+      summary: Get DNSSEC test results
+      description: 'Returns the keychain validity for a record on a domain secured using DNSSEC extensions.
+
+        '
+      operationId: getTestDnsSecResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnssecTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/sip-server:
+    get:
+      tags:
+      - Voice SIP Server Test Results
+      summary: Get SIP server test results
+      description: 'Returns Voice SIP server test results. If no window, start time, or end time is specified, data for the
+        most recent round is returned. If a window or start time is specified, the results might include a round that started
+        just before the specified start time.
+
+        '
+      operationId: getTestSipServerResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/rtp-server:
+    get:
+      tags:
+      - Voice RTP Server Test Results
+      summary: Retrieve RTP server test metrics
+      description: 'Returns Voice RTP server test results. If no window, start time, or end time is specified, data for the
+        most recent round is returned. If a window or start time is specified, the results might include a round that started
+        just before the specified start time.
+
+        '
+      operationId: getTestRtpServerResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RtpStreamTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/bgp:
+    get:
+      tags:
+      - Network BGP Test Results
+      summary: Get BGP test results
+      description: 'Returns a list of BGP monitors actively monitoring the destination''s target prefix. This list includes
+        information about the prefix, its associated AS Number, and provides details regarding reachability, path updates,
+        and any changes in the path for the target network.
+
+        '
+      operationId: getTestBgpResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /test-results/{testId}/bgp/routes/prefix/{prefixId}/round/{roundId}:
+    get:
+      tags:
+      - Network BGP Test Results
+      summary: Get BGP route test results by prefix
+      description: 'Returns an ordered list of networks crossed by a particular network prefix, including assigned monitors
+        for the test and the paths taken to reach the destination. This is similar to revealing ASPath details found in a
+        BGP Routing Information Base (rib) dump.
+
+        '
+      operationId: getTestBgpRoutesPrefixRoundResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/PrefixIdPath'
+      - $ref: '#/components/parameters/RoundIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTestRouteInformationResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  parameters:
+    PrefixIdPath:
+      name: prefixId
+      description: The ID of the prefix. You can get `prefixId` from the `/test-results/{testId}/bgp` endpoint.
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '3789376546'
+    ServerIdPath:
+      name: serverId
+      description: DNS server ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+    HttpServerExpand:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: This parameter lets you decide if you want to see more details about test results. By default, no extra
+        information is shown unless you use the query parameter. For instance, if you want more info about the "header," add
+        ?expand=header to the query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Expand'
+        example:
+        - certificate
+    Direction:
+      name: direction
+      in: query
+      style: form
+      description: 'Choose the direction for the metrics you want: [`from-target`, `to-target`, `bidirectional`]. This applies
+        when you''re doing bidirectional Agent-to-Agent tests. For bidirectional data, you''ll get combined results; otherwise,
+        you''ll get data for one direction. If you try to get unidirectional test data with an incorrect direction parameter,
+        it will trigger an error response.'
+      schema:
+        $ref: '#/components/schemas/TestDirection'
+    PathVisDirection:
+      name: direction
+      in: query
+      style: form
+      description: 'Choose the direction for the metrics you want: [`from-target`, `to-target`]. This applies when you''re
+        doing bidirectional Agent-to-Agent tests. Omitting the parameter will default the results to both `from-target` and
+        `to-target` values (bidirectional); otherwise, you''ll get data for one direction. If you try to get unidirectional
+        test data with an incorrect direction parameter, it will trigger an error response.'
+      schema:
+        $ref: '#/components/schemas/PathVisDirection'
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed
+        by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days,
+        and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone,
+        following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used
+        with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete
+        time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for
+        reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of
+        this parameter.
+      schema:
+        type: string
+        example: null
+    AgentIdPath:
+      name: agentId
+      description: Agent ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '11'
+    RoundIdPath:
+      name: roundId
+      description: Round ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '1384309800'
+    PageIdPath:
+      name: pageId
+      description: Web page ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+  schemas:
+    Expand:
+      type: string
+      enum:
+      - header
+      - certificate
+      example: header
+    NetworkTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    NetworkTestResult:
+      allOf:
+      - type: object
+        properties:
+          availableBandwidth:
+            type: number
+            description: The bandwidth from the client to the server measured in Mbps. This value is not available if bandwidth
+              testing is disabled, if no value could be calculated, or if the target is a proxy.
+            example: 9.100464
+            format: double
+            readOnly: true
+          avgLatency:
+            type: number
+            description: Average RTT for packets sent to destination
+            example: 167.04
+            format: double
+            readOnly: true
+          bandwidth:
+            type: number
+            example: 4.3313155
+            format: double
+            readOnly: true
+          capacity:
+            type: number
+            description: The capacity from the client to the server measured in Mbps. This value is not available if bandwidth
+              testing is disabled, if no value could be calculated, or if the target is a proxy.
+            example: 210.10854
+            format: double
+            readOnly: true
+          jitter:
+            type: number
+            description: Standard deviation of latency
+            example: 0.076808
+            format: double
+            readOnly: true
+          loss:
+            type: number
+            description: Percentage of packets not reaching the destination. This field is omitted when no loss measurement
+              is available.
+            example: 0
+            format: double
+            readOnly: true
+          maxLatency:
+            type: number
+            description: Maximum RTT for packets sent to destination
+            example: 168
+            format: double
+            readOnly: true
+          minLatency:
+            type: number
+            description: Minimum RTT for packets sent to destination
+            example: 167
+            format: double
+            readOnly: true
+          proxyLoss:
+            type: number
+            description: Percentage of packets not reaching proxy.
+            example: 2.5
+            format: float
+            readOnly: true
+          proxyAverageLatency:
+            type: number
+            description: Average RTT for packets sent to proxy, in milliseconds.
+            example: 45
+            format: float
+            readOnly: true
+          proxyMinLatency:
+            type: number
+            description: Minimum RTT for packets sent to proxy, in milliseconds.
+            example: 40
+            format: float
+            readOnly: true
+          proxyMaxLatency:
+            type: number
+            description: Maximum RTT for packets sent to proxy, in milliseconds.
+            example: 50
+            format: float
+            readOnly: true
+          proxyJitter:
+            type: number
+            description: Standard deviation of proxy latency, in milliseconds.
+            example: 1.2
+            format: float
+            readOnly: true
+          packetsBySecond:
+            type: array
+            description: Number of packets sent and received in a second.
+            example:
+            - []
+            - - 0
+            - - 2
+            - - 2
+              - 1
+            - - 1
+              - 1
+            items:
+              type: array
+              items:
+                type: integer
+            readOnly: true
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          date:
+            type: string
+            description: Data point date in UTC (ISO date-time format).
+            format: date-time
+            example: '2022-07-17T22:00:54Z'
+            readOnly: true
+          roundId:
+            type: integer
+            description: Epoch time (seconds) indicating the start time of the round
+            example: 1384309800
+            readOnly: true
+          serverIp:
+            type: string
+            description: IP of target server
+            example: 50.18.127.223
+            readOnly: true
+          server:
+            type: string
+            description: Target server, including port (if method used is TCP)
+            example: www.thousandeyes.com:80
+            readOnly: true
+          healthScore:
+            type: number
+            description: A normalized value (0.0-1.0) representing the network connection health of the test target. Returns
+              negative values as error codes. -1.0 indicates there was insufficient data to calculate the health score.
+            example: 0.98
+          direction:
+            $ref: '#/components/schemas/TestDirection'
+          errorDetails:
+            allOf:
+            - $ref: '#/components/schemas/TestResultErrorDetails'
+            description: Error details. This field is omitted when no error occurs.
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+    PathVisDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PathVisDetailTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    PathVisDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/PathVisBaseTestResult'
+      - type: object
+        properties:
+          pathTraces:
+            type: array
+            description: Shows 3 iterations of path trace, with each iteration specified by a pathId
+            items:
+              $ref: '#/components/schemas/PathVisRoute'
+    PathVisTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/PathVisTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    PathVisTestResult:
+      allOf:
+      - type: object
+        properties:
+          pathTraces:
+            type: array
+            description: Shows all iterations of path trace, with each iteration specified by a pathId
+            items:
+              $ref: '#/components/schemas/PathTrace'
+      - $ref: '#/components/schemas/PathVisBaseTestResult'
+    PathVisBaseTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          server:
+            type: string
+            description: Target server, including port (if method used is TCP)
+            example: www.google.com:443
+            readOnly: true
+          serverIp:
+            type: string
+            description: IP of target server
+            example: 172.217.170.68
+            readOnly: true
+          sourceIp:
+            type: string
+            description: IP address of source agent
+            example: 196.40.106.237
+            readOnly: true
+          sourcePrefix:
+            type: string
+            description: IP prefix of source agent
+            example: 196.40.96.0/20
+            readOnly: true
+          targetIsProxy:
+            type: boolean
+            description: Specifies whether the traces are targeting a proxy. If not set, it is considered as false.
+            example: true
+            readOnly: true
+          direction:
+            $ref: '#/components/schemas/PathVisDirection'
+    PathVisRoute:
+      type: object
+      properties:
+        pathId:
+          type: string
+          description: Unique ID of path trace
+          example: '4711301366345855606023718047703941305741293841502186803'
+          readOnly: true
+        hops:
+          type: array
+          description: Array of hop objects indicating each step in the traceroute
+          items:
+            $ref: '#/components/schemas/PathVisHop'
+    PathVisHop:
+      type: object
+      properties:
+        hop:
+          type: integer
+          description: Hop index
+          example: 1
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the hop
+          example: 196.40.106.237
+          readOnly: true
+        prefix:
+          type: string
+          description: Prefix of IP address shown in CIDR
+          example: 196.40.96.0/20
+          readOnly: true
+        rdns:
+          type: string
+          description: Reverse DNS entry of IP, if available
+          example: core-router1.cpt2.host-h.net
+          readOnly: true
+        network:
+          type: string
+          description: Autonomous System originating the prefix
+          example: HETZNER (Pty) Ltd (AS 37153)
+          readOnly: true
+        responseTime:
+          type: integer
+          description: RTT to the hop’s IP in milliseconds
+          example: 1
+          readOnly: true
+        location:
+          type: string
+          description: Location information for the hop
+          example: Cape Town, South Africa
+          readOnly: true
+        mpls:
+          type: string
+          description: Multiprotocol Label Switching information, if available
+          readOnly: true
+    PathTrace:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: IP address of the hop
+          example: 196.40.106.237
+          readOnly: true
+        mss:
+          type: integer
+          description: Maximum segment size in bytes
+          example: 1460
+          readOnly: true
+        numberOfHops:
+          type: integer
+          description: Number of hops for path trace to destination
+          example: 15
+          readOnly: true
+        pathId:
+          type: string
+          description: Unique ID of path trace
+          example: '1230899668701775614109128428722974545787322404682781961521'
+          readOnly: true
+        pathMtu:
+          type: integer
+          description: MTU sizes on network from agents to the target
+          example: 1500
+          readOnly: true
+        responseTime:
+          type: integer
+          description: RTT of the path trace to the destination in milliseconds
+          example: 1500
+          readOnly: true
+    PathVisDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      description: Direction of the path trace.
+      example: to-target
+    HttpTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    HttpTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          serverIp:
+            type: string
+            description: IP address of destination server
+            example: 193.2.1.88
+            readOnly: true
+          responseCode:
+            type: integer
+            description: HTTP response code
+            example: 200
+          numRedirects:
+            type: integer
+            description: Number of redirects
+            example: 0
+          redirectTime:
+            type: integer
+            description: Cumulative redirect timing in milliseconds
+            example: 10
+          dnsTime:
+            type: integer
+            description: Time required to resolve DNS in milliseconds
+            example: 0
+          dnsServerMeasurement:
+            allOf:
+            - $ref: '#/components/schemas/DnsServerMeasurement'
+            example:
+              usedDnsResponse:
+                id: 41837
+                qr: response
+                opcode: query
+                authoritativeAnswer: false
+                truncation: false
+                recursionDesired: true
+                recursionAvailable: true
+                zero: false
+                authenticData: false
+                checkingDisabled: false
+                responseCode: noerror
+                question:
+                - name: www.example.com
+                  type: a
+                  class: in
+                  ttl: 0
+                  data: ''
+                answer:
+                - name: www.example.com
+                  type: a
+                  class: in
+                  ttl: 300
+                  data: 203.0.113.10
+                dnsResolver: 8.8.8.8
+                timing:
+                  startTimeUs: '1769706600000000'
+                  totalTimeUs: 19304
+                protocol: udp
+              unusedDnsResponses:
+              - id: 41838
+                qr: response
+                opcode: query
+                authoritativeAnswer: false
+                truncation: false
+                recursionDesired: true
+                recursionAvailable: true
+                zero: false
+                authenticData: false
+                checkingDisabled: false
+                responseCode: nxdomain
+                question:
+                - name: www.example.com
+                  type: aaaa
+                  class: in
+                  ttl: 0
+                  data: ''
+                dnsResolver: 8.8.4.4
+                timing:
+                  startTimeUs: '1769706600020000'
+                  totalTimeUs: 15420
+                protocol: udp
+              usedHostsFile: false
+              resolvedIp: 203.0.113.10
+          sslTime:
+            type: integer
+            description: Time to negotiate SSL/TLS in milliseconds
+            example: 9
+          connectTime:
+            type: integer
+            description: Time required to establish a TCP connection to the server
+            example: 2
+          waitTime:
+            type: integer
+            description: Time elapsed between completion of request and first byte of response in milliseconds
+            example: 3
+          receiveTime:
+            type: integer
+            description: Elapsed time between first and last byte of response in milliseconds
+            example: 1
+          wireSize:
+            type: integer
+            description: Size of content in bytes
+            example: 9993
+          responseTime:
+            type: integer
+            description: Time to first byte in milliseconds
+            example: 14
+          throughput:
+            type: number
+            format: double
+            description: WireSize divided by receiveTime in byter per second
+            example: 123
+          totalTime:
+            type: integer
+            description: response time + receive time
+            example: 15
+          headers:
+            $ref: '#/components/schemas/HttpTestResultHeaders'
+          errorType:
+            type: string
+            description: Type of error encountered; corresponds to phase of connection
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          sslCipher:
+            type: string
+            description: Cipher suite
+          sslVersion:
+            type: string
+            description: TLS version
+            example: TLSv1.3
+          sslCertificates:
+            type: array
+            items:
+              $ref: '#/components/schemas/SslCert'
+          healthScore:
+            type: number
+            description: A normalized value (0.0-1.0) representing the web application connection health of the test target.
+              Returns negative values as error codes. -1.0 indicates there was insufficient data to calculate the health score.
+            example: 0.98
+    HttpTestResultHeaders:
+      type: object
+      description: Expandable object containing both request and response headers
+      properties:
+        requestHeaders:
+          type: string
+          description: 'Crlf-delimited list of request headers in header: value format'
+          example: "GET / HTTP/1.1\r\nHost: www.thousandeyes.com\r\nUser-Agent: curl/7.58.0-DEV\r\nAccept: */*\r\nAccept-Encoding:\
+            \ deflate, gzip\r\nX-ThousandEyes-Agent: yes\r\n"
+        responseHeaders:
+          type: string
+          description: 'crlf-delimited list of response headers in header: value format'
+          example: "HTTP/1.1 200 OK\r\nContent-Type: text/html;charset=UTF-8\r\nContent-Length: 9993\r\nConnection: keep-alive\r\
+            \nDate: Mon, 04 May 2020 16:13:00 GMT\r\nServer: Apache\r\nContent-Language: en-US\r\nContent-Encoding: gzip\r\
+            \nX-Frame-Options: sameorigin\r\nCache-Control: max-age=600, must-revalidate\r\nStrict-Transport-Security: max-age=31536000\r\
+            \nX-Content-Type-Options: nosniff\r\nX-XSS-Protection: 1; mode=block\r\nVary: Accept-Encoding\r\nX-Cache: Hit\
+            \ from cloudfront\r\nVia: 1.1 7ba3caf71ae7a52dd411d1a543e80cd8.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SFO5-C3\r\
+            \nX-Amz-Cf-Id: w4h42tkoJD-rEpkRDZUvnQBmy26GVGe6pUsuRr1Dphf7oajYbjXaOA==\r\nAge: 132\r\n"
+    SslCert:
+      type: object
+      properties:
+        daysUntilExpiry:
+          type: integer
+          description: Days until certificate expires, rounded down. 0 is shown if there are less than 24 hours remaining.
+            Calculated when the test was executed.
+          example: 0
+        isFetchDateInValidCertDateRange:
+          type: boolean
+          description: True when certificate fetch date is within the valid certificate date range, false otherwise
+          example: true
+        hasValidSigningCert:
+          type: boolean
+          description: This field is implicitly true; it is output only when false. false indicates this certificate was missing
+            a valid signing certificate in the chain.
+          example: false
+        issuerName:
+          type: string
+          description: Certificate issuer
+          example: DigiCert SHA2 Extended Validation Server CA
+        validBefore:
+          type: string
+          format: date-time
+          description: Certificate is not valid after this date
+          example: '2020-05-12T12:00:00Z'
+        validAfter:
+          type: string
+          format: date-time
+          description: Certificate is not valid before this date
+          example: '2018-03-27T00:00:00Z'
+        subjectAlternativeNames:
+          type: array
+          description: Alternative name(s) of the certificate subject, extracted from the Subject Alternative Name (SAN) X.509
+            certificate extension, for example example.com, www2.example.com
+          items:
+            type: string
+          example:
+          - www.thousandeyes.com
+          - thousandeyes.com
+        subjectName:
+          type: string
+          description: certificate’s subject name - a value of the common name (CN) RDN from the certificate’s Subject attribute,
+            for example www.example.com
+          example: www.thousandeyes.com
+    PageLoadTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/PageLoadTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    PageLoadTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          responseTime:
+            type: number
+            format: double
+            description: Time to first byte in milliseconds
+            example: 34.35
+            readOnly: true
+          totalSize:
+            type: integer
+            description: Sum of wire size of all objects on page in bytes
+            example: 403301
+            readOnly: true
+          numObjects:
+            type: integer
+            description: Number of objects found on the page
+            example: 17
+            readOnly: true
+          numErrors:
+            type: integer
+            description: Number of objects which encountered errors during download
+            example: 0
+            readOnly: true
+          domLoadTime:
+            type: integer
+            description: Time to interaction in milliseconds
+            example: 352
+            readOnly: true
+          pageLoadTime:
+            type: integer
+            description: Time to completely load page in milliseconds
+            example: 352
+            readOnly: true
+    PageLoadDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PageLoadDetailTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    PageLoadDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/PageLoadTestResult'
+      - type: object
+        properties:
+          har:
+            $ref: '#/components/schemas/PageHar'
+    PageHar:
+      type: object
+      description: See [HAR specification](http://www.softwareishard.com/blog/har-12-spec/) for details
+      readOnly: true
+      example:
+        log:
+          creator:
+            name: ThousandEyes DB Exporter
+          entries:
+          - pageref: page_0
+            request:
+              headers:
+              - name: :authority
+                value: google.com
+              - name: :method
+                value: GET
+              - name: :path
+                value: /
+              - name: :scheme
+                value: https
+              - name: accept
+                value: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+              - name: accept-encoding
+                value: gzip, deflate, br
+              - name: accept-language
+                value: en-US,en;q=0.9
+              - name: upgrade-insecure-requests
+                value: '1'
+              - name: user-agent
+                value: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.83 Safari/537.36
+              - name: x-thousandeyes-agent
+                value: 'yes'
+              method: GET
+              url: https://google.com/
+            response:
+              bodySize: 220
+              content:
+                mimeType: text/html
+                size: 220
+              headers:
+              - name: alt-svc
+                value: quic=":443"; ma=2592000; v="46,43",h3-Q050=":443"; ma=2592000,h3-Q049=":443"; ma=2592000,h3-Q048=":443";
+                  ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000
+              - name: cache-control
+                value: public, max-age=2592000
+              - name: content-length
+                value: '220'
+              - name: content-type
+                value: text/html; charset=UTF-8
+              - name: date
+                value: Fri, 15 Nov 2019 16:41:54 GMT
+              - name: expires
+                value: Sun, 15 Dec 2019 16:41:54 GMT
+              - name: location
+                value: https://www.google.com/
+              - name: server
+                value: gws
+              - name: status
+                value: '301'
+              - name: x-frame-options
+                value: SAMEORIGIN
+              - name: x-xss-protection
+                value: '0'
+              headersSize: 471
+              redirectURL: ''
+              status: 301
+              statusText: MOVED_PERMANENTLY
+            serverIPAddress: 172.217.6.110
+            startedDateTime: '2019-11-15T16:41:54.798Z'
+            time: 71
+            timings:
+              blocked: 2
+              connect: 16
+              dns: 1
+              receive: 1
+              send: 0
+              ssl: 14
+              wait: 50
+          - pageref: page_0
+            request:
+              headers:
+              - name: :authority
+                value: www.google.com
+              - name: :method
+                value: GET
+              - name: :path
+                value: /
+              - name: :scheme
+                value: https
+              - name: accept
+                value: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+              - name: accept-encoding
+                value: gzip, deflate, br
+              - name: accept-language
+                value: en-US,en;q=0.9
+              - name: upgrade-insecure-requests
+                value: '1'
+              - name: user-agent
+                value: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.83 Safari/537.36
+              - name: x-thousandeyes-agent
+                value: 'yes'
+              method: GET
+              url: https://www.google.com/
+            response:
+              bodySize: 65214
+              content:
+                mimeType: text/html
+                size: 225039
+              headers:
+              - name: alt-svc
+                value: quic=":443"; ma=2592000; v="46,43",h3-Q050=":443"; ma=2592000,h3-Q049=":443"; ma=2592000,h3-Q048=":443";
+                  ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000
+              - name: cache-control
+                value: private, max-age=0
+              - name: content-encoding
+                value: br
+              - name: content-length
+                value: '65214'
+              - name: content-type
+                value: text/html; charset=UTF-8
+              - name: date
+                value: Fri, 15 Nov 2019 16:41:54 GMT
+              - name: expires
+                value: '-1'
+              - name: p3p
+                value: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+              - name: server
+                value: gws
+              - name: set-cookie
+                value: (removed)
+              - name: status
+                value: '200'
+              - name: strict-transport-security
+                value: max-age=31536000
+              - name: x-frame-options
+                value: SAMEORIGIN
+              - name: x-xss-protection
+                value: '0'
+              headersSize: 915
+              redirectURL: ''
+              status: 200
+              statusText: OK
+            serverIPAddress: 172.217.4.196
+            startedDateTime: '2019-11-15T16:41:54.870Z'
+            time: 182
+            timings:
+              blocked: 2
+              connect: 4
+              dns: 0
+              receive: 58
+              send: 0
+              ssl: 2
+              wait: 118
+          pages:
+          - id: page_0
+            pageTimings:
+              onContentLoad: 367
+              onLoad: 737
+            responseCode: 0
+            startedDateTime: '2019-11-15T16:41:54.796Z'
+            title: Google
+          version: '1.2'
+    WebTransactionTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTransactionTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    WebTransactionTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          componentErrors:
+            type: integer
+            description: Number of components which did not successfully load
+            example: 5
+            readOnly: true
+          transactionTime:
+            type: integer
+            description: Elapsed execution time of the web transaction script in milliseconds
+            example: 2379
+            readOnly: true
+          errorType:
+            type: string
+            description: Type of error encountered; corresponds to phase of connection
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+    WebTransactionDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTransactionDetailTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    WebTransactionDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/WebTransactionTestResult'
+      - type: object
+        properties:
+          markers:
+            type: array
+            items:
+              $ref: '#/components/schemas/Marker'
+          pages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Page'
+    ApiTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    ApiTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          apiTransactionTime:
+            type: number
+            format: float
+            description: Elapsed execution time of the API steps.
+            example: 990.1
+            readOnly: true
+          completion:
+            type: number
+            format: float
+            description: Percentage of steps which completed successfully and passed assertions.
+            example: 100
+            readOnly: true
+          errorType:
+            type: string
+            description: Type of error encountered.
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+    ApiDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDetailTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    ApiDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/ApiTestResult'
+      - type: object
+        properties:
+          requests:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiRequestDetail'
+    ApiRequestDetail:
+      type: object
+      properties:
+        apiCallTime:
+          type: number
+          format: float
+          description: Total time specific to the API call.
+          example: 900.9
+        assertErrorCount:
+          type: integer
+          description: Count of assertion errors.
+          example: 0
+        blockedTime:
+          type: number
+          format: float
+          description: Time to establish a socket connection for this request.
+          example: 49.9
+        connectTime:
+          type: number
+          format: float
+          description: Time to establish a TCP connection.
+          example: 12.1
+        completion:
+          type: number
+          format: float
+          description: 100 if the request responded with no assertion errors, otherwise 0.
+          example: 100
+        dnsTime:
+          type: number
+          format: float
+          description: Time for the agent to perform a DNS resolution of the hostname in the URL.
+          example: 11.1
+        name:
+          type: string
+          description: Name of the API step.
+          example: First Step to Acquire Token
+        processingTime:
+          type: number
+          format: float
+          description: Time for the agent to process the API step, including the waitTimeMs delay specified in the post request
+            options.
+          example: 59.9
+        receiveTime:
+          type: number
+          format: float
+          description: Time to receive the response from the server.
+          example: 224.1
+        responseTime:
+          type: number
+          format: float
+          description: Time for server to send the response.
+          example: 440.8
+        sendTime:
+          type: number
+          format: float
+          description: Time to send the request.
+          example: 8.1
+        stepNumber:
+          type: integer
+          description: Index of the API step within requests, starting at 1.
+          example: 1
+        stepTime:
+          type: number
+          format: float
+          description: Total time for an API step, including API call time and processing time.
+          example: 990.1
+        stepType:
+          $ref: '#/components/schemas/ApiRequestStepType'
+        url:
+          type: string
+          description: URL of request
+          example: https://api.thousandeyes.com/v7/status
+        waitTime:
+          type: number
+          format: float
+          description: Total time between when the agent completes sending the HTTP request to the web server and when the
+            agent receives the first byte of the response from the web server.
+          example: 18.1
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiRequestDetailAssertion'
+    ApiRequestStepType:
+      type: string
+      description: The value of `stepType` is "oauth2" if the step was generated by Browserbot to fetch an OAuth2 access token.
+      enum:
+      - default
+      - oauth2
+      example: default
+    ApiRequestDetailAssertion:
+      type: object
+      properties:
+        step:
+          type: integer
+          description: Index of the assertion, starting at 1.
+          example: 1
+        hasFailed:
+          type: boolean
+          description: Indicates if the assertion passed or failed. `true` if the assertion failed; `false` if the assertion
+            passed.
+          example: false
+    WebTransactionPageDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTransactionPageDetailTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    WebTransactionPageDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/WebTransactionDetailTestResult'
+      - type: object
+        properties:
+          har:
+            $ref: '#/components/schemas/PageHar'
+    Marker:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name assigned to marker in transaction script
+          example: SearchForWebdriver
+          readOnly: true
+        duration:
+          type: integer
+          description: Total time recorded by marker in milliseconds
+          example: 1360
+          readOnly: true
+    Page:
+      type: object
+      properties:
+        pageNum:
+          type: integer
+          description: Page index
+          example: 0
+          readOnly: true
+        pageName:
+          type: string
+          description: Meta title value for page visited
+          example: Google
+          readOnly: true
+        componentCount:
+          type: integer
+          description: Number of components on target page
+          example: 136
+          readOnly: true
+        errorCount:
+          type: integer
+          description: Number of errors encountered during page load
+          example: 0
+          readOnly: true
+        duration:
+          type: number
+          format: float
+          description: Time spent on page in milliseconds
+          example: 1117.5660001039505
+          readOnly: true
+    FtpServerTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/FtpServerTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    FtpServerTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          serverIp:
+            type: string
+            description: IP address of destination server
+            example: 193.2.1.88
+            readOnly: true
+          responseCode:
+            type: integer
+            description: FTP response code
+            example: 226
+            readOnly: true
+          dnsTime:
+            type: number
+            format: float
+            description: Time required to resolve DNS  in milliseconds
+            example: 0.589
+            readOnly: true
+          connectTime:
+            type: number
+            format: float
+            description: Time required to establish a TCP connection to the server in milliseconds
+            example: 50.153
+            readOnly: true
+          negotiationTime:
+            type: number
+            format: float
+            description: Time negotiate the connection and authenticate with the destination server in milliseconds
+            example: 503.413
+            readOnly: true
+          waitTime:
+            type: number
+            format: float
+            description: Time elapsed between completion of request and first byte of response in milliseconds
+            example: 52.1
+            readOnly: true
+          responseTime:
+            type: number
+            format: float
+            description: Sum of DNS, connect, negotiation and wait times in milliseconds
+            example: 0.589
+            readOnly: true
+          transferTime:
+            type: number
+            format: float
+            description: Elapsed time between first and last byte of the transfer in milliseconds
+            example: 99.865
+            readOnly: true
+          wireSize:
+            type: integer
+            description: Size of content in bytes
+            example: 22172
+            readOnly: true
+          totalTime:
+            type: number
+            format: float
+            description: Sum of response + transfer time in milliseconds
+            example: 705.554
+            readOnly: true
+          errorType:
+            type: string
+            description: Type of error encountered; corresponds to phase of connection
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          throughput:
+            type: integer
+            description: WireSize divided by receiveTime in byter per second
+            example: 123
+            readOnly: true
+    DnsTraceTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsTraceTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    DnsTraceTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          output:
+            type: string
+            description: Verbose output from the trace request
+            example: "com.\t172800\tIN\tNS\ta.gtld-servers.net.\ncom.\t172800\tIN\tNS\tf.gtld-servers.net.\ncom.\t172800\t\
+              IN\tNS\tc.gtld-servers.net.\ncom.\t172800\tIN\tNS\tb.gtld-servers.net.\ncom.\t172800\tIN\tNS\td.gtld-servers.net.\n\
+              com.\t172800\tIN\tNS\te.gtld-servers.net.\ncom.\t172800\tIN\tNS\tg.gtld-servers.net.\ncom.\t172800\tIN\tNS\t\
+              m.gtld-servers.net.\ncom.\t172800\tIN\tNS\th.gtld-servers.net.\ncom.\t172800\tIN\tNS\tj.gtld-servers.net.\n\
+              com.\t172800\tIN\tNS\ti.gtld-servers.net.\ncom.\t172800\tIN\tNS\tl.gtld-servers.net.\ncom.\t172800\tIN\tNS\t\
+              k.gtld-servers.net.\n;; Received 498 bytes from 199.7.91.13(d.root-servers.net.) in 119 ms\n\nthousandeyes.com.\t\
+              172800\tIN\tNS\ta1.verisigndns.com.\nthousandeyes.com.\t172800\tIN\tNS\ta2.verisigndns.com.\nthousandeyes.com.\t\
+              172800\tIN\tNS\ta3.verisigndns.com.\nthousandeyes.com.\t172800\tIN\tNS\tu1.verisigndns.com.\n;; Received 266\
+              \ bytes from 192.5.6.30(a.gtld-servers.net.) in 178 ms\n\napp.thousandeyes.com.\t300\tIN\tCNAME\tweb.thousandeyes.com.\n\
+              web.thousandeyes.com.\t300\tIN\tCNAME\tlb-app.thousandeyes.com.\nlb-app.thousandeyes.com.\t3600\tIN\tA\t208.185.7.120\n\
+              ;; Received 173 bytes from 209.112.113.33(a1.verisigndns.com.) in 178 ms\n\n"
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          queries:
+            type: integer
+            description: How many queries were required to get to the requested result
+            example: 3
+            readOnly: true
+          failedQueries:
+            type: integer
+            description: How many queries failed while getting to the requested result
+            example: 0
+            readOnly: true
+          finalServerQueried:
+            type: string
+            description: DNS server that provided the final result
+            example: a1.verisigndns.com.
+            readOnly: true
+          finalQueryTime:
+            type: integer
+            description: How long the final query took to return a response
+            example: 178
+            readOnly: true
+          mappings:
+            type: string
+            description: Final mappings returned from the request
+            example: 208.185.7.120
+            readOnly: true
+    DnsServerTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsServerTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    DnsServerTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          serverId:
+            type: string
+            description: Internal ID of DNS server being tested
+            example: '456'
+            readOnly: true
+          server:
+            type: string
+            description: Canonical name of server being tested
+            example: a1.verisigndns.com.
+            readOnly: true
+          resolutionTime:
+            type: integer
+            description: How long it took to run the query against the serverow long it took to run the query against the
+              server
+            example: 3
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          mappings:
+            type: string
+            description: Final mappings returned from the request
+            example: 208.185.7.120
+            readOnly: true
+    DnssecTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/DnssecTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    DnssecTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          isValid:
+            type: boolean
+            description: Indicates if keychain is valid (if false see errorDetails field)
+            example: true
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+    SipServerTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/SipServerTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    SipServerTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          serverIp:
+            type: string
+            description: Target agent IP address
+            example: 193.2.1.88
+            readOnly: true
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          availability:
+            type: number
+            format: float
+            description: availability of the service
+            example: 100
+            readOnly: true
+          connectTime:
+            type: integer
+            description: Time required to establish a TCP connection to the server in milliseconds, only available when TCP
+              is configured as protocol
+            example: 5
+            readOnly: true
+          dnsTime:
+            type: integer
+            description: Time required to resolve DNS in milliseconds
+            example: 2
+            readOnly: true
+          inviteTime:
+            type: integer
+            description: Time to complete INVITE in milliseconds
+            example: 10
+            readOnly: true
+          optionsTime:
+            type: integer
+            description: Time to complete OPTIONS in milliseconds
+            example: 17
+            readOnly: true
+          numRedirects:
+            type: integer
+            description: Number of redirects
+            example: 0
+            readOnly: true
+          optionsRequest:
+            type: string
+            description: Entire OPTIONS request
+            example: "OPTIONS sip:6054@voice.sfo2.notarealco.com SIP/2.0\r\nVia: SIP/2.0/TCP 38.140.61.68:55431;branch=z9hG4bKRTzPzMoVh0;rport\r\
+              \nFrom: <sip:6054@voice.sfo2.notarealco.com>;tag=cGaJDNKQFE\r\nTo: <sip:6054@voice.sfo2.notarealco.com>\r\n\
+              Call-ID: oO9WaL3av8@38.140.61.68\r\nCSeq: 3 OPTIONS\r\nContact: <sip:6054@38.140.61.68:55431;transport=tcp>\r\
+              \nUser-Agent: ThousandEyes Test Call\r\nAllow: INVITE, ACK, CANCEL, BYE\r\nSupported: outbound, path\r\nMax-Forwards:\
+              \ 70\r\nExpires: 60\r\nContent-Length: 0\r\n\r\n\nOPTIONS sip:6054@voice.sfo2.notarealco.com SIP/2.0\r\nVia:\
+              \ SIP/2.0/TCP 38.140.61.68:55431;branch=z9hG4bKRTzPzMoVh0;rport\r\nFrom: <sip:6054@voice.sfo2.notarealco.com>;tag=cGaJDNKQFE\r\
+              \nTo: <sip:6054@voice.sfo2.notarealco.com>\r\nCall-ID: oO9WaL3av8@38.140.61.68\r\nCSeq: 4 OPTIONS\r\nContact:\
+              \ <sip:6054@38.140.61.68:55431;transport=tcp>\r\nAuthorization: Digest username=\"al6054\", realm=\"asterisk\"\
+              , nonce=\"1598728080/4e3bef2c789bdfa45ce9123221e08c8f\", uri=\"sip:6054@voice.sfo2.notarealco.com\", response=\"\
+              83c538a39ff766cf75ffd1d62317b442\", algorithm=MD5, cnonce=\"0a4f113b\", opaque=\"748ffa241d840721\", qop=auth,\
+              \ nc=00000001\r\nUser-Agent: ThousandEyes Test Call\r\nAllow: INVITE, ACK, CANCEL, BYE\r\nSupported: outbound,\
+              \ path\r\nMax-Forwards: 70\r\nExpires: 60\r\nContent-Length: 0\r\n\r\n"
+            readOnly: true
+          optionsResponse:
+            type: string
+            description: Entire OPTIONS response
+            example: "SIP/2.0 401 Unauthorized\r\nVia: SIP/2.0/TCP 38.140.61.68:55431;rport=55431;received=38.140.61.68;branch=z9hG4bKRTzPzMoVh0\r\
+              \nCall-ID: oO9WaL3av8@38.140.61.68\r\nFrom: <sip:6054@voice.sfo2.notarealco.com>;tag=cGaJDNKQFE\r\nTo: <sip:6054@voice.sfo2.notarealco.com>;tag=z9hG4bKRTzPzMoVh0\r\
+              \nCSeq: 3 OPTIONS\r\nWWW-Authenticate: Digest  realm=\"asterisk\",nonce=\"1598728080/4e3bef2c789bdfa45ce9123221e08c8f\"\
+              ,opaque=\"748ffa241d840721\",algorithm=md5,qop=\"auth\"\r\nServer: Asterisk PBX 16.4.0\r\nContent-Length:  0\r\
+              \n\r\n\nSIP/2.0 200 OK\r\nVia: SIP/2.0/TCP 38.140.61.68:55431;rport=55431;received=38.140.61.68;branch=z9hG4bKRTzPzMoVh0\r\
+              \nCall-ID: oO9WaL3av8@38.140.61.68\r\nFrom: <sip:6054@voice.sfo2.notarealco.com>;tag=cGaJDNKQFE\r\nTo: <sip:6054@voice.sfo2.notarealco.com>;tag=z9hG4bKRTzPzMoVh0\r\
+              \nCSeq: 4 OPTIONS\r\nAccept: application/xpidf+xml, application/cpim-pidf+xml, application/simple-message-summary,\
+              \ application/pidf+xml, application/dialog-info+xml, application/simple-message-summary, application/pidf+xml,\
+              \ application/dialog-info+xml, application/sdp, message/sipfrag;version=2.0\r\nAllow: OPTIONS, REGISTER, SUBSCRIBE,\
+              \ NOTIFY, PUBLISH, INVITE, ACK, BYE, CANCEL, UPDATE, PRACK, MESSAGE, REFER\r\nSupported: 100rel, timer, replaces,\
+              \ norefersub\r\nAccept-Encoding: text/plain\r\nAccept-Language: en\r\nServer: Asterisk PBX 16.4.0\r\nContent-Length:\
+              \  0\r\n\r\n"
+            readOnly: true
+          registerTime:
+            type: integer
+            description: Time to complete REGISTER in milliseconds
+            example: 21
+            readOnly: true
+          responseCode:
+            type: integer
+            description: SIP server response code
+            example: 200
+            readOnly: true
+          responseTime:
+            type: integer
+            description: Time to first byte
+            example: 12
+            readOnly: true
+          totalTime:
+            type: integer
+            description: Total time
+            example: 40
+            readOnly: true
+          waitTime:
+            type: integer
+            description: Time elapsed between completion of request and first byte of response
+            example: 5
+            readOnly: true
+          errorType:
+            $ref: '#/components/schemas/SipServerErrorType'
+          problemDetail:
+            type: string
+            description: Error details, if an error was encountered
+            readOnly: true
+    SipServerErrorType:
+      type: string
+      enum:
+      - none
+      - dns
+      - connect
+      - register
+      - invite
+      - option
+      - server
+      - ssl
+      description: Error type, none if there is no error
+      example: none
+      readOnly: true
+    RtpStreamTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/RtpStreamTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    RtpStreamTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          serverIp:
+            type: string
+            description: Target agent IP address
+            example: 172.97.102.37
+            readOnly: true
+          dscp:
+            type: string
+            description: DSCP value received by the server from the agent
+            example: '46'
+            readOnly: true
+          dscpName:
+            type: string
+            description: Name of DSCP value received by the server from the agent
+            example: EF (DSCP 46)
+            readOnly: true
+          mos:
+            type: number
+            format: float
+            description: Mean opinion score for agent’s stream
+            example: 4.351024
+            readOnly: true
+          codecName:
+            type: string
+            description: Name of codec used by agen
+            example: G.711 @ 64 Kbps
+            readOnly: true
+          codecMaxMos:
+            type: number
+            format: float
+            description: Maximum value of Mean Opinion Score based on codec selection
+            example: 4.41
+            readOnly: true
+          loss:
+            type: number
+            format: float
+            description: Percentage value of packets sent from agent not received by server
+            example: 0
+            readOnly: true
+          discards:
+            type: number
+            format: float
+            description: Percentage of packets discarded
+            example: 0
+            readOnly: true
+          latency:
+            type: integer
+            description: Time to send packets from source to server in milliseconds
+            example: 103
+            readOnly: true
+          pdv:
+            type: integer
+            description: Variation in packet delay in milliseconds
+            example: 1
+            readOnly: true
+          errorDetail:
+            type: string
+            description: Error details, if an error was encountered
+            example: Connection error
+            readOnly: true
+    TestResultAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
+    TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    ConsoleLogs:
+      type: object
+      description: Console logs captured during script execution to help troubleshoot transaction issues.
+      properties:
+        level:
+          type: string
+          description: Severity level of the log, or UNKNOWN if the log is system-generated.
+          example: INFO
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix epoch time, in milliseconds, when the log entry was captured.
+          example: 1715880042123
+        value:
+          type: string
+          description: Log message.
+          example: 'Uncaught TypeError: Cannot read property attr of undefined'
+    ConsoleLogsResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          consoleLogs:
+            type: array
+            items:
+              $ref: '#/components/schemas/ConsoleLogs'
+    ConsoleLogsTestResults:
+      type: object
+      readOnly: true
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsoleLogsResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
+    EndTime:
+      type: integer
+      description: Epoch time (seconds) indicating the end time of the round
+      example: 1384309800
+      readOnly: true
+    EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/StartTime'
+        endTime:
+          $ref: '#/components/schemas/EndTime'
+    BgpTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BgpTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    BgpTestResult:
+      allOf:
+      - $ref: '#/components/schemas/BgpBasicTestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          updates:
+            type: number
+            format: double
+            description: Number of updates tracked against this prefix by this monitor.
+            example: 0
+          pathChanges:
+            type: number
+            format: double
+            description: Number of path changes tracked against this prefix by this monitor.
+            example: 0
+          reachability:
+            type: number
+            format: double
+            description: Percentage reachability
+            example: 0
+    BgpBasicTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - type: object
+        properties:
+          monitor:
+            $ref: '#/components/schemas/TestResultMonitor'
+          prefixId:
+            type: string
+            description: Internally tracked prefix ID.
+            example: '215'
+          prefix:
+            type: string
+            description: Prefix being tracked.
+            example: 99.128.0.0/11
+    TestResultMonitor:
+      type: object
+      properties:
+        monitorId:
+          type: string
+          description: Unique monitor ID.
+          example: '281474976710706'
+          readOnly: true
+        monitorName:
+          type: string
+          description: The name of the Monitor.
+          example: Vancouver, Canada - Bell Canada (AS 6539)
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code.
+          example: US
+          readOnly: true
+    BgpTestRouteInformationResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BgpTestRouteInformationResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    BgpTestRouteInformationResult:
+      allOf:
+      - $ref: '#/components/schemas/BgpBasicTestResult'
+      - type: object
+        properties:
+          isActive:
+            type: boolean
+            description: Represents whether the route is active or inactive. An inactive route was an active route in the
+              previous test round and is now superseded by another active (preferred) route. When requesting data for the
+              test round in which a route change happened, both routes (active and inactive one) are included in the response.
+            example: true
+          hops:
+            type: array
+            items:
+              $ref: '#/components/schemas/BgpHop'
+    BgpHop:
+      type: object
+      properties:
+        asn:
+          type: integer
+          description: ASN of transit autonomous system
+          readOnly: true
+          example: 852
+        asName:
+          type: string
+          description: Name of autonomous system.
+          readOnly: true
+          example: Telus Advanced Communications
+    TestResult:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Data point date UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        roundId:
+          type: integer
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/TestResultAppLinks'
+    TestResultAppLinks:
+      allOf:
+      - $ref: '#/components/schemas/AppLinks'
+      - example:
+          appLink:
+            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    DnsServerMeasurement:
+      type: object
+      description: DNS resolution details collected while locating the HTTP test target. Present when the agent captured DNS
+        server measurement data for the round. The order of `unusedDnsResponses` matches the order returned by the DNS resolver.
+      readOnly: true
+      properties:
+        usedDnsResponse:
+          $ref: '#/components/schemas/DnsServerResponse'
+        unusedDnsResponses:
+          type: array
+          description: Additional DNS responses received while resolving the target.
+          items:
+            $ref: '#/components/schemas/DnsServerResponse'
+          example:
+          - id: 41838
+            responseCode: servfail
+            dnsResolver: 8.8.4.4
+            question:
+            - name: www.google.com
+              type: aaaa
+              class: in
+              ttl: 0
+              data: ''
+        usedHostsFile:
+          type: boolean
+          description: Indicates whether the hosts file (for example, `/etc/hosts`) was used to resolve the target.
+          example: false
+          readOnly: true
+        resolvedIp:
+          type: string
+          description: IP address resolved for the target, from DNS or the hosts file.
+          example: 142.250.191.132
+          readOnly: true
+    DnsServerResponse:
+      type: object
+      description: A DNS response received while resolving the HTTP test target.
+      readOnly: true
+      properties:
+        id:
+          type: integer
+          description: DNS message ID.
+          example: 41837
+          readOnly: true
+        qr:
+          $ref: '#/components/schemas/DnsQr'
+        opcode:
+          $ref: '#/components/schemas/DnsOpcode'
+        authoritativeAnswer:
+          type: boolean
+          description: DNS header AA flag.
+          example: false
+          readOnly: true
+        truncation:
+          type: boolean
+          description: DNS header TC flag.
+          example: false
+          readOnly: true
+        recursionDesired:
+          type: boolean
+          description: DNS header RD flag.
+          example: true
+          readOnly: true
+        recursionAvailable:
+          type: boolean
+          description: DNS header RA flag.
+          example: true
+          readOnly: true
+        zero:
+          type: boolean
+          description: DNS header Z flag. Reserved and expected to be false.
+          example: false
+          readOnly: true
+        authenticData:
+          type: boolean
+          description: DNS header AD flag.
+          example: false
+          readOnly: true
+        checkingDisabled:
+          type: boolean
+          description: DNS header CD flag.
+          example: false
+          readOnly: true
+        responseCode:
+          $ref: '#/components/schemas/DnsResponseCode'
+        question:
+          type: array
+          description: Records in the DNS question section.
+          items:
+            $ref: '#/components/schemas/DnsResourceRecord'
+        answer:
+          type: array
+          description: Records in the DNS answer section.
+          items:
+            $ref: '#/components/schemas/DnsResourceRecord'
+        dnsResolver:
+          type: string
+          description: DNS resolver that returned this response.
+          example: 8.8.8.8
+          readOnly: true
+        timing:
+          $ref: '#/components/schemas/DnsTiming'
+        protocol:
+          $ref: '#/components/schemas/DnsMeasurementProtocol'
+    DnsResourceRecord:
+      type: object
+      description: A DNS resource record from the question or answer section.
+      readOnly: true
+      properties:
+        name:
+          type: string
+          description: Record name.
+          example: www.google.com
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/DnsResourceRecordType'
+        class:
+          $ref: '#/components/schemas/DnsResourceRecordClass'
+        ttl:
+          type: integer
+          description: Time to live in seconds.
+          example: 300
+          readOnly: true
+        data:
+          type: string
+          description: Record data (RDATA).
+          example: 142.250.191.132
+          readOnly: true
+    DnsTiming:
+      type: object
+      description: Timing metrics for a DNS lookup.
+      readOnly: true
+      properties:
+        startTimeUs:
+          type: string
+          description: Unix epoch timestamp in microseconds when the DNS query started.
+          example: '1769706600000000'
+          readOnly: true
+        totalTimeUs:
+          type: integer
+          description: Total DNS lookup time in microseconds.
+          example: 19304
+          readOnly: true
+    DnsQr:
+      type: string
+      description: DNS header QR flag.
+      enum:
+      - query
+      - response
+      example: response
+      readOnly: true
+    DnsOpcode:
+      type: string
+      description: DNS header OPCODE field (RFC 1035).
+      enum:
+      - query
+      - iquery
+      - status
+      - unknown-3
+      - unknown-4
+      - unknown-5
+      - unknown-6
+      - unknown-7
+      - unknown-8
+      - unknown-9
+      - unknown-10
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      example: query
+      readOnly: true
+    DnsResponseCode:
+      type: string
+      description: DNS response code (RCODE), including extended RCODE values (RFC 1035 and RFC 6891).
+      enum:
+      - noerror
+      - formerr
+      - servfail
+      - nxdomain
+      - notimp
+      - refused
+      - yxdomain
+      - yxrrset
+      - nxrrset
+      - notauth
+      - notzone
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      - badvers
+      - badkey
+      - badtime
+      - badmode
+      - badname
+      - badalg
+      - badtrunc
+      - badcookie
+      example: noerror
+      readOnly: true
+    DnsResourceRecordType:
+      type: string
+      description: DNS resource record type (IANA). Values match `DnsRecordType` on DNS Server test configuration where applicable.
+      enum:
+      - unknown
+      - a
+      - cname
+      - aaaa
+      example: a
+      readOnly: true
+    DnsResourceRecordClass:
+      type: string
+      description: DNS resource record class (IANA).
+      enum:
+      - unknown
+      - in
+      example: in
+      readOnly: true
+    DnsMeasurementProtocol:
+      type: string
+      description: Actual wire transport used to perform the DNS lookup. `tcp` indicates a TCP retry (for example, after a
+        truncated UDP response).
+      enum:
+      - unspecified
+      - udp
+      - tcp
+      - dot
+      - doh
+      example: udp
+      readOnly: true
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    TestDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction of the test, which affects how results are shown.
+      default: to-target
+      example: to-target
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the
+        set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+            API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other
+            endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate`
+        field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field
+        indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Link'
+  responses:
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred

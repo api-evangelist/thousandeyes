@@ -1,0 +1,1958 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  title: Agents API
+  version: 7.0.100
+  description: '
+
+    ## Overview
+
+    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+externalDocs:
+  description: Find out more about Agents & Monitors
+  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings
+tags:
+- name: Cloud and Enterprise Agents
+- name: Local Problems
+- name: Enterprise Agent Cluster
+- name: Cloud and Enterprise Agent Notification Rules
+- name: Agent Proxies
+paths:
+  /agents:
+    get:
+      tags:
+      - Cloud and Enterprise Agents
+      summary: List Cloud and Enterprise Agents
+      operationId: getAgents
+      description: 'List the Cloud and Enterprise Agents available to your account in ThousandEyes.
+
+
+        If an agent is an Enterprise Agent, this operation returns the agent’s public and private IP addresses, as well as
+        the public network where the agent is located.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandAgent'
+      - $ref: '#/components/parameters/AgentTypes'
+      - $ref: '#/components/parameters/Labels'
+      - $ref: '#/components/parameters/TagKeys'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CloudEnterpriseAgents'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/local-problems:
+    get:
+      tags:
+      - Local Problems
+      summary: List Cloud agents with local problems
+      operationId: getAgentsLocalProblems
+      description: 'Returns local problem intervals for Cloud Agents available to your account in ThousandEyes. FedRAMP Cloud
+        Agents are not included. Local problems indicate agent-side impairment detected by ThousandEyes and do not indicate
+        that a monitored target or service was down.
+
+
+        If no time range is specified, this operation returns active local problems.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LocalProblemAgentResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}:
+    get:
+      tags:
+      - Cloud and Enterprise Agents
+      summary: Retrieve Cloud and Enterprise Agent
+      operationId: getAgent
+      description: 'Returns details for an agent, including assigned tests.
+
+
+        For Enterprise Agents, this operation returns additional details, including utilization data, assigned accounts, a
+        list of account groups the agent is assigned to, and utilization details.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandAgentDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Cloud and Enterprise Agents
+      summary: Update Enterprise Agent
+      operationId: updateAgent
+      description: 'Updates details for an Enterprise Agent. This operation can only be used for Enterprise Agents, and only
+        for users in a role that permits modification of Enterprise Agents.
+
+
+        Important notes related to agent modification on tests:
+
+        * if an agent is removed from a test, the modification date for tests using that agent at the time it was removed
+        will be changed.
+
+        * If an agent is removed from an entire account group, then all tests using this agent in the removed account group
+        will be updated to reflect the removed agent.
+
+        * If a removed agent is the final remaining agent on a test, then the test will be disabled when the agent is removed.
+
+
+        Users can update the following fields:
+
+        * `agentName`: String representation of an agent. No two agents can have the same display name.
+
+        * `enabled`: Boolean representation of agent state.
+
+        * `accountGroups`: An array of account group ids. See `v7/account-groups` to pull a list of account IDs.
+
+        * `tests`: An array of test Is. See `v7/tests` to retrieve a list tests available in the current account context.
+
+        * `ipv6Policy`: Enum representation of the IP version policy.
+
+        * `keepBrowserCache`: Boolean representation of the Keep browser cache state.
+
+        * `targetForTests`: String representation of the target IP address or domain name. This represents the test destination
+        when agent is acting as a test target in an agent-to-agent test.
+
+        * `localResolutionPrefixes`: This array of strings represents the public IP ranges where the Enterprise Agent performs
+        rDNS (Reverse DNS) lookups. The range should be in CIDR notation, such as `10.1.1.0/24`. Please note that a maximum
+        of 5 prefixes is allowed. This only applies to Enterprise Agents and Enterprise Agent clusters.'
+      parameters:
+      - $ref: '#/components/parameters/AgentId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandAgentDetails'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Cloud and Enterprise Agents
+      summary: Delete Enterprise Agent
+      operationId: deleteAgent
+      description: 'Deletes an Enterprise Agent.
+
+
+        Important notes related to agent removal:
+
+        * If an agent is deleted, the modification date for tests using that agent at the time it was deleted will be changed.
+
+        * If a deleted agent is the final remaining agent on a test, then the test will be disabled when the agent is removed.
+
+        * If an agent is removed, it must be re-initialized to use the same machine again in different context. Virtual Appliances
+        can be updated using the Reset State button in the Advanced tab of the agent management interface. Users running packaged
+        versions of Linux will need to remove /var/lib/te-agent/\*.sqlite in order to reinitialize an agent.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/AgentId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}/cluster/assign:
+    post:
+      tags:
+      - Enterprise Agent Cluster
+      summary: Add member to Enterprise Agent cluster
+      operationId: assignAgentToCluster
+      description: "Assigns agents to an Enterprise Agent cluster. If the agent specified by `agentId` in the URL path is\
+        \ not already part of a cluster, this operation creates a new cluster with that agent as the base member.\n\nThis\
+        \ operation requires the `Edit agents in account group` permission.\n\nA JSON request body is required for this operation,\
+        \ even when creating a cluster with a single agent. To create a cluster from a single standalone agent, pass an empty\
+        \ `agents` array in the request body:\n\n```\n{ \"agents\": [] }\n```\n\nIf no body is provided, the server returns\
+        \ a 400 Bad Request error.\n\nThe response is a single Enterprise Agent Cluster. The assigned agents become cluster\
+        \ members and can be returned using the `?expand=cluster-member` parameter.\n\nUpon successful cluster creation, the\
+        \ response includes:\n\n* Information about the new or updated cluster.\n\n* Each cluster member receives a unique\
+        \ `memberId` within the cluster.\n\n* The `memberId` is not linked to the original `agentId` used in the request URL\
+        \ or POST body.\n\n* The cluster name is based on the agent whose `agentId` is specified in the request URL.\n\n**Example:\
+        \ Creating a cluster from a single agent**\n\n```\ncurl -X POST https://api.thousandeyes.com/v7/agents/64965/cluster/assign\
+        \ \\\n'{\"agents\":[]}' \\\n-H \"content-type:application/json\" \\\n-H \"Authorization: Bearer $Bearer_token\" \n\
+        ````\n\n**Example: Adding multiple agents to a cluster**\n\nWhen adding multiple agents, the `{agentId}` specified\
+        \ in the URL path must not be included in the `agents` array. Only include additional agent IDs in the array.\n\n\
+        ```\ncurl https://api.thousandeyes.com/v7/agents/64965/cluster/assign \\\n'{\"agents\":[\n  \"2277\",\n  \"1234\"\n\
+        ]}' \\\n-H \"content-type:application/json\" \\\n-H \"Authorization: Bearer $Bearer_token\" \n````"
+      parameters:
+      - $ref: '#/components/parameters/AssignAgentId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandAgentDetails'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentClusterAssignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}/cluster/unassign:
+    post:
+      tags:
+      - Enterprise Agent Cluster
+      summary: Remove member from Enterprise Agent cluster
+      operationId: unassignAgentFromCluster
+      description: "Converts a cluster with a single or multiple Enterprise Agent members back to a standalone Enterprise\
+        \ Agent(s). This operation can also be used to remove one or more members from an Enterprise Agent cluster. Removed\
+        \ members revert to being standalone Enterprise Agents. If all members are removed from the cluster, the Enterprise\
+        \ Agent Cluster is deleted.\n\nThe response is an list of agents, containing both the Enterprise Agent Cluster (if\
+        \ it still exists), and the removed members, now as standalone Enterprise Agents. This operation is exclusive to Enterprise\
+        \ Agent clusters and can be accessed only by users with the `Edit agents in account group` permission.\n\nOn successful\
+        \ completion, the response contains the following information:\n\n* The updated cluster information is provided in\
+        \ the response body, unless all members are removed from the cluster.\n\n* Information about each removed member,\
+        \ now a standalone agent.\n\n* When a non-last member is removed from the cluster, it receives a new `agentId` value.\
+        \ This new `agentId` is different from the `agentId` the agent had before joining the cluster, and it is also unrelated\
+        \ to the `memberId` value the agent had while being a part of the cluster.\n\n* If all members are removed from the\
+        \ cluster, the cluster itself is converted back to a standalone Enterprise Agent too. Such standalone agent inherits\
+        \ the old cluster’s `agentId` value. The last `memberId` listed in the POST body inherits the cluster’s `agentId`\
+        \ value.\n\n**Example - removing a single member**\n```\ncurl -X POST https://api.thousandeyes.com/v7/agents/64965/cluster/unassign\
+        \   \\\n'{\"members\":[\"55974\"]}' \\\n-H \"content-type:application/json\" \\\n-H \"Authorization: Bearer $Bearer_token\"\
+        \ \n```\n\n**Example - removing multiple members**\n```\ncurl https://api.thousandeyes.com/v7/agents/64965/cluster/unassign\
+        \ \\\n'{\"members\":[\n    \"55974\",\n    \"12313\"]\n }' \\\n-H \"content-type:application/json\" \\\n-H \"Authorization:\
+        \ Bearer $Bearer_token\" \n```"
+      parameters:
+      - $ref: '#/components/parameters/UnassignAgentId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandAgentDetails'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentClusterUnassignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CloudEnterpriseAgents'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/notification-rules:
+    get:
+      tags:
+      - Cloud and Enterprise Agent Notification Rules
+      summary: List agent notification rules
+      operationId: getAgentsNotificationRules
+      description: Returns a list of all agent notification rules configured under the account.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ListNotificationRulesResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/notification-rules/{notificationRuleId}:
+    get:
+      tags:
+      - Cloud and Enterprise Agent Notification Rules
+      summary: Retrieve agent notification rule
+      operationId: getAgentsNotificationRule
+      description: 'Returns details of an agent notification rule, including agents it is assigned to.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/NotificationRuleId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/NotificationRuleDetail'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/proxies:
+    get:
+      tags:
+      - Agent Proxies
+      summary: List Enterprise Agent Proxies
+      operationId: getAgentsProxies
+      description: 'List all enterprise agent proxies available under the account group.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentProxies'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}/tests/assign:
+    post:
+      tags:
+      - Tests Assignment on Agents
+      summary: Assign tests to an agent
+      operationId: assignTests
+      description: "Assign tests to a specific Agent. Existing assigned tests are not removed.\n\n**Important notes:**\n\n\
+        \  * The operation fails if the specified agent does not exist.\n\n  * If any provided test ID is invalid, the entire\
+        \ operation is canceled.\n\n  * Already assigned tests are ignored; other valid tests will be assigned.\n\n  * This\
+        \ operation does not overwrite existing assignments."
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/AssignAgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentTestsAssignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}/tests/override:
+    post:
+      tags:
+      - Tests Assignment on Agents
+      summary: Overwrite tests assigned to an agent
+      operationId: overwriteTests
+      description: "Replaces all tests assigned to a specific agent with the new set of test IDs provided.\n\n**Important\
+        \ notes:**\n\n  * The operation fails if the specified agent does not exist.\n\n  * If any test ID is invalid, the\
+        \ operation is canceled and no changes are made.\n\n  * Already assigned tests that are also in the request are ignored.\n\
+        \n  * Previously assigned tests not included in the request will be removed."
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/AssignAgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentTestsAssignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/{agentId}/tests/unassign:
+    post:
+      tags:
+      - Tests Assignment on Agents
+      summary: Unassign tests from an agent
+      operationId: unassignTests
+      description: "Unassigns the specified tests from a specific agent.\n\n**Important notes:**\n\n  * The operation fails\
+        \ if the specified agent does not exist.\n\n  * If any test ID is invalid, the operation is canceled and no changes\
+        \ are made."
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/AssignAgentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentTestsAssignRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentDetails'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  schemas:
+    CloudEnterpriseAgents:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEnterpriseAgent'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    CloudEnterpriseAgent:
+      anyOf:
+      - $ref: '#/components/schemas/AgentResponse'
+      - $ref: '#/components/schemas/EnterpriseAgent'
+    LocalProblemAgentResults:
+      type: object
+      properties:
+        localProblems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocalProblem'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    LocalProblem:
+      type: object
+      required:
+      - agent
+      - startDate
+      - duration
+      - active
+      properties:
+        agent:
+          $ref: '#/components/schemas/LocalProblemAgent'
+        startDate:
+          $ref: '#/components/schemas/LocalProblemStartDate'
+        endDate:
+          $ref: '#/components/schemas/LocalProblemEndDate'
+        duration:
+          $ref: '#/components/schemas/LocalProblemDuration'
+        active:
+          $ref: '#/components/schemas/LocalProblemActive'
+    LocalProblemAgent:
+      type: object
+      properties:
+        agentId:
+          $ref: '#/components/schemas/LocalProblemAgentId'
+        agentName:
+          $ref: '#/components/schemas/LocalProblemAgentName'
+        countryId:
+          $ref: '#/components/schemas/LocalProblemAgentCountryId'
+        location:
+          $ref: '#/components/schemas/LocalProblemAgentLocation'
+    LocalProblemStartDate:
+      type: string
+      description: Date and time when the local problem interval started, in UTC.
+      format: date-time
+      example: '2026-05-18T03:14:00Z'
+      readOnly: true
+    LocalProblemEndDate:
+      type: string
+      description: Date and time when the local problem interval ended, in UTC. This value is `null` when the local problem
+        is active.
+      format: date-time
+      nullable: true
+      example: '2026-05-18T03:22:00Z'
+      readOnly: true
+    LocalProblemDuration:
+      type: integer
+      description: Duration of the local problem interval in seconds.
+      example: 480
+      readOnly: true
+    LocalProblemActive:
+      type: boolean
+      description: Indicates whether the local problem is active.
+      example: false
+      readOnly: true
+    LocalProblemAgentId:
+      type: string
+      description: Agent ID.
+      example: '281474976710706'
+      readOnly: true
+    LocalProblemAgentName:
+      type: string
+      description: Agent name.
+      example: thousandeyes-stg-va-254
+      readOnly: true
+    LocalProblemAgentCountryId:
+      type: string
+      description: Two-letter ISO country code where the agent is located.
+      example: US
+      readOnly: true
+    LocalProblemAgentLocation:
+      type: string
+      description: Agent location.
+      nullable: true
+      example: San Francisco Bay Area
+      readOnly: true
+    CloudAgentType:
+      type: string
+      description: Cloud agent type.
+      example: cloud
+      pattern: ^cloud$
+    EnterpriseAgentType:
+      type: string
+      description: Enterprise agent type.
+      example: enterprise
+      pattern: ^enterprise$
+    EnterpriseClusterAgentType:
+      type: string
+      description: Enterprise Cluster agent type.
+      example: enterprise-cluster
+      pattern: ^enterprise-cluster$
+    AgentClusterAssignRequest:
+      type: object
+      properties:
+        agents:
+          type: array
+          description: Contains list of agent IDs (get `agentId` from `/agents` operation)
+          items:
+            type: string
+            description: Agent ID
+          example:
+          - '281474976710706'
+    AgentClusterUnassignRequest:
+      type: object
+      properties:
+        members:
+          type: array
+          description: Contains list of member IDs. (get `memberId` from `/agents/{agentId}` operation)
+          items:
+            type: string
+            description: member ID
+          example:
+          - '281474976710706'
+    AgentTestsAssignRequest:
+      type: object
+      properties:
+        testIds:
+          type: array
+          description: 'List of test IDs to assign.   You can retrieve available `testIds` using the `/agents` endpoint with
+            the `expand=testIds` query parameter.
+
+            '
+          items:
+            type: string
+            description: Test ID
+          example:
+          - '281474976710706'
+    AgentDetails:
+      oneOf:
+      - $ref: '#/components/schemas/CloudAgentDetail'
+      - $ref: '#/components/schemas/EnterpriseAgentDetail'
+      - $ref: '#/components/schemas/EnterpriseAgentClusterDetail'
+      discriminator:
+        propertyName: agentType
+        mapping:
+          cloud: '#/components/schemas/CloudAgentDetail'
+          enterprise: '#/components/schemas/EnterpriseAgentDetail'
+          enterprise-cluster: '#/components/schemas/EnterpriseAgentClusterDetail'
+    CloudAgentDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SimpleAgent'
+      - type: object
+        required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/CloudAgentType'
+          tests:
+            type: array
+            description: List of tests. See `/tests` for more information.
+            items:
+              $ref: '#/components/schemas/SimpleTest'
+          labels:
+            type: array
+            description: List of labels - see `/labels` for more information.
+            items:
+              $ref: '#/components/schemas/AgentLabel'
+            readOnly: true
+          tags:
+            type: array
+            description: List of tags. See `/tags` for more information.
+            items:
+              $ref: '#/components/schemas/AgentTag'
+            readOnly: true
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    EnterpriseAgentDetail:
+      allOf:
+      - type: object
+        required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/EnterpriseAgentType'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+      - $ref: '#/components/schemas/SimpleEnterpriseAgent'
+      - $ref: '#/components/schemas/EnterpriseAgentResponseExpands'
+    EnterpriseAgentClusterDetail:
+      allOf:
+      - type: object
+        required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/EnterpriseClusterAgentType'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+      - $ref: '#/components/schemas/SimpleEnterpriseAgent'
+      - $ref: '#/components/schemas/EnterpriseAgentResponseExpands'
+    EnterpriseAgentResponseExpands:
+      type: object
+      properties:
+        testIds:
+          $ref: '#/components/schemas/TestIds'
+        tests:
+          type: array
+          description: List of tests. See `/tests` for more information.
+          items:
+            $ref: '#/components/schemas/SimpleTest'
+        notificationRules:
+          type: array
+          description: List of notification rule objects configured on agent
+          items:
+            $ref: '#/components/schemas/NotificationRules'
+        labels:
+          type: array
+          description: List of labels. See `/labels` for more information.
+          items:
+            $ref: '#/components/schemas/AgentLabel'
+          readOnly: true
+        tags:
+          type: array
+          description: List of tags. See `/tags` for more information.
+          items:
+            $ref: '#/components/schemas/AgentTag'
+          readOnly: true
+    AgentRequest:
+      type: object
+      properties:
+        agentName:
+          type: string
+          description: Name of the agent.
+          example: thousandeyes-stg-va-254
+        enabled:
+          type: boolean
+          description: Flag indicating if the agent is enabled.
+          example: true
+        accountGroups:
+          type: array
+          description: Contains a list of account groups IDs. See `/accounts-groups` for a list of account IDs
+          items:
+            type: string
+          example:
+          - '1234'
+          - '1'
+        ipv6Policy:
+          $ref: '#/components/schemas/AgentIpv6Policy'
+        keepBrowserCache:
+          type: boolean
+          description: Flag indicating if the agent retains cache.
+          example: true
+        targetForTests:
+          type: string
+          format: ipv4
+          description: Test target IP address.
+          example: 1.1.1.1
+        localResolutionPrefixes:
+          type: array
+          description: Public IP ranges for rDNS lookups. The range must be in CIDR notation; for example, 10.1.1.0/24. Maximum
+            of 5 prefixes allowed (Enterprise Agents and Enterprise Agent clusters only).
+          items:
+            type: string
+          example:
+          - 10.2.3.3/24
+          - 10.2.3.3/25
+        tests:
+          type: array
+          description: Contains list of test IDs. See `/tests` to pull a list of available tests.
+          items:
+            type: string
+          example:
+          - '12313145'
+          - '12345'
+    AgentIpv6Policy:
+      type: string
+      description: IP version policy, (Enterprise Agents and Enterprise Clusters only)
+      enum:
+      - force-ipv4
+      - prefer-ipv6
+      - force-ipv6
+      example: force-ipv4
+    ListNotificationRulesResponse:
+      allOf:
+      - $ref: '#/components/schemas/NotificationRules'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    NotificationRules:
+      type: object
+      properties:
+        agentAlertRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationRule'
+          example:
+          - ruleId: '281474976710706'
+            ruleName: Default Agent Offline Notification
+            expression: ((lastContact >= 30 min))
+            notifyOnClear: true
+            isDefault: false
+          - ruleId: '281474976710709'
+            ruleName: Test Rule
+            expression: ((lastContact >= 40 min))
+            notifyOnClear: true
+            isDefault: true
+    NotificationRule:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          description: Agent notification rule ID
+          example: '281474976710706'
+          readOnly: true
+        ruleName:
+          type: string
+          description: Name of the agent notification rule
+          example: Default Agent Offline Notification
+        expression:
+          type: string
+          description: Expression of agent notification rule
+          example: ((lastContact >= 30 min))
+        notifyOnClear:
+          type: boolean
+          description: Send notification when notification clears
+          example: true
+        isDefault:
+          type: boolean
+          description: Agent notification rule will be automatically included on all new Enterprise Agents.
+          example: false
+    NotificationRuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/NotificationRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/AgentNotification'
+          agents:
+            type: array
+            items:
+              $ref: '#/components/schemas/AgentResponse'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    AgentNotification:
+      type: object
+      description: Alert notification object.
+      properties:
+        email:
+          $ref: '#/components/schemas/AlertEmail'
+        thirdParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertIntegrationBase'
+        webhook:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertIntegrationBase'
+    AgentProxies:
+      type: object
+      properties:
+        agentProxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentProxy'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    AgentProxy:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account id that this proxy configuration belongs to
+          example: '1234'
+        authType:
+          $ref: '#/components/schemas/ProxyAuthType'
+        bypassList:
+          type: array
+          description: A list of hostnames, network prefixes, or wildcards used to determine which test targets should not
+            be proxied. If all tests should be proxied, leave empty.
+          items:
+            type: string
+          example:
+          - 10.0.0.0/16
+          - '*.thousandeyes.com'
+        lastModified:
+          type: string
+          description: Last modification timestamp of the proxy. Expressed in UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+        location:
+          type: string
+          description: The location of the proxy. If proxyType is `static` use the format `hostname:port`. If location is
+            `pac`, then specify the URL where the PAC file can be obtained.
+          example: proxy.thousandeyes.com:3128
+        isLocalConfigured:
+          type: boolean
+          description: Set to `true` if this proxy configuration comes from the agent’s config file. Specify `false` if the
+            proxy configuration was created in the ThousandEyes application.
+          example: true
+        name:
+          type: string
+          description: Expression of agent notification rule.
+          example: Test Proxy - Auth Type - BASIC
+        password:
+          type: string
+          format: password
+          description: Password for proxy authentication
+          example: '**********'
+        proxyId:
+          type: string
+          description: Agent proxy's unique ID.
+          example: '281474976710706'
+        type:
+          $ref: '#/components/schemas/ProxyType'
+        user:
+          type: string
+          description: Username for proxy authentication.
+          example: user1
+    ProxyAuthType:
+      type: string
+      description: The type of authentication the proxy requires
+      enum:
+      - basic
+      - ntlm
+      - kerberos
+      - unknown
+      example: basic
+    ProxyType:
+      type: string
+      description: The type of proxy, STATIC or PAC.
+      enum:
+      - static
+      - pac
+      example: static
+    AlertEmail:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message used for email notification.
+          example: This test is failing, check as soon as possible.
+        recipients:
+          type: array
+          description: List of recipients emails that will be notified.
+          items:
+            type: string
+          example:
+          - user1@thousandeyes.com
+          - user2@cisco.com
+    AlertIntegrationBase:
+      type: object
+      properties:
+        integrationId:
+          type: string
+          description: Unique ID of the integration.
+          example: wb-78
+        integrationName:
+          type: string
+          description: Name of the integration.
+          example: integrationSlack1
+        integrationType:
+          $ref: '#/components/schemas/AlertIntegrationType'
+        target:
+          type: string
+          description: Target URL of the integration.
+          example: https://hooks.slack.com/services/REDACTED
+        authMethod:
+          type: string
+          description: (PagerDuty only) Authentication method.
+          example: Basic
+        authUser:
+          type: string
+          description: (PagerDuty only) Authentication user.
+          example: user123
+        authToken:
+          type: string
+          description: (PagerDuty only) Authentication token.
+          example: 0VqDYEpidpHVAK397x8PBsmZ
+        channel:
+          type: string
+          description: (Slack only) Slack `#channel` or `@user`.
+          example: '#slackChannel'
+    AlertIntegrationType:
+      type: string
+      description: Type of the alert integration
+      enum:
+      - pager-duty
+      - slack
+      example: slack
+    AgentLabel:
+      type: object
+      readOnly: true
+      properties:
+        labelId:
+          type: string
+          description: Label Id.
+          example: '11'
+        name:
+          type: string
+          description: Name of the label.
+          example: Label name
+    AgentTag:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          description: Tag Id.
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          format: uuid
+        key:
+          type: string
+          description: Tag key, for example, "Location" or "Department".
+          example: Location
+        value:
+          type: string
+          description: Tag value, for example, "San Francisco" or "Engineering".
+          example: San Francisco
+    AgentListExpand:
+      type: string
+      enum:
+      - cluster-member
+      - test
+      - test-ids
+    AgentDetailsExpand:
+      type: string
+      enum:
+      - cluster-member
+      - test
+      - test-ids
+      - notification-rule
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
+    AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/NetworkProviderType'
+    SimpleAgent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AgentBase'
+      - type: object
+        properties:
+          agentId:
+            type: string
+            description: Unique ID of the agent.
+            example: '281474976710706'
+            readOnly: true
+          agentName:
+            type: string
+            description: Name of the agent.
+            example: thousandeyes-stg-va-254
+          location:
+            type: string
+            description: Location of the agent.
+            example: San Francisco Bay Area
+            readOnly: true
+          countryId:
+            type: string
+            description: 2-digit ISO country code
+            example: US
+            readOnly: true
+          coordinates:
+            $ref: '#/components/schemas/Coordinates'
+          networkProviderInfo:
+            allOf:
+            - $ref: '#/components/schemas/NetworkProviderInfo'
+            readOnly: true
+            example:
+              asn: 7018
+              name: AT&T Services, Inc.
+              type: isp
+          enabled:
+            type: boolean
+            description: Flag indicating if the agent is enabled.
+            example: true
+          verifySslCertificates:
+            type: boolean
+            description: Flag indicating if has normal SSL operations or  if instead it's set to ignore SSL errors on browserbot-based
+              tests.
+            example: true
+            readOnly: true
+          prefix:
+            type: string
+            description: Prefix containing agents public IP address.
+            example: 99.128.0.0/11
+            readOnly: true
+    AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/SimpleAgent'
+    TestIds:
+      type: array
+      description: List of test IDs assigned to the agent.
+      items:
+        type: integer
+        format: int64
+      readOnly: true
+      example:
+      - 281474976710706
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the
+        set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+            API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other
+            endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    ErrorDetailCode:
+      type: string
+      description: Code for the agent error.
+      enum:
+      - agent-version-outdated
+      - browserbot-version-outdated
+      - appliance-version-outdated
+      - clock-offset
+      - os-end-of-installation-support
+      - os-end-of-support
+      - os-end-of-life
+      - nat-traversal-error
+      example: agent-version-outdated
+      readOnly: true
+    ErrorDetail:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorDetailCode'
+        description:
+          type: string
+          description: Description for the agent error.
+          example: 'Agent Version 0.1.1 (latest: 1.0.0)'
+          readOnly: true
+    EnterpriseAgentState:
+      type: string
+      description: State of the agent.
+      enum:
+      - online
+      - offline
+      - disabled
+      example: online
+      readOnly: true
+    EnterpriseAgentSerialNumber:
+      type: string
+      description: Serial number of an enterprise agent or cluster member device. This field is not available for Cloud Agents.
+      example: FOC2218ABCD
+      readOnly: true
+    ClusterMember:
+      allOf:
+      - $ref: '#/components/schemas/AgentBase'
+      - type: object
+        properties:
+          memberId:
+            type: string
+            description: Unique ID of the cluster member
+            example: '10'
+            readOnly: true
+          name:
+            type: string
+            description: Name of the cluster member
+            example: Cluster member name
+            readOnly: true
+          errorDetails:
+            type: array
+            description: If an enterprise agent or a cluster member presents at least one error, the errors will be shown
+              as an array of entries in the errorDetails field (Enterprise Agents and Enterprise Cluster members only)
+            items:
+              $ref: '#/components/schemas/ErrorDetail'
+            readOnly: true
+          lastSeen:
+            type: string
+            description: UTC last seen date (ISO date-time format).
+            format: date-time
+            example: '2022-07-17T22:00:54Z'
+            readOnly: true
+          agentState:
+            $ref: '#/components/schemas/EnterpriseAgentState'
+          targetForTests:
+            type: string
+            format: ipv4
+            description: Test target IP address.
+            example: 1.1.1.1
+          serialNumber:
+            $ref: '#/components/schemas/EnterpriseAgentSerialNumber'
+          utilization:
+            type: integer
+            description: Shows overall utilization percentage (online Enterprise Agents and Enterprise Clusters only).
+            example: 25
+            readOnly: true
+    ClusterMembers:
+      type: array
+      description: If an enterprise agent is clustered, detailed information about each cluster member will be shown as array
+        entries in the clusterMembers field. This field is not shown for Enterprise Agents in standalone mode, or for Cloud
+        Agents.
+      items:
+        $ref: '#/components/schemas/ClusterMember'
+      readOnly: true
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint.
+      example: '1234'
+    AccountGroup:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        accountGroupName:
+          type: string
+          description: Account group name
+          example: Account A
+    EnterpriseAgentIpv6Policy:
+      type: string
+      description: IP version policy, (Enterprise Agents and Enterprise Clusters only)
+      enum:
+      - force-ipv4
+      - prefer-ipv6
+      - force-ipv6
+      example: force-ipv4
+    InterfaceIpMapping:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+          description: Name of the mapping
+          example: wlp4s0
+          readOnly: true
+        ipAddresses:
+          type: array
+          description: Array of ipAddress entries
+          items:
+            type: string
+          example:
+          - 73.252.207.219
+          - 2601:646:300:3ae0::b977
+          readOnly: true
+    EnterpriseAgentData:
+      type: object
+      properties:
+        testIds:
+          $ref: '#/components/schemas/TestIds'
+        tests:
+          type: array
+          description: List of tests. See `/tests` for more information.
+          items:
+            $ref: '#/components/schemas/SimpleTest'
+        clusterMembers:
+          $ref: '#/components/schemas/ClusterMembers'
+        utilization:
+          type: integer
+          description: Shows overall utilization percentage (online Enterprise Agents and Enterprise Clusters only).
+          example: 25
+          readOnly: true
+        accountGroups:
+          type: array
+          description: List of account groups. See /accounts-groups to pull a list of account IDs
+          items:
+            $ref: '#/components/schemas/AccountGroup'
+        ipv6Policy:
+          $ref: '#/components/schemas/EnterpriseAgentIpv6Policy'
+        errorDetails:
+          type: array
+          description: If an enterprise agent or a cluster member presents at least one error, the errors will be shown as
+            an array of entries in the errorDetails field (Enterprise Agents and Enterprise Cluster members only)
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          readOnly: true
+        hostname:
+          type: string
+          description: Fully qualified domain name of the agent (Enterprise Agents only)
+          example: thousandeyes.com
+          readOnly: true
+        lastSeen:
+          type: string
+          description: UTC last seen date (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        agentState:
+          $ref: '#/components/schemas/EnterpriseAgentState'
+        keepBrowserCache:
+          type: boolean
+          description: Flag indicating if the agent retains cache.
+          example: true
+        createdDate:
+          type: string
+          description: UTC Agent creation date (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        targetForTests:
+          type: string
+          format: ipv4
+          description: Test target IP address.
+          example: 1.1.1.1
+        serialNumber:
+          $ref: '#/components/schemas/EnterpriseAgentSerialNumber'
+        localResolutionPrefixes:
+          type: array
+          description: To perform rDNS lookups for public IP ranges, this field represents the public IP ranges. The range
+            must be in CIDR notation; for example, 10.1.1.0/24. Maximum of 5 prefixes allowed (Enterprise Agents and Enterprise
+            Agent clusters only).
+          items:
+            type: string
+            example: 10.2.3.3/24
+        interfaceIpMapping:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterfaceIpMapping'
+          readOnly: true
+    EnterpriseAgent:
+      allOf:
+      - $ref: '#/components/schemas/AgentResponse'
+      - $ref: '#/components/schemas/EnterpriseAgentData'
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate`
+        field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field
+        indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    SimpleEnterpriseAgent:
+      allOf:
+      - $ref: '#/components/schemas/SimpleAgent'
+      - $ref: '#/components/schemas/EnterpriseAgentData'
+  parameters:
+    AgentId:
+      name: agentId
+      in: path
+      description: Unique ID for the agent.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
+    AssignAgentId:
+      name: agentId
+      in: path
+      description: Unique ID for the Enterprise Agent cluster to add new agents to.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
+    UnassignAgentId:
+      name: agentId
+      in: path
+      description: Unique ID for the Enterprise Agent cluster to remove agents from.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
+    NotificationRuleId:
+      name: notificationRuleId
+      in: path
+      description: Unique ID for the agent notification rule.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
+    ExpandAgent:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: Optional parameter, off by default. Indicates which agent sub-resource to expand. For example, if you wish
+        to expand the `clusterMembers` sub-resource, pass the `?expand=cluster-member` query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/AgentListExpand'
+        example:
+        - cluster-member
+    ExpandAgentDetails:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: Optional parameter, off by default. Indicates which agent sub-resource to expand. For example, if you wish
+        to expand the `clusterMembers` sub-resource, pass the `?expand=cluster-member` query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/AgentDetailsExpand'
+        example:
+        - cluster-member
+    AgentTypes:
+      name: agentTypes
+      in: query
+      style: form
+      explode: false
+      description: Specifies the type of agent to request.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/CloudEnterpriseAgentType'
+        example:
+        - enterprise
+    Labels:
+      name: labels
+      in: query
+      style: form
+      explode: false
+      description: Specifies the labels of the agents to request.
+      schema:
+        type: array
+        items:
+          type: string
+        example:
+        - myCustomLabeledAgent
+    TagKeys:
+      name: tagKeys
+      in: query
+      style: form
+      explode: false
+      description: Specifies which tag keys to request from the agents.
+      schema:
+        type: array
+        items:
+          type: string
+          example: myCustomTagKeyForAgent
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed
+        by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days,
+        and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone,
+        following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used
+        with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete
+        time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for
+        reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred

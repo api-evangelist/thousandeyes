@@ -1,0 +1,68 @@
+generated: '2026-08-19'
+method: searched
+source: https://www.cisco.com/c/en/us/products/collateral/security/cisco-thousandeyes-og.html
+source_updated: '2026-03-27'
+currency: USD
+billing_period: monthly price, billed annually or prepaid for the term
+minimum_term: 12 months
+note: ThousandEyes publishes no self-serve pricing page — www.thousandeyes.com/pricing answers HTTP 403
+  to every non-browser client and the product is sold through Cisco Commerce (CCW). The list prices below
+  are published first-party by Cisco in the ThousandEyes Ordering Guide, which names the part numbers
+  and starting prices; volume tiers are resolved in CCW at quote time. All prices are per month.
+plan_count: 7
+plans:
+- name: ThousandEyes Units
+  part_number: TE-UNITS
+  price: 0.85
+  unit: unit/month
+  included: Consumption currency for Cloud, Enterprise and Device Agent tests and for Cloud/Traffic Insights
+    flow monitoring (1 FPS/month = 0.24 Units/month).
+  minimum: 2,000 Units
+- name: Endpoint Experience Advantage
+  part_number: TE-USERS
+  price: 14.6
+  price_qualifier: starting at
+  unit: user/month
+  included: Up to 10 concurrent tests per license; 30-day test data retention.
+  minimum: tiered — 110+ Advantage users alone, or blended minimums with Essentials
+- name: Endpoint Experience Essentials
+  part_number: TE-USERS-ES
+  price: 6.0
+  price_qualifier: starting at
+  unit: user/month
+  included: Up to 4 concurrent tests per license; 14-day test data retention.
+  minimum: 270+ Essentials users alone, or blended minimums with Advantage
+- name: Internet Insights
+  part_number: TE-INSIGHTS
+  price: 2750.0
+  price_qualifier: starting at
+  unit: package/month
+  included: One provider-type x region package (e.g. Asia Pacific CDN Providers). Up to 12 packages, or
+    the Global Insights Bundle covering all 28.
+- name: Connected Device Agent License
+  part_number: TE-DEVICES
+  price: 64.1
+  price_qualifier: starting at
+  unit: license/month
+  included: Last-mile monitoring per connected device.
+  minimum: 250 licenses
+- name: Cloud Insights Essentials
+  part_number: TE-CLOUD-ES
+  price: 6000.0
+  unit: license/month
+  included: Cloud Insights platform functionality, Essentials tier. Mutually exclusive with Advantage;
+    quantity 1 only.
+- name: Cloud Insights Advantage
+  part_number: TE-CLOUD-ADV
+  price: 12000.0
+  unit: license/month
+  included: Cloud Insights platform functionality, Advantage tier. Mutually exclusive with Essentials;
+    quantity 1 only.
+api_pricing: The v7 API and the MCP server carry no separate charge — access is included with any ThousandEyes
+  entitlement and governed by the API Access permission and the rate limits in rate-limits/thousandeyes-rate-limits.yml.
+probes:
+- url: https://www.thousandeyes.com/pricing
+  status: 403
+  note: bot challenge; not readable by any non-browser client
+- url: https://www.cisco.com/c/en/us/products/collateral/security/cisco-thousandeyes-og.html
+  status: 200

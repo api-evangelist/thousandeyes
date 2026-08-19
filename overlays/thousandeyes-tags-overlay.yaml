@@ -1,0 +1,30 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for ThousandEyes Tags API
+  version: 1.0.0
+extends: openapi/thousandeyes-tags-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: thousandeyes
+    x-apievangelist-harvested: '2026-08-19'
+    x-apievangelist-source: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/ — the Download
+      OpenAPI Document link on the Cisco DevNet ThousandEyes API v7 reference
+    x-apievangelist-artifacts:
+      authentication: authentication/thousandeyes-authentication.yml
+      scopes: scopes/thousandeyes-scopes.yml
+      conventions: conventions/thousandeyes-conventions.yml
+      errors: errors/thousandeyes-problem-types.yml
+      rate-limits: rate-limits/thousandeyes-rate-limits.yml
+      lifecycle: lifecycle/thousandeyes-lifecycle.yml
+      data-model: data-model/thousandeyes-data-model.yml
+      mcp: mcp/thousandeyes-mcp.yml
+- target: $.info
+  update:
+    x-apievangelist-conventions:
+      pagination: cursor; follow _links.next.href
+      tenancy: aid query parameter selects the account group
+      time_range: window (relative) or startDate+endDate (absolute, ISO 8601 UTC)
+      errors: application/problem+json (RFC 9457)
+      idempotency: not supported — no Idempotency-Key header exists; retried creates duplicate
+      rate_limits: 240 req/min per organization; X-Organization-Rate-Limit-* headers; 429 with no Retry-After

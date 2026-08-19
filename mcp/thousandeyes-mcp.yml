@@ -1,0 +1,208 @@
+generated: '2026-08-19'
+method: searched
+status: published
+source: https://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server
+deployment:
+  mode: remote
+  endpoint: https://api.thousandeyes.com/mcp
+  auth: oauth
+  verified: probed
+  note: 'POST tools/list to https://api.thousandeyes.com/mcp returns HTTP 401 "Not Authorized" — the endpoint
+    is live and the tool schemas are credential-gated. Anonymous discovery works via RFC 9728: /.well-known/oauth-protected-resource
+    names api.thousandeyes.com as the authorization server and mcp:manage as the scope. A local-stdio
+    option exists only as the generic mcp-remote@latest bridge that the docs show for AWS Kiro; ThousandEyes
+    publishes no stdio package of its own, so the mode is remote.'
+server:
+  name: ThousandEyes MCP Server
+  transport: http
+  url: https://api.thousandeyes.com/mcp
+  vendor_repo: https://github.com/CiscoDevNet/ThousandEyes-MCP-Server-official
+  terms: https://www.thousandeyes.com/pdf/cisco-networking-mcp-server-terms.pdf
+  clients_documented:
+  - OpenAI Codex
+  - Claude (custom connector)
+  - Cursor IDE
+  - VS Code
+  - AWS Kiro
+authentication:
+  methods:
+  - ThousandEyes API bearer token (Authorization header)
+  - OAuth 2.0 authorization code + device code flow
+  permission_required: API Access
+  scopes:
+  - mcp:manage
+  - offline_access
+  authorization_server: https://api.thousandeyes.com
+rate_limits:
+  bearer_token: counts against the organization-wide limit of 240 requests/minute, shared with other API
+    integrations
+  oauth2_client: each OAuth2 client gets its own 240 requests/minute limit that does not consume the organization
+    limit
+  source: https://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server
+tool_groups:
+- read-only
+- write/delete
+tool_count: 51
+tools_source: published tool table in the ThousandEyes MCP Server integration guide; input schemas are
+  NOT public — tools/list requires an authenticated session
+tools:
+- name: list_tests
+  category: Core Monitoring
+  description: View all configured tests (web apps, services, networks being monitored).
+- name: get_test_details
+  category: Core Monitoring
+  description: Retrieve detailed information about a specific test.
+- name: list_events
+  category: Core Monitoring
+  description: Find network and application problems within a time range.
+- name: get_event_details
+  category: Core Monitoring
+  description: Deep dive into specific events with impacted targets, locations, and agents.
+- name: list_alerts
+  category: Core Monitoring
+  description: View triggered or cleared alerts.
+- name: get_alert_details
+  category: Core Monitoring
+  description: Get comprehensive information about specific alerts.
+- name: search_outages
+  category: Core Monitoring
+  description: Find network and application outages with various filters.
+- name: instant_tests
+  category: Testing
+  description: Run, rerun, and retrieve real-time results for on-demand tests during active troubleshooting
+    sessions.
+- name: create_synthetic_test
+  category: Testing
+  description: Create new scheduled synthetic tests for network and application monitoring.
+- name: update_synthetic_test
+  category: Testing
+  description: Update an existing scheduled synthetic test.
+- name: delete_synthetic_test
+  category: Testing
+  description: Delete a scheduled synthetic test that is no longer needed.
+- name: list_alert_rules
+  category: Alerting
+  description: List alert rules for synthetics, Endpoint Agents, Connected Devices, Cloud Insights and
+    Traffic Insights.
+- name: get_alert_rule
+  category: Alerting
+  description: Retrieve one alert rule, including expression, severity, notification settings and violation
+    criteria.
+- name: create_alert_rule
+  category: Alerting
+  description: Create an alert rule with an expression, alert type, severity, violation window and optional
+    notifications.
+- name: update_alert_rule
+  category: Alerting
+  description: Update an existing alert rule.
+- name: delete_alert_rule
+  category: Alerting
+  description: Delete an alert rule by ID.
+- name: list_dashboards
+  category: Dashboards
+  description: List dashboard summaries in the current account group.
+- name: get_dashboard
+  category: Dashboards
+  description: Retrieve a dashboard definition, including its configured widgets.
+- name: get_dashboard_widget_data
+  category: Dashboards
+  description: Retrieve the raw data rendered by a specific dashboard widget.
+- name: create_dashboard
+  category: Dashboards
+  description: Create a new dashboard, optionally with widgets and privacy settings.
+- name: update_dashboard
+  category: Dashboards
+  description: Update an existing dashboard.
+- name: delete_dashboard
+  category: Dashboards
+  description: Delete a dashboard by ID.
+- name: get_cloud_insights_events_analysis_inputs
+  category: Cloud Insights
+  description: Retrieve Cloud Insights events analysis data for cloud inventory and traffic events.
+- name: list_cloud_insights_inventory
+  category: Cloud Insights
+  description: Retrieve Cloud Insights inventory details or inventory changes for selected cloud resources.
+- name: resolve_cloud_insights_entity_filters
+  category: Cloud Insights
+  description: Resolve Cloud Insights entity names, types or aliases to canonical filter IDs.
+- name: get_cloud_insights_metrics
+  category: Cloud Insights
+  description: Retrieve Cloud Insights time series metrics for cloud traffic, resource, event and transit
+    gateway analysis.
+- name: list_endpoint_agents_and_tests
+  category: Endpoint
+  description: List Endpoint Agents and/or tests with filtering.
+- name: list_endpoint_agent_dynamic_tests
+  category: Endpoint
+  description: List configured Endpoint Agent dynamic tests.
+- name: get_endpoint_agent_metrics
+  category: Endpoint
+  description: Time series data from Endpoint Agents (network, web, wireless, cellular metrics).
+- name: get_endpoint_scheduled_test_results
+  category: Endpoint
+  description: Retrieve network results for a scheduled Endpoint Agent test.
+- name: get_endpoint_network_topologies_probes
+  category: Endpoint
+  description: Retrieve Endpoint Agent network topology probe data.
+- name: get_connected_device
+  category: Endpoint
+  description: Get full details for one Connected Device by agent id.
+- name: get_path_visualization
+  category: Network
+  description: See network paths and hop-by-hop routing information.
+- name: get_full_path_visualization
+  category: Network
+  description: Comprehensive path data for all agents and rounds.
+- name: get_bgp_test_results
+  category: Network
+  description: BGP reachability and routing information.
+- name: get_bgp_route_details
+  category: Network
+  description: Detailed AS path and routing information for specific prefixes.
+- name: get_cloud_and_enterprise_agents
+  category: Inventory
+  description: List Cloud and Enterprise Agents with filters such as agent type, location, country and
+    enabled status.
+- name: get_account_groups
+  category: Inventory
+  description: List available account groups.
+- name: list_tags
+  category: Tags
+  description: List key-value tags in an account group, including static assignments where available.
+- name: get_tag
+  category: Tags
+  description: Retrieve one tag by ID, including tag metadata and static assignments.
+- name: create_tag
+  category: Tags
+  description: Create a static or dynamic key-value tag for one supported object type.
+- name: update_tag
+  category: Tags
+  description: Update tag metadata such as key, value, description, color, assignment type or dynamic
+    filters.
+- name: assign_tags
+  category: Tags
+  description: Assign a static tag to supported objects.
+- name: unassign_tags
+  category: Tags
+  description: Remove static tag assignments from supported objects.
+- name: delete_tag
+  category: Tags
+  description: Delete a tag by ID.
+- name: search_templates
+  category: Templates
+  description: List the available templates for your account group and optionally filter by name.
+- name: deploy_template
+  category: Templates
+  description: Deploy a template to create tests, dashboards, alert rules or other assets.
+- name: get_anomalies
+  category: Analysis
+  description: Detect metric anomalies in test data over time.
+- name: get_metrics
+  category: Analysis
+  description: Retrieve aggregated metrics for custom dashboards and reports.
+- name: get_detailed_test_results
+  category: Analysis
+  description: Retrieve detailed page load or web transaction results for a specific test, agent and round.
+- name: get_service_map
+  category: Analysis
+  description: Retrieve a distributed tracing service map for supported HTTP server tests.

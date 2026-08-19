@@ -1,0 +1,942 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  version: 7.0.100
+  title: Tags API
+  description: 'The ThousandEyes Tags API provides a tagging system with key/value pairs. It allows you to tag assets within
+    the ThousandEyes platform (such as agents, tests, or dashboards) with meaningful metadata. For example: `branch:sfo`,
+    `branch:nyc`, and `team:netops`.
+
+
+    This feature provides:
+
+
+    * Support for automation.
+
+    * Powerful and flexible reports/dashboards.
+
+    * Support for third-party integrations.
+
+
+    Things to note with the ThousandEyes Tags API:
+
+
+    * Tags are backwards-compatible with existing labels.
+
+    * Tags are separated by Tests (CEA), Agents (CEA), Endpoint Agents, Scheduled Endpoint Tests, and Reports. A single tag
+    can only apply to one type of target object, so each tag must specify the target type of object via a `type` field.
+
+    * Tags are defined in a single table so that they can be represented using a single model - `Tag`.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+tags:
+- name: Tags
+  description: Tag CRUD Operations
+- name: Tag Assignment
+  description: Assign tags to other objects
+paths:
+  /tags:
+    get:
+      operationId: getTags
+      tags:
+      - Tags
+      summary: List tags
+      description: This operation returns a list of tags in the specified account group (`aid`).
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTags'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tags'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Tags'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    post:
+      tags:
+      - Tags
+      summary: Create tag
+      operationId: createTag
+      description: Creates a new tag.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '201':
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '409':
+          description: An existing item already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagInfo'
+            example:
+              key: network-interface
+              value: approved-nics
+              objectType: endpoint-agent
+              type: dynamic
+              matchType: and
+              filters:
+              - key: nic-model
+                values:
+                - Intel(R) Wi-Fi 6 AX200 160MHz
+                mode: in
+                scope: default
+              - key: nic-driver-version
+                values:
+                - 22.250.0.9
+                mode: in
+                scope: default
+        description: Tag resource
+  /tags/bulk:
+    post:
+      tags:
+      - Tags
+      summary: Create multiple tags
+      operationId: createTags
+      description: 'Creates multiple tags. Note the response includes a `statuses` array. This array provides status information
+        for each tag object, indexed 1:1 with the `tags` array.  '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '207':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagResponse'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkTagResponse'
+        description: Tag resource
+  /tags/{id}:
+    get:
+      tags:
+      - Tags
+      summary: Retrieve tag
+      description: Retrieves a tag using its ID.
+      operationId: getTag
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      - $ref: '#/components/parameters/ExpandTags'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    put:
+      tags:
+      - Tags
+      summary: Update tag
+      operationId: updateTag
+      description: Updates a tag.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: id
+        in: path
+        description: ID of tag to update
+        required: true
+        schema:
+          type: string
+        example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagInfo'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      tags:
+      - Tags
+      summary: Delete tag
+      operationId: deleteTag
+      description: Deletes a tag.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/assign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Assign multiple tags to multiple objects
+      description: 'Assigns the specified static tags to the specified objects. This operation has cumulative behavior: The
+        tags are statically assigned to the specified objects, and the previous assignments persist. No unassignment takes
+        place. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See
+        `Type` for more information about static vs. dynamic tags.'
+      operationId: assignTags
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/bulkAssignRequest'
+      responses:
+        '207':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/unassign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Remove multiple tags from multiple objects
+      description: 'Removes the specified static tags from one or more objects. Note: This endpoint does not support dynamic
+        tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic
+        tags.'
+      operationId: unassignTags
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/bulkAssignRequest'
+      responses:
+        '207':
+          description: Tag assignments created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/{id}/assign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Assign tag to multiple objects
+      description: 'Assigns a static tag to one or more objects. This operation has cumulative behavior: The tag is statically
+        assigned to the specified objects, and the previous assignments persist. No unassignment takes place. Note: This endpoint
+        does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information
+        about static vs. dynamic tags.'
+      operationId: assignTag
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/assignRequest'
+      responses:
+        '207':
+          description: Assignment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignment'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignment'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/{id}/unassign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Remove tag from multiple objects
+      operationId: unassignTag
+      description: 'Removes a static tag from one or more objects. Note: This endpoint does not support dynamic tag assignment
+        (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/assignRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  requestBodies:
+    assignRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TagAssignment'
+    bulkAssignRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkTagAssignments'
+  schemas:
+    ExpandTagsOptions:
+      enum:
+      - assignments
+      type: string
+    TagInfo:
+      type: object
+      properties:
+        assignments:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Assignment'
+        accessType:
+          $ref: '#/components/schemas/AccessType'
+        aid:
+          type: integer
+          nullable: true
+          example: 1234
+          format: int64
+          description: The account group ID
+          readOnly: true
+        builtIn:
+          type: boolean
+          example: true
+          description: Indicates whether it is a built-in tag or a user-created (custom) tag.
+          readOnly: true
+        color:
+          type: string
+          description: Tag color
+          example: '#FF0000'
+        createDate:
+          type: string
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T23:31:11Z'
+          readOnly: true
+          description: Tag creation date
+        icon:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          description: The tag's description.
+          example: To tag assets in San Francisco
+        id:
+          type: string
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          description: The tag ID
+          readOnly: true
+          format: uuid
+        key:
+          type: string
+          example: branch
+          description: The tags's key
+        legacyId:
+          type: number
+          nullable: true
+          readOnly: true
+        modifiedDate:
+          type: string
+          nullable: true
+          format: date-time
+          example: '2022-03-01T23:31:11Z'
+          readOnly: true
+          description: The date and time the tag was last modified.
+        objectType:
+          $ref: '#/components/schemas/ObjectType'
+        type:
+          $ref: '#/components/schemas/Type'
+        value:
+          type: string
+          example: sfo
+          description: The tag's value
+        matchType:
+          $ref: '#/components/schemas/TagMatchType'
+        filters:
+          description: The combination of filters (filter keys) dynamically assigned to an `endpoint-agent` as determined
+            by the matching logic (`and` or `or`). For example, if you filter on `bssid` and `ssid` with a matching logic
+            of `and`, both filters are assigned as tags to the `endpoint-agent`; `or` means either filter can be assigned.
+            **Note:** filters currently only apply to `endpoint-agent` object types.
+          type: array
+          readOnly: false
+          items:
+            $ref: '#/components/schemas/TagFilter'
+    TagFilter:
+      type: object
+      properties:
+        key:
+          type: string
+          description: 'Filter key used for filtering.
+
+
+            When `scope` is `default`, accepted values are `agent-id`, `location`, `serial-number`, `public-network`, `local-network`,
+            `connection`, `gateway`, `platform`, `nic-model`, `nic-driver-version`, `agent-type`, `proxy-target`, `vpn-vendor`,
+            `vpn-gateway-address`, `vpn-target`, `vpn-client-network`, `vpn-client-address`, `ip-address-family`, `ssid`,
+            `bssid`, `hostname`, `username`, and `asn`.
+
+
+            When `scope` is `custom`, use a user-defined check-in metadata key.
+
+            '
+          example: vpn-client-network
+        values:
+          type: array
+          example:
+          - 10.1.1.0/24
+          - 192.168.1.0/24
+          items:
+            type: string
+            description: "Value depends on the key, and may change in the future.\n\n* `agent-id`: The agent identifiers.\n\
+              * `location`: The agent location.\n* `serial-number`: The endpoint device serial number.\n* `gateway`: The gateway\
+              \ IP to match.\n* `ssid`: A wildcard match on the SSID. Supports `*` for any characters and `?` for any single\
+              \ character.\n* `username`: A wildcard match on the users that use the agent. Supports `*` for any characters\
+              \ and `?` for any single character.\n* `hostname`: A wildcard match on the host name. Supports `*` for any characters\n\
+              and `?` for any single character.\n* `bssid`: BSSID for the wifi. Must be lower case, with colons.\n* `platform`:\
+              \ Type of operating system. Supports `Mac`, `Windows`, and `Linux`.\n* `nic-model`: The network interface controller\
+              \ model. Matching is exact and case-sensitive.\n* `nic-driver-version`: The network interface controller driver\
+              \ version. Matching is exact and case-sensitive.\n* `asn`: Integer Autonomous System (AS) number.\n* `public-network`:\
+              \ Network for agent's public IP in CIDR format, or IP for single IP, for example, `192.45.32.0/22`.\n* `local-network`:\
+              \ Network for agent's local IP in CIDR format, or IP for single IP, for example, `10.100.64.0/20`.\n* `connection`:\
+              \ Type of connection. Supports `Ethernet` or `Wireless`.\n* `agent-type`: Type of agent. Supports `endpoint`,\
+              \ `endpoint-pulse` or `endpoint-csc`.\n* `proxy-target`: The proxy target.\n* `ip-address-family`: `ipv4` or\
+              \ `ipv6`.\n* `vpn-vendor`: Vendor of the VPN software. \n    Examples include: \n\n    * `cisco-anyconnect`\n\
+              \    * `palo-alto-globalprotect`\n    * `ivanti-connect-secure`\n    * `zscaler-internet-access`\n    * `f5-big-ip`\n\
+              * `vpn-gateway-address`: Server-side VPN connection IP address.\n* `vpn-target`: The VPN target.\n* `vpn-client-network`:\
+              \ Network for the VPN client IP in CIDR format, for example, `10.100.32.128/25`.\n* `vpn-client-address`: The\
+              \ VPN client IP, for example, `10.100.32.165`.\n"
+            example: 10.1.1.0/24
+        mode:
+          $ref: '#/components/schemas/TagFilterMode'
+        scope:
+          $ref: '#/components/schemas/TagFilterScope'
+    TagFilterMode:
+      type: string
+      description: 'Type of matching logic applied to the values:
+
+
+        * `in`: The value on the agent must match one of the list of values provided.
+
+        * `not-in`: The value on the agent must not match any of the list of values provided.
+
+        '
+      enum:
+      - in
+      - not-in
+      example: in
+    TagFilterScope:
+      type: string
+      description: 'Scope of the filter.
+
+
+        * `default`: The filter is from the default set provided by ThousandEyes.
+
+        * `custom`: The filter is user-defined. Set in check-in metadata.
+
+        '
+      enum:
+      - default
+      - custom
+      example: custom
+      default: default
+    ObjectType:
+      type: string
+      description: The object type associated with the tag
+      enum:
+      - test
+      - dashboard
+      - endpoint-test
+      - v-agent
+      - connected-devices-test
+      - endpoint-agent
+      example: test
+    Type:
+      type: string
+      description: The nature of the tag - whether the tag is dynamically assigned to objects based on a filter rule or statically
+        assigned to specified objects. Currently only `endpoint-agent` object types support dynamic assignment; all other
+        object types (for example, `test`, `agent`) support only static assignment.
+      enum:
+      - static
+      - dynamic
+      example: static
+    TagMatchType:
+      description: 'Specifies how filters (tag keys) are applied (matched) to objects for tag assignment.
+
+        * `and`: All filters must be matched.
+
+        * `or`: Any of the filters should match.
+
+
+        Note: filtering and matching currently only apply to `endpoint-agent` object types, as these functions are used for
+        dynamic tag assignment.
+
+        '
+      type: string
+      readOnly: false
+      enum:
+      - and
+      - or
+      example: and
+    Tag:
+      allOf:
+      - $ref: '#/components/schemas/TagInfo'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    TagAssignment:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Object Id
+          example: '123'
+        type:
+          $ref: '#/components/schemas/AssignmentType'
+    AssignmentType:
+      type: string
+      enum:
+      - test
+      - v-agent
+      - endpoint-test
+      - dashboard
+      - connected-devices-test
+    BulkTagAssignment:
+      allOf:
+      - type: object
+        properties:
+          tagId:
+            type: string
+            format: uuid
+            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+            description: The ID of the tag to assign
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+      - $ref: '#/components/schemas/TagAssignment'
+    BulkTagAssignments:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkTagAssignment'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    Tags:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    TagBulkCreateError:
+      type: object
+      properties:
+        tag:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TagInfo'
+        responseCode:
+          type: integer
+          example: 200
+          description: HTTP response code
+        message:
+          type: string
+          example: Object successfully created
+          description: Status / error message
+    BulkTagResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        errors:
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TagBulkCreateError'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    AccessType:
+      type: string
+      description: "The access level of the tag. The access level determines the label's visibility in the UI and the permissions\
+        \ required to modify it. Accepted values are:\n\n\n* `all`: The tag is visible and editable by any user in the account\
+        \ group with the standard **View tags** or **Edit tags** permission. Default for all user-created tags.\n\n* `partner`:\
+        \ The tag is owned by a specific integration partner. Only that partner can read or modify it. It's hidden from all\
+        \ regular account users and excluded from their GET responses.\n\n* `system`: Reserved for ThousandEyes internal use\
+        \ only. This value may appear in GET responses on internally managed tags but cannot be set by users or integration\
+        \ partners. \n"
+      enum:
+      - all
+      - partner
+      - system
+      example: all
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+  parameters:
+    ExpandTags:
+      name: expand
+      in: query
+      description: Optional, to retrieve associated assignments. Only static tags will return object assignments.
+      required: false
+      schema:
+        example:
+        - assignments
+        items:
+          $ref: '#/components/schemas/ExpandTagsOptions'
+        type: array
+      style: form
+    TagIdPath:
+      name: id
+      in: path
+      description: Tag ID
+      required: true
+      schema:
+        type: string
+      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'

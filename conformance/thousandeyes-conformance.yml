@@ -1,0 +1,88 @@
+generated: '2026-08-19'
+method: derived
+source: openapi/thousandeyes-*-openapi.yml + https://api.thousandeyes.com/.well-known/oauth-authorization-server
+  + https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: 26 published OpenAPI documents at version 3.0.1 (templates at 3.0.0), 326 operations, all
+    with operationIds, summaries and tags
+- id: rfc9457-problem-details
+  conforms: true
+  evidence: error responses use application/problem+json with type/title/status/detail/instance; ValidationError
+    extends it with errors[]
+- id: oauth2
+  conforms: true
+  evidence: RFC 6749 authorization_code + RFC 8628 device_code + refresh_token advertised at /.well-known/oauth-authorization-server
+- id: rfc8414-authorization-server-metadata
+  conforms: true
+  evidence: https://api.thousandeyes.com/.well-known/oauth-authorization-server returns 200 with issuer,
+    jwks_uri, token/authorization/registration endpoints
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: https://api.thousandeyes.com/.well-known/oauth-protected-resource returns 200 naming the resource,
+    authorization servers and scopes
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: registration_endpoint https://api.thousandeyes.com/v7/oauth2/clients advertised in the authorization-server
+    metadata
+- id: pkce-rfc7636
+  conforms: true
+  evidence: 'code_challenge_methods_supported: [S256]'
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration answers 401, and the OAuth metadata advertises no openid
+    scope or id_token response type; a userinfo_endpoint exists but OIDC discovery is not anonymous
+- id: model-context-protocol
+  conforms: true
+  evidence: remote MCP server at https://api.thousandeyes.com/mcp with OAuth-protected-resource discovery;
+    tools/list returns 401 unauthenticated
+- id: opentelemetry
+  conforms: true
+  evidence: ThousandEyes for OpenTelemetry API exports metrics and traces to OTLP endpoints (openapi/thousandeyes-opentelemetry-openapi.yml)
+- id: cursor-pagination
+  conforms: true
+  evidence: cursor query parameter plus a _links.next.href envelope on collection responses
+- id: idempotency
+  conforms: false
+  evidence: no Idempotency-Key header in any of the 26 specs and no retry-safety mechanism documented
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: a dated deprecation policy is published in terms, but no Sunset or Deprecation response header
+    is documented and no operation is marked deprecated
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: no /.well-known/security.txt on any thousandeyes.com host (404 on api., 404 on docs., 403
+    on www.); Cisco serves one at www.cisco.com
+- id: asyncapi
+  conforms: false
+  evidence: a real webhook and OpenTelemetry streaming surface exists but no AsyncAPI document is published;
+    webhook payloads are operator-authored Handlebars templates
+- id: json:api
+  conforms: false
+- id: odata
+  conforms: false
+- id: scim
+  conforms: true
+  evidence: SCIM 1.1 and 2.0 endpoints published at https://api.thousandeyes.com/scim/v1 and /scim/v2
+    for user add/update/delete. Filtering supported on ExternalID and UserName only; /Groups and /Bulk
+    are not implemented. Not described by any of the 26 OpenAPI documents.
+  docs: https://docs.thousandeyes.com/product-documentation/user-management/user-registration/thousandeyes-support-for-scim
+- id: fhir
+  conforms: false
+compliance_program:
+  published: true
+  owner: Cisco Systems — ThousandEyes has been a Cisco business unit since the 2020 acquisition, so its
+    certifications are published in the Cisco Trust Portal rather than on a ThousandEyes-branded trust
+    page.
+  trust_portal: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+  government_offering: ThousandEyes for Government is a separate FedRAMP-scoped instance; several APIs
+    (Cloud Insights, Internet Insights, Emulation, webhooks, page-load/transaction/API tests) are explicitly
+    unavailable there, and each affected OpenAPI document says so in info.description.
+  artifact: security/thousandeyes-trust-center.yml
+undocumented_surfaces:
+- name: SCIM provisioning API
+  base: https://api.thousandeyes.com/scim/v2
+  note: Real, first-party and documented in prose, but absent from every published OpenAPI document —
+    a genuine contract gap rather than a discovery failure.
+  docs: https://docs.thousandeyes.com/product-documentation/user-management/user-registration/thousandeyes-support-for-scim

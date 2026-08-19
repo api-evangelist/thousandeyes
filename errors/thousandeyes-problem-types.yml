@@ -1,0 +1,101 @@
+generated: '2026-08-19'
+method: derived
+source: openapi/thousandeyes-*-openapi.yml (26 documents, 326 operations) enriched from https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+format: rfc9457
+media_type: application/problem+json
+envelope:
+  schema: Error
+  fields:
+  - type
+  - title
+  - status
+  - detail
+  - instance
+  validation_extension:
+    schema: ValidationError
+    adds: errors[] of {code, field, message} when several field-level problems occur
+  unauthorized_extension:
+    schema: UnauthorizedError
+    fields:
+    - error
+    - error_description
+    note: 401 uses the OAuth-style error body rather than the problem+json shape, e.g. {"error":"invalid_token","error_description":"Invalid
+      access token"}
+  legacy_shape: Some operations still return the pre-9457 body {"timestamp", "httpStatus", "errors":[],
+    "path"} documented on the response-status-codes page.
+problem_count: 11
+problems:
+- status: 400
+  title: Bad Request
+  detail: Request validation failed. There are invalid or missing fields.
+  schema: ValidationError
+  occurrences: 212
+  remediation: Inspect errors[] — each item names the offending field and a referenceable code.
+- status: 401
+  title: Unauthorized
+  detail: Invalid credentials provided, or the account is locked after repeated failed attempts.
+  schema: UnauthorizedError
+  occurrences: 326
+  remediation: Re-issue the bearer token, or complete the OAuth flow. If credentials are known good, the
+    account may be locked.
+- status: 403
+  title: Insufficient permissions to query endpoint
+  detail: The token is valid but the role lacks the required ThousandEyes permission.
+  schema: Error
+  occurrences: 323
+  remediation: Grant the operation-specific permission (e.g. Settings Tests Update, View organization
+    usage) via RBAC.
+- status: 404
+  title: Not found
+  detail: The object or endpoint does not exist in this account group.
+  schema: Error
+  occurrences: 307
+  remediation: Check the id and the aid account-group context.
+- status: 405
+  title: Method Not Allowed
+  detail: Wrong HTTP method for the target endpoint.
+  source: https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+  remediation: Consult the operation in the OpenAPI document.
+- status: 406
+  title: Not Acceptable
+  detail: The returned content type does not match the request Accept header.
+  source: https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+- status: 409
+  title: Conflict
+  detail: The write collides with existing state — for example a duplicate OpenTelemetry data-stream name.
+  schema: Error
+  occurrences: 6
+- status: 412
+  title: Precondition Failed
+  detail: A resource limit blocks the write, e.g. "User cannot create more than 5 integrations".
+  occurrences: 1
+- status: 415
+  title: Unsupported Media Type
+  detail: POSTed payload is in an unsupported format.
+  source: https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+- status: 429
+  title: Exhausted rate limit for the organization
+  detail: More than 240 requests in a rolling minute (24/min for instant tests, 10/min for template deploy).
+  schema: Error
+  occurrences: 278
+  remediation: Wait for the UTC timestamp in the matching X-*-Rate-Limit-Reset header. No Retry-After
+    is sent.
+- status: 500
+  title: Internal Server Error
+  detail: Unhandled server error.
+  schema: Error
+  occurrences: 311
+  remediation: Open a ThousandEyes Customer Engineering case.
+also:
+- status: 502
+  title: Bad Gateway
+  occurrences: 161
+  schema: Error
+- status: 503
+  title: Service Unavailable
+  detail: The API is in maintenance mode.
+  source: https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/
+- status: 301
+  title: Moved Permanently
+  detail: Request addressed a nonexistent API version.
+  source: https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/

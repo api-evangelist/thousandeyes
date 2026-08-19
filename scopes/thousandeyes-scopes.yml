@@ -1,0 +1,42 @@
+generated: '2026-08-19'
+method: probed
+source: https://api.thousandeyes.com/.well-known/oauth-authorization-server and https://api.thousandeyes.com/.well-known/oauth-protected-resource
+docs: https://developer.cisco.com/docs/thousandeyes/authentication/
+note: 'The 26 harvested OpenAPI documents declare only http/bearer security, so derive-oauth-scopes.py
+  found nothing. The OAuth 2.0 surface is real but lives outside the spec: the RFC 8414 and RFC 9728 metadata
+  documents are served anonymously and advertise exactly two scopes. Per-operation authorization is expressed
+  as ThousandEyes RBAC permissions (see authentication/thousandeyes-authentication.yml), not as OAuth
+  scopes.'
+schemes:
+- name: OAuth2
+  source: https://api.thousandeyes.com/.well-known/oauth-authorization-server
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://app.thousandeyes.com/oauth2/authorize
+    tokenUrl: https://api.thousandeyes.com/v7/oauth2/token
+  - flow: deviceCode
+    deviceAuthorizationUrl: https://api.thousandeyes.com/v7/oauth2/device/authorization
+    tokenUrl: https://api.thousandeyes.com/v7/oauth2/token
+scope_count: 2
+scopes:
+- scope: mcp:manage
+  description: Access the ThousandEyes MCP server at https://api.thousandeyes.com/mcp. Advertised by both
+    the authorization-server and the protected-resource metadata.
+  flows:
+  - authorizationCode
+  - deviceCode
+  sources:
+  - https://api.thousandeyes.com/.well-known/oauth-authorization-server
+- scope: offline_access
+  description: Issue a refresh token so the client can renew access without re-authorizing.
+  flows:
+  - authorizationCode
+  - deviceCode
+  sources:
+  - https://api.thousandeyes.com/.well-known/oauth-authorization-server
+protected_resource:
+  resource: https://api.thousandeyes.com
+  authorization_servers:
+  - https://api.thousandeyes.com
+  bearer_methods_supported:
+  - header

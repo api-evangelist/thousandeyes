@@ -1,0 +1,194 @@
+generated: '2026-08-19'
+method: derived
+source: openapi/thousandeyes-*-openapi.yml (26 documents, 1,811 component schemas in the unified document)
+  + https://docs.thousandeyes.com/product-documentation/getting-started/thousandeyes-glossary
+note: Relationships are read from id-reference fields that recur across component schemas (testId appears
+  in 26 schemas, agentId in 21, tagIds in 13) and from the path hierarchy. Identifiers are opaque strings;
+  ThousandEyes uses no typed id prefixes.
+root: Organization > Account Group (aid) — every object below is scoped to an account group, selected
+  with the aid query parameter.
+entity_count: 16
+entities:
+- name: Organization
+  api: openapi/thousandeyes-administrative-openapi.yml
+  id: orgId
+  description: Top-level tenant. Owns account groups, users, roles and quotas.
+- name: AccountGroup
+  api: openapi/thousandeyes-administrative-openapi.yml
+  id: aid
+  description: Tenancy boundary for every other object. Selected per request with the aid query parameter.
+- name: User
+  api: openapi/thousandeyes-administrative-openapi.yml
+  id: uid
+  description: Platform user. Also provisionable over SCIM 1.1/2.0 at api.thousandeyes.com/scim.
+- name: Role
+  api: openapi/thousandeyes-administrative-openapi.yml
+  id: roleId
+  description: Named bundle of permissions (API Access, Settings Tests Update, View organization usage,
+    ...).
+- name: Agent
+  api: openapi/thousandeyes-agents-openapi.yml
+  id: agentId
+  description: Cloud or Enterprise Agent — the vantage point that executes tests.
+- name: EndpointAgent
+  api: openapi/thousandeyes-endpoint-agents-openapi.yml
+  id: agentId
+  description: Software agent on an employee device. Carries its own labels and dynamic/scheduled tests.
+- name: Test
+  api: openapi/thousandeyes-tests-openapi.yml
+  id: testId
+  description: Scheduled synthetic test. Strongly typed — agent-to-server, agent-to-agent, BGP, DNS server/trace/DNSSEC,
+    HTTP server, page load, web transaction, API, FTP, SIP, voice.
+- name: InstantTest
+  api: openapi/thousandeyes-instant-tests-openapi.yml
+  id: testId
+  description: One-off run of a test definition for live troubleshooting.
+- name: TestResult
+  api: openapi/thousandeyes-test-results-openapi.yml
+  id: roundId
+  description: Per-round measurement for a test and agent. Path visualization, BGP routes, HTTP timings,
+    console logs.
+- name: AlertRule
+  api: openapi/thousandeyes-alerts-openapi.yml
+  id: ruleId
+  description: Expression plus severity, violation window and notification settings.
+- name: Alert
+  api: openapi/thousandeyes-alerts-openapi.yml
+  id: alertId
+  description: A triggered or cleared instance of an alert rule.
+- name: Event
+  api: openapi/thousandeyes-event-detection-openapi.yml
+  id: id
+  description: Detected deviation from baseline for a component (proxy, network node, AS, server), with
+    affected tests, agents and targets.
+- name: Dashboard
+  api: openapi/thousandeyes-dashboards-openapi.yml
+  id: dashboardId
+  description: Widget layout, global filter, refresh rate, sharing and optional snapshot schedule.
+- name: Tag
+  api: openapi/thousandeyes-tags-openapi.yml
+  id: tagId
+  description: Key/value metadata attachable to tests, dashboards, agents and endpoint scheduled tests.
+    Static or dynamic.
+- name: Connector
+  api: openapi/thousandeyes-integrations-openapi.yml
+  id: id
+  description: Outbound integration target — generic, webhook, CyberArk Conjur or Palo Alto Panorama.
+- name: Stream
+  api: openapi/thousandeyes-opentelemetry-openapi.yml
+  id: id
+  description: ThousandEyes for OpenTelemetry data stream exporting metrics or traces to an OTLP endpoint.
+relationships:
+- from: Organization
+  to: AccountGroup
+  type: has_many
+  via: aid
+- from: AccountGroup
+  to: Test
+  type: has_many
+  via: aid
+- from: AccountGroup
+  to: Agent
+  type: has_many
+  via: aid
+- from: AccountGroup
+  to: Dashboard
+  type: has_many
+  via: aid
+- from: AccountGroup
+  to: AlertRule
+  type: has_many
+  via: aid
+- from: Test
+  to: Agent
+  type: has_many
+  via: agentId / agentIds
+- from: Test
+  to: TestResult
+  type: has_many
+  via: testId
+- from: TestResult
+  to: Agent
+  type: belongs_to
+  via: agentId
+- from: TestResult
+  to: Test
+  type: belongs_to
+  via: testId
+- from: Test
+  to: Tag
+  type: has_many
+  via: tagIds
+- from: Dashboard
+  to: Tag
+  type: has_many
+  via: tagIds
+- from: Agent
+  to: Tag
+  type: has_many
+  via: tagIds
+- from: AlertRule
+  to: Test
+  type: has_many
+  via: testIds
+- from: Alert
+  to: AlertRule
+  type: belongs_to
+  via: ruleId
+- from: Alert
+  to: Test
+  type: belongs_to
+  via: testId
+- from: Event
+  to: Test
+  type: has_many
+  via: affectedTests
+- from: Event
+  to: Agent
+  type: has_many
+  via: affectedAgents
+- from: EndpointAgent
+  to: EndpointLabel
+  type: has_many
+  via: labelId
+- from: EndpointAgent
+  to: Test
+  type: has_many
+  via: testId
+- from: Connector
+  to: Operation
+  type: has_many
+  via: connectors / operations assignment
+- from: AlertRule
+  to: Connector
+  type: has_many
+  via: integrationId
+- from: User
+  to: Role
+  type: has_many
+  via: roleId
+- from: User
+  to: AccountGroup
+  type: has_many
+  via: aid
+- from: Test
+  to: Monitor
+  type: has_many
+  via: monitorId
+  note: BGP tests only
+id_reference_fields:
+  testId: 26
+  agentId: 21
+  tagIds: 13
+  testIds: 7
+  ruleId: 6
+  labelId: 6
+  roundId: 5
+  integrationId: 4
+  targetAgentId: 4
+  monitorId: 3
+  agentIds: 3
+  orgId: 3
+  alertId: 2
+  accountId: 2
+  note: counts are the number of component schemas across the 26 specs that declare each field

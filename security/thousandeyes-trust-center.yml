@@ -1,0 +1,42 @@
+generated: '2026-08-19'
+method: searched
+source: https://trustportal.cisco.com/c/r/ctp/trust-portal.html + https://docs.thousandeyes.com/thousandeyes-for-government/thousandeyes-for-government
+published: true
+trust_center_url: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+ownership_note: ThousandEyes publishes its compliance artefacts through the Cisco Trust Portal rather
+  than a ThousandEyes-branded trust page — it has been a Cisco business unit since 2020 and the developer
+  reference points all legal and security matters at Cisco. Reports (SOC 2 in particular) are behind an
+  NDA-gated portal login.
+certifications:
+- name: FedRAMP Moderate
+  scope: ThousandEyes for Government (app.thousandeyes.us / api.thousandeyes.us, AWS GovCloud US-EAST1)
+  evidence: https://docs.thousandeyes.com/thousandeyes-for-government/thousandeyes-for-government
+  status: 200
+  note: 'First-party, on a ThousandEyes host. The commercial and government instances are separate: Cloud
+    Insights, Internet Insights, Emulation, webhooks and page-load/transaction/API tests are explicitly
+    unavailable in the government instance, and each affected OpenAPI document says so in info.description.'
+certifications_reported_not_probed:
+- name: SOC 2 Type 2
+  note: Announced by ThousandEyes and said to be downloadable from the Cisco Trust Portal after NDA. The
+    announcement pages sit on www.thousandeyes.com, which answers 403 to every non-browser client, so
+    this could not be verified by probe.
+- name: ISO/IEC 27001
+  note: Same — announced on www.thousandeyes.com, not probeable.
+- name: ISO 22301
+  note: Same.
+- name: TX-RAMP Level 2
+  note: Same; said to be viewable in the Cisco Trust Portal.
+- name: ENS (Esquema Nacional de Seguridad)
+  note: Same.
+shared_responsibility:
+  url: https://docs.thousandeyes.com/product-documentation/user-management/user-entity-controls
+  note: ThousandEyes publishes a customer security and privacy responsibilities page covering RBAC, SSO/SAML,
+    SCIM provisioning, password policy and API token handling.
+privacy_policy: https://www.cisco.com/c/en/us/about/legal/privacy-full.html
+probes:
+- url: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+  status: 200
+- url: https://docs.thousandeyes.com/thousandeyes-for-government/thousandeyes-for-government
+  status: 200
+- url: https://www.thousandeyes.com/trust
+  status: 403

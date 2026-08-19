@@ -1,0 +1,27 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/thousandeyes-cli/ + https://github.com/thousandeyes/thousandeyes-cli
+name: thousandeyes-cli
+official: true
+language: go
+latest_release: 0.0.3
+released: '2026-07-01'
+repository: https://github.com/thousandeyes/thousandeyes-cli
+install:
+- method: go install
+  command: go install github.com/thousandeyes/thousandeyes-cli@latest
+- method: release binary
+  url: https://github.com/thousandeyes/thousandeyes-cli/releases
+auth:
+  requires: the same access as direct API requests — the API access permission and a ThousandEyes API
+    bearer token
+  docs: https://developer.cisco.com/docs/thousandeyes/authentication/
+surface:
+  note: The developer reference describes the CLI by workflow rather than publishing a command tree; command
+    names below are the workflow areas Cisco names, not a transcribed --help output.
+  workflows:
+  - manage tests and resources
+  - work with templates
+  - use ThousandEyes data in automation environments (shell scripts, pipelines)
+maturity: 0.x — pre-1.0, published July 2026. The package entry in packages/thousandeyes-packages.yml
+  records the same version.

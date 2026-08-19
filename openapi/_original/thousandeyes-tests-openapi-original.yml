@@ -1,0 +1,5897 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  version: 7.0.100
+  title: Tests API
+  description: '**Note:** The Page Load Tests, API Tests, and Web Transaction Tests APIs are not available for ThousandEyes
+    for Government instance.
+
+
+    This API allows you to list, create, edit, and delete Network and Application Synthetics tests.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+externalDocs:
+  description: Find out more about Network and Application Synthetics tests
+  url: https://docs.thousandeyes.com/product-documentation/internet-and-wan-monitoring/tests#cloud-and-enterprise-agent-based-tests
+tags:
+- name: Tests
+  description: Get all tests
+- name: Agent to Server Tests
+  description: Agent to Server test management operations
+- name: Agent to Agent Tests
+  description: Agent to Agent test management operations
+- name: BGP Tests
+  description: BGP test management operations
+- name: DNS Server Tests
+  description: DNS Server test management operations
+- name: DNS Trace Tests
+  description: DNS Trace test management operations
+- name: DNSSEC Tests
+  description: DNSSEC test management operations
+- name: HTTP Server Tests
+  description: HTTP Server test management operations
+- name: Page Load Tests
+  description: Page Load test management operations
+- name: Web Transaction Tests
+  description: Web Transactions test management operations
+- name: API Tests
+  description: API test management operations
+- name: FTP Server Tests
+  description: FTP Server test management operations
+- name: SIP Server Tests
+  description: SIP Server test management operations
+- name: Voice Tests
+  description: Voice test management operations
+- name: Path Visualization Interface Groups
+paths:
+  /tests:
+    get:
+      tags:
+      - Tests
+      summary: List configured tests
+      operationId: getTests
+      description: 'Returns configured tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Tests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/bgp:
+    get:
+      tags:
+      - BGP Tests
+      summary: List BGP tests
+      operationId: getBgpTests
+      description: 'Returns a list of BGP tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - BGP Tests
+      summary: Create BGP test
+      operationId: createBgpTest
+      description: Creates a new BGP test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandBgpTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BgpTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/bgp/{testId}:
+    get:
+      tags:
+      - BGP Tests
+      summary: Get BGP test
+      operationId: getBgpTest
+      description: Returns details for a BGP test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandBgpTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - BGP Tests
+      summary: Update BGP test
+      operationId: updateBgpTest
+      description: 'Updates a BGP test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandBgpTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBgpTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BgpTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - BGP Tests
+      summary: Delete BGP test
+      operationId: deleteBgpTest
+      description: Deletes a BGP test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/agent-to-server:
+    get:
+      tags:
+      - Agent to Server Tests
+      summary: List Agent to Server tests
+      operationId: getAgentToServerTests
+      description: 'Returns a list of Agent to Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Agent to Server Tests
+      summary: Create Agent to Server test
+      operationId: createAgentToServerTest
+      description: Creates a new Agent to Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentToServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/agent-to-server/{testId}:
+    get:
+      tags:
+      - Agent to Server Tests
+      summary: Get Agent to Server test
+      operationId: getAgentToServerTest
+      description: Returns details for a Agent to Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Agent to Server Tests
+      summary: Update Agent to Server test
+      operationId: updateAgentToServerTest
+      description: 'Updates an Agent to Server test. Shared tests have limited updating capabilities. Only account-specific
+        configurations may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires
+        Account Admin permissions.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentToServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Agent to Server Tests
+      summary: Delete Agent to Server test
+      operationId: deleteAgentToServerTest
+      description: Deletes an Agent to Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/agent-to-agent:
+    get:
+      tags:
+      - Agent to Agent Tests
+      summary: List Agent to Agent tests
+      operationId: getAgentToAgentTests
+      description: 'Returns a list of Agent to Agent tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToAgentTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Agent to Agent Tests
+      summary: Create Agent to Agent test
+      operationId: createAgentToAgentTest
+      description: Creates a new Agent to Agent test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentToAgentTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToAgentTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/agent-to-agent/{testId}:
+    get:
+      tags:
+      - Agent to Agent Tests
+      summary: Get Agent to Agent test
+      operationId: getAgentToAgentTest
+      description: Returns details for a Agent to Agent test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToAgentTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Agent to Agent Tests
+      summary: Update Agent to Agent test
+      operationId: updateAgentToAgentTest
+      description: 'Updates a Agent to Agent test. Shared tests have limited updating capabilities. Only account-specific
+        configurations may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires
+        Account Admin permissions.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentToAgentTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentToAgentTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Agent to Agent Tests
+      summary: Delete Agent to Agent test
+      operationId: deleteAgentToAgentTest
+      description: Deletes the specified Agent to Agent test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dns-server:
+    get:
+      tags:
+      - DNS Server Tests
+      summary: List DNS Server tests
+      operationId: getDnsServerTests
+      description: 'Returns a list of all DNS Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - DNS Server Tests
+      summary: Create DNS Server test
+      operationId: createDnsServerTest
+      description: Creates a new DNS Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dns-server/{testId}:
+    get:
+      tags:
+      - DNS Server Tests
+      summary: Get DNS Server test
+      operationId: getDnsServerTest
+      description: Returns details for a DNS Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - DNS Server Tests
+      summary: Update DNS Server test
+      operationId: updateDnsServerTest
+      description: 'Updates a DNS Server test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - DNS Server Tests
+      summary: Delete DNS Server test
+      operationId: deleteDnsServerTest
+      description: 'Deletes the specified DNS Server test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dns-trace:
+    get:
+      tags:
+      - DNS Trace Tests
+      summary: List DNS Trace tests
+      operationId: getDnsTraceTests
+      description: 'Returns a list of all DNS Trace tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - DNS Trace Tests
+      summary: Create DNS Trace test
+      operationId: createDnsTraceTest
+      description: 'Creates a new DNS Trace test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsTraceTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dns-trace/{testId}:
+    get:
+      tags:
+      - DNS Trace Tests
+      summary: Get DNS Trace test
+      operationId: getDnsTraceTest
+      description: Returns details for a DNS Trace test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - DNS Trace Tests
+      summary: Update DNS Trace test
+      operationId: updateDnsTraceTest
+      description: 'Updates a DNS Trace test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsTraceTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - DNS Trace Tests
+      summary: Delete DNS Trace test
+      operationId: deleteDnsTraceTest
+      description: 'Deletes the specified DNS Trace test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dnssec:
+    get:
+      tags:
+      - DNSSEC Tests
+      summary: List DNSSEC tests
+      operationId: getDnsSecTests
+      description: 'Returns a list of all DNSSEC tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsSecTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - DNSSEC Tests
+      summary: Create DNSSEC test
+      operationId: createDnsSecTest
+      description: 'Creates a new DNSSEC test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsSecTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsSecTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/dnssec/{testId}:
+    get:
+      tags:
+      - DNSSEC Tests
+      summary: Get DNSSEC test
+      operationId: getDnsSecTest
+      description: Returns details for a DNSSEC test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsSecTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - DNSSEC Tests
+      summary: Update DNSSEC test
+      operationId: updateDnsSecTest
+      description: 'Updates a DNSSEC test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsSecTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsSecTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - DNSSEC Tests
+      summary: Delete DNSSEC test
+      operationId: deleteDnsSecTest
+      description: Deletes the specified DNSSEC test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/http-server:
+    get:
+      tags:
+      - HTTP Server Tests
+      summary: List HTTP Server tests
+      operationId: getHttpServerTests
+      description: 'Returns a list of all HTTP Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - HTTP Server Tests
+      summary: Create HTTP Server test
+      operationId: createHttpServerTest
+      description: 'Creates a new HTTP Server test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/http-server/{testId}:
+    get:
+      tags:
+      - HTTP Server Tests
+      summary: Get HTTP Server test
+      operationId: getHttpServerTest
+      description: Returns details for a HTTP Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - HTTP Server Tests
+      summary: Update HTTP Server test
+      operationId: updateHttpServerTest
+      description: 'Updates a HTTP Server test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - HTTP Server Tests
+      summary: Delete HTTP Server test
+      operationId: deleteHttpServerTest
+      description: Deletes the specified HTTP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/page-load:
+    get:
+      tags:
+      - Page Load Tests
+      summary: List Page Load tests
+      operationId: getPageLoadTests
+      description: 'Returns a list of all Page Load tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Page Load Tests
+      summary: Create Page Load test
+      operationId: createPageLoadTest
+      description: Creates a new Page Load test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageLoadTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/page-load/{testId}:
+    get:
+      tags:
+      - Page Load Tests
+      summary: Get Page Load test
+      operationId: getPageLoadTest
+      description: Returns details for a Page Load test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Page Load Tests
+      summary: Update Page Load test
+      operationId: updatePageLoadTest
+      description: 'Updates a Page Load test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageLoadTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PageLoadTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Page Load Tests
+      summary: Delete Page Load test
+      operationId: deletePageLoadTest
+      description: 'Deletes the specified Page Load test. This method requires Account Admin permissions. '
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/web-transactions:
+    get:
+      tags:
+      - Web Transaction Tests
+      summary: List Web Transactions tests
+      operationId: getWebTransactionsTests
+      description: 'Returns a list of all Web Transactions tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Web Transaction Tests
+      summary: Create Web Transactions test
+      operationId: createWebTransactionsTest
+      description: Creates a new Web Transactions test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebTransactionTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/web-transactions/{testId}:
+    get:
+      tags:
+      - Web Transaction Tests
+      summary: Get Web Transactions test
+      operationId: getWebTransactionsTest
+      description: Returns details for a Web Transactions test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Web Transaction Tests
+      summary: Update Web Transactions test
+      operationId: updateWebTransactionsTest
+      description: 'Updates a Web Transactions test. Shared tests have limited updating capabilities. Only account-specific
+        configurations may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires
+        Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebTransactionTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebTransactionTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Web Transaction Tests
+      summary: Delete Web Transactions test
+      operationId: deleteWebTransactionsTest
+      description: Deletes the specified Web Transactions test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/api:
+    get:
+      tags:
+      - API Tests
+      summary: List API tests
+      operationId: getApiTests
+      description: 'Returns a list of all API tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - API Tests
+      summary: Create API test
+      operationId: createApiTest
+      description: Creates a new API test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/api/{testId}:
+    get:
+      tags:
+      - API Tests
+      summary: Get API test
+      operationId: getApiTest
+      description: Returns details for a API test configuration. Please use `expand` parameter to access sub-resources such
+        as alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - API Tests
+      summary: Update API test
+      operationId: updateApiTest
+      description: 'Updates an API test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires write permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - API Tests
+      summary: Delete API test
+      operationId: deleteApiTest
+      description: Deletes the specified API test. This method requires write permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/ftp-server:
+    get:
+      tags:
+      - FTP Server Tests
+      summary: List FTP Server tests
+      operationId: getFtpServerTests
+      description: 'Returns a list of FTP Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FtpServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - FTP Server Tests
+      summary: Create FTP Server test
+      operationId: createFtpServerTest
+      description: Creates a new FTP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FtpServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FtpServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/ftp-server/{testId}:
+    get:
+      tags:
+      - FTP Server Tests
+      summary: Get FTP Server test
+      operationId: getFtpServerTest
+      description: Returns details for a FTP Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FtpServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - FTP Server Tests
+      summary: Update FTP Server test
+      operationId: updateFtpServerTest
+      description: 'Updates a FTP Server test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FtpServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FtpServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - FTP Server Tests
+      summary: Delete FTP Server test
+      operationId: deleteFtpServerTest
+      description: Deletes the specified FTP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /tests/{testId}/history:
+    get:
+      tags:
+      - Tests
+      summary: Get test version history
+      operationId: getTestVersionHistory
+      description: Retrieve the version history of a specific test.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: limit
+        in: query
+        description: The maximum number of version history entries to return. If not specified, the default is 50 or the total
+          number of available versions, whichever is fewer.
+        required: false
+        schema:
+          type: integer
+          default: 50
+          maximum: 500
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestVersionHistoryResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /tests/sip-server:
+    get:
+      tags:
+      - SIP Server Tests
+      summary: List SIP Server tests
+      operationId: getSipServerTests
+      description: 'Returns a list of SIP Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - SIP Server Tests
+      summary: Create SIP Server test
+      operationId: createSipServerTest
+      description: Creates a new SIP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SipServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/sip-server/{testId}:
+    get:
+      tags:
+      - SIP Server Tests
+      summary: Get SIP Server test
+      operationId: getSipServerTest
+      description: Returns details for a SIP Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - SIP Server Tests
+      summary: Update SIP Server test
+      operationId: updateSipServerTest
+      description: 'Updates a SIP Server test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SipServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - SIP Server Tests
+      summary: Delete SIP Server test
+      operationId: deleteSipServerTest
+      description: Deletes the specified SIP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /tests/voice:
+    get:
+      tags:
+      - Voice Tests
+      summary: List Voice tests
+      operationId: getVoiceTests
+      description: 'Returns a list of Voice tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VoiceTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Voice Tests
+      summary: Create Voice test
+      operationId: createVoiceTest
+      description: Creates a new Voice test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VoiceTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/voice/{testId}:
+    get:
+      tags:
+      - Voice Tests
+      summary: Get Voice test
+      operationId: getVoiceTest
+      description: Returns details for a Voice test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VoiceTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - Voice Tests
+      summary: Update Voice test
+      operationId: updateVoiceTest
+      description: 'Updates a Voice test. Shared tests have limited updating capabilities. Only account-specific configurations
+        may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VoiceTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Voice Tests
+      summary: Delete Voice test
+      operationId: deleteVoiceTest
+      description: Deletes the specified Voice test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /network/path-vis/interface-groups:
+    get:
+      tags:
+      - Path Visualization Interface Groups
+      summary: List interface groups for path visualization
+      operationId: getPathVisInterfaceGroups
+      description: Returns a list of all path visualization interface groups. For more information about interface groups,
+        see https://docs.thousandeyes.com/product-documentation/end-user-monitoring/viewing-data/endpoint-agent-views-reference#grouping.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/InterfaceGroups'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Path Visualization Interface Groups
+      summary: Create interface group for path visualization
+      operationId: createPathVisInterfaceGroups
+      description: Creates a new path visualization interface group.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterfaceGroup'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/InterfaceGroup'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /network/path-vis/interface-groups/{interfaceGroupId}:
+    put:
+      tags:
+      - Path Visualization Interface Groups
+      summary: Update interface group
+      operationId: updatePathVisInterfaceGroup
+      description: Updates a path visualization interface group..
+      parameters:
+      - $ref: '#/components/parameters/InterfaceGroupId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterfaceGroup'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/InterfaceGroup'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Path Visualization Interface Groups
+      summary: Delete interface group
+      operationId: deletePathVisInterfaceGroup
+      description: Deletes a path visualization interface group.
+      parameters:
+      - $ref: '#/components/parameters/InterfaceGroupId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  parameters:
+    InterfaceGroupId:
+      name: interfaceGroupId
+      description: ID of the network path vis interface group
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+    ExpandTest:
+      name: expand
+      in: query
+      description: Optional parameter on whether or not to expand the test sub-resources. By default no expansion is going
+        to take place if the query parameter is not present. If the user wishes to expand the `agents` sub-resource, they
+        need to pass the `?expand=agent` query.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandTestOptions'
+        example:
+        - agent
+        - monitor
+    ExpandBgpTest:
+      name: expand
+      in: query
+      description: Optional parameter on whether or not to expand the test sub-resources. By default no expansion takes place
+        if the query parameter is not present. To expand the `monitors` sub-resource, pass the `?expand=monitor` query.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandBgpTestOptions'
+        example:
+        - alert-rule
+        - monitor
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    VersionId:
+      name: versionId
+      in: query
+      description: The unique identifier for a specific version of the test settings. If provided, returns the test configuration
+        as it existed at that version. To retrieve available version IDs, use the `/tests/{testId}/history` endpoint. If not
+        specified, the current version of the test settings is returned.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  schemas:
+    ExpandTestOptions:
+      type: string
+      enum:
+      - agent
+      - alert-rule
+      - monitor
+      - label
+      - tag
+      - shared-with-account
+      example: agent
+    ExpandBgpTestOptions:
+      type: string
+      enum:
+      - alert-rule
+      - monitor
+      - label
+      - tag
+      - shared-with-account
+      example: monitor
+    Tests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    TestRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseRequest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsRequest'
+      required:
+      - agents
+    BaseRequest:
+      type: object
+      properties:
+        labels:
+          type: array
+          description: Contains list of test label IDs (get `labelId` from `/labels` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '9842'
+          - '1283'
+        tags:
+          type: array
+          description: Contains list of test tag IDs (get `id` from `/tags` endpoint).
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+          - ec8e64fb-6f11-485c-a5d5-488098ad626a
+        sharedWithAccounts:
+          type: array
+          description: Contains list of account group IDs. Test is shared with the listed account groups (get `aid` from `/account-groups`
+            endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '1234'
+          - '12345'
+        alertRules:
+          type: array
+          items:
+            type: string
+          description: List of alert rules IDs to apply to the test (get `ruleId` from `/alerts/rules` endpoint. If `alertsEnabled`
+            is set to `true` and `alertRules` is not included on test creation or update, applicable user default alert rules
+            will be used)
+          writeOnly: true
+          readOnly: false
+          example:
+          - '344753'
+          - '212697'
+    MonitorsRequest:
+      type: object
+      properties:
+        monitors:
+          type: array
+          description: Contains list of BGP monitor IDs (get `monitorId` from `/monitors` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '17410'
+          - '5'
+    BgpTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedBgpTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    BgpTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedBgpTest'
+      - $ref: '#/components/schemas/BaseRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    UpdateBgpTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseBgpRequest'
+      - $ref: '#/components/schemas/BaseRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    BgpTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/BgpTest'
+    AgentToServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedAgentToServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    AgentToServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedAgentToServerTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - type: object
+        properties:
+          port:
+            type: integer
+            description: Port number to use for the test. The default port is 80.
+            example: 443
+    UpdateAgentToServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - $ref: '#/components/schemas/AgentToServerWritablePropertyFields'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsRequest'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          alertsEnabled:
+            type: boolean
+            description: Indicates if alerts are enabled.
+            example: true
+          enabled:
+            $ref: '#/components/schemas/Enabled'
+          description:
+            type: string
+            description: A description of the test.
+            example: ThousandEyes Test
+          testName:
+            $ref: '#/components/schemas/TestName'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+          port:
+            type: integer
+            description: Port number to use for the test. The default port is 80.
+            example: 443
+    AgentToServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/AgentToServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    AgentToAgentTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedAgentToAgentTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    AgentToAgentTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedAgentToAgentTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    AgentToAgentTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/AgentToAgentTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    DnsServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedDnsServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    DnsServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedDnsServerRequestTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    DnsServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/DnsServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    DnsTraceTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedDnsTraceTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    DnsTraceTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedDnsTraceTest'
+      - $ref: '#/components/schemas/TestRequest'
+    DnsTraceTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/DnsTraceTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    DnsSecTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedDnsSecTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    DnsSecTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedDnsSecTest'
+      - $ref: '#/components/schemas/TestRequest'
+    DnsSecTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/DnsSecTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    HttpServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedHttpServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    HttpServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedHttpServerTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    HttpServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/HttpServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    PageLoadTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedPageLoadTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    PageLoadTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedPageLoadTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    PageLoadTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/PageLoadTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    WebTransactionTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedWebTransactionTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    WebTransactionTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedWebTransactionTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - type: object
+        properties:
+          credentials:
+            $ref: '#/components/schemas/TestCredentials'
+    WebTransactionTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/WebTransactionTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    ApiTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedApiTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedApiTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - type: object
+        properties:
+          credentials:
+            $ref: '#/components/schemas/TestCredentials'
+          vaultCredentials:
+            type: array
+            description: List of credential IDs that are stored in an external vault.
+            items:
+              $ref: '#/components/schemas/TestVaultCredential'
+    ApiTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    FtpServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedFtpServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    FtpServerTestRequest:
+      required:
+      - password
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedFtpServerTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    FtpServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/FtpServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    SipServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedSipServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    SipServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - type: object
+        required:
+        - interval
+        - targetSipCredentials
+        properties:
+          targetSipCredentials:
+            $ref: '#/components/schemas/TestSipCredentials'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    SipServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/SipServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    VoiceTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedVoiceTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    VoiceTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedVoiceTest'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+    VoiceTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/VoiceTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    InterfaceGroups:
+      type: object
+      properties:
+        pathVisInterfaceGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterfaceGroup'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    InterfaceGroup:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account Group Id
+          readOnly: true
+          example: '1234'
+        groupId:
+          type: string
+          description: Group ID
+          readOnly: true
+          example: '281474976710706'
+        groupName:
+          type: string
+          description: Name of the path visualization interface group
+          example: PathVis Interface Group
+        ipAddresses:
+          type: array
+          items:
+            type: string
+          description: Array of IP addresses associated with the interface group
+          example:
+          - 1.1.1.1
+          - 8.8.8.8
+        rdnsRegexes:
+          type: array
+          readOnly: true
+          items:
+            type: string
+          description: Array of RDNS Regexes associated with the interface group
+          example:
+          - aggr403b-1.iad3.rackspace.net
+          - aggr403c-1.iad3.rackspace.net
+    TestVersionHistory:
+      type: object
+      properties:
+        versionTimestamp:
+          type: string
+          format: date-time
+          description: Timestamp when this version was created.
+          example: '2022-07-17T22:00:54Z'
+        testId:
+          type: string
+          description: The unique identifier of the test.
+          example: '474276'
+        createdBy:
+          type: string
+          description: The user who created the version.
+          example: user (user@user.com)
+        versionId:
+          type: string
+          description: The unique identifier for a specific version of the test settings.
+          example: '1234'
+    TestVersionHistoryResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+        testVersionHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestVersionHistory'
+      additionalProperties: false
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the
+        set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+            API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other
+            endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    TestAgentRequest:
+      type: object
+      required:
+      - agentId
+      properties:
+        agentId:
+          type: string
+          description: The agent ID. Get `agentId` from `/agents` endpoint.
+        sourceIpAddress:
+          type: string
+          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses`
+            from the `/agents` endpoint.
+      example:
+        agentId: '125'
+        sourceIpAddress: 1.1.1.1
+    TestAgentsRequest:
+      type: array
+      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
+      items:
+        $ref: '#/components/schemas/TestAgentRequest'
+    UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+            API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other
+            endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    TestUsePublicBgp:
+      type: boolean
+      description: Indicate if all available public BGP monitors should be used, when ommited defaults to `bgpMeasurements`
+        value.
+      default: true
+      example: true
+    UnexpandedBgpTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - type: object
+        required:
+        - prefix
+        properties:
+          enabled:
+            $ref: '#/components/schemas/Enabled'
+          includeCoveredPrefixes:
+            type: boolean
+            description: Indicate if queries for subprefixes detected under this prefix should included.
+            example: true
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+          alertsEnabled:
+            type: boolean
+            description: Indicates if alerts are enabled.
+            example: true
+          createdBy:
+            $ref: '#/components/schemas/TestCreatedBy'
+          createdDate:
+            $ref: '#/components/schemas/TestCreatedDate'
+          type:
+            type: string
+            example: bgp
+            readOnly: true
+          prefix:
+            type: string
+            description: a.b.c.d is a network address, with the prefix length defined as e. Prefixes can be any length from
+              8 to 24.
+    TestBgpType:
+      type: string
+      example: bgp
+      readOnly: true
+    BaseBgpRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - type: object
+        properties:
+          enabled:
+            $ref: '#/components/schemas/Enabled'
+          includeCoveredPrefixes:
+            type: boolean
+            description: Indicate if queries for subprefixes detected under this prefix should included.
+            example: true
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+          alertsEnabled:
+            type: boolean
+            description: Indicates if alerts are enabled.
+            example: true
+          createdBy:
+            $ref: '#/components/schemas/TestCreatedBy'
+          createdDate:
+            $ref: '#/components/schemas/TestCreatedDate'
+          type:
+            $ref: '#/components/schemas/TestBgpType'
+    TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestLabel'
+    TestTag:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          description: Unique tag ID.
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          format: uuid
+        key:
+          type: string
+          description: Tag key. For example, "Location" or "Department".
+          example: Location
+        value:
+          type: string
+          description: Tag value. For example, "San Francisco" or "Engineering".
+          example: San Francisco
+    TestTags:
+      type: array
+      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for
+        Instant Tests. For more information, see `/tags`.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestTag'
+    SharedWithAccount:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account group ID.
+          example: '1234'
+        name:
+          type: string
+          description: Account group name.
+          example: Account name
+    TestSharedAccounts:
+      type: array
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/SharedWithAccount'
+    InstantTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - type: object
+        properties:
+          labels:
+            $ref: '#/components/schemas/TestLabels'
+          tags:
+            $ref: '#/components/schemas/TestTags'
+          sharedWithAccounts:
+            $ref: '#/components/schemas/TestSharedAccounts'
+    MonitorType:
+      type: string
+      description: Type of monitor
+      enum:
+      - public
+      - private
+      example: public
+    Monitor:
+      type: object
+      properties:
+        countryId:
+          type: string
+          description: Country ID
+          example: GB
+          readOnly: true
+        monitorId:
+          type: string
+          description: BGP monitor ID
+          example: '1234'
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the BGP monitor
+          example: 4.69.184.193
+        network:
+          type: string
+          description: Name of the autonomous system in which the monitor is found
+          example: Level 3 Communications, Inc. (AS 3356)
+        monitorType:
+          $ref: '#/components/schemas/MonitorType'
+        monitorName:
+          type: string
+          description: Display name of the BGP monitor
+          example: Seattle, WA
+    TestBgpMonitors:
+      type: array
+      description: Contains list of enabled BGP monitors.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Monitor'
+    RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
+    AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates
+        to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a
+        list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    AlertRoundsViolationMode:
+      type: string
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for
+        CEA and Endpoint Scheduled test rules. The default is `any`.'
+      enum:
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    SensitivityLevel:
+      type: string
+      description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases
+        the likelihood of triggering alerts.
+      enum:
+      - high
+      - medium
+      - low
+      example: medium
+      readOnly: true
+    Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    AlertRule:
+      type: object
+      properties:
+        ruleId:
+          $ref: '#/components/schemas/RuleId'
+        ruleName:
+          type: string
+          description: Name of the alert rule
+          example: The End of the Internet
+          readOnly: true
+        expression:
+          type: string
+          description: String expression of alert rule
+          example: ((hops((hopDelay >= 100 ms))))
+          readOnly: true
+        direction:
+          $ref: '#/components/schemas/AlertDirection'
+        isDefault:
+          type: boolean
+          description: Alert rules allow up to 1 alert rule to be selected as a default for each type. By checking the default
+            option, this alert rule will be automatically included on subsequently created tests that test a metric used in
+            alerting here
+          example: true
+          readOnly: true
+        alertType:
+          $ref: '#/components/schemas/AlertType'
+        minimumSources:
+          type: integer
+          description: The minimum number of agents or monitors that must meet the specified criteria in order to trigger
+            the alert
+          example: 10
+          readOnly: true
+        minimumSourcesPct:
+          type: integer
+          description: the minimum percentage of all assigned agents or monitors that must meet the specified criteria in
+            order to trigger the alert
+          example: 99
+          readOnly: true
+        roundsViolatingMode:
+          $ref: '#/components/schemas/AlertRoundsViolationMode'
+        roundsViolatingOutOf:
+          type: integer
+          description: Specifies the divisor (y value) for the “X of Y times” condition.
+          example: 5
+          readOnly: true
+        roundsViolatingRequired:
+          type: integer
+          description: Specifies the numerator (x value) for the “X of Y times” condition
+          example: 2
+          readOnly: true
+        sensitivityLevel:
+          $ref: '#/components/schemas/SensitivityLevel'
+        severity:
+          $ref: '#/components/schemas/Severity'
+    BaseBgpTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - type: object
+        properties:
+          enabled:
+            $ref: '#/components/schemas/Enabled'
+          monitors:
+            $ref: '#/components/schemas/TestBgpMonitors'
+          includeCoveredPrefixes:
+            type: boolean
+            description: Indicate if queries for subprefixes detected under this prefix should included.
+            example: true
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+          alertsEnabled:
+            type: boolean
+            description: Indicates if alerts are enabled.
+            example: true
+          alertRules:
+            type: array
+            description: A list of enabled alert rule objects.
+            items:
+              $ref: '#/components/schemas/AlertRule'
+          createdBy:
+            $ref: '#/components/schemas/TestCreatedBy'
+          createdDate:
+            $ref: '#/components/schemas/TestCreatedDate'
+          type:
+            $ref: '#/components/schemas/TestBgpType'
+    BgpTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseBgpTest'
+      - type: object
+        required:
+        - prefix
+        properties:
+          prefix:
+            type: string
+            description: a.b.c.d is a network address, with the prefix length defined as e. Prefixes can be any length from
+              8 to 24.
+    UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+    TestBandwidthMeasurements:
+      type: boolean
+      description: Set to `true` to enable bandwidth measurements, only applies to Enterprise agents assigned to the test.
+      example: true
+    TestMtuMeasurements:
+      type: boolean
+      description: Set `true` to measure MTU sizes on network from agents to the target.
+      example: false
+    TestNumPathTraces:
+      type: integer
+      minimum: 1
+      maximum: 10
+      description: Number of path traces executed by the agent.
+      default: 3
+      example: 3
+    TestPathTraceMode:
+      type: string
+      enum:
+      - classic
+      - in-session
+      description: Select `inSession` to perform the path trace within a TCP session.
+      default: classic
+      example: classic
+    TestProbeMode:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      description: Probe mode used by network test, only valid when the protocol is set to TCP.
+      default: auto
+      example: auto
+    TestProtocol:
+      type: string
+      enum:
+      - tcp
+      - icmp
+      - udp
+      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
+      default: tcp
+      example: tcp
+    TestRandomizedStartTime:
+      type: boolean
+      description: Indicates whether agents should randomize the start time in each test round.
+      default: false
+      example: false
+    TestDscp:
+      type: string
+      description: DSCP label.
+      readOnly: true
+      example: Best Effort (DSCP 0)
+    TestDscpId:
+      type: string
+      enum:
+      - '0'
+      - '8'
+      - '16'
+      - '24'
+      - '32'
+      - '40'
+      - '48'
+      - '56'
+      - '10'
+      - '12'
+      - '14'
+      - '18'
+      - '20'
+      - '22'
+      - '26'
+      - '28'
+      - '30'
+      - '34'
+      - '36'
+      - '38'
+      - '46'
+      - '44'
+      description: DSCP ID [to see list for acceptable values](https://docs.thousandeyes.com/product-documentation/tests/dscp-options-in-network-tests)
+      default: '0'
+      example: '0'
+    TestIpv6Policy:
+      type: string
+      enum:
+      - force-ipv4
+      - prefer-ipv6
+      - force-ipv6
+      - use-agent-policy
+      description: IP version policy. Overrides the IPv6 policy configured at the agent level.
+      default: use-agent-policy
+      example: use-agent-policy
+    AgentToServerWritablePropertyFields:
+      type: object
+      properties:
+        bandwidthMeasurements:
+          $ref: '#/components/schemas/TestBandwidthMeasurements'
+        continuousMode:
+          type: boolean
+          description: "To enable continuous monitoring, set this parameter to `true` to. \nWhen continuous monitoring is\
+            \ enabled, the following actions occur:\n* `fixedPacketRate` is enforced\n* `bandwidthMeasurements` are disabled\n\
+            * If the `protocol` is set to `tcp`, `probeMode` is set to `syn`.\n"
+          example: false
+        fixedPacketRate:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: If continuousMode is `false`, set the fixedPacketRate to a value between 10-100. If `continuousMode`
+            is `true`, set the `fixedPacketRate` to `1`
+          example: 25
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        server:
+          type: string
+          description: The target name or IP address. If a port is set for the test, it is appended to the target name or
+            IP address using a colon.
+          example: www.thousandeyes.com:80
+        dscp:
+          $ref: '#/components/schemas/TestDscp'
+        dscpId:
+          $ref: '#/components/schemas/TestDscpId'
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        pingPayloadSize:
+          type: integer
+          minimum: 0
+          maximum: 1400
+          description: Payload size (not total packet size) for the end-to-end metric's probes, ping payload size allows values
+            from 0 to 1400 bytes. When set to null, payload sizes are 0 bytes for ICMP-based tests and 1 byte for TCP-based
+            tests.
+        networkMeasurements:
+          type: boolean
+          description: View packet loss in 1-second intervals. This is only available for 1-minute interval tests. Set to
+            `true` to enable network measurements.
+          default: false
+          example: false
+    AgentToServerTestType:
+      type: string
+      example: agent-to-server
+      readOnly: true
+    AgentToServerProperties:
+      allOf:
+      - $ref: '#/components/schemas/AgentToServerWritablePropertyFields'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/AgentToServerTestType'
+        required:
+        - server
+    TestBgpMeasurements:
+      type: boolean
+      description: Set to `true` to enable bgp measurements.
+      default: true
+      example: true
+    UnexpandedAgentToServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/AgentToServerProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    BaseTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - type: object
+        properties:
+          alertRules:
+            type: array
+            description: Contains list of enabled alert rule objects.
+            items:
+              $ref: '#/components/schemas/AlertRule'
+    AgentToServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/AgentToServerProperties'
+    TestMonitorsProperties:
+      type: object
+      properties:
+        bgpMeasurements:
+          $ref: '#/components/schemas/TestBgpMeasurements'
+        usePublicBgp:
+          $ref: '#/components/schemas/TestUsePublicBgp'
+        monitors:
+          $ref: '#/components/schemas/TestBgpMonitors'
+    AgentToServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/AgentToServerInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
+    AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/NetworkProviderType'
+    SimpleAgent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AgentBase'
+      - type: object
+        properties:
+          agentId:
+            type: string
+            description: Unique ID of the agent.
+            example: '281474976710706'
+            readOnly: true
+          agentName:
+            type: string
+            description: Name of the agent.
+            example: thousandeyes-stg-va-254
+          location:
+            type: string
+            description: Location of the agent.
+            example: San Francisco Bay Area
+            readOnly: true
+          countryId:
+            type: string
+            description: 2-digit ISO country code
+            example: US
+            readOnly: true
+          coordinates:
+            $ref: '#/components/schemas/Coordinates'
+          networkProviderInfo:
+            allOf:
+            - $ref: '#/components/schemas/NetworkProviderInfo'
+            readOnly: true
+            example:
+              asn: 7018
+              name: AT&T Services, Inc.
+              type: isp
+          enabled:
+            type: boolean
+            description: Flag indicating if the agent is enabled.
+            example: true
+          verifySslCertificates:
+            type: boolean
+            description: Flag indicating if has normal SSL operations or  if instead it's set to ignore SSL errors on browserbot-based
+              tests.
+            example: true
+            readOnly: true
+          prefix:
+            type: string
+            description: Prefix containing agents public IP address.
+            example: 99.128.0.0/11
+            readOnly: true
+    AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/SimpleAgent'
+    TestAgentsResponse:
+      type: array
+      description: Contains list of agents.
+      items:
+        $ref: '#/components/schemas/AgentResponse'
+    TestDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction of the test, which affects how results are shown.
+      default: to-target
+      example: to-target
+    TestPort:
+      type: integer
+      minimum: 1
+      maximum: 65535
+      description: Target port.
+      default: 49153
+      example: 49153
+    AgentToAgentTestProtocol:
+      type: string
+      enum:
+      - tcp
+      - udp
+      default: tcp
+      example: tcp
+    TestFixedPacketRate:
+      type: integer
+      minimum: 0
+      maximum: 100
+      description: Sets packets rate sent to measure the network in packets per second.
+      example: 50
+    AgentToAgentProperties:
+      type: object
+      required:
+      - targetAgentId
+      properties:
+        direction:
+          $ref: '#/components/schemas/TestDirection'
+        dscp:
+          $ref: '#/components/schemas/TestDscp'
+        dscpId:
+          $ref: '#/components/schemas/TestDscpId'
+        mss:
+          type: integer
+          minimum: 20
+          maximum: 1400
+          description: Maximum segment size, in bytes.
+          example: 100
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        port:
+          $ref: '#/components/schemas/TestPort'
+        protocol:
+          $ref: '#/components/schemas/AgentToAgentTestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        targetAgentId:
+          type: string
+          description: '`agentId` of the target agent for the test.'
+          example: '2954'
+        throughputMeasurements:
+          type: boolean
+          description: Enable or disable throughput measurements. Throughput measurements cannot be enabled when the source
+            or target of the test is a cloud agent.
+          default: false
+          example: false
+        throughputDuration:
+          type: integer
+          minimum: 5000
+          maximum: 30000
+          description: The throughput duration.
+          default: 10000
+          example: 10000
+        throughputRate:
+          type: integer
+          minimum: 8
+          maximum: 1000
+          description: The throughput rate, only applicable for UDP protocol.
+          example: 10
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        type:
+          type: string
+          example: agent-to-agent
+          readOnly: true
+    UnexpandedAgentToAgentTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/AgentToAgentProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    AgentToAgentInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/AgentToAgentProperties'
+    AgentToAgentTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/AgentToAgentInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    TestDnsServer:
+      type: object
+      properties:
+        serverId:
+          type: string
+          description: Unique identifier of the DNS server.
+          example: '1447'
+        serverName:
+          type: string
+          description: Fully qualified domain name (FQDN) of DNS server.
+          example: dns-example.net
+    TestDnsTransportProtocol:
+      type: string
+      enum:
+      - udp
+      - tcp
+      description: Transport protocol used for DNS requests.
+      default: udp
+      example: udp
+    TestDomain:
+      type: string
+      description: The target record for the test, with the record type suffixed. If no record type is specified, the test
+        defaults to an ANY record.
+      example: www.thousandeyes.com
+    TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    DnsQueryClass:
+      type: string
+      enum:
+      - in
+      - ch
+      description: Domain class used by this test. 'in' stands for Internet, while 'ch' stands for Chaos.
+      example: in
+    DnsServerProperties:
+      type: object
+      required:
+      - domain
+      - dnsServers
+      properties:
+        bandwidthMeasurements:
+          $ref: '#/components/schemas/TestBandwidthMeasurements'
+        dnsServers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestDnsServer'
+        dnsTransportProtocol:
+          $ref: '#/components/schemas/TestDnsTransportProtocol'
+        domain:
+          $ref: '#/components/schemas/TestDomain'
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        recursiveQueries:
+          type: boolean
+          description: Set true to run query with RD (recursion desired) flag enabled.
+          example: true
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        dnsQueryClass:
+          $ref: '#/components/schemas/DnsQueryClass'
+        type:
+          type: string
+          example: dns-server
+          readOnly: true
+    UnexpandedDnsServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/DnsServerProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    DnsServerRequestProperties:
+      type: object
+      required:
+      - domain
+      - dnsServers
+      properties:
+        bandwidthMeasurements:
+          $ref: '#/components/schemas/TestBandwidthMeasurements'
+        dnsServers:
+          type: array
+          description: A list of DNS server FQDN.
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - dns-example.net
+          - 8.8.8.8
+        dnsTransportProtocol:
+          $ref: '#/components/schemas/TestDnsTransportProtocol'
+        domain:
+          $ref: '#/components/schemas/TestDomain'
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        recursiveQueries:
+          type: boolean
+          description: Set true to run query with RD (recursion desired) flag enabled.
+          example: true
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        dnsQueryClass:
+          $ref: '#/components/schemas/DnsQueryClass'
+        type:
+          type: string
+          example: dns-server
+          readOnly: true
+    UnexpandedDnsServerRequestTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/DnsServerRequestProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    DnsServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/DnsServerProperties'
+    DnsServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/DnsServerInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    DnsTraceProperties:
+      type: object
+      required:
+      - domain
+      properties:
+        dnsTransportProtocol:
+          $ref: '#/components/schemas/TestDnsTransportProtocol'
+        domain:
+          $ref: '#/components/schemas/TestDomain'
+        dnsQueryClass:
+          $ref: '#/components/schemas/DnsQueryClass'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        type:
+          type: string
+          example: dns-trace
+          readOnly: true
+    UnexpandedDnsTraceTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/DnsTraceProperties'
+      - type: object
+        required:
+        - interval
+    DnsTraceInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/DnsTraceProperties'
+    DnsTraceTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/DnsTraceInstantTest'
+      - type: object
+        required:
+        - interval
+    DnsSecProperties:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          $ref: '#/components/schemas/TestDomain'
+        dnsQueryClass:
+          $ref: '#/components/schemas/DnsQueryClass'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        type:
+          type: string
+          example: dnssec
+          readOnly: true
+    UnexpandedDnsSecTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/DnsSecProperties'
+      - type: object
+        required:
+        - interval
+    DnsSecInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/DnsSecProperties'
+    DnsSecTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/DnsSecInstantTest'
+      - type: object
+        required:
+        - interval
+    TestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      - kerberos
+      - oauth
+      default: none
+      example: none
+    AgentInterfaces:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          example: 192.1.1.0
+          description: IP address of the agent interface.
+        agentId:
+          type: string
+          description: The agent ID of the enterprise agent for the test.
+          example: '2954'
+    TestClientCertificate:
+      type: string
+      description: String representation (containing newline characters) of client certificate, the private key must be placed
+        first, then the certificate.
+      example: 'REDACTED_PRIVATE_KEY_EXAMPLE
+
+        -----BEGIN CERTIFICATE-----
+
+        MIICUTCCAfugAwIBAgIBADANBgkqhkiG9w0BAQQFADBXMQswCQYDVQQGEwJDTjEL
+
+        -----END CERTIFICATE-----
+
+        '
+    TestCustomHeaders:
+      type: object
+      properties:
+        root:
+          type: object
+          description: Use these HTTP headers for root server request.
+          additionalProperties:
+            type: string
+        domains:
+          type: object
+          description: Use these HTTP headers for the specified domains.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+        all:
+          type: object
+          description: Use these HTTP headers for all domains.
+          additionalProperties:
+            type: string
+      example:
+        root:
+          header1: value1
+        domains:
+          domain1.com:
+            header2: value2
+        all:
+          header3: value3
+    TestDesiredStatusCode:
+      type: string
+      description: Specify the HTTP status code value that indicates a successful response. The default value accepts any
+        2xx or 3xx status code.
+      default: default
+      example: '200'
+    TestDistributedTracing:
+      type: boolean
+      description: Adds distributed tracing headers to API requests using B3 and W3C standards.
+      example: false
+    TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    TestHttpTimeLimit:
+      type: integer
+      minimum: 5
+      maximum: 60
+      description: HTTP time limit in seconds.
+      default: 5
+      example: 5
+    TestHttpVersion:
+      type: integer
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    TestIncludeHeaders:
+      type: boolean
+      description: Set to `true` to capture response headers for objects loaded by the test.
+      default: true
+      example: true
+    TestUrl:
+      type: string
+      description: Target for the test.
+      example: www.thousandeyes.com
+    RequestMethod:
+      type: string
+      enum:
+      - get
+      - post
+      description: HTTP request method.
+      example: get
+    OAuthAuthType:
+      type: string
+      description: HTTP authentication type used for the OAuth request.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    OAuth:
+      type: object
+      properties:
+        testUrl:
+          $ref: '#/components/schemas/TestUrl'
+        requestMethod:
+          $ref: '#/components/schemas/RequestMethod'
+        postBody:
+          type: string
+          description: Enter the OAuth body for the HTTP POST request in this field when using OAuth as the authentication
+            mechanism. No special escaping is required. The value is saved only when `requestMethod` is set to `post`.
+        headers:
+          type: string
+          description: Request headers used for OAuth.
+        authType:
+          $ref: '#/components/schemas/OAuthAuthType'
+        username:
+          type: string
+          description: OAuth username
+        password:
+          type: string
+          description: OAuth password
+          writeOnly: true
+      description: Use this only if you want to use OAuth as the authentication mechanism.
+      example:
+        testUrl: https://api.thousandeyes.com/v7/status
+        requestMethod: post
+        postBody: 'client_id: ************'
+        headers: 'Authorization: Basic ************'
+        authType: none
+        username: user123
+        password: '*******'
+    TestPassword:
+      type: string
+      description: Password for Basic/NTLM authentication.
+      example: password
+      writeOnly: true
+    TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
+    TestSslVersionId:
+      type: string
+      description: 'SSL version options:
+
+
+        * Use ''0'' for automatic selection.
+
+        * Use ''3'' for SSLv3.
+
+        * Use ''4'' for TLS v1.0.
+
+        * Use ''5'' for TLS v1.1.
+
+        * Use ''6'' for TLS v1.2.
+
+        * Use ''7'' for TLS v1.3.
+
+        '
+      enum:
+      - '0'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      default: '0'
+      example: '0'
+    TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    TestUserAgent:
+      type: string
+      description: User-agent string to be provided during the test.
+      example: curl
+    TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    TestVerifyCertificate:
+      type: boolean
+      description: Ignore or acknowledge certificate errors. Set to false to ignore certificate errors.
+      default: false
+      example: false
+    TestAllowUnsafeLegacyRenegotiation:
+      type: boolean
+      description: Allows TLS renegotiation with servers not supporting RFC 5746. Default Set to true to allow unsafe legacy
+        renegotiation.
+      default: true
+      example: true
+    TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    TestOverrideAgentProxy:
+      type: boolean
+      description: Flag indicating if a proxy other than the default should be used. To override the default proxy for agents,
+        set to `true` and specify a value for `overrideProxyId`.
+      default: false
+      example: false
+    TestOverrideProxyId:
+      type: string
+      description: ID of the proxy to be used if the default proxy is overridden.
+      example: '281474976710706'
+    TestCollectProxyNetworkData:
+      type: boolean
+      description: Indicates whether network data to the proxy should be collected.
+      default: false
+      example: false
+    TestVaultCredentialTarget:
+      type: string
+      enum:
+      - username
+      - password
+      - script
+      description: The target setting that the credential should be used for.
+      example: username
+    TestVaultCredential:
+      type: object
+      properties:
+        secretId:
+          type: string
+          description: UUID of the configured secret.
+          example: f27e85b2-318b-4145-b5aa-c9dc8d8b0819
+        target:
+          $ref: '#/components/schemas/TestVaultCredentialTarget'
+    HttpServerBaseProperties:
+      type: object
+      properties:
+        authType:
+          $ref: '#/components/schemas/TestAuthType'
+        agentInterfaces:
+          $ref: '#/components/schemas/AgentInterfaces'
+        bandwidthMeasurements:
+          $ref: '#/components/schemas/TestBandwidthMeasurements'
+        clientCertificate:
+          $ref: '#/components/schemas/TestClientCertificate'
+        contentRegex:
+          type: string
+          description: Content regex, this field does not require escaping.
+          example: (regex)+
+        customHeaders:
+          $ref: '#/components/schemas/TestCustomHeaders'
+        desiredStatusCode:
+          $ref: '#/components/schemas/TestDesiredStatusCode'
+        distributedTracing:
+          $ref: '#/components/schemas/TestDistributedTracing'
+        downloadLimit:
+          type: integer
+          description: Specifies maximum number of bytes to download from the target object.
+          example: 2048
+        dnsOverride:
+          type: string
+          format: ipv4
+          description: IP address to use for DNS override.
+          example: 8.8.8.8
+        httpTargetTime:
+          $ref: '#/components/schemas/TestHttpTargetTime'
+        httpTimeLimit:
+          $ref: '#/components/schemas/TestHttpTimeLimit'
+        httpVersion:
+          $ref: '#/components/schemas/TestHttpVersion'
+        includeHeaders:
+          $ref: '#/components/schemas/TestIncludeHeaders'
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        oAuth:
+          $ref: '#/components/schemas/OAuth'
+        password:
+          $ref: '#/components/schemas/TestPassword'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        sslVersion:
+          $ref: '#/components/schemas/TestSslVersion'
+        sslVersionId:
+          $ref: '#/components/schemas/TestSslVersionId'
+        url:
+          $ref: '#/components/schemas/TestUrl'
+        useNtlm:
+          $ref: '#/components/schemas/TestUseNtlm'
+        userAgent:
+          $ref: '#/components/schemas/TestUserAgent'
+        username:
+          $ref: '#/components/schemas/TestUsername'
+        verifyCertificate:
+          $ref: '#/components/schemas/TestVerifyCertificate'
+        allowUnsafeLegacyRenegotiation:
+          $ref: '#/components/schemas/TestAllowUnsafeLegacyRenegotiation'
+        followRedirects:
+          $ref: '#/components/schemas/TestFollowRedirects'
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        overrideAgentProxy:
+          $ref: '#/components/schemas/TestOverrideAgentProxy'
+        overrideProxyId:
+          $ref: '#/components/schemas/TestOverrideProxyId'
+        collectProxyNetworkData:
+          $ref: '#/components/schemas/TestCollectProxyNetworkData'
+        vaultCredentials:
+          type: array
+          description: List of credential IDs that are stored in an external vault.
+          items:
+            $ref: '#/components/schemas/TestVaultCredential'
+    TestHeaders:
+      type: array
+      description: HTTP request headers used.
+      items:
+        type: string
+      example:
+      - 'header1: value1'
+      - 'header2: value2'
+    TestHttpType:
+      type: string
+      example: http-server
+      readOnly: true
+    HttpServerProperties:
+      allOf:
+      - $ref: '#/components/schemas/HttpServerBaseProperties'
+      - type: object
+        required:
+        - url
+        properties:
+          headers:
+            $ref: '#/components/schemas/TestHeaders'
+          downloadLimit:
+            type: integer
+            description: Specifies maximum number of bytes to download from the target object.
+            example: 2048
+          dnsOverride:
+            type: string
+            format: ipv4
+            description: IP address to use for DNS override.
+            example: 8.8.8.8
+          randomizedStartTime:
+            $ref: '#/components/schemas/TestRandomizedStartTime'
+          requestMethod:
+            $ref: '#/components/schemas/RequestMethod'
+          postBody:
+            type: string
+            description: Enter the body for the HTTP POST request in this field. No special escaping is required. If content
+              is provided and `requestMethod` is not specified, `requestMethod` is automatically set to `post`.
+            example: '{ "example" : "value"}'
+          ipv6Policy:
+            $ref: '#/components/schemas/TestIpv6Policy'
+          type:
+            $ref: '#/components/schemas/TestHttpType'
+    UnexpandedHttpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/HttpServerProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    HttpServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/HttpServerProperties'
+    HttpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/HttpServerInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    TestPageLoadTimeLimit:
+      type: integer
+      description: Page load time limit. Must be larger than the `httpTimeLimit`.
+      minimum: 5
+      maximum: 60
+      default: 10
+      example: 10
+    TestBlockDomains:
+      type: string
+      description: Domains or full object URLs to be excluded from metrics and waterfall data for transaction tests.
+      example: domain.com/
+    TestDisableScreenshot:
+      type: boolean
+      description: Enables or disables screenshots on error. Set true to not capture
+      default: false
+      example: false
+    TestAllowMicAndCamera:
+      type: boolean
+      description: Set true allow the use of a fake mic and camera in the browser.
+      default: false
+      example: false
+    TestAllowGeolocation:
+      type: boolean
+      description: Set true to use the agent’s geolocation by the web page.
+      default: false
+      example: false
+    TestBrowserLanguage:
+      type: string
+      description: Set one of the available browser language that you want to use to configure the browser.
+      example: en-US
+    TestChromeOptions:
+      type: string
+      description: Command-line options passed to Chrome when running the test.
+      default: ''
+      example: --disable-gpu
+    TestChromePolicies:
+      type: string
+      description: JSON string of Chrome policy settings to apply.
+      default: '{}'
+      example: '{"ProxyMode":"direct"}'
+    TestChromiumTrack:
+      type: string
+      enum:
+      - stable
+      - latest
+      description: '* `stable`: Uses the default Chromium version.
+
+        * `latest`: Uses the newest Chromium version available from ThousandEyes as soon as it is available. Performance may
+        differ from tests using the default Chromium version.
+
+        '
+      default: stable
+      example: stable
+    TestPageLoadingStrategy:
+      type: string
+      enum:
+      - normal
+      - eager
+      - none
+      description: "* `normal`: The test waits until the entire page is fully loaded, including the downloading and parsing\
+        \ of HTML content as well as all associated resources, before advancing to the next action in the transaction test\
+        \ script. \n* `eager`: The test waits for the DOMContentLoaded event, indicating that HTML content is downloaded and\
+        \ parsed, and the document reaches the \"interactive\" readiness state, before proceeding to the next action in the\
+        \ test script.\n* `none`: The test only waits for the download of HTML content. Once the HTML is downloaded, the test\
+        \ continues to the next action in the transaction test script without waiting for additional resources.\n"
+      default: normal
+      example: normal
+    TestPageLoadType:
+      type: string
+      example: page-load
+      readOnly: true
+    TestIdentifyAgentTrafficWithUserAgent:
+      type: boolean
+      description: 'Determines how agent traffic is identified:
+
+
+        * `false`: Adds the `x-thousandeyes-agent: yes` header.
+
+        * `true`: Appends `(ThousandEyes Agent)` to the `user-agent` header.
+
+
+        For more information, see [Notes on Agent ID Strategy](https://docs.thousandeyes.com/product-documentation/browser-synthetics/test-settings-page-load-transaction#notes-on-agent-id-strategy).
+
+        '
+      example: false
+      default: false
+    PageLoadProperties:
+      allOf:
+      - $ref: '#/components/schemas/HttpServerBaseProperties'
+      - type: object
+        required:
+        - url
+        properties:
+          emulatedDeviceId:
+            type: string
+            description: ID of the emulated device, if one was given when the test was created.
+            example: '2'
+          pageLoadTargetTime:
+            type: integer
+            description: Target time for page load completion, specified in seconds and cannot exceed the `pageLoadTimeLimit`.
+            minimum: 1
+            maximum: 60
+            example: 10
+          pageLoadTimeLimit:
+            $ref: '#/components/schemas/TestPageLoadTimeLimit'
+          blockDomains:
+            $ref: '#/components/schemas/TestBlockDomains'
+          disableScreenshot:
+            $ref: '#/components/schemas/TestDisableScreenshot'
+          allowMicAndCamera:
+            $ref: '#/components/schemas/TestAllowMicAndCamera'
+          allowGeolocation:
+            $ref: '#/components/schemas/TestAllowGeolocation'
+          browserLanguage:
+            $ref: '#/components/schemas/TestBrowserLanguage'
+          chromeOptions:
+            $ref: '#/components/schemas/TestChromeOptions'
+          chromePolicies:
+            $ref: '#/components/schemas/TestChromePolicies'
+          chromiumTrack:
+            $ref: '#/components/schemas/TestChromiumTrack'
+          pageLoadingStrategy:
+            $ref: '#/components/schemas/TestPageLoadingStrategy'
+          distributedTracing:
+            $ref: '#/components/schemas/TestDistributedTracing'
+          randomizedStartTime:
+            $ref: '#/components/schemas/TestRandomizedStartTime'
+          type:
+            $ref: '#/components/schemas/TestPageLoadType'
+          identifyAgentTrafficWithUserAgent:
+            $ref: '#/components/schemas/TestIdentifyAgentTrafficWithUserAgent'
+    TestHttpInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: HTTP test run interval. The interval between HTTP test runs in seconds cannot exceed the specified interval
+        value and defaults to the same value as the interval if not set.
+      example: 120
+    TestSubInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1200
+      - 1800
+      - 3600
+      description: Subinterval for round-robin testing (in seconds). Must be less than or equal to interval and must evenly
+        divide interval.
+      example: 60
+    UnexpandedPageLoadTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/PageLoadProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          httpInterval:
+            $ref: '#/components/schemas/TestHttpInterval'
+          subinterval:
+            $ref: '#/components/schemas/TestSubInterval'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    PageLoadInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/PageLoadProperties'
+    PageLoadTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/PageLoadInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          httpInterval:
+            $ref: '#/components/schemas/TestHttpInterval'
+          subinterval:
+            $ref: '#/components/schemas/TestSubInterval'
+    TestWebTransactionTimeLimit:
+      type: integer
+      description: Time limit for transaction in seconds.
+      minimum: 5
+      maximum: 180
+      default: 30
+      example: 30
+    TestWebTransactionType:
+      type: string
+      example: web-transactions
+      readOnly: true
+    WebTransactionProperties:
+      allOf:
+      - $ref: '#/components/schemas/HttpServerBaseProperties'
+      - type: object
+        required:
+        - transactionScript
+        - url
+        properties:
+          emulatedDeviceId:
+            type: string
+            description: ID of the emulated device, if specified when the test was created.
+            example: '2'
+          targetTime:
+            type: integer
+            description: Target completion time, in seconds. Defaults to 10. Cannot exceed the `timeLimit` value.
+            minimum: 1
+            maximum: 180
+            default: 10
+            example: 1
+          timeLimit:
+            $ref: '#/components/schemas/TestWebTransactionTimeLimit'
+          transactionScript:
+            type: string
+            description: JavaScript of a web transaction test. Quotes must be escaped (precede " characters with \ ).
+            example: if (true) { return true; }
+          flagCollectConsoleLogs:
+            type: boolean
+            description: Whether to collect console logs during script execution.
+            default: false
+            example: false
+          blockDomains:
+            $ref: '#/components/schemas/TestBlockDomains'
+          disableScreenshot:
+            $ref: '#/components/schemas/TestDisableScreenshot'
+          allowMicAndCamera:
+            $ref: '#/components/schemas/TestAllowMicAndCamera'
+          allowGeolocation:
+            $ref: '#/components/schemas/TestAllowGeolocation'
+          browserLanguage:
+            $ref: '#/components/schemas/TestBrowserLanguage'
+          chromeOptions:
+            $ref: '#/components/schemas/TestChromeOptions'
+          chromePolicies:
+            $ref: '#/components/schemas/TestChromePolicies'
+          chromiumTrack:
+            $ref: '#/components/schemas/TestChromiumTrack'
+          pageLoadingStrategy:
+            $ref: '#/components/schemas/TestPageLoadingStrategy'
+          distributedTracing:
+            $ref: '#/components/schemas/TestDistributedTracing'
+          randomizedStartTime:
+            $ref: '#/components/schemas/TestRandomizedStartTime'
+          type:
+            $ref: '#/components/schemas/TestWebTransactionType'
+          identifyAgentTrafficWithUserAgent:
+            $ref: '#/components/schemas/TestIdentifyAgentTrafficWithUserAgent'
+    UnexpandedWebTransactionTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/WebTransactionProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          subinterval:
+            $ref: '#/components/schemas/TestSubInterval'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    TestCredentials:
+      type: array
+      description: Contains a list of credential IDs (get `credentialId` from `/credentials` endpoint).
+      items:
+        type: string
+      example:
+      - '3247'
+      - '1051'
+    WebTransactionInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/WebTransactionProperties'
+      - type: object
+        properties:
+          credentials:
+            $ref: '#/components/schemas/TestCredentials'
+    WebTransactionTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/WebTransactionInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          subinterval:
+            $ref: '#/components/schemas/TestSubInterval'
+    ApiPredefinedVariable:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Variable name. Must be unique.
+          example: myUsername
+        value:
+          type: string
+          description: Variable value, will be treated as string.
+          example: ThousandEyesAccountUserName
+    ApiRequestAssertionName:
+      type: string
+      enum:
+      - status-code
+      - response-body
+      description: Set to `status-code` to assert the response status code. Set to `response-body` to assert data is present
+        in the response body. Use `ApiRequestAssertion` to set the value for the assertion.
+      example: status-code
+    ApiRequestAssertionOperator:
+      type: string
+      enum:
+      - is
+      - is-not
+      - includes
+      - not-includes
+      - matches
+      - not-matches
+      description: If `name = status-code``, accepted values are [is, is-not]. If `name = response-body``, accepted values
+        are [includes, not-includes, matches, not-matches]`.
+      example: is
+    ApiRequestAssertion:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/ApiRequestAssertionName'
+        operator:
+          $ref: '#/components/schemas/ApiRequestAssertionOperator'
+        value:
+          type: string
+          description: The value of the assertion. If name = `status-code`, the status code to assert. If name = `response-body`,
+            the lookup value to assert.
+          example: 200
+    ApiRequestAuthType:
+      type: string
+      enum:
+      - none
+      - basic
+      - bearer-token
+      - oauth2
+      description: Will override the Authorization request header.
+      default: none
+      example: none
+    ApiClientAuthentication:
+      type: string
+      description: The OAuth2 client authentication location type.
+      enum:
+      - basic-auth-header
+      - in-body
+      example: basic-auth-header
+    ApiRequestHeader:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Request header key.
+          example: x-custom-header
+        value:
+          type: string
+          description: Request header value. Supports variables `{{variableName}}`.
+          example: keep-alive
+    ApiRequestMethod:
+      type: string
+      description: HTTP request method.
+      enum:
+      - get
+      - post
+      - put
+      - delete
+      - patch
+      example: get
+    ApiRequestVariable:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Variable name
+          example: myTestName
+        value:
+          type: string
+          description: The JSON path of data within the Response Body to assign to this variable.
+          example: tests[0].name
+    ApiRequest:
+      type: object
+      required:
+      - name
+      - url
+      properties:
+        assertions:
+          type: array
+          description: List of assertion objects.
+          items:
+            $ref: '#/components/schemas/ApiRequestAssertion'
+        authType:
+          $ref: '#/components/schemas/ApiRequestAuthType'
+        bearerToken:
+          type: string
+          writeOnly: true
+          description: The bearer token if `authType = bearer-token`.
+          example: abcd-1234-...
+        body:
+          type: string
+          description: POST/PUT request body. Must be in JSON format.
+        clientAuthentication:
+          $ref: '#/components/schemas/ApiClientAuthentication'
+        clientId:
+          type: string
+          description: The application ID used when `authType` is set to "oauth2".
+          writeOnly: true
+          example: client-id
+        clientSecret:
+          type: string
+          description: The private client secret used when `authType` is set to "oauth2".
+          writeOnly: true
+          example: client-secret
+        collectApiResponse:
+          type: boolean
+          description: Set to `true` if API response body should be collected and saved. Set to `false` if API response body
+            should not be saved.
+          default: true
+          example: true
+        headers:
+          type: array
+          description: Array of API Request Header objects.
+          items:
+            $ref: '#/components/schemas/ApiRequestHeader'
+        method:
+          $ref: '#/components/schemas/ApiRequestMethod'
+        name:
+          type: string
+          description: API step name, must be unique.
+          example: Step 1
+        password:
+          type: string
+          writeOnly: true
+          description: The password if `authType = basic`.
+          example: basic_pw123
+        scope:
+          type: string
+          description: Application-specific scope values for the access token when `authType` is "oauth2".
+          example: read, write, deploy
+        tokenUrl:
+          type: string
+          description: The endpoint used to request the access token when `authType` is "oauth2".
+          example: https://id.cisco.com/oauth2/default/v1/token
+        url:
+          type: string
+          description: Request url. Supports variables in the format `{{variableName}}`.
+          example: https://api.thousandeyes.com/v7/status
+        username:
+          type: string
+          description: The username if `authType = basic`.
+          example: ThousandEyesUserName
+        variables:
+          type: array
+          description: Array of API post request variable objects.
+          items:
+            $ref: '#/components/schemas/ApiRequestVariable'
+        verifyCertificate:
+          $ref: '#/components/schemas/TestVerifyCertificate'
+        waitTimeMs:
+          type: integer
+          description: Post request delay before executing the next API requests, in milliseconds.
+          example: 0
+    ApiProperties:
+      type: object
+      required:
+      - requests
+      - url
+      properties:
+        clientCertificate:
+          $ref: '#/components/schemas/TestClientCertificate'
+        clientCertDomainsAllowList:
+          type: string
+          example: www.thousandeyes.com
+          description: Comma separated list of domains to send the client certificate.
+        collectProxyNetworkData:
+          $ref: '#/components/schemas/TestCollectProxyNetworkData'
+        distributedTracing:
+          $ref: '#/components/schemas/TestDistributedTracing'
+        followRedirects:
+          $ref: '#/components/schemas/TestFollowRedirects'
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        overrideAgentProxy:
+          $ref: '#/components/schemas/TestOverrideAgentProxy'
+        overrideProxyId:
+          $ref: '#/components/schemas/TestOverrideProxyId'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        predefinedVariables:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiPredefinedVariable'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiRequest'
+        sslVersionId:
+          $ref: '#/components/schemas/TestSslVersionId'
+        targetTime:
+          type: integer
+          description: Target time for completion metric, defaults to 50% of time limit specified in seconds. (0 means default
+            behavior)
+          minimum: 0
+          maximum: 60
+          example: 1
+        timeLimit:
+          type: integer
+          description: Time limit for transaction in seconds. Exceeding this limit will result in a Timeout error.
+          minimum: 5
+          maximum: 180
+          default: 30
+        type:
+          type: string
+          example: api
+          readOnly: true
+        url:
+          $ref: '#/components/schemas/TestUrl'
+    UnexpandedApiTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/ApiProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    ApiInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/ApiProperties'
+      - type: object
+        properties:
+          credentials:
+            $ref: '#/components/schemas/TestCredentials'
+          vaultCredentials:
+            type: array
+            description: List of credential IDs that are stored in an external vault.
+            items:
+              $ref: '#/components/schemas/TestVaultCredential'
+    ApiTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/ApiInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    FtpServerRequestType:
+      type: string
+      enum:
+      - download
+      - upload
+      - list
+      description: Set the type of activity for the test.
+      example: download
+    FtpServerProperties:
+      type: object
+      required:
+      - requestType
+      - url
+      - username
+      properties:
+        bandwidthMeasurements:
+          $ref: '#/components/schemas/TestBandwidthMeasurements'
+        downloadLimit:
+          type: integer
+          description: Specify maximum number of bytes to download from the target object.
+          example: 1048576
+        ftpTargetTime:
+          type: integer
+          description: Target time for operation completion; specified in milliseconds.
+          minimum: 1000
+          maximum: 6000
+        ftpTimeLimit:
+          type: integer
+          description: Set the time limit for the test in seconds.
+          minimum: 10
+          maximum: 60
+          default: 10
+          example: 10
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        password:
+          $ref: '#/components/schemas/TestPassword'
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        requestType:
+          $ref: '#/components/schemas/FtpServerRequestType'
+        url:
+          $ref: '#/components/schemas/TestUrl'
+        useActiveFtp:
+          type: boolean
+          description: Explicitly set the flag to use active FTP.
+          default: false
+          example: false
+        useExplicitFtps:
+          type: boolean
+          description: Use explicit FTPS (ftp over SSL). By default, tests will autodetect when it is appropriate to use FTPS.
+          example: false
+        username:
+          $ref: '#/components/schemas/TestUsername'
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        type:
+          type: string
+          example: ftp-server
+          readOnly: true
+    UnexpandedFtpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/FtpServerProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    FtpServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/FtpServerProperties'
+    FtpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/FtpServerInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+    SipServerProperties:
+      type: object
+      required:
+      - port
+      - targetSipCredentials
+      properties:
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        optionsRegex:
+          type: string
+          description: Options regex, this field does not require escaping.
+          example:
+          - a-z
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        registerEnabled:
+          type: boolean
+          description: Set to true to perform SIP registration on the test target with the SIP REGISTER command.
+          default: false
+          example: false
+        sipTargetTime:
+          type: integer
+          minimum: 100
+          maximum: 5000
+          description: Target time for test completion in milliseconds.
+          example: 1000
+        sipTimeLimit:
+          type: integer
+          minimum: 5
+          maximum: 10
+          description: Time limit in milliseconds.
+          default: 5
+          example: 5
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        type:
+          type: string
+          example: sip-server
+          readOnly: true
+    TestSipAuthUser:
+      type: string
+      description: Username for authentication with SIP server.
+      example: username
+    SipTestProtocol:
+      type: string
+      enum:
+      - tcp
+      - tls
+      - udp
+      description: Transport layer for SIP communication.
+      default: tcp
+      example: tcp
+    TestSipRegistrar:
+      type: string
+      description: SIP server to be tested, specified by domain name or IP address.
+      example: voice.thousandeyes.com
+    TestSipUser:
+      type: string
+      description: Username for SIP registration, should be unique within a ThousandEyes account group.
+      example: username
+    UnexpandedSipServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+      - type: object
+        required:
+        - interval
+        - port
+        properties:
+          authUser:
+            $ref: '#/components/schemas/TestSipAuthUser'
+          password:
+            $ref: '#/components/schemas/TestPassword'
+          port:
+            $ref: '#/components/schemas/TestPort'
+          protocol:
+            $ref: '#/components/schemas/SipTestProtocol'
+          sipRegistrar:
+            $ref: '#/components/schemas/TestSipRegistrar'
+          user:
+            $ref: '#/components/schemas/TestSipUser'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    TestSipCredentials:
+      type: object
+      required:
+      - port
+      properties:
+        authUser:
+          $ref: '#/components/schemas/TestSipAuthUser'
+        password:
+          $ref: '#/components/schemas/TestPassword'
+        port:
+          $ref: '#/components/schemas/TestPort'
+        protocol:
+          $ref: '#/components/schemas/SipTestProtocol'
+        sipRegistrar:
+          $ref: '#/components/schemas/TestSipRegistrar'
+        user:
+          $ref: '#/components/schemas/TestSipUser'
+    SipServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+    SipServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - $ref: '#/components/schemas/SipServerInstantTest'
+      - $ref: '#/components/schemas/TestSipCredentials'
+      required:
+      - interval
+    VoiceProperties:
+      type: object
+      required:
+      - targetAgentId
+      properties:
+        codec:
+          type: string
+          description: Codec label
+          example: G.711 @ 64 Kbps
+          readOnly: true
+        codecId:
+          type: string
+          description: 'Codec identifier for the RTP stream. Valid values:
+
+
+            * `0`: G.711 @ 64 Kbps
+
+            * `1`: G.722.1 @ 24 Kbps (WB)
+
+            * `2`: G.722.1 @ 32 Kbps (WB)
+
+            * `3`: G.726 @ 32 Kbps
+
+            * `4`: G.723.1 @ 6.4 Kbps
+
+            * `5`: G.729a @ 8 Kbps
+
+            * `6`: RTAudio @ 45 Kbps (WB)
+
+            * `7`: RTAudio @ 27.8 Kbps
+
+            * `8`: SILK @ 36 Kbps (WB)
+
+            * `9`: G.722 @ 64 Kbps (WB)
+
+            '
+          example: '0'
+        dscp:
+          $ref: '#/components/schemas/TestDscp'
+        dscpId:
+          $ref: '#/components/schemas/TestDscpId'
+        duration:
+          type: integer
+          minimum: 5
+          maximum: 30
+          description: Duration of the test in seconds.
+          default: 5
+          example: 5
+        jitterBuffer:
+          type: integer
+          minimum: 0
+          maximum: 150
+          description: De-jitter buffer size in seconds.
+          default: 40
+          example: 40
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        port:
+          type: integer
+          minimum: 1024
+          maximum: 65535
+          description: Port number for the chosen protocol.
+          example: 1024
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        targetAgentId:
+          type: string
+          description: Agent ID of the target agent for the test.
+          example: '281474976710706'
+        type:
+          type: string
+          example: voice
+          readOnly: true
+    UnexpandedVoiceTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/VoiceProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    VoiceInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/VoiceProperties'
+    VoiceTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/VoiceInstantTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.

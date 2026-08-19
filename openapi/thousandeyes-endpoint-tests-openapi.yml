@@ -1,0 +1,1738 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  title: Endpoint Tests API
+  version: 7.0.100
+  description: 'Manage endpoint agent dynamic and scheduled tests using the Endpoint Tests API.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+externalDocs:
+  description: Find out more about Endpoint Agent Scheduled Tests
+  url: https://docs.thousandeyes.com/product-documentation/end-user-monitoring/scheduled-tests
+tags:
+- name: Endpoint Scheduled Tests
+- name: Agent to Server Endpoint Scheduled Tests
+- name: HTTP Server Endpoint Scheduled Tests
+- name: Agent To Server Endpoint Dynamic Tests
+- name: Endpoint Real User Tests
+paths:
+  /endpoint/tests/scheduled-tests:
+    get:
+      tags:
+      - Endpoint Scheduled Tests
+      summary: List endpoint scheduled tests
+      operationId: getEndpointScheduledTests
+      description: 'Returns a list of all endpoint scheduled tests configured in ThousandEyes. This list does not contain
+        saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/real-user-tests:
+    get:
+      tags:
+      - Endpoint Real User Tests
+      summary: List endpoint real user tests
+      operationId: getEndpointRealUserTests
+      description: Returns real user test domain monitoring profiles for endpoint agents.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Real user test domain monitoring profiles.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointRealUserTestsResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/scheduled-tests/agent-to-server:
+    get:
+      tags:
+      - Agent to Server Endpoint Scheduled Tests
+      summary: List agent to server endpoint scheduled tests
+      operationId: getAgentToServerEndpointScheduledTests
+      description: 'Returns a list of all agent to server endpoint scheduled tests configured in ThousandEyes. This list does
+        not contain saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentToServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Agent to Server Endpoint Scheduled Tests
+      summary: Creates agent to server endpoint scheduled test
+      operationId: createAgentToServerEndpointScheduledTest
+      description: 'Creates a new endpoint test in ThousandEyes using properties specified in the POST data.
+
+        Please note that only Account Admins have the authorization to create new tests; regular users are restricted from
+        using POST-based methods.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointAgentToServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentToServerTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/scheduled-tests/agent-to-server/{testId}:
+    get:
+      tags:
+      - Agent to Server Endpoint Scheduled Tests
+      summary: Retrieve agent to server endpoint scheduled test
+      operationId: getAgentToServerEndpointScheduledTest
+      description: Retrieves details of an agent to server endpoint scheduled test.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentToServerTest'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    patch:
+      tags:
+      - Agent to Server Endpoint Scheduled Tests
+      summary: Update agent to server endpoint scheduled test
+      operationId: updateAgentToServerEndpointScheduledTest
+      description: "Updates an agent to server scheduled test. Includes support for \nenabling and disabling the test."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointNetworkTestUpdate'
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentToServerTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Agent to Server Endpoint Scheduled Tests
+      summary: Delete agent to server scheduled test
+      operationId: deleteAgentToServerEndpointScheduledTest
+      description: Deletes an agent to server endpoint scheduled test.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/scheduled-tests/http-server:
+    get:
+      tags:
+      - HTTP Server Endpoint Scheduled Tests
+      summary: List HTTP server endpoint scheduled tests
+      operationId: getHttpServerEndpointScheduledTests
+      description: 'Returns a list of agent to server endpoint scheduled tests configured in ThousandEyes. This list does
+        not contain saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointHttpServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - HTTP Server Endpoint Scheduled Tests
+      summary: Create HTTP server endpoint scheduled test
+      operationId: createHttpServerEndpointScheduledTest
+      description: 'Creates a new HTTP server endpoint test in ThousandEyes, using properties specified in the POST data.
+
+        Please note that only users with Account Admin privileges have the authorization to create new tests; regular users
+        are restricted from using POST-based methods.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointHttpServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointHttpServerTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/scheduled-tests/http-server/{testId}:
+    get:
+      tags:
+      - HTTP Server Endpoint Scheduled Tests
+      summary: Retrieves HTTP server endpoint scheduled test
+      operationId: getHttpServerEndpointScheduledTest
+      description: Retrieves details of an HTTP Server endpoint scheduled test.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointHttpServerTest'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    patch:
+      tags:
+      - HTTP Server Endpoint Scheduled Tests
+      summary: Update HTTP server endpoint scheduled test
+      operationId: updateHttpServerEndpointScheduledTest
+      description: "Updates an HTTP server scheduled test. Includes support for \nenabling and disabling the test."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointHttpTestUpdate'
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointHttpServerTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - HTTP Server Endpoint Scheduled Tests
+      summary: Delete HTTP server scheduled test
+      operationId: deleteHttpServerEndpointScheduledTest
+      description: Deletes an HTTP server endpoint scheduled test.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/dynamic-tests/agent-to-server:
+    get:
+      tags:
+      - Agent To Server Endpoint Dynamic Tests
+      summary: List endpoint dynamic tests
+      operationId: getAgentToServerEndpointDynamicTests
+      description: 'Returns a list of all endpoint dynamic tests configured in ThousandEyes. This list does not contain saved
+        events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DynamicTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - Agent To Server Endpoint Dynamic Tests
+      summary: Create endpoint dynamic test
+      operationId: createAgentToServerEndpointDynamicTest
+      description: 'Create a new endpoint dynamic test in ThousandEyes using properties specified in the POST data.
+
+        Please note that only Account Admins have the authorization to create new tests; regular users are restricted from
+        using POST-based methods.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DynamicTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DynamicTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /endpoint/tests/dynamic-tests/agent-to-server/{testId}:
+    get:
+      tags:
+      - Agent To Server Endpoint Dynamic Tests
+      summary: Retrieve endpoint dynamic test
+      operationId: getAgentToServerEndpointDynamicTest
+      description: Returns details of an endpoint dynamic test, including test type, name, intervals, targets.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DynamicTest'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    patch:
+      tags:
+      - Agent To Server Endpoint Dynamic Tests
+      summary: Update agent to server dynamic test
+      operationId: updateAgentToServerEndpointDynamicTest
+      description: "Updates an agent to server endpoint dynamic test. Includes support for \nenabling and disabling the test."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointDynamicTestUpdate'
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DynamicTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - Agent To Server Endpoint Dynamic Tests
+      summary: Delete agent to server dynamic test
+      operationId: deleteAgentToServerEndpointDynamicTest
+      description: Deletes an agent to server endpoint dynamic test.
+      parameters:
+      - $ref: '#/components/parameters/TestId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  parameters:
+    TestId:
+      name: testId
+      in: path
+      description: Unique ID of endpoint test.
+      example: '584739201'
+      required: true
+      schema:
+        type: string
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  schemas:
+    EndpointRealUserTestsResponse:
+      type: object
+      required:
+      - realUserTests
+      properties:
+        realUserTests:
+          type: array
+          description: Real user test domain monitoring profiles.
+          items:
+            $ref: '#/components/schemas/EndpointRealUserTest'
+    EndpointRealUserTest:
+      type: object
+      required:
+      - profileId
+      - aid
+      - name
+      - includedDomains
+      - excludedDomains
+      - monitoringSettings
+      properties:
+        profileId:
+          type: string
+          description: Unique ID of the monitoring profile.
+          example: '73421'
+          readOnly: true
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        name:
+          type: string
+          description: Monitoring profile name.
+          example: Corporate domains
+          readOnly: true
+        includedDomains:
+          type: array
+          description: Domains included in real user monitoring.
+          items:
+            type: string
+            example: example.com
+            readOnly: true
+        excludedDomains:
+          type: array
+          description: Domains excluded from real user monitoring.
+          items:
+            type: string
+            example: static.example.com
+            readOnly: true
+        monitoringSettings:
+          $ref: '#/components/schemas/EndpointMonitoringSettings'
+    EndpointMonitoringSettings:
+      type: object
+      required:
+      - monitoringSettingsType
+      example:
+        monitoringSettingsId: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
+        monitoringSettingsType: agent-tags
+        tagIds:
+        - 49d9e7d2-7df5-43df-9b37-aa596b929062
+        labelIds:
+        - '567'
+      properties:
+        monitoringSettingsId:
+          type: string
+          nullable: true
+          description: Unique ID of the monitoring settings.
+          example: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
+          readOnly: true
+        monitoringSettingsType:
+          $ref: '#/components/schemas/EndpointMonitoringSettingsType'
+        agentIds:
+          type: array
+          nullable: true
+          description: Endpoint Agent IDs selected by the monitoring settings.
+          items:
+            $ref: '#/components/schemas/EndpointAgentId'
+        tagIds:
+          type: array
+          nullable: true
+          description: Endpoint Agent tag IDs selected by the monitoring settings.
+          example:
+          - 49d9e7d2-7df5-43df-9b37-aa596b929062
+          items:
+            type: string
+            format: uuid
+        labelIds:
+          type: array
+          nullable: true
+          description: Legacy Endpoint Agent label IDs selected by the monitoring settings.
+          example:
+          - '567'
+          items:
+            type: string
+            example: '567'
+            readOnly: true
+    EndpointMonitoringSettingsType:
+      type: string
+      description: Endpoint Agent selector type used by the monitoring settings.
+      enum:
+      - all-agents
+      - specific-agents
+      - agent-labels
+      - agent-tags
+      example: agent-tags
+      readOnly: true
+    DynamicTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/DynamicTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointAgentToServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentToServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointHttpServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointHttpServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointHttpTestUpdate:
+      allOf:
+      - $ref: '#/components/schemas/TestUpdate'
+      - type: object
+        properties:
+          url:
+            $ref: '#/components/schemas/EndpointHttpServerTestUrl'
+    EndpointNetworkTestUpdate:
+      allOf:
+      - $ref: '#/components/schemas/TestUpdate'
+      - type: object
+        properties:
+          port:
+            $ref: '#/components/schemas/TestPort'
+          server:
+            type: string
+            description: Target domain name or IP address.
+            example: www.example.com
+    EndpointDynamicTestUpdate:
+      allOf:
+      - $ref: '#/components/schemas/TestUpdate'
+      - type: object
+        properties:
+          application:
+            $ref: '#/components/schemas/DynamicTestApplication'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    EndpointTestAgentSelectorType:
+      type: string
+      enum:
+      - all-agents
+      - specific-agents
+      - agent-labels
+      - agent-tags
+      description: "Specifies how agents are selected for the endpoint test.\n\nAgents can be selected from:\n  - all available\
+        \ agents\n  - a specific list of agents\n  - agents matching tags\n  - agents matching labels (deprecated)\n"
+      default: all-agents
+      example: all-agents
+    EndpointTestAgents:
+      type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType`
+        is set to `specific-agent`.
+      items:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    EndpointAgentLabels:
+      type: array
+      deprecated: true
+      description: 'Deprecated. Use `tagIds` instead.
+
+
+        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is
+        set to `agent-labels`.
+
+        '
+      items:
+        type: string
+      example:
+      - '567'
+      - '214'
+    TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    EndpointIpVersionIn:
+      description: For configuring network tests, the IP version of the test.
+      type: string
+      enum:
+      - V4_ONLY
+      - V6_ONLY
+      - V6_PREFER
+      - OS_DEFAULT
+      example: V4_ONLY
+    EndpointInstantTest:
+      type: object
+      required:
+      - testName
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointTestAgentSelectorType'
+        agents:
+          $ref: '#/components/schemas/EndpointTestAgents'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionIn'
+    EndpointTestPort:
+      type: integer
+      description: Port number.
+      default: 443
+      example: 443
+    EndpointAgentToServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointInstantTest'
+      - type: object
+        required:
+        - server
+        properties:
+          serverName:
+            type: string
+            deprecated: true
+            description: A server address without a protocol or IP address. **Deprecated, use `server` instead**.
+            example: www.example.com
+          server:
+            type: string
+            description: Target domain name or IP address.
+            example: www.example.com
+          port:
+            $ref: '#/components/schemas/EndpointTestPort'
+    TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds
+        the license limit.
+      default: false
+      example: false
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    EndpointTestProtocol:
+      type: string
+      enum:
+      - icmp
+      - icmp-with-tcp-connect
+      - tcp
+      - prefer-tcp
+      - ast-autodetect
+      - autodetect
+      description: Protocol requested for the test.
+      default: icmp
+      example: icmp
+    EndpointAgentToServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointAgentToServerInstantTest'
+      - type: object
+        properties:
+          isPrioritized:
+            $ref: '#/components/schemas/TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          protocol:
+            $ref: '#/components/schemas/EndpointTestProtocol'
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint.
+      example: '1234'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EndpointTestSelfLink:
+      allOf:
+      - description: A reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Link'
+    ScheduledTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
+    EndpointTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/EndpointTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/ScheduledTestResults'
+      readOnly: true
+    EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
+    EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    EndpointSpecificAgentsSelectorConfig:
+      type: object
+      description: Specific agents selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointSpecificAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        agents:
+          $ref: '#/components/schemas/EndpointTestAgents'
+      required:
+      - agentSelectorType
+    EndpointAgentLabelsSelectorType:
+      type: string
+      example: agent-labels
+      pattern: ^agent-labels$
+    EndpointAgentLabelsSelectorConfig:
+      type: object
+      description: Agent labels selection object.
+      readOnly: true
+      deprecated: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentLabelsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointAgentTagsSelectorType:
+      type: string
+      example: agent-tags
+      pattern: ^agent-tags$
+    EndpointAgentTagsSelectorConfig:
+      type: object
+      description: Agent tags selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentTagsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointAgentSelectorConfig:
+      type: object
+      description: Agents selection object based on agentSelectorType.
+      readOnly: true
+      oneOf:
+      - $ref: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    TestIsSavedEvent:
+      type: boolean
+      description: 'Indicates if the test is a saved event.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect
+        API.
+
+        '
+      example: false
+      readOnly: true
+    TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server
+        and sends path trace packets within the established TCP session.
+      example: true
+    TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestLabel'
+    TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY,
+        V6_PREFER, and OS_DEFAULT.
+      type: string
+      example: V4_ONLY
+    EndpointScheduledTestType:
+      type: string
+      enum:
+      - agent-to-server
+      - http-server
+      description: Type of test being queried.
+      example: agent-to-server
+      readOnly: true
+    TestProbeModeResponse:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses
+        return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
+    EndpointTest:
+      type: object
+      required:
+      - type
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        _links:
+          $ref: '#/components/schemas/EndpointTestLinks'
+        agentSelectorConfig:
+          $ref: '#/components/schemas/EndpointAgentSelectorConfig'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        isPrioritized:
+          $ref: '#/components/schemas/TestIsPrioritized'
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        isEnabled:
+          $ref: '#/components/schemas/TestIsEnabled'
+        isSavedEvent:
+          $ref: '#/components/schemas/TestIsSavedEvent'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        labels:
+          $ref: '#/components/schemas/TestLabels'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionOut'
+        server:
+          type: string
+          description: Target domain name or IP address.
+          example: www.example.com
+        testId:
+          type: string
+          description: Each test is assigned a unique ID to access test data from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        type:
+          $ref: '#/components/schemas/EndpointScheduledTestType'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        port:
+          $ref: '#/components/schemas/EndpointTestPort'
+    EndpointAgentToServerType:
+      type: string
+      description: Type of test being queried.
+      example: agent-to-server
+      pattern: ^agent-to-server$
+      readOnly: true
+    EndpointAgentToServerTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/EndpointAgentToServerType'
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    EndpointTestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    TestSslVersionId:
+      type: string
+      description: 'SSL version options:
+
+
+        * Use ''0'' for automatic selection.
+
+        * Use ''3'' for SSLv3.
+
+        * Use ''4'' for TLS v1.0.
+
+        * Use ''5'' for TLS v1.1.
+
+        * Use ''6'' for TLS v1.2.
+
+        * Use ''7'' for TLS v1.3.
+
+        '
+      enum:
+      - '0'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      default: '0'
+      example: '0'
+    EndpointTestResultUrl:
+      type: string
+      description: The test target URL.
+      example: https://example.com:443
+    EndpointHttpServerBaseTest:
+      type: object
+      properties:
+        authType:
+          $ref: '#/components/schemas/EndpointTestAuthType'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        httpTimeLimit:
+          type: integer
+          description: Maximum amount of time in milliseconds the agents wait before a request times out.
+          default: 5000
+          example: 5000
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        username:
+          $ref: '#/components/schemas/TestUsername'
+        sslVersionId:
+          $ref: '#/components/schemas/TestSslVersionId'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        verifyCertificate:
+          type: boolean
+          description: Flag indicating if a certificate should be verified.
+          default: true
+          example: true
+        url:
+          $ref: '#/components/schemas/EndpointTestResultUrl'
+    TestRequestHasPing:
+      type: boolean
+      description: Optional flag indicating if the test should run ping.
+      default: true
+      deprecated: true
+      example: true
+    TestRequestHasTraceRoute:
+      type: boolean
+      description: Optional flag indicating if the test should run traceroute.
+      default: true
+      deprecated: true
+      example: true
+    TestPassword:
+      type: string
+      description: Password for Basic/NTLM authentication.
+      example: password
+      writeOnly: true
+    TestProbeMode:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      description: Probe mode used by network test, only valid when the protocol is set to TCP.
+      default: auto
+      example: auto
+    EndpointHttpServerTestUrl:
+      type: string
+      description: "The test target URL. You can optionally specify the protocol (`http` or `https`). \n\n- **Default Protocol:**\
+        \ If no protocol is specified, `https` is used by default.\n\n- **Port Number:** To specify a port, append it to the\
+        \ URL with a colon after the hostname or IP address (e.g., `https://example.com:443`).\n\n    - If no port is specified\
+        \ in the URL, the `port` is determined by the default for protocol (HTTP: 80, HTTPS: 443).\n"
+      example: https://example.com:443
+    EndpointHttpServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointInstantTest'
+      - $ref: '#/components/schemas/EndpointHttpServerBaseTest'
+      - type: object
+        required:
+        - url
+        properties:
+          hasPing:
+            $ref: '#/components/schemas/TestRequestHasPing'
+          hasTraceroute:
+            $ref: '#/components/schemas/TestRequestHasTraceRoute'
+          networkMeasurements:
+            $ref: '#/components/schemas/TestNetworkMeasurements'
+          targetResponseTime:
+            type: integer
+            description: Response time target in milliseconds. Affects the colors of agents and legends on the view page.
+              The value is compared with actual response time in order to determine the color scale (from green to red).
+            default: 1000
+            example: 1000
+          password:
+            $ref: '#/components/schemas/TestPassword'
+          tcpProbeMode:
+            $ref: '#/components/schemas/TestProbeMode'
+          url:
+            $ref: '#/components/schemas/EndpointHttpServerTestUrl'
+    EndpointHttpServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointHttpServerInstantTest'
+      - type: object
+        properties:
+          isPrioritized:
+            $ref: '#/components/schemas/TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          networkMeasurements:
+            $ref: '#/components/schemas/TestNetworkMeasurements'
+    EndpointHttpServerType:
+      type: string
+      description: Type of test being queried.
+      example: http-server
+      pattern: ^http-server$
+      readOnly: true
+    TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    TestHttpVersion:
+      type: integer
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
+    TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    EndpointHttpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointTest'
+      - $ref: '#/components/schemas/EndpointHttpServerBaseTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/EndpointHttpServerType'
+          followRedirects:
+            $ref: '#/components/schemas/TestFollowRedirects'
+          httpTargetTime:
+            $ref: '#/components/schemas/TestHttpTargetTime'
+          httpVersion:
+            $ref: '#/components/schemas/TestHttpVersion'
+          isPrioritized:
+            $ref: '#/components/schemas/TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          sslVersion:
+            $ref: '#/components/schemas/TestSslVersion'
+          useNtlm:
+            $ref: '#/components/schemas/TestUseNtlm'
+    DynamicTestApplication:
+      type: string
+      description: Which supported application to monitor, can be one of `webex`, `zoom`, `microsoft-teams`.
+      example: webex
+    DynamicTestRequest:
+      allOf:
+      - type: object
+        required:
+        - testName
+        - application
+        properties:
+          agentSelectorType:
+            $ref: '#/components/schemas/EndpointTestAgentSelectorType'
+          agents:
+            $ref: '#/components/schemas/EndpointTestAgents'
+          endpointAgentLabels:
+            $ref: '#/components/schemas/EndpointAgentLabels'
+          tagIds:
+            $ref: '#/components/schemas/TagIds'
+          isPrioritized:
+            $ref: '#/components/schemas/TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          maxMachines:
+            $ref: '#/components/schemas/EndpointTestMaxMachines'
+          application:
+            $ref: '#/components/schemas/DynamicTestApplication'
+          protocol:
+            $ref: '#/components/schemas/EndpointTestProtocol'
+          tcpProbeMode:
+            $ref: '#/components/schemas/TestProbeMode'
+          testName:
+            $ref: '#/components/schemas/TestName'
+          hasPathTraceInSession:
+            $ref: '#/components/schemas/TestHasPathTraceInSession'
+          ipVersion:
+            $ref: '#/components/schemas/EndpointIpVersionIn'
+    DynamicTestSelfLink:
+      allOf:
+      - description: The reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/dynamic-tests/agent-to-server/281474976710706
+      - $ref: '#/components/schemas/Link'
+    DynamicTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/pathvis
+    DynamicTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/DynamicTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/DynamicTestResults'
+      readOnly: true
+    TestHasPing:
+      type: boolean
+      description: Optional flag indicating if the test should run ping.
+      default: true
+    TestHasTraceRoute:
+      type: boolean
+      description: Optional flag indicating if the test should run traceroute.
+      default: true
+    DynamicTest:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        _links:
+          $ref: '#/components/schemas/DynamicTestLinks'
+        agentSelectorConfig:
+          $ref: '#/components/schemas/EndpointAgentSelectorConfig'
+        application:
+          $ref: '#/components/schemas/DynamicTestApplication'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        isPrioritized:
+          $ref: '#/components/schemas/TestIsPrioritized'
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        isEnabled:
+          $ref: '#/components/schemas/TestIsEnabled'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        hasPing:
+          $ref: '#/components/schemas/TestHasPing'
+        hasTraceroute:
+          $ref: '#/components/schemas/TestHasTraceRoute'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionOut'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        testId:
+          type: string
+          description: Each test is assigned a unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        labels:
+          $ref: '#/components/schemas/TestLabels'
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    TestUpdate:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        isEnabled:
+          $ref: '#/components/schemas/TestIsEnabled'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+    TestPort:
+      type: integer
+      minimum: 1
+      maximum: 65535
+      description: Target port.
+      default: 49153
+      example: 49153
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.

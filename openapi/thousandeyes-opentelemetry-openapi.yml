@@ -1,0 +1,746 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  title: ThousandEyes for OpenTelemetry API
+  version: 7.0.100
+  description: "**Note:** The following ThousandEyes for OpenTelemetry API capabilities are not available for ThousandEyes\
+    \ for Government instance:\n\n* Traces\n* Connected Devices\n* OTel-based integrations that rely on connectors and operations,\
+    \ including:\n  * Splunk Cloud Platform HEC\n  * Splunk Enterprise HEC\n  * Splunk Observability APM\n  * Dynatrace Observability\
+    \ APM\n\nThousandEyes for OpenTelemetry provides machine-to-machine integration between ThousandEyes and its customers.\
+    \ It allows you to export ThousandEyes telemetry data in OTel format, which is widely used in the industry. With ThousandEyes\
+    \ for OTel, you can leverage frameworks widely used in the observability domain - such as Splunk, Grafana, and Honeycomb\
+    \ - to capture and analyze ThousandEyes data. Any client that supports OTel can use ThousandEyes for OpenTelemetry.\n\n\
+    ThousandEyes for OTel is made up of the following components:\n\n* Data streaming APIs that you can use to configure and\
+    \ enable your ThousandEyes tests with OTel-compatible streams,\nin particular to configure how ThousandEyes telemetry\
+    \ data is exported to client integrations.\n* A set of streaming pipelines called _collectors_ that actively fetch ThousandEyes\
+    \ network test data, enrich the data with some additional\ndetail, filter, and push the data to the customer-configured\
+    \ endpoints, depending on what you configure via the public APIs.\n* Third-party OTel collectors that receive, transform,\
+    \ filter, and export different metrics to client applications such as AppD, or any other OTel-capable client\nconfiguration.\n\
+    \nFor more information about ThousandEyes for OpenTelemetry, see the [product documentation](https://docs.thousandeyes.com/product-documentation/integration-guides/opentelemetry).\n"
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+tags:
+- name: Streaming
+  description: Configure data streaming
+paths:
+  /streams:
+    get:
+      operationId: getStreams
+      tags:
+      - Streaming
+      summary: List data streams
+      description: Retrieves a list of configured data streams. Empty list is returned if no streams are configured.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: type
+        in: query
+        description: Optional filter on type of Stream; should match one of Stream `type` enum
+        required: false
+        schema:
+          $ref: '#/components/schemas/StreamType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StreamCollection'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    post:
+      tags:
+      - Streaming
+      summary: Create data stream
+      operationId: createStream
+      description: Creates a new data stream.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '201':
+          description: item created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CreateStreamResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '401':
+          $ref: '#/components/responses/401'
+        '409':
+          description: An existing item already exists
+        '412':
+          description: Reached limit on number of streams (maximum 10 data streams per account group)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorIntegrationLimits'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stream'
+        description: Stream to configure
+  /streams/{id}:
+    get:
+      operationId: getStream
+      tags:
+      - Streaming
+      summary: Retrieve data stream
+      description: Retrieves a configured data stream using its ID.
+      parameters:
+      - name: id
+        in: path
+        description: ID of stream to query
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: type
+        in: query
+        description: Optional filter on type of Stream; should match one of Stream `type` enum
+        required: false
+        schema:
+          $ref: '#/components/schemas/StreamType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetStreamResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    put:
+      operationId: updateStream
+      tags:
+      - Streaming
+      summary: Update data stream
+      description: Updates a configured data stream using its ID. The fields are overwritten, not appended.
+      parameters:
+      - name: id
+        in: path
+        description: ID of stream to query
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Stream updated
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GetStreamResponse'
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '409':
+          description: A data stream with the same name already exists
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutStream'
+    delete:
+      operationId: deleteStream
+      tags:
+      - Streaming
+      summary: Delete a data stream
+      description: Deletes a configured data stream using its ID.
+      parameters:
+      - name: id
+        in: path
+        description: ID of stream to query
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  schemas:
+    StreamType:
+      description: "The type of data stream to configure.\nWhen using `splunk-hec`:\n  - `endpointType` must be `http`.\n\
+        \  - `exporterConfig.splunkHec.token` must contain the *Splunk HEC Token*."
+      type: string
+      enum:
+      - opentelemetry
+      - splunk-hec
+      example: opentelemetry
+    DataModelVersion:
+      description: "The version of the data model used in the data stream.\nWhen using `v1`:\n  - The `signal` cannot be `trace`."
+      default: v2
+      type: string
+      enum:
+      - v1
+      - v2
+      example: v2
+    AuditOperation:
+      type: object
+      properties:
+        createdBy:
+          type: integer
+          format: int64
+          description: ID of the user who created the integration
+          example: 3962
+        createdDate:
+          type: integer
+          format: int64
+          description: Creation date of the integration
+          example: 1679677853573
+    AuditOperationWithUpdate:
+      allOf:
+      - $ref: '#/components/schemas/AuditOperation'
+      - type: object
+        properties:
+          updatedBy:
+            type: integer
+            format: int64
+            description: ID of the user who last updated the integration
+            example: 3962
+            nullable: true
+          updatedDate:
+            type: integer
+            format: int64
+            description: Date of the last update to the integration
+            example: 1679677853573
+            nullable: true
+    StreamStatus:
+      type: object
+      properties:
+        lastSuccess:
+          type: integer
+          format: int64
+          description: Last timestamp when data was successfully sent to the stream endpoint.
+          example: 1679677853573
+          nullable: true
+        lastFailure:
+          type: integer
+          format: int64
+          description: Last timestamp when data failed to send the stream endpoint.
+          example: 1679677853573
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StreamStatusType'
+    StreamStatusType:
+      type: string
+      description: 'The status of the stream integration. pending: No data is currently being sent to the stream endpoint.
+        failing: Data is being sent but not successfully reaching the stream endpoint. connected: Data is being sent successfully
+        to the stream endpoint.'
+      example: connected
+      enum:
+      - connected
+      - pending
+      - failing
+    PutStream:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/StreamName'
+        customHeaders:
+          description: Custom headers.
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            Authorization: '*****'
+            Content-Type: '*****'
+        streamEndpointUrl:
+          $ref: '#/components/schemas/StreamEndpointUrl'
+        tagMatch:
+          description: A collection of tags that determine what tests are included in the data stream. These tag values are
+            also included as attributes in the data stream metrics. Tags are invalid if the tag key includes characters that
+            are not allowed by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
+          type: array
+          items:
+            $ref: '#/components/schemas/TagMatch'
+          example:
+          - key: keyA
+            value: valueA
+          - key: keyB
+            value: valueB
+        testMatch:
+          description: A collection of tests to be included in the data stream.
+          type: array
+          items:
+            $ref: '#/components/schemas/TestMatch'
+          example:
+          - id: '1234'
+            domain: cea
+          - id: '5678'
+            domain: endpoint
+        enabled:
+          description: Flag to enable or disable the stream integration.
+          type: boolean
+          example: true
+        filters:
+          $ref: '#/components/schemas/Filters'
+        inputConfig:
+          $ref: '#/components/schemas/InputConfig'
+        exporterConfig:
+          $ref: '#/components/schemas/ExporterConfig'
+        endpointAgentLabel:
+          description: A collection of Endpoint Agent label IDs that determines what local network data is included in the
+            data stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are
+            synchronized.
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentLabel'
+        endpointAgentTag:
+          description: A collection of Endpoint Agent Tag IDs that determines what local network data is included in the data
+            stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are synchronized.
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentTag'
+    TagMatch:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The name of the tag key to match. The key is invalid if it includes characters that are not allowed
+            by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
+          example: keyA
+        value:
+          type: string
+          description: The value of the tag to match
+          example: valueA
+    Filters:
+      type: object
+      description: Provides the ability to filter data points based on the specified test types.
+      properties:
+        testTypes:
+          $ref: '#/components/schemas/FiltersTestTypes'
+    FiltersTestTypes:
+      type: object
+      description: Test types that can be used for filtering data points.
+      properties:
+        values:
+          $ref: '#/components/schemas/FiltersTestTypesValues'
+    FiltersTestTypesValues:
+      type: array
+      description: A list of test types to filter data points.
+      items:
+        $ref: '#/components/schemas/TestType'
+      example:
+      - agent-to-server
+      - bgp
+      - http-server
+    InputConfig:
+      type: object
+      description: Configuration that specifies which input data is included for each signal.
+      properties:
+        metric:
+          $ref: '#/components/schemas/InputConfigMetric'
+    InputConfigMetric:
+      type: object
+      description: Configuration for metric input data in the stream integration.
+      properties:
+        connectedDevices:
+          $ref: '#/components/schemas/ConnectedDevices'
+    ConnectedDevices:
+      type: object
+      description: Configuration for Connected Devices metric data in the stream integration.
+      required:
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: Flag to enable or disable Connected Devices data.
+          example: true
+          default: false
+    TestMatch:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the test to match.
+          example: '1234'
+        domain:
+          $ref: '#/components/schemas/TestMatchDomain'
+    TestMatchDomain:
+      type: string
+      description: "The domain of the test to match.\n `cea` - Cloud and Enterprise Agent\n `endpoint` - Endpoint Agent"
+      example: cea
+      enum:
+      - cea
+      - endpoint
+    ExporterConfig:
+      type: object
+      description: Capability to set exporter configuration.
+      properties:
+        splunkHec:
+          $ref: '#/components/schemas/ExporterConfigSplunkHec'
+        authorization:
+          $ref: '#/components/schemas/ExporterConfigAuthorization'
+    EndpointAgentLabel:
+      type: object
+      description: Endpoint Agent label configuration.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The label ID of Endpoint Agent labels.
+          example: '1234'
+    EndpointAgentTag:
+      type: object
+      description: Endpoint Agent tag configuration.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The tag ID of Endpoint Agent tags.
+          example: 91863f70-e5a6-4a1c-a266-caf02db3607d
+    ExporterConfigAuthorization:
+      type: object
+      description: Authentication configuration type.
+      properties:
+        oAuth2:
+          $ref: '#/components/schemas/ExporterConfigOAuth2'
+    ExporterConfigOAuth2:
+      type: object
+      description: OAuth2 authentication configuration.
+      properties:
+        clientId:
+          type: string
+          description: The OAuth2 client ID.
+          example: '1234567890'
+        clientSecret:
+          type: string
+          description: The OAuth2 client secret.
+          example: '1234567890'
+        tokenUrl:
+          type: string
+          description: The OAuth2 token URL.
+          example: https://example.com/token
+        scopes:
+          type: array
+          description: The OAuth2 scopes.
+          items:
+            type: string
+          example:
+          - read
+          - write
+    ExporterConfigSplunkHec:
+      type: object
+      description: Splunk HEC configuration. This can only be configured when the `type` is `splunk-hec`.
+      properties:
+        token:
+          type: string
+          description: The Splunk HEC `token`. This is a required field.
+          example: d0a91307-be2f-4218-a9f8-71c02d98846b
+        source:
+          type: string
+          description: The Splunk HEC `source`. This field is optional.
+          example: ThousandEyesOTel
+          default: ThousandEyesOTel
+        sourceType:
+          type: string
+          description: The Splunk HEC `sourceType`. This field is optional.
+          example: ThousandEyesOTel
+          default: ThousandEyesOTel
+        index:
+          type: string
+          description: The name of the Splunk HEC index where the event data will be stored.  This field is optional.
+          example: thousandeyes_otel_events_index
+    Stream:
+      allOf:
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/StreamType'
+          signal:
+            $ref: '#/components/schemas/Signal'
+          endpointType:
+            $ref: '#/components/schemas/EndpointType'
+          streamEndpointUrl:
+            $ref: '#/components/schemas/StreamEndpointUrl'
+          dataModelVersion:
+            $ref: '#/components/schemas/DataModelVersion'
+      - $ref: '#/components/schemas/PutStream'
+    StreamName:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Name of the data stream. When omitted, a name is generated on creation and the existing name is preserved
+        on update.
+      example: Production metrics stream
+    Signal:
+      type: string
+      description: "The OpenTelemetry signal of the stream integration.\nWhen using `trace` or `log`:\n  - `dataModelVersion`\
+        \ must be `v2`."
+      default: metric
+      example: metric
+      enum:
+      - metric
+      - trace
+      - log
+    EndpointType:
+      type: string
+      description: 'The type of connection used to send data to the endpoint.
+
+        **Note**: When using the `splunk-hec` ''type'', the `EndpointType` must be `http`.'
+      default: grpc
+      example: grpc
+      enum:
+      - grpc
+      - http
+    StreamResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 342ieu09
+          description: The data stream ID
+          readOnly: true
+        enabled:
+          type: boolean
+          example: true
+          description: Flag to indicate if the stream integration is currently enabled.
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/StreamLinks'
+    StreamEndpointUrl:
+      type: string
+      description: "The URL ThousandEyes sends data stream to.\nFor a URL to be valid, it needs to: - Be syntactically correct.\
+        \ - Be reachable. - Use the HTTPS protocol. - When using the `grpc` endpointType, streamEndpointUrl cannot contain\
+        \ paths:\n    - Valid . `grpc` - `https://example.com`\n    - Invalid . `grpc` - `https://example.com/collector`.\n\
+        \    - Valid . `http` - `https://example.com/collector`.\n\n- When using the `http` endpointType, the operation must\
+        \ match the exact final full URL (including the path if there is one) to which the data will be sent. Examples below:\n\
+        \    - `https://api.honeycomb.io:443/v1/metrics`\n    - `https://ingest.eu0.signalfx.com/v2/datapoint/otlp`"
+      example: https://api.thousandeyes.otel-collector
+    GetStreamResponse:
+      allOf:
+      - $ref: '#/components/schemas/StreamResponse'
+      - $ref: '#/components/schemas/Stream'
+      - type: object
+        properties:
+          auditOperation:
+            $ref: '#/components/schemas/AuditOperationWithUpdate'
+          streamStatus:
+            $ref: '#/components/schemas/StreamStatus'
+    CreateStreamResponse:
+      allOf:
+      - $ref: '#/components/schemas/StreamResponse'
+      - $ref: '#/components/schemas/Stream'
+      - type: object
+        properties:
+          auditOperation:
+            $ref: '#/components/schemas/AuditOperation'
+          streamStatus:
+            $ref: '#/components/schemas/StreamStatus'
+    StreamCollection:
+      type: array
+      items:
+        $ref: '#/components/schemas/GetStreamResponse'
+    BadRequestError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        httpStatus:
+          type: string
+          example: BAD_REQUEST
+        errors:
+          type: array
+          items:
+            type: string
+            example: 'JSON parse error: invalid type'
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/streams
+    ApiErrorIntegrationLimits:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        httpStatus:
+          type: string
+          example: PRECONDITION_FAILED
+        errors:
+          type: array
+          items:
+            type: string
+            example: User cannot create more than 5 integrations
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/streams
+    StreamSelfLink:
+      type: object
+      properties:
+        href:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/streams/575766da-9664-4e85-94fe-facbe1154799
+    StreamLinks:
+      type: object
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/StreamSelfLink'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '204':
+      description: No content
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'

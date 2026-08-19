@@ -1,0 +1,4359 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+info:
+  version: 7.0.100
+  title: Dashboards API
+  description: Manage ThousandEyes Dashboards.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+tags:
+- name: Dashboards
+  description: Dashboards and Widgets operations
+- name: Dashboard Snapshots
+  description: Dashboard Snapshots CRUD operations
+- name: Dashboards Filters
+paths:
+  /dashboards:
+    get:
+      tags:
+      - Dashboards
+      operationId: getDashboards
+      summary: List dashboards
+      description: 'Returns a list of dashboards and their settings within your account group.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiDashboards'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Dashboards
+      operationId: createDashboard
+      summary: Create dashboard
+      description: 'Creates a new dashboard in your account group. To create a dashboard,  you must have one of the following
+        permissions:
+
+        * `Edit dashboard templates for all users in account group` permission (Account Admin).
+
+
+        * `Edit own dashboard templates` permission (Regular User).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Request body schema to create a dashboard.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dashboard'
+        required: true
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}:
+    get:
+      tags:
+      - Dashboards
+      operationId: getDashboard
+      summary: Retrieve dashboard
+      description: 'Returns a list of widgets within a dashboard, along with the dashboard''s metadata.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiDashboard'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Dashboards
+      summary: Update dashboard
+      operationId: updateDashboard
+      description: "Updates an existing dashboard in your account group. \n\n**Note**: \n* Users with the `Edit dashboard\
+        \ templates for all users in account group` permission (Account Admin) can update any dashboard.\n* Users with the\
+        \ `Edit own dashboard templates` permission (Regular User) can only update the dashboards they have created themselves.\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      requestBody:
+        description: Request body schema to update a dashboard.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dashboard'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Dashboards
+      operationId: deleteDashboard
+      summary: Delete dashboard
+      description: 'Deletes a dashboard using the `dashboardId` provided in the request.
+
+
+        **Note**:
+
+        * Users with the `Edit dashboard templates for all users in account group` permission (Account Admin) can delete any
+        dashboard.
+
+        * Users with the `Edit own dashboard templates` permission (Regular User) can only delete the dashboards they have
+        created themselves.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}/clone:
+    post:
+      tags:
+      - Dashboards
+      operationId: cloneDashboard
+      summary: Clone dashboard
+      description: 'Creates a dashboard by cloning an existing dashboard. By default, the clone inherits the source dashboard''s
+        widgets, layout, default timespan, tags, and other supported settings. Values provided in the request override the
+        corresponding source dashboard settings. Sharing settings are not inherited. If `title` is omitted, the API generates
+        a unique title for the clone.
+
+
+        **Note**:
+
+        * Users with the `Edit dashboard templates for all users in account group` permission (Account Admin) can clone any
+        dashboard they can view.
+
+        * Users with the `Edit own dashboard templates` permission (Regular User) can clone dashboards they can view. The
+        current user owns the cloned dashboard.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      requestBody:
+        description: Optional overrides for the cloned dashboard.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloneDashboardRequest'
+        required: false
+      responses:
+        '201':
+          description: Dashboard cloned successfully.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}/actions/schedule:
+    put:
+      tags:
+      - Dashboards
+      operationId: updateDashboardSchedule
+      summary: Create or update dashboard snapshot schedule
+      description: 'Creates or replaces the snapshot schedule for a dashboard. Set `repeat` to `NONE` to generate one snapshot
+        at `startTime`. Other `repeat` values create recurring snapshots. Schedule settings control when snapshots are generated,
+        the data time range included in each snapshot, and email delivery options.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      requestBody:
+        required: true
+        description: Snapshot schedule configuration.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DashboardScheduleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiDashboard'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: The dashboard changed while the schedule operation was being applied.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: about:blank
+                title: Conflict
+                status: 409
+                detail: The dashboard changed while its schedule was being updated. Retry the request.
+                instance: /v7/dashboards/{dashboardId}/actions/schedule
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Dashboards
+      operationId: deleteDashboardSchedule
+      summary: Delete dashboard snapshot schedule
+      description: 'Removes the snapshot schedule from a dashboard. Existing snapshots are not deleted.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/DashboardIdPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: The dashboard changed while the schedule operation was being applied.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                type: about:blank
+                title: Conflict
+                status: 409
+                detail: The dashboard changed while its schedule was being deleted. Retry the request.
+                instance: /v7/dashboards/{dashboardId}/actions/schedule
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}/widgets/{widgetId}:
+    get:
+      tags:
+      - Dashboards
+      operationId: getDashboardWidgetData
+      summary: Retrieve dashboard widget data
+      description: 'Returns the raw data displayed within a widget in the dashboard.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardIdPath'
+      - $ref: '#/components/parameters/WidgetId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/DashboardMax'
+      - $ref: '#/components/parameters/DashboardCursor'
+      - $ref: '#/components/parameters/DashboardSort'
+      - $ref: '#/components/parameters/DashboardOrder'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiWidgetDataResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}/widgets/{widgetId}/cards/{cardId}:
+    get:
+      tags:
+      - Dashboards
+      operationId: getIndividualCardData
+      summary: Retrieve individual card data from numbers widget
+      description: 'Returns the raw data for an individual card within a numbers widget in the dashboard.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardIdPath'
+      - $ref: '#/components/parameters/WidgetId'
+      - $ref: '#/components/parameters/CardId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiNumbersCardData'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/{dashboardId}/widgets/{widgetId}/columns/{columnId}:
+    get:
+      tags:
+      - Dashboards
+      operationId: getIndividualColumnData
+      summary: Retrieve individual column data from multi-metric table widget
+      description: 'Returns the raw data for an individual column within a multi-metric table widget in the dashboard.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardIdPath'
+      - $ref: '#/components/parameters/WidgetId'
+      - $ref: '#/components/parameters/ColumnId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiMultiMetricColumnData'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboard-snapshots:
+    get:
+      tags:
+      - Dashboard Snapshots
+      operationId: getDashboardSnapshots
+      summary: List dashboard snapshots
+      description: 'Returns a list of dashboard snapshots within your account group. Use this data to identify a specific
+        dashboard snapshot, which can be used in other endpoints to access aggregated data. The `View Snapshots` permission
+        is required to use this endpoint."
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: dashboardId
+        in: query
+        required: false
+        schema:
+          type: string
+        example: 646f4d2ce3c99b0536c3821e
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DashboardSnapshotsPage'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Dashboard Snapshots
+      operationId: createDashboardSnapshot
+      summary: Create dashboard snapshot
+      description: 'Creates a new dashboard snapshot within your account group. The `Edit Snapshots` permission is required
+        to use this endpoint.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Request body schema to create a dashboard snapshot.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateDashboardSnapshotRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            X-Dashboard-Snapshot-Rate-Limit-Limit:
+              $ref: '#/components/headers/DashboardSnapshotRateLimit'
+            X-Dashboard-Snapshot-Rate-Limit-Remaining:
+              $ref: '#/components/headers/DashboardSnapshotRateLimitRemaining'
+            X-Dashboard-Snapshot-Rate-Limit-Reset:
+              $ref: '#/components/headers/DashboardSnapshotRateLimitReset'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DashboardSnapshotResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          description: Exhausted rate limit for snapshot creation
+          headers:
+            X-Dashboard-Snapshot-Rate-Limit-Limit:
+              $ref: '#/components/headers/DashboardSnapshotRateLimit'
+            X-Dashboard-Snapshot-Rate-Limit-Remaining:
+              $ref: '#/components/headers/DashboardSnapshotRateLimitRemaining'
+            X-Dashboard-Snapshot-Rate-Limit-Reset:
+              $ref: '#/components/headers/DashboardSnapshotRateLimitReset'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboard-snapshots/{snapshotId}:
+    get:
+      tags:
+      - Dashboard Snapshots
+      operationId: getDashboardSnapshot
+      summary: Retrieve dashboard snapshot
+      description: This operation returns a list of widgets configured in dashboard snapshot configured in ThousandEyes. Seed
+        this endpoint with a snapshotId found from the /dashboard-snapshots endpoint. This endpoint requires the `View Snapshots`
+        permission be assigned to the role of the user accessing this endpoint. Returns a list of widgets configured within
+        a dashboard snapshot. Use the `snapshotId` obtained from the `/dashboard-snapshots` endpoint. The `View Snapshots`
+        permission is required to use this endpoint."
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/SnapshotIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiDashboardSnapshot'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      tags:
+      - Dashboard Snapshots
+      operationId: updateDashboardSnapshotExpirationDate
+      summary: Update snapshot expiration
+      description: 'Updates the expiration date of a dashboard snapshot. The `Edit snapshots` permission is required to access
+        this endpoint.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/SnapshotIdPath'
+      requestBody:
+        description: Request body schema to update a snapshot expiration.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSnapshotExpirationDateApiRequest'
+        required: true
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Dashboard Snapshots
+      operationId: deleteDashboardSnapshot
+      summary: Delete dashboard snapshot
+      description: 'Deletes a dashboard snapshot using the `snapshotId` provided in the request. Users with the `Edit reports
+        for all users in account group` permission (Account Admin) can delete any dashboard snapshot.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/SnapshotIdPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboard-snapshots/{snapshotId}/widgets/{widgetId}:
+    get:
+      tags:
+      - Dashboard Snapshots
+      operationId: getDashboardSnapshotWidgetData
+      summary: Retrieve dashboard snapshot data
+      description: 'Returns actual metrics used in the generation of a dashboard snapshot.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/SnapshotIdPath'
+      - $ref: '#/components/parameters/WidgetId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiWidgetDataSnapshotResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/filters:
+    get:
+      tags:
+      - Dashboards Filters
+      summary: List dashboard filters
+      operationId: getDashboardsFilters
+      description: 'Returns a list of dashboard filters and its context within your account group.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterSearchPattern'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFiltersResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Dashboards Filters
+      summary: Create dashboard filter
+      operationId: createDashboardFilter
+      description: 'Creates a new dashboard filter in your account group. To create a filter,  you must have one of the following
+        permissions:
+
+        * `Edit dashboard templates for all users in account group` permission (Account Admin). * `Edit own dashboard templates`
+        permission (Regular User).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Dashboard filter object to be created and saved
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiContextFilterRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/filters/{id}:
+    get:
+      tags:
+      - Dashboards Filters
+      summary: Get dashboard filter
+      operationId: getDashboardFilter
+      description: 'Returns a list of data source filters and their metadata within the dashboard filter.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Dashboards Filters
+      summary: Update dashboard filter
+      operationId: updateDashboardFilter
+      description: "Updates an existing dashboard filter in your account group.\n                     \n **Note**:\n \n *\
+        \ Users with the `Edit dashboard templates for all users in account group` permission (Account Admin) can update any\
+        \ dashboard filter.\n \n * Users with the `Edit own dashboard templates` permission (Regular User) can only update\
+        \ the dashboard filters they have created themselves.\n"
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Updated dashboard filter context object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiContextFilterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Dashboards Filters
+      summary: Delete dashboard filter
+      operationId: deleteDashboardFilter
+      description: "Deletes a dashboard filter using the `filterId` provided in the request.\n\n\n **Note**:\n\n * Users with\
+        \ the `Edit dashboard templates for all users in account group` permission (Account Admin) can delete any dashboard\
+        \ filter.\n\n * Users with the `Edit own dashboard templates` permission (Regular User) can only delete the dashboard\
+        \ filters they have created themselves.\n"
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  parameters:
+    DashboardIdPath:
+      name: dashboardId
+      required: true
+      in: path
+      description: A Identifier for a dashboard which can be obtained from the `/dashboards` endpoint.
+      schema:
+        type: string
+      example: 646f4d2ce3c99b0536c3821e
+    WidgetId:
+      name: widgetId
+      required: true
+      in: path
+      description: A Identifier for a widget.
+      schema:
+        type: string
+      example: unpmg
+    SnapshotIdPath:
+      name: snapshotId
+      required: true
+      in: path
+      description: A Identifier for a dashboard snapshot which can be obtained from the `/dashboards-snapshots` endpoint.
+      schema:
+        type: string
+      example: d28bb71f-5a47-4783-8f12-d4b115e61b0c
+    DashboardCursor:
+      name: cursor
+      in: query
+      description: An optional pagination cursor. This parameter should not not be used directly. Instead, use the `_links`
+        returned by the API. This feature is only available in the **Test Table** widget.
+      schema:
+        type: string
+      example: bGFzdFJvdW5kSWQ9MTY4MTQxMDQ4MA
+    DashboardMax:
+      name: max
+      in: query
+      description: 'Optionally specify the maximum number of objects to retrieve. This only applies to the **Alert List**
+        and **Test Table** Widgets.
+
+        * The default for the **Alert List** widget is set by its limitBy configuration.
+
+        * The default value for the **Test Table** widget is 10.'
+      schema:
+        type: number
+      example: 10
+    DashboardSort:
+      name: sort
+      in: query
+      description: 'Optional sorting parameter with attributes listed comma-separated. This only applies to the **Alert List**
+        and **Test Table** Widgets.
+
+        * For the **Alert List** widget, you can sort by `alertStatus` or `startTime`. The default is `alertStatus`.
+
+        * For the **Test Table** widget, you can sort by `alertStatus`, `testName`, or `testType`. The sequence might vary
+        from the web application. The default sort attribute is `alertStatus`.'
+      schema:
+        type: string
+      example: alertStatus
+    DashboardOrder:
+      name: order
+      in: query
+      description: Optional sorting order parameter that accepts either `asc` (ascending) or `desc` (descending) values. This
+        only applies to the **Alert List** and **Test Table** Widgets.
+      schema:
+        $ref: '#/components/schemas/DashboardOrder'
+      example: asc
+    DashboardFilterSearchPattern:
+      in: query
+      name: searchPattern
+      description: Optional search pattern parameter to filter list of dashboard filters by either name or description values.
+      required: false
+      schema:
+        type: string
+        example: cea-filter
+    DashboardFilterIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique dashboard filter ID.
+      example: 65bc18e8f2073a4a469cd958
+    CardId:
+      name: cardId
+      required: true
+      in: path
+      description: An identifier for a card within the numbers widget.
+      schema:
+        type: string
+      example: rvwgs
+    ColumnId:
+      name: columnId
+      required: true
+      in: path
+      description: An identifier for a column within the multi-metric table widget.
+      schema:
+        type: string
+      example: col123
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed
+        by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days,
+        and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone,
+        following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used
+        with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete
+        time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for
+        reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of
+        this parameter.
+      schema:
+        type: string
+        example: null
+  schemas:
+    DashboardOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+    ApiAgentStatusWidget:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/AgentStatusWidgetType'
+          agents:
+            $ref: '#/components/schemas/AgentWidgetType'
+          show:
+            $ref: '#/components/schemas/AgentWidgetShow'
+          dataSource:
+            $ref: '#/components/schemas/AgentStatusDatasource'
+    AgentWidgetType:
+      $ref: '#/components/schemas/LegacyAgentWidgetType'
+    LegacyAgentWidgetType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - Enterprise Agents
+      - Endpoint Agents
+    AgentWidgetShow:
+      $ref: '#/components/schemas/LegacyAgentWidgetShow'
+    LegacyAgentWidgetShow:
+      type: string
+      description: Ownership of the agent.
+      enum:
+      - Owned Agents
+      - All Assigned Agents
+    ApiAlertListWidget:
+      type: object
+      description: A widget that displays a list of alerts based on specified criteria, such as alert type and time frame.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/AlertListWidgetType'
+          alertTypes:
+            uniqueItems: true
+            type: array
+            description: List of alert types configured in the widget, an empty list means all alert types.
+            items:
+              $ref: '#/components/schemas/ApiAlertListAlertType'
+          limitTo:
+            type: integer
+            format: int32
+            description: Limit the number of alerts displayed in the widget.
+            example: 15
+          activeWithin:
+            $ref: '#/components/schemas/ActiveWithin'
+          dataSource:
+            $ref: '#/components/schemas/AlertListDatasource'
+    ApiAggregateProperty:
+      type: string
+      description: Defines the property by which to aggregate the metric. Metrics are grouped based on unique values of the
+        chosen property. Selecting `ALL` aggregates the data into a single group.
+      example: ALL
+      enum:
+      - TIME
+      - NONE
+      - ALL
+      - SOURCE
+      - AGENT
+      - MONITOR
+      - CONTINENT
+      - COUNTRY
+      - REGION
+      - TARGET_AGENT
+      - SOURCE_AND_TARGET_AGENT
+      - TEST
+      - SERVER
+      - TEST_LABEL
+      - TEST_TAG
+      - AGENT_LABEL
+      - AGENT_TAG
+      - TRANSACTION_STEP
+      - TRANSACTION_PAGE
+      - WEB_TRANSACTION_MARKER
+      - WEB_TRANSACTION_MARKER_INTERNAL
+      - WEB_TRANSACTION_PAGE
+      - WEB_TRANSACTION_PAGE_INTERNAL
+      - EYEBROW_MACHINE_ID
+      - EYEBROW_CLIENT_ID
+      - EYEBROW_HOST
+      - EYEBROW_NETWORK_ID
+      - EYEBROW_WHOIS_RANGE_ID
+      - EYEBROW_PLATFORM
+      - EYEBROW_CONNECTION
+      - EYEBROW_GEONAME_ID
+      - EYEBROW_LABEL
+      - EYEBROW_DOMAIN
+      - EYEBROW_TEST
+      - EYEBROW_AGENT_TYPE
+      - EYEBROW_TARGET_IP
+      - EYEBROW_NET_TARGET_IP
+      - ENDPOINT_CELLULAR_CARRIER_NAME
+      - ENDPOINT_CELLULAR_NETWORK_GEN
+      - ENDPOINT_CELLULAR_NETWORK_SUBTYPE
+      - EYEBROW_GATEWAY
+      - EYEBROW_SSID
+      - SSID
+      - EYEBROW_BSSID
+      - BSSID
+      - EYEBROW_VPN_VENDOR
+      - EYEBROW_VPN_GATEWAY
+      - EYEBROW_PROXY_ADDRESS
+      - EYEBROW_NETWORK_PROBE_DNS_SERVER
+      - EYEBROW_DESTINATION_IP_ADDRESS
+      - EYEBROW_SESSION_ERRORS
+      - EYEBROW_ASN
+      - DEVICE_INTERFACE
+      - DEVICE
+      - DEVICE_CLASS
+      - DEVICE_INTERFACE_TYPE
+      - INSIGHTS_CATALOG_PROVIDER
+      - INSIGHTS_ASN
+      - ASN
+      - INSIGHTS_LOCATION
+      - INSIGHTS_AFFECTED_TEST
+      - INSIGHTS_AFFECTED_DOMAIN
+      - INSIGHTS_AFFECTED_INTERFACE_LOCATION
+      - INSIGHTS_AFFECTED_INTERFACE_IP
+      - INSIGHTS_DESTINATION_LOCATION
+      - INSIGHTS_DESTINATION_ASN
+      - INSIGHTS_DESTINATION_PREFIX
+      - INSIGHTS_APPLICATION
+      - INSIGHTS_ERROR_TYPE
+      - INSIGHTS_AFFECTED_DOMAIN_LOCATION
+      - INSIGHTS_AFFECTED_SERVER_LOCATION
+      - APPDYNAMICS_APPLICATION
+      - APPDYNAMICS_SERVICE
+      - DOMAIN
+      - EYEBROW_ORG_NAME
+      - EYEBROW_USER
+      - EYEBROW_AGENT
+      - EYEBROW_AGENT_TAG
+      - EYEBROW_COMPUTER_NAME
+      - CLOUD_NATIVE_MONITORING-ALL
+      - CLOUD_NATIVE_MONITORING-ACCOUNT
+      - CLOUD_NATIVE_MONITORING-REGION
+      - CLOUD_NATIVE_MONITORING-AVAILABILITY_ZONE
+      - CLOUD_NATIVE_MONITORING-VPC
+      - CLOUD_NATIVE_MONITORING-SUBNET
+      - CLOUD_NATIVE_MONITORING-TYPE
+      - CLOUD_NATIVE_MONITORING-SERVICE_PROVIDER
+      - CLOUD_NATIVE_MONITORING-REMOTE_ACCOUNT
+      - CLOUD_NATIVE_MONITORING-REMOTE_REGION
+      - CLOUD_NATIVE_MONITORING-REMOTE_AVAILABILITY_ZONE
+      - CLOUD_NATIVE_MONITORING-REMOTE_VPC
+      - CLOUD_NATIVE_MONITORING-REMOTE_SUBNET
+      - CLOUD_NATIVE_MONITORING-REMOTE_TYPE
+      - CLOUD_NATIVE_MONITORING-REMOTE_SERVICE_PROVIDER
+      - TRAFFIC_INSIGHTS_MONITORING-ALL
+      - TRAFFIC_INSIGHTS_MONITORING-GEOLOC
+      - TRAFFIC_INSIGHTS_MONITORING-DEVICE
+      - TRAFFIC_INSIGHTS_MONITORING-DEVICE_IFNAME
+      - TRAFFIC_INSIGHTS_MONITORING-APPLICATION
+    ApiBoxAndWhiskersWidget:
+      type: object
+      description: 'A widget that displays a box and whisker plot, mapping data points over time with key statistics: median,
+        range, and quartiles.'
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ScalableWidget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/BoxAndWhiskersWidgetType'
+          groupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          dataSource:
+            $ref: '#/components/schemas/BoxAndWhiskersDatasource'
+    ApiWidgetFixedYScalePrefix:
+      type: string
+      description: Prefix denoting the unit of measurement for the fixed Y-axis scale.
+      example: Mbps
+      enum:
+      - Kbps
+      - Mbps
+      - Gbps
+      - Kbitps
+      - Mbitps
+      - Gbitps
+      - Kpps
+      - Mpps
+      - Gpps
+    ScalableWidget:
+      type: object
+      properties:
+        minScale:
+          type: number
+          format: float
+          description: Minimum scale configured in the widget.
+          example: 1
+        maxScale:
+          type: number
+          format: float
+          description: Maximum scale configured in the widget.
+          example: 100
+        unit:
+          $ref: '#/components/schemas/ApiWidgetFixedYScalePrefix'
+    ShowSubmetrics:
+      description: Controls how metrics with submetric components are displayed. If `true` (default), the widget displays
+        one chart per group. If `false`, the widget displays all submetrics in a single chart. For metrics without submetric
+        components, this field is ignored and returned as `null`.
+      type: boolean
+      nullable: true
+      default: true
+      example: true
+    WidgetLimit:
+      type: integer
+      format: int32
+      description: Limit configured in the widget.
+      example: 10
+    ApiColorGridWidget:
+      type: object
+      description: The Color Grid widget displays colored cards arranged in rows and columns.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ScalableWidget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/ColorGridWidgetType'
+          cards:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          groupCardsBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          columns:
+            type: integer
+            format: int32
+            description: 'Number of columns: 1 or 2.'
+            example: 1
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          sortGroupBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortGroupDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          dataSource:
+            $ref: '#/components/schemas/ColorGridDatasource'
+    LegacyWidgetSortProperty:
+      type: string
+      deprecated: true
+      description: Determines the card sorting criterion.
+      example: Alphabetical
+      enum:
+      - Alphabetical
+      - Value
+    WidgetSortProperty:
+      $ref: '#/components/schemas/LegacyWidgetSortProperty'
+    LegacyWidgetSortDirection:
+      type: string
+      deprecated: true
+      description: Specifies the order in which cards are sorted.
+      example: Ascending
+      enum:
+      - Ascending
+      - Descending
+    WidgetSortDirection:
+      $ref: '#/components/schemas/LegacyWidgetSortDirection'
+    LegacyApiDashboard:
+      type: object
+      deprecated: true
+      properties:
+        accountId:
+          deprecated: true
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1234
+          description: Identifier for the account group associated with a dashboard.
+        createdBy:
+          deprecated: true
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1
+          description: Identifier for the user that created a dashboard.
+        modifiedBy:
+          deprecated: true
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1
+          description: Identifier for the user that last modified a dashboard.
+        modifiedDate:
+          deprecated: true
+          type: string
+          readOnly: true
+          example: '2023-05-16 10:14:28'
+          description: UTC date/time when a dashboard was last modified.
+        globalOverride:
+          deprecated: true
+          type: boolean
+          description: When set to `true`, the defaultTimespan is used and overrides the widget's timespan. If set to `false`,
+            the the widget's timespan is used.
+        migratedReport:
+          deprecated: true
+          type: boolean
+          readOnly: true
+          description: True if this dashboard was previously a report.
+          example: false
+        apiLink:
+          deprecated: true
+          type: array
+          description: A links array containing the self and the snapshots links.
+          items:
+            type: object
+            additionalProperties: true
+    Dashboard:
+      description: Dashboard upon which this dashboard snapshot is based upon.
+      allOf:
+      - type: object
+        properties:
+          dashboardId:
+            type: string
+            readOnly: true
+            example: 5e1f7a99143ae6004fdc3bb4
+            description: Identifier of a dashboard.
+          title:
+            type: string
+            example: HTTP Server Widgets
+            description: Title of a dashboard.
+          isBuiltIn:
+            type: boolean
+            readOnly: true
+            description: Indicates if a dashboard is built-in. True for built-in dashboards, false for user-created dashboards.
+            example: true
+          aid:
+            type: string
+            readOnly: true
+            example: '1234'
+            description: Identifier for the account group associated with a dashboard.
+          createdBy:
+            type: string
+            readOnly: true
+            example: '1'
+            description: Identifier for the user that created a dashboard.
+          modifiedBy:
+            type: string
+            readOnly: true
+            example: '1'
+            description: Identifier for the user that last modified a dashboard.
+          modifiedDate:
+            type: string
+            format: date-time
+            readOnly: true
+            example: '2023-05-16T10:14:28Z'
+            description: UTC date/time when a dashboard was last modified (ISO date-time format).
+          isPrivate:
+            type: boolean
+            description: A dashboard can be viewed by other users in the account. If true, only the creator of the dashboard
+              may view it. If false, all users in the same account may view it.
+            example: true
+          isDefaultForUser:
+            type: boolean
+            readOnly: true
+            description: Indicates whether this dashboard is the user's default. True for default, false if not.
+            example: true
+          isDefaultForAccount:
+            type: boolean
+            readOnly: true
+            description: Indicates whether this dashboard is the account group's default. True for default, false if not.
+            example: false
+          widgets:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiWidget'
+          description:
+            type: string
+            example: HTTP Server Widgets
+            description: A text description of the dashboard's purpose and functionality. This information assists users in
+              understanding the dashboard but isn't displayed when viewing a dashboard.
+          defaultTimespan:
+            $ref: '#/components/schemas/DefaultTimespan'
+          isGlobalOverride:
+            type: boolean
+            description: When set to `true`, the defaultTimespan is used and overrides the widget's timespan. If set to `false`,
+              the the widget's timespan is used.
+          isMigratedReport:
+            type: boolean
+            readOnly: true
+            description: True if this dashboard was previously a report.
+            example: false
+          layout:
+            $ref: '#/components/schemas/DashboardLayout'
+          schedule:
+            readOnly: true
+            allOf:
+            - $ref: '#/components/schemas/DashboardSchedule'
+          refreshRate:
+            $ref: '#/components/schemas/RefreshRate'
+          _links:
+            $ref: '#/components/schemas/DashboardLinks'
+      - $ref: '#/components/schemas/DashboardGlobalFilterId'
+    CloneDashboardRequest:
+      type: object
+      description: Optional values that override settings inherited from the source dashboard. Omit the request body or send
+        an empty object (`{}`) to clone the dashboard without overrides.
+      properties:
+        title:
+          type: string
+          description: Title of the cloned dashboard. If omitted, the API generates a unique title.
+          example: HTTP Server Widgets Copy
+        tagIds:
+          description: Dashboard tag identifiers. An empty array clears tags from the clone; omission preserves the source
+            dashboard's tags.
+          allOf:
+          - $ref: '#/components/schemas/TagIds'
+        description:
+          type: string
+          maxLength: 1000
+          description: Description for the cloned dashboard.
+          example: Copy of the HTTP Server Widgets dashboard
+        layout:
+          $ref: '#/components/schemas/DashboardLayout'
+        defaultTimespan:
+          $ref: '#/components/schemas/DefaultTimespan'
+        isGlobalOverride:
+          type: boolean
+          description: If `true`, the dashboard time range overrides local widget time settings.
+          example: false
+        refreshRate:
+          $ref: '#/components/schemas/CloneDashboardRefreshRate'
+        globalFilterId:
+          type: string
+          description: Global filter applied to the cloned dashboard. If omitted, the source dashboard's filter is preserved
+            when cloning within the same account group. When cloning across account groups, the filter is cleared.
+          example: 65babd9bb90bf55b17c96c8d
+        sharedAccountIds:
+          type: array
+          uniqueItems: true
+          description: Account group IDs with which to share the cloned dashboard. An empty array limits sharing to current
+            account group. Omission does not share with other account groups. The `isPrivate` setting controls visibility
+            within the current account group. Cannot be used together with `isSharedWithAllAccountGroups=true`
+          items:
+            $ref: '#/components/schemas/AccountGroupId'
+          example:
+          - '1234'
+          - '5678'
+        isSharedWithAllAccountGroups:
+          type: boolean
+          description: When `true`, shares the cloned dashboard with all account groups available to the user. Cannot be used
+            together with `sharedAccountIds`.
+          example: false
+        isPrivate:
+          type: boolean
+          description: When `true`, only the creator can view the cloned dashboard. Combining this property with `sharedAccountIds`
+            or `isSharedWithAllAccountGroups=true` returns `400 Bad Request`. Defaults to `false`.
+          default: false
+          example: true
+        isDefaultForUser:
+          type: boolean
+          description: When `true`, sets the cloned dashboard as the current user's default dashboard.
+          example: false
+        isDefaultForAccount:
+          type: boolean
+          description: When `true`, sets the cloned dashboard as the current account group's default dashboard.
+          example: false
+    ApiDashboards:
+      type: array
+      items:
+        $ref: '#/components/schemas/ApiDashboard'
+    ApiDashboard:
+      description: Dashboard upon which this dashboard snapshot is based upon.
+      allOf:
+      - type: object
+        properties:
+          dashboardId:
+            type: string
+            readOnly: true
+            example: 5e1f7a99143ae6004fdc3bb4
+            description: Identifier of a dashboard.
+          title:
+            type: string
+            example: HTTP Server Widgets
+            description: Title of a dashboard.
+          isBuiltIn:
+            type: boolean
+            readOnly: true
+            description: Indicates if a dashboard is built-in. True for built-in dashboards, false for user-created dashboards.
+            example: true
+          aid:
+            type: string
+            readOnly: true
+            example: '1234'
+            description: Identifier for the account group associated with a dashboard.
+          dashboardCreatedBy:
+            type: string
+            readOnly: true
+            example: '1'
+            description: Identifier for the user that created a dashboard.
+          dashboardModifiedBy:
+            type: string
+            readOnly: true
+            example: '1'
+            description: Identifier for the user that last modified a dashboard.
+          dashboardModifiedDate:
+            type: string
+            format: date-time
+            readOnly: true
+            example: '2023-05-16T10:14:28Z'
+            description: UTC date/time when a dashboard was last modified (ISO date-time format).
+          isPrivate:
+            type: boolean
+            description: A dashboard can be viewed by other users in the account. If true, only the creator of the dashboard
+              may view it. If false, all users in the same account may view it.
+            example: true
+          isDefaultForUser:
+            type: boolean
+            readOnly: true
+            description: Indicates whether this dashboard is the user's default. True for default, false if not.
+            example: true
+          isDefaultForAccount:
+            type: boolean
+            readOnly: true
+            description: Indicates whether this dashboard is the account group's default. True for default, false if not.
+            example: false
+          widgets:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiWidget'
+          description:
+            type: string
+            example: HTTP Server Widgets
+            description: A text description of the dashboard's purpose and functionality. This information assists users in
+              understanding the dashboard but isn't displayed when viewing a dashboard.
+          defaultTimespan:
+            $ref: '#/components/schemas/DefaultTimespan'
+          isGlobalOverride:
+            type: boolean
+            description: When set to `true`, the defaultTimespan is used and overrides the widget's timespan. If set to `false`,
+              the the widget's timespan is used.
+          isMigratedReport:
+            type: boolean
+            readOnly: true
+            description: True if this dashboard was previously a report.
+            example: false
+          layout:
+            $ref: '#/components/schemas/DashboardLayout'
+          schedule:
+            readOnly: true
+            allOf:
+            - $ref: '#/components/schemas/DashboardSchedule'
+          refreshRate:
+            $ref: '#/components/schemas/RefreshRate'
+          _links:
+            $ref: '#/components/schemas/DashboardLinks'
+      - $ref: '#/components/schemas/DashboardGlobalFilterId'
+      - $ref: '#/components/schemas/LegacyApiDashboard'
+    LegacyDefaultTimespan:
+      type: object
+      deprecated: true
+      properties:
+        timespanDuration:
+          deprecated: true
+          type: integer
+          format: int64
+          description: Relative timespan in seconds.
+          example: 7200
+        timespanStart:
+          deprecated: true
+          type: string
+          description: UTC start date of the timespan range.
+          example: '2023-05-16 10:14:28'
+        timespanEnd:
+          deprecated: true
+          type: string
+          description: UTC end date of the timespan range.
+          example: '2023-05-16 11:14:28'
+    ApiDefaultTimespan:
+      type: object
+      properties:
+        duration:
+          type: integer
+          format: int64
+          description: Relative timespan in seconds.
+          example: 7200
+        start:
+          type: string
+          format: date-time
+          description: UTC start date of the timespan range (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        end:
+          type: string
+          format: date-time
+          description: UTC end date of the timespan range (ISO date-time format).
+          example: '2023-05-16T11:14:28Z'
+    RefreshRate:
+      type: string
+      enum:
+      - 'off'
+      - 2m
+      - 5m
+      - 10m
+      - 15m
+      - 30m
+      - 60m
+      default: 'off'
+      description: Auto-refresh interval for a dashboard. Use `off` to disable auto-refresh.
+    CloneDashboardRefreshRate:
+      type: string
+      enum:
+      - 'off'
+      - 2m
+      - 5m
+      - 10m
+      - 15m
+      - 30m
+      - 60m
+      description: Auto-refresh interval for the cloned dashboard. If omitted, the clone inherits the source dashboard's refresh
+        rate.
+      example: 5m
+    DefaultTimespan:
+      allOf:
+      - $ref: '#/components/schemas/LegacyDefaultTimespan'
+      - $ref: '#/components/schemas/ApiDefaultTimespan'
+    ApiDuration:
+      description: Specifies a fixed timespan for data aggregation.
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/DurationValue'
+        unit:
+          $ref: '#/components/schemas/LegacyDurationUnit'
+    ActiveWithin:
+      description: Timespan in which alerts must have been active to appear in the widget.
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/DurationValue'
+        unit:
+          $ref: '#/components/schemas/LegacyDurationUnit'
+    DurationValue:
+      type: integer
+      format: int32
+      description: Timespan value.
+      example: 10
+    LegacyDurationUnit:
+      type: string
+      deprecated: true
+      description: Timespan unit.
+      enum:
+      - Minutes
+      - Hours
+      - Days
+      example: Days
+    ApiGeoMapWidget:
+      type: object
+      description: Displays data on a geographic map, highlighting information across different regions.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ScalableWidget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/MapWidgetType'
+          groupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          isGeoMapPerTest:
+            type: boolean
+            description: Indicates whether a separate map is displayed for each test within the widget. When set to true,
+              individual maps are generated.
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          dataSource:
+            $ref: '#/components/schemas/GeoMapDatasource'
+    ApiGroupedBarchartWidget:
+      type: object
+      description: Displays grouped bars, each representing multiple data points. You can configure the bars to align horizontally
+        or vertically.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/BarChartGroupedWidgetType'
+          groupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          axisGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          showLabels:
+            type: boolean
+            description: Displays labels on each bar when set to `true`.
+          isHorizontalBarChart:
+            type: boolean
+          dataSource:
+            $ref: '#/components/schemas/GroupedBarChartDatasource'
+    ApiHeatmapWidget:
+      type: object
+      description: Displays metric intensity across row and column groupings in a grid to help compare relative values across
+        two dimensions.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/HeatmapWidgetType'
+          rowGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          columnGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          dataSource:
+            $ref: '#/components/schemas/HeatmapDatasource'
+    ApiListWidget:
+      type: object
+      description: A widget that displays a list of items, such as events. It can use a time range to limit the items shown.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/ListWidgetType'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          activeWithin:
+            $ref: '#/components/schemas/ActiveWithin'
+          dataSource:
+            $ref: '#/components/schemas/ListDatasource'
+    ApiListWidgetRowLinks:
+      type: object
+      description: Links for a **List** widget row.
+      readOnly: true
+      properties:
+        data:
+          $ref: '#/components/schemas/Link'
+    ApiListWidgetRow:
+      type: object
+      description: A row in a **List** widget. Property names are dimension display labels mapped to their values for that
+        row.
+      properties:
+        _links:
+          $ref: '#/components/schemas/ApiListWidgetRowLinks'
+      additionalProperties:
+        description: Dimension display label mapped to its value for this row.
+        oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+    ApiListWidgetLegend:
+      type: object
+      description: Map of legend labels to their counts for the **List** widget.
+      additionalProperties:
+        type: integer
+        format: int32
+      example:
+        ONGOING: 5
+        CLEAR: 3
+    ApiListWidgetRows:
+      type: array
+      description: Detailed information about each row in the **List** widget.
+      items:
+        $ref: '#/components/schemas/ApiListWidgetRow'
+    ApiMultiMetricColumn:
+      type: object
+      description: Defines a column within a table that aggregates and displays various metrics (Multi-Metric table).
+      properties:
+        id:
+          type: string
+        dataSource:
+          $ref: '#/components/schemas/MultiMetricsTableDatasource'
+        metricGroup:
+          $ref: '#/components/schemas/MetricGroup'
+        direction:
+          $ref: '#/components/schemas/DashboardMetricDirection'
+        metric:
+          $ref: '#/components/schemas/DashboardMetric'
+        filters:
+          $ref: '#/components/schemas/WidgetFilters'
+        measure:
+          $ref: '#/components/schemas/ApiWidgetMeasure'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiMultiMetricTableWidget:
+      type: object
+      description: A Multi-Metric table widget with columns, each representing a different metric, offering a comprehensive
+        view rather than restricting to a single metric.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/MultiMetricTableWidgetType'
+          compareToPreviousValue:
+            type: boolean
+            description: Enables comparison of the current metric value with the previous value.
+          rowGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          multiMetricColumns:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiMultiMetricColumn'
+          dataSource:
+            $ref: '#/components/schemas/MultiMetricsTableDatasource'
+    ApiMultiSearchFilterApiTestTableFilterKey:
+      type: object
+      description: A multi search filter key within the Multi-Metric table widget. The key represents the filter name, and
+        the value specifies the filter value.
+      properties:
+        key:
+          $ref: '#/components/schemas/TestTableFilterKey'
+        value:
+          type: string
+    TestTableFilterKey:
+      type: string
+      enum:
+      - Anything
+      - Test Name
+      - Target
+      - Test ID
+      - Test type
+      - Label ID
+      - Tag ID
+      example: Target
+    ApiNumbersCard:
+      type: object
+      description: An individual number card within the numbers card widget.
+      allOf:
+      - $ref: '#/components/schemas/ScalableWidget'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Identifier of the widget.
+            example: '1234'
+          description:
+            type: string
+            description: Description of the number card.
+            example: Widget Title
+          measure:
+            $ref: '#/components/schemas/ApiWidgetMeasure'
+          compareToPreviousValue:
+            type: boolean
+          fixedTimespan:
+            $ref: '#/components/schemas/ApiDuration'
+          shouldExcludeAlertSuppressionWindows:
+            type: boolean
+            description: Excludes alert suppression windows from the widget when set to `true`.
+          dataSource:
+            $ref: '#/components/schemas/NumbersCardDatasource'
+          metricGroup:
+            $ref: '#/components/schemas/MetricGroup'
+          direction:
+            $ref: '#/components/schemas/DashboardMetricDirection'
+          metric:
+            $ref: '#/components/schemas/DashboardMetric'
+          filters:
+            $ref: '#/components/schemas/WidgetFilters'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    ApiNumbersCardWidget:
+      type: object
+      description: A widget composed of multiple cards, each presenting a singular metric, such as average packet loss, page
+        load time, or alert count.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/NumberWidgetType'
+          numberCards:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiNumbersCard'
+          dataSource:
+            $ref: '#/components/schemas/NumbersCardDatasource'
+    ApiPieChartWidget:
+      type: object
+      description: Displays data as segments of a pie, with each slice representing a portion of the total value.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ApiPieChartWidgetProperties'
+    ApiPieChartWidgetProperties:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/PieChartWidgetType'
+        groupBy:
+          $ref: '#/components/schemas/ApiAggregateProperty'
+        dataSource:
+          $ref: '#/components/schemas/PieChartDatasource'
+        showSubmetrics:
+          $ref: '#/components/schemas/ShowSubmetrics'
+    ApiStackedAreaChartWidget:
+      type: object
+      description: Displays line plots over time, stacking quantities vertically to showcase cumulative data trends, similar
+        to stacked bar charts. Ideal for visualizing changes in response times, error counts, and other metrics, revealing
+        the progression of values across a timeline. Use this chart to replace stacked bar charts for temporal data analysis.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ScalableWidget'
+      - $ref: '#/components/schemas/ApiStackedAreaChartWidgetProperties'
+    ApiStackedAreaChartWidgetProperties:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/TimeSeriesStackedAreaWidgetType'
+        groupBy:
+          $ref: '#/components/schemas/ApiAggregateProperty'
+        dataSource:
+          $ref: '#/components/schemas/StackedAreaChartDatasource'
+        showSubmetrics:
+          $ref: '#/components/schemas/ShowSubmetrics'
+    ApiStackedBarchartWidget:
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        description: Displays horizontal histogram bars with multiple values, which are useful for composite metric data (such
+          as HTTP response or fetch time) and for comparing values between multiple tests or for comparing values on a country-by-country
+          basis. The bars can be aligned horizontally or vertically as columns.
+        properties:
+          type:
+            $ref: '#/components/schemas/BarChartStackedWidgetType'
+          axisGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          showLabels:
+            type: boolean
+          isHorizontalBarChart:
+            type: boolean
+            description: Set to `true` to display bars horizontally in the widget.
+          dataSource:
+            $ref: '#/components/schemas/StackedBarChartDatasource'
+    ApiTableWidget:
+      type: object
+      description: Organizes data in rows and columns, with options to list by test, geographic location, data source, or
+        aggregated categories.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/TableWidgetType'
+          compareToPreviousValue:
+            type: boolean
+          rowGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          columnGroupBy:
+            $ref: '#/components/schemas/ApiAggregateProperty'
+          sortBy:
+            $ref: '#/components/schemas/WidgetSortProperty'
+          sortDirection:
+            $ref: '#/components/schemas/WidgetSortDirection'
+          limit:
+            $ref: '#/components/schemas/WidgetLimit'
+          dataSource:
+            $ref: '#/components/schemas/TableDatasource'
+    ApiTestTableWidget:
+      type: object
+      description: Displays tests and statuses with options to sort and filter. It can be set to show only certain tests,
+        like those with specific labels or failing tests.
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/TestTableWidgetType'
+          filter:
+            $ref: '#/components/schemas/ApiWidgetFilterApiTestTableFilterKey'
+          exclude:
+            $ref: '#/components/schemas/ApiWidgetFilterApiTestTableFilterKey'
+          dataSource:
+            $ref: '#/components/schemas/TestTableDatasource'
+    ApiTimeseriesWidget:
+      type: object
+      description: The Timeseries widget graphs data over time, with the chosen metric displayed on the vertical axis. vertical
+        axis
+      allOf:
+      - $ref: '#/components/schemas/Widget'
+      - $ref: '#/components/schemas/ScalableWidget'
+      - $ref: '#/components/schemas/ApiTimeseriesWidgetProperties'
+    ApiTimeseriesWidgetProperties:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/TimeSeriesLineWidgetType'
+        showTimeseriesOverallBaseline:
+          type: boolean
+          description: Displays the overall baseline when set to `true`.
+          default: false
+          example: true
+        groupBy:
+          $ref: '#/components/schemas/ApiAggregateProperty'
+        isTimeseriesOneChartPerLine:
+          type: boolean
+          description: Displays a separate chart for each line when set to `true`.
+          default: false
+          example: true
+        showZoomSlider:
+          type: boolean
+          description: Displays the zoom slider on the time axis when set to `true`.
+          default: false
+          example: true
+        dataSource:
+          $ref: '#/components/schemas/TimeseriesDatasource'
+    AgentStatusDatasource:
+      type: string
+      description: Datasource of the agent to retrieve status.
+      enum:
+      - ALERTS
+      - DEVICES
+      - DNSP
+      - ENDPOINT_AGENTS
+      - ENDPOINT_SCHEDULED_TEST
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ROUTING
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - INTERNET_INSIGHTS
+      - APPDYNAMICS_SERVICE_HEALTH
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    AlertListDatasource:
+      type: string
+      description: Datasource of the alert list.
+      enum:
+      - ALERTS
+      - DEVICES
+      - DNSP
+      - ENDPOINT_AGENTS
+      - ENDPOINT_SCHEDULED_TEST
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ROUTING
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - INTERNET_INSIGHTS
+      - APPDYNAMICS_SERVICE_HEALTH
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    BoxAndWhiskersDatasource:
+      type: string
+      description: Datasource of the box and whiskers widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: INTERNET_INSIGHTS
+    ColorGridDatasource:
+      type: string
+      description: Datasource of the color grid widget.
+      enum:
+      - THIRD_PARTY_APPLICATIONS
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: INTERNET_INSIGHTS
+    GeoMapDatasource:
+      type: string
+      description: Datasource of the geo map widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: INTERNET_INSIGHTS
+    GroupedBarChartDatasource:
+      type: string
+      description: Datasource of the grouped bar chart widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    HeatmapDatasource:
+      type: string
+      description: Data source of the heatmap widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    ListDatasource:
+      type: string
+      description: Data source for the list widget.
+      enum:
+      - EVENT_DETECTION
+      example: EVENT_DETECTION
+    MultiMetricsTableDatasource:
+      type: string
+      description: Datasource of the Multi-Metrics table widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    NumbersCardDatasource:
+      type: string
+      description: Datasource of the numbers card widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    PieChartDatasource:
+      type: string
+      description: Datasource of the pie chart widget.
+      enum:
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - ENDPOINT_AGENTS
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_SCHEDULED_TEST
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    StackedAreaChartDatasource:
+      type: string
+      description: Datasource of the stacked area chart widget.
+      enum:
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - ENDPOINT_AGENTS
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_SCHEDULED_TEST
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    StackedBarChartDatasource:
+      type: string
+      description: Datasource of the stacked bar chart widget.
+      enum:
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - ENDPOINT_AGENTS
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_SCHEDULED_TEST
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    TableDatasource:
+      type: string
+      description: Datasource of the table widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: ENDPOINT_AGENTS
+    TestTableDatasource:
+      type: string
+      description: Datasource of the test table widget.
+      enum:
+      - ALERTS
+      - DEVICES
+      - DNSP
+      - ENDPOINT_AGENTS
+      - ENDPOINT_SCHEDULED_TEST
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ROUTING
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - INTERNET_INSIGHTS
+      - APPDYNAMICS_SERVICE_HEALTH
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: CLOUD_AND_ENTERPRISE_AGENTS
+    TimeseriesDatasource:
+      type: string
+      description: Datasource of the Timeseries widget.
+      enum:
+      - ALERTS
+      - CLOUD_AND_ENTERPRISE_AGENTS
+      - DEVICES
+      - ENDPOINT_AGENTS
+      - ENDPOINT_AST_TEST
+      - ENDPOINT_BROWSER_SESSION
+      - ENDPOINT_LOCAL_NETWORK
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_SCHEDULED_TEST
+      - INTERNET_INSIGHTS
+      - ROUTING
+      - CLOUD_NATIVE_MONITORING
+      - TRAFFIC_INSIGHTS_MONITORING
+      example: CLOUD_AND_ENTERPRISE_AGENTS
+    MetricGroup:
+      type: string
+      description: 'Metric group of widget as it appears in the UI. Note: may not be required in some cases.'
+      enum:
+      - AGENT_TO_AGENT
+      - AGENT_TO_SERVER
+      - HTTP_SERVER
+      - FTP_SERVER
+      - PAGE_LOAD
+      - TRANSACTIONS_CLASSIC
+      - TRANSACTIONS
+      - API
+      - ENDPOINT_BROWSER_SESSION_NETWORK
+      - ENDPOINT_BROWSER_SESSION_SYSTEM
+      - ENDPOINT_BROWSER_SESSION_VISITED_PAGES
+      - ENDPOINT_SCHEDULED_TEST_HTTP_SERVER
+      - ENDPOINT_SCHEDULED_TEST_NETWORK
+      - ENDPOINT_SCHEDULED_TEST_SYSTEM
+      - ENDPOINT_AST_TEST_NETWORK
+      - ENDPOINT_AST_TEST_SYSTEM
+      - ENDPOINT_LOCAL_NETWORK_GATEWAY
+      - ENDPOINT_LOCAL_NETWORK_AGENTS
+      - ENDPOINT_LOCAL_NETWORK_DNS
+      - ENDPOINT_LOCAL_NETWORK_NETWORK_ACCESS
+      - ENDPOINT_LOCAL_NETWORK_PROXY
+      - ENDPOINT_LOCAL_NETWORK_SYSTEM
+      - ENDPOINT_LOCAL_NETWORK_VPN
+      - ENDPOINT_LOCAL_NETWORK_WIRELESS
+      - ENDPOINT_LOCAL_NETWORK_CELLULAR
+      - BGP
+      - DEVICE
+      - VOIP
+      - SIP
+      - ALERTS
+      - DNS
+      - DOMAIN_TRACE
+      - DNSSEC
+      - DNSP
+      - NETWORK_OUTAGES
+      - APPLICATION_OUTAGES
+      - APPDYNAMICS_SERVICE_HEALTH
+      - CLOUD_NATIVE_MONITORING-TRAFFIC_FLOW
+      - CLOUD_NATIVE_MONITORING-EVENTS
+      - TRAFFIC_INSIGHTS_MONITORING-TRAFFIC_FLOW
+      example: BGP
+    DashboardMetricDirection:
+      type: string
+      description: Direction of agent to agent metric.
+      enum:
+      - TO_TARGET
+      - FROM_TARGET
+      - BIDIRECTIONAL
+      example: FROM_TARGET
+    DashboardMetric:
+      type: string
+      description: Indicates the specific metric in the report, determined by the layer, test type, and metric values.
+      enum:
+      - ONE_WAY_NET_LOSS_TO_TARGET
+      - ONE_WAY_NET_LATENCY_TO_TARGET
+      - ONE_WAY_NET_JITTER_TO_TARGET
+      - ONE_WAY_NET_THROUGHPUT_TO_TARGET
+      - ONE_WAY_NET_ERROR_TO_TARGET
+      - ONE_WAY_NET_LOSS_FROM_TARGET
+      - ONE_WAY_NET_LATENCY_FROM_TARGET
+      - ONE_WAY_NET_JITTER_FROM_TARGET
+      - ONE_WAY_NET_THROUGHPUT_FROM_TARGET
+      - ONE_WAY_NET_ERROR_FROM_TARGET
+      - ONE_WAY_NET_LOSS_BIDIRECTIONAL
+      - ONE_WAY_NET_LATENCY_BIDIRECTIONAL
+      - ONE_WAY_NET_JITTER_BIDIRECTIONAL
+      - ONE_WAY_NET_THROUGHPUT_BIDIRECTIONAL
+      - ONE_WAY_NET_ERROR_BIDIRECTIONAL
+      - NET_LOSS
+      - NET_LATENCY
+      - NET_JITTER
+      - NET_BANDWIDTH
+      - NET_CAPACITY
+      - PROXY_NET_LOSS
+      - PROXY_NET_LATENCY
+      - PROXY_NET_JITTER
+      - WEB_AVAILABILITY
+      - WEB_THROUGHPUT
+      - WEB_DNS
+      - WEB_CONNECT
+      - WEB_SSL
+      - WEB_WAIT
+      - WEB_TTFB
+      - WEB_RECEIVE
+      - WEB_REDIRECT
+      - WEB_FETCH
+      - WEB_AUTHENTICATION_ERROR_COUNT
+      - WEB_DNS_ERROR_COUNT
+      - WEB_CONNECT_ERROR_COUNT
+      - WEB_SSL_ERROR_COUNT
+      - WEB_SEND_ERROR_COUNT
+      - WEB_RECEIVE_ERROR_COUNT
+      - WEB_HTTP_ERROR_COUNT
+      - WEB_CONTENT_ERROR_COUNT
+      - WEB_TOTAL_ERROR_COUNT
+      - FTP_AVAILABILITY
+      - FTP_THROUGHPUT
+      - FTP_DNS
+      - FTP_CONNECT
+      - FTP_SSL
+      - FTP_NEGOTIATION
+      - FTP_WAIT
+      - FTP_TTFB
+      - FTP_TRANSFER
+      - FTP_TOTAL
+      - FTP_DNS_ERROR_COUNT
+      - FTP_CONNECT_ERROR_COUNT
+      - FTP_SSL_ERROR_COUNT
+      - FTP_NEGOTIATION_ERROR_COUNT
+      - FTP_TRANSFER_ERROR_COUNT
+      - FTP_FTP_ERROR_COUNT
+      - FTP_CONTENT_ERROR_COUNT
+      - FTP_TOTAL_ERROR_COUNT
+      - WEB_PAGE_LOAD_DOM_TIME
+      - WEB_PAGE_LOAD
+      - WEB_PAGE_TTFB
+      - WEB_PAGE_COMPONENT_COUNT
+      - WEB_PAGE_ERROR_COUNT
+      - WEB_PAGE_LOAD_COMPLETION_RATE
+      - CLASSIC_TRANSACTION_TIME
+      - CLASSIC_TRANSACTION_COMPLETION
+      - CLASSIC_TRANSACTION_STEP_TIME
+      - CLASSIC_TRANSACTION_PAGE_TIME
+      - TRANSACTION_MARKER_TIME_DECOMPOSED
+      - TRANSACTION_PAGE_LOAD_TIME_DECOMPOSED
+      - TRANSACTION_PAGE_TIME_DECOMPOSED
+      - TRANSACTION_PAGE_LOAD_DOM_TIME_DECOMPOSED
+      - TRANSACTION_TIME
+      - TRANSACTION_TIMEOUT
+      - TRANSACTION_ASSERT_ERROR
+      - TRANSACTION_OTHER_ERROR
+      - TRANSACTION_PAGE_ERROR
+      - TRANSACTION_COMPLETION
+      - TRANSACTION_ERROR
+      - TRANSACTION_MARKER_TIME
+      - TRANSACTION_PAGE_TIME
+      - TRANSACTION_PAGE_LOAD_TIME
+      - TRANSACTION_PAGE_LOAD_DOM_TIME
+      - API_TRANSACTION_TIME
+      - API_REQUEST_CALL_TIME
+      - API_REQUEST_DNS_TIME
+      - API_REQUEST_CONNECT_TIME
+      - API_REQUEST_SSL_TIME
+      - API_REQUEST_SEND_TIME
+      - API_REQUEST_WAIT_TIME
+      - API_REQUEST_BLOCK_TIME
+      - API_REQUEST_RECEIVE_TIME
+      - API_REQUEST_ASSERT_ERROR_COUNT
+      - API_REQUEST_COMPLETION
+      - API_REQUEST_OTHER_ERROR_COUNT
+      - VOIP_DISCARDS
+      - VOIP_LATENCY
+      - VOIP_LOSS
+      - VOIP_MOS
+      - VOIP_PDV
+      - SIP_AVAILABILITY
+      - SIP_DNS
+      - SIP_CONNECT
+      - SIP_REDIRECT
+      - SIP_REGISTER
+      - SIP_OPTIONS
+      - SIP_INVITE
+      - SIP_WAIT
+      - SIP_RESPONSE_TIME
+      - SIP_TOTAL_TIME
+      - SIP_DNS_ERROR_COUNT
+      - SIP_CONNECT_ERROR_COUNT
+      - SIP_REGISTER_ERROR_COUNT
+      - SIP_OPTIONS_ERROR_COUNT
+      - SIP_INVITE_ERROR_COUNT
+      - SIP_TOTAL_ERROR_COUNT
+      - DNS_SERVER_AVAILABILITY
+      - DNS_SERVER_TIME
+      - DNS_TRACE_AVAILABILITY
+      - DNS_TRACE_QUERY_COUNT
+      - DNS_TRACE_QUERY_TIME
+      - DNSSEC_VALIDITY
+      - DNSP_AVAILABILITY
+      - DNSP_TIME
+      - DNSP_SERVER_TIME
+      - BGP_REACHABILITY
+      - BGP_PATH_CHANGES
+      - ALERT_COUNT
+      - ALERT_COUNT_AGENT
+      - ALERT_COUNT_BGP
+      - ALERT_COUNT_DNSP
+      - ENDPOINT_SAMPLE_COUNT
+      - ENDPOINT_NET_LOSS
+      - ENDPOINT_NET_LATENCY
+      - ENDPOINT_NET_JITTER
+      - ENDPOINT_NET_CONNECT_FAILURES
+      - ENDPOINT_NET_CPU_LOAD_PERCENT
+      - ENDPOINT_NET_MEMORY_LOAD_PERCENT
+      - ENDPOINT_NET_VPN_LOSS
+      - ENDPOINT_NET_VPN_LATENCY
+      - ENDPOINT_PAGE_COUNT
+      - ENDPOINT_WEB_COMPLETION
+      - ENDPOINT_WEB_RESPONSE_TIME
+      - ENDPOINT_WEB_PAGE_LOAD
+      - ENDPOINT_WEB_PAGE_LOAD_DOM_TIME
+      - ENDPOINT_WEB_EXPERIENCE_SCORE
+      - ENDPOINT_WEB_BROWSER_ERROR_COUNT
+      - ENDPOINT_GATEWAY_PROBE_COUNT
+      - ENDPOINT_GATEWAY_COMBINED_TRANSMISSION_RATE
+      - ENDPOINT_GATEWAY_SIGNAL_QUALITY
+      - ENDPOINT_GATEWAY_LOSS
+      - ENDPOINT_GATEWAY_LATENCY
+      - ENDPOINT_GATEWAY_AGENT_SCORE
+      - ENDPOINT_GATEWAY_SCORE
+      - ENDPOINT_GATEWAY_CONNECTION_SCORE
+      - ENDPOINT_GATEWAY_PROXY_LOSS
+      - ENDPOINT_GATEWAY_PROXY_LATENCY
+      - ENDPOINT_GATEWAY_PROXY_SCORE
+      - ENDPOINT_GATEWAY_VPN_LOSS
+      - ENDPOINT_GATEWAY_VPN_LATENCY
+      - ENDPOINT_GATEWAY_VPN_SCORE
+      - ENDPOINT_GATEWAY_DNS_LOSS
+      - ENDPOINT_GATEWAY_DNS_LATENCY
+      - ENDPOINT_GATEWAY_DNS_TIME
+      - ENDPOINT_GATEWAY_CPU_LOAD_PERCENT
+      - ENDPOINT_GATEWAY_MEMORY_LOAD_PERCENT
+      - EYEBROW_GATEWAY_WIRELESS_CHANNEL_SWAP_EVENTS
+      - EYEBROW_GATEWAY_WIRELESS_RETRANSMISSION_RATE
+      - EYEBROW_GATEWAY_WIRELESS_ROAMING_EVENTS
+      - EYEBROW_GATEWAY_WIRELESS_SIGNAL_QUALITY
+      - EYEBROW_GATEWAY_WIRELESS_THROUGHPUT
+      - ENDPOINT_CELLULAR_RSSI
+      - ENDPOINT_CELLULAR_RSRP
+      - ENDPOINT_CELLULAR_RSRQ
+      - ENDPOINT_CELLULAR_SINR
+      - ENDPOINT_AST_TEST_NET_LOSS
+      - ENDPOINT_AST_TEST_NET_JITTER
+      - ENDPOINT_AST_TEST_NET_LATENCY
+      - ENDPOINT_AST_TEST_NET_CPU_LOAD_PERCENT
+      - ENDPOINT_AST_TEST_NET_MEMORY_LOAD_PERCENT
+      - ENDPOINT_AST_TEST_VPN_LOSS
+      - ENDPOINT_AST_TEST_VPN_LATENCY
+      - ENDPOINT_AST_TEST_TCP_CONNECTION_ERROR_COUNT
+      - ENDPOINT_AST_TEST_APPLICATION_SCORE
+      - ENDPOINT_GATEWAY_WIRELESS_CHANNEL_SWAP_EVENTS
+      - ENDPOINT_GATEWAY_WIRELESS_RETRANSMISSION_RATE
+      - ENDPOINT_GATEWAY_WIRELESS_ROAMING_EVENTS
+      - ENDPOINT_GATEWAY_WIRELESS_SIGNAL_QUALITY
+      - ENDPOINT_GATEWAY_WIRELESS_THROUGHPUT
+      - ENDPOINT_TEST_NET_LOSS
+      - ENDPOINT_TEST_NET_JITTER
+      - ENDPOINT_TEST_NET_LATENCY
+      - ENDPOINT_TEST_NET_CPU_LOAD_PERCENT
+      - ENDPOINT_TEST_NET_MEMORY_LOAD_PERCENT
+      - ENDPOINT_TEST_VPN_LOSS
+      - ENDPOINT_TEST_VPN_LATENCY
+      - ENDPOINT_TEST_TCP_CONNECTION_ERROR_COUNT
+      - ENDPOINT_TEST_APPLICATION_SCORE
+      - ENDPOINT_TEST_HTTP_AVAILABILITY
+      - ENDPOINT_TEST_HTTP_WAIT
+      - ENDPOINT_TEST_HTTP_SSL
+      - ENDPOINT_TEST_HTTP_CONNECT
+      - ENDPOINT_TEST_HTTP_DNS_LOOKUP
+      - ENDPOINT_TEST_HTTP_RESPONSE_TIME
+      - ENDPOINT_TEST_HTTP_THROUGHPUT
+      - ENDPOINT_TEST_HTTP_APPLICATION_SCORE
+      - DEVICE_AVAILABILITY
+      - DEVICE_THROUGHPUT_INPUT
+      - DEVICE_THROUGHPUT_OUTPUT
+      - DEVICE_DISCARDS_INPUT
+      - DEVICE_DISCARDS_OUTPUT
+      - DEVICE_ERRORS_INPUT
+      - DEVICE_ERRORS_OUTPUT
+      - DEVICE_DISCARDS_AND_ERRORS_INPUT
+      - DEVICE_DISCARDS_AND_ERRORS_OUTPUT
+      - DEVICE_INTERFACES_UP
+      - DEVICE_INTERFACES_WITH_STATE_CHANGES
+      - NETWORK_OUTAGES_OUTAGES
+      - NETWORK_OUTAGES_LOCATIONS
+      - NETWORK_OUTAGES_INTERFACES
+      - NETWORK_OUTAGES_AFFECTED_TESTS
+      - APPLICATION_OUTAGES_AFFECTED_TESTS
+      - APPLICATION_OUTAGES_SERVERS
+      - APPLICATION_OUTAGES_LOCATIONS
+      - APPLICATION_OUTAGES_OUTAGES
+      - APPDYNAMICS_SERVICE_HEALTH
+      - CLOUD_NATIVE_MONITORING-ACCEPTED_TOTAL_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-ACCEPTED_OUTBOUND_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-ACCEPTED_INBOUND_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-ACCEPTED_INTERNAL_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-REJECTED_TOTAL_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-REJECTED_OUTBOUND_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-REJECTED_INBOUND_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-REJECTED_INTERNAL_THROUGHPUT
+      - CLOUD_NATIVE_MONITORING-TOTAL_CONNECTION_RATE
+      - CLOUD_NATIVE_MONITORING-CONNECTION_RATE
+      - CLOUD_NATIVE_MONITORING-INTERNAL_CONNECTION_RATE
+      - CLOUD_NATIVE_MONITORING-ALL_EVENTS
+      - CLOUD_NATIVE_MONITORING-CONFIGURATION_CHANGE_EVENTS
+      - CLOUD_NATIVE_MONITORING-AUTOSCALING_EVENTS
+      - TRAFFIC_INSIGHTS_MONITORING-TOTAL_THROUGHPUT
+      - TRAFFIC_INSIGHTS_MONITORING-DOWNSTREAM_THROUGHPUT
+      - TRAFFIC_INSIGHTS_MONITORING-UPSTREAM_THROUGHPUT
+      - TRAFFIC_INSIGHTS_MONITORING-CONNECTION_RATE
+      example: ENDPOINT_GATEWAY_CPU_LOAD_PERCENT
+    WidgetFilters:
+      type: object
+      description: '(Optional) Specifies the filters applied to the widget. When present, the `filters` property displays.
+        Each filter object has two properties: `filterProperty` and `filterValue`. The `filterProperty` can be values like
+        `AGENT`, `ENDPOINT_MACHINE_ID`, `TEST`, `MONITOR`, etc.  The `filterValue` represents an identifier array of the selected
+        property.'
+      example:
+        TEST:
+        - 5187
+        - 5227
+        ENDPOINT_MACHINE_ID:
+        - fbd0050c-07f7-43f7-9631-14b32f096962
+      additionalProperties:
+        uniqueItems: true
+        type: array
+        items: {}
+    Widget:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the widget.
+          readOnly: true
+          example: '1234'
+        title:
+          type: string
+          description: Title of the widget
+          example: Widget Title
+        visualMode:
+          $ref: '#/components/schemas/VisualMode'
+        embedUrl:
+          type: string
+          description: When `isEmbedded` is set to `true`, an `embedUrl` is provided.
+          readOnly: true
+          example: https://embed.thousandeyes.com/e/00aa:3039802d-5c76-42d2-9a93-c6e5f9d3122f
+        isEmbedded:
+          type: boolean
+          description: Set to `true` if widget is marked as embedded; otherwise, set to `false`.
+        metricGroup:
+          $ref: '#/components/schemas/MetricGroup'
+        direction:
+          $ref: '#/components/schemas/DashboardMetricDirection'
+        metric:
+          $ref: '#/components/schemas/DashboardMetric'
+        filters:
+          $ref: '#/components/schemas/WidgetFilters'
+        measure:
+          $ref: '#/components/schemas/ApiWidgetMeasure'
+        fixedTimespan:
+          $ref: '#/components/schemas/ApiDuration'
+        apiLink:
+          type: string
+          readOnly: true
+          deprecated: true
+        shouldExcludeAlertSuppressionWindows:
+          type: boolean
+          description: Excludes alert suppression window data if set to `true`.
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiWidget:
+      oneOf:
+      - $ref: '#/components/schemas/ApiAgentStatusWidget'
+      - $ref: '#/components/schemas/ApiAlertListWidget'
+      - $ref: '#/components/schemas/ApiBoxAndWhiskersWidget'
+      - $ref: '#/components/schemas/ApiColorGridWidget'
+      - $ref: '#/components/schemas/ApiGeoMapWidget'
+      - $ref: '#/components/schemas/ApiGroupedBarchartWidget'
+      - $ref: '#/components/schemas/ApiHeatmapWidget'
+      - $ref: '#/components/schemas/ApiListWidget'
+      - $ref: '#/components/schemas/ApiMultiMetricTableWidget'
+      - $ref: '#/components/schemas/ApiNumbersCardWidget'
+      - $ref: '#/components/schemas/ApiPieChartWidget'
+      - $ref: '#/components/schemas/ApiStackedAreaChartWidget'
+      - $ref: '#/components/schemas/ApiStackedBarchartWidget'
+      - $ref: '#/components/schemas/ApiTableWidget'
+      - $ref: '#/components/schemas/ApiTestTableWidget'
+      - $ref: '#/components/schemas/ApiTimeseriesWidget'
+      discriminator:
+        propertyName: type
+        mapping:
+          'Bar Chart: Stacked': '#/components/schemas/ApiStackedBarchartWidget'
+          'Bar Chart: Grouped': '#/components/schemas/ApiGroupedBarchartWidget'
+          Heatmap: '#/components/schemas/ApiHeatmapWidget'
+          'Time Series: Line': '#/components/schemas/ApiTimeseriesWidget'
+          'Time Series: Stacked Area': '#/components/schemas/ApiStackedAreaChartWidget'
+          Pie Chart: '#/components/schemas/ApiPieChartWidget'
+          Table: '#/components/schemas/ApiTableWidget'
+          Multi Metric Table: '#/components/schemas/ApiMultiMetricTableWidget'
+          Number: '#/components/schemas/ApiNumbersCardWidget'
+          Agent Status: '#/components/schemas/ApiAgentStatusWidget'
+          Color Grid: '#/components/schemas/ApiColorGridWidget'
+          Alert List: '#/components/schemas/ApiAlertListWidget'
+          List: '#/components/schemas/ApiListWidget'
+          Test Table: '#/components/schemas/ApiTestTableWidget'
+          Map: '#/components/schemas/ApiGeoMapWidget'
+          Box and Whiskers: '#/components/schemas/ApiBoxAndWhiskersWidget'
+    BarChartStackedWidgetType:
+      type: string
+      pattern: '^Bar Chart: Stacked$'
+      description: 'Bar Chart: Stacked widget type.'
+      example: 'Bar Chart: Stacked'
+    BarChartGroupedWidgetType:
+      type: string
+      pattern: '^Bar Chart: Grouped$'
+      description: 'Bar Chart: Grouped widget type.'
+      example: 'Bar Chart: Grouped'
+    HeatmapWidgetType:
+      type: string
+      pattern: ^Heatmap$
+      description: Heatmap widget type.
+      example: Heatmap
+    TimeSeriesLineWidgetType:
+      type: string
+      pattern: '^Time Series: Line$'
+      description: 'Time Series: Line widget type.'
+      example: 'Time Series: Line'
+    TimeSeriesStackedAreaWidgetType:
+      type: string
+      pattern: '^Time Series: Stacked Area$'
+      description: 'Time Series: Stacked Area widget type'
+      example: 'Time Series: Stacked Area'
+    PieChartWidgetType:
+      type: string
+      pattern: ^Pie Chart$
+      description: Pie Chart widget type
+      example: Pie Chart
+    TableWidgetType:
+      type: string
+      pattern: ^Table$
+      description: Table widget type.
+      example: Table
+    MultiMetricTableWidgetType:
+      type: string
+      pattern: ^Multi Metric Table$
+      description: Multi Metric Table widget type.
+      example: Multi Metric Table
+    NumberWidgetType:
+      type: string
+      pattern: ^Number$
+      description: Number widget type.
+      example: Number
+    AgentStatusWidgetType:
+      type: string
+      pattern: ^Agent Status$
+      description: Agent Status widget type.
+      example: Agent Status
+    ColorGridWidgetType:
+      type: string
+      pattern: ^Color Grid$
+      description: Color Grid widget type.
+      example: Color Grid
+    AlertListWidgetType:
+      type: string
+      pattern: ^Alert List$
+      description: Alert List widget type.
+      example: Alert List
+    ListWidgetType:
+      type: string
+      pattern: ^List$
+      description: List widget type. Currently supports only `List`.
+      example: List
+    TestTableWidgetType:
+      type: string
+      pattern: ^Test Table$
+      description: Test Table widget type,
+      example: Test Table
+    MapWidgetType:
+      type: string
+      pattern: ^Map$
+      description: Map widget type.
+      example: Map
+    BoxAndWhiskersWidgetType:
+      type: string
+      pattern: ^Box and Whiskers$
+      description: Box and Whiskers widget type.
+      example: Box and Whiskers
+    VisualMode:
+      type: string
+      description: Visual mode in the UI. Either full or half the width of the window.
+      default: Full
+      enum:
+      - Full
+      - Half screen
+      example: Full
+    ApiWidgetFilterApiTestTableFilterKey:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMultiSearchFilterApiTestTableFilterKey'
+        type:
+          $ref: '#/components/schemas/TestTableFilterType'
+    TestTableFilterType:
+      type: string
+      enum:
+      - all
+      - any
+      example: all
+    ApiWidgetMeasure:
+      type: object
+      description: Determines how to aggregate the the metric.
+      properties:
+        type:
+          $ref: '#/components/schemas/WidgetMeasureType'
+        percentileValue:
+          type: number
+          description: The percentile value to use when `type == NTH_PERCENTILE`.
+          format: float
+          example: 95
+    WidgetMeasureType:
+      type: string
+      description: Determines how to aggregate the the metric.
+      example: MEAN
+      enum:
+      - MINIMUM
+      - MAXIMUM
+      - MEAN
+      - MEDIAN
+      - NTH_PERCENTILE
+      - PERCPOSITIVE
+      - PERCZERO
+      - STDDEV
+      - TOTAL
+      - VALUES
+      - SUM
+      - CLOUD_NATIVE_MONITORING-MEAN
+      - CLOUD_NATIVE_MONITORING-SUM
+      - TRAFFIC_INSIGHTS_MONITORING-SUM
+      - TRAFFIC_INSIGHTS_MONITORING-MEAN
+    SnapshotExpirationDate:
+      type: string
+      format: date-time
+      description: Expiration date of the snapshot. If unspecified, the snapshot expires 1 year from its creation date. The
+        expiration date must be set within 5 years from the current date and adhere to the ISO date-time format.
+      example: '2023-05-16T10:14:28Z'
+    GenerateDashboardSnapshotRequest:
+      type: object
+      description: Request to generate a snapshot from a dashboard.
+      properties:
+        startDate:
+          type: string
+          format: date-time
+          description: Date and time to start aggregating data (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        endDate:
+          type: string
+          format: date-time
+          description: Date and time to end aggregating data (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        displayName:
+          type: string
+          description: The name of the snapshot, does not have to be unique.
+          example: snapshot from API
+        dashboardId:
+          type: string
+          description: TheIdentifierof the dashboard to generate a snapshot from
+          example: 646f4d2ce3c99b0536c3821e
+        anonymizeData:
+          type: boolean
+          description: Set to `true` to anonymize the data in the snapshot.
+        timezone:
+          type: string
+          description: Specifies the timezone used for date and time fields.
+          example: PST
+        expirationDate:
+          $ref: '#/components/schemas/SnapshotExpirationDate'
+    UpdateSnapshotExpirationDateApiRequest:
+      type: object
+      description: Request to update the expiration date of a snapshot.
+      properties:
+        snapshotExpirationDate:
+          $ref: '#/components/schemas/SnapshotExpirationDate'
+        expirationDate:
+          deprecated: true
+          type: string
+          description: Expiration date of the snapshot. If unspecified, the snapshot expires 1 year from its creation date.
+            The expiration date must be set within 5 years from the current date.
+          example: '2023-05-16 10:14:28'
+    ApiAgentLocation:
+      type: object
+      description: Location of the agent.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: Latitude of the agent.
+          example: 37.77493
+        longitude:
+          type: number
+          format: double
+          description: Longitude of the agent.
+          example: -122.41942
+        locationName:
+          type: string
+          description: Name of the agent location.
+          example: San Francisco, California, US
+    ApiAgentStatusAgent:
+      type: object
+      description: Agent shown in agent status widget.
+      properties:
+        agentId:
+          type: string
+          description: Identifier of the agent.
+          example: '6522'
+        status:
+          $ref: '#/components/schemas/EnterpriseAgentState'
+        ipInfo:
+          $ref: '#/components/schemas/ApiAgentStatusIpInfo'
+        agentName:
+          type: string
+          description: Name of the agent
+          example: 0c3898000117
+        location:
+          $ref: '#/components/schemas/ApiAgentLocation'
+    ApiAgentStatusIpInfo:
+      type: object
+      description: IP information of the agent.
+      properties:
+        publicIp:
+          type: string
+          description: Public IP of the agent.
+          format: ipv4
+          example: 172.58.92.31
+        privateIp:
+          type: string
+          description: Private IP of the agent.
+          format: ipv4
+          example: 172.58.92.31
+        ipv6:
+          type: string
+        operativeSystemVersion:
+          type: string
+    ApiAgentStatusSummary:
+      type: object
+      description: Summary of the agent status.
+      properties:
+        online:
+          type: integer
+          format: int32
+          description: Shows the number of agents with an online status.
+          example: 10
+        offline:
+          type: integer
+          format: int32
+          description: Shows the number of agents with an offline status.
+          example: 2
+        disabled:
+          type: integer
+          format: int32
+          description: Shows the number of agents with disabled status.
+          example: 3
+    AlertListAlertType:
+      type: string
+      description: Name of the alert type
+      enum:
+      - network-end-to-end-server
+      - network-end-to-end-agent
+      - network-path-trace
+      - dns-server
+      - dns-trace
+      - dnssec
+      - dns-plus-domain
+      - dns-plus-server
+      - web-http-server
+      - web-page-load
+      - web-transaction-classic
+      - web-transaction
+      - api
+      - web-ftp-server
+      - voice-sip-server
+      - voice-rtp-stream
+      - device
+      - device-interface
+      - endpoint-end-to-end-server
+      - endpoint-web-http-server
+      - endpoint-path-trace
+      - browser-session-agent
+      - browser-session-application
+      - routing-bgp
+    LegacyAlertListAlertType:
+      type: string
+      description: Name of the alert type
+      enum:
+      - Network - End-to-End (Server)
+      - Network - End-to-End (Agent)
+      - Network - Path Trace
+      - DNS Server
+      - DNS Trace
+      - DNSSEC
+      - DNS+ Domain
+      - DNS+ Server
+      - Web - HTTP Server
+      - Web - Page Load
+      - Web - Transaction (Classic)
+      - Web - Transaction
+      - API
+      - Web - FTP Server
+      - Voice - SIP Server
+      - Voice - RTP Stream
+      - Device
+      - Device Interface
+      - Endpoint - End-to-End (Server)
+      - EndpointWeb - HTTP Server
+      - Endpoint - Path Trace
+      - Browser Sessions - Agent
+      - Browser Sessions - Application
+      - Routing - BGP
+    ApiAlertListAlertType:
+      $ref: '#/components/schemas/LegacyAlertListAlertType'
+    ApiAlertListAlert:
+      type: object
+      description: Alert shown in the alert list widget.
+      properties:
+        alertId:
+          type: string
+          description: Identifier of the alert.
+          example: '2004945'
+        testId:
+          type: string
+          description: Identifier of the test.
+          example: '56512'
+        ruleId:
+          type: string
+          description: Identifier of the rule.
+          example: '281724'
+        alertSource:
+          type: string
+          description: Name of the agent, monitor or device producing the alert.
+          example: Http Test
+        alertRule:
+          type: string
+          description: Name of the alert rule that this alert belongs to.
+          example: Http Test Rule
+        alertType:
+          $ref: '#/components/schemas/AlertListAlertType'
+        startTime:
+          type: string
+          format: date-time
+          description: UTC date when the alert was first active.
+          example: '2023-06-02T08:54:00Z'
+        durationInSeconds:
+          type: integer
+          format: int64
+          description: Number of seconds the alert was active. If it’s still active, this number will increase every second.
+          example: 25
+        active:
+          type: boolean
+          description: Set to `true` if alert is active, `false` otherwise.
+          example: true
+    ApiDashboardAsw:
+      type: object
+      description: Alert suppression window shown in a widget.
+      properties:
+        id:
+          type: string
+          description: Identifier of the alert suppression window.
+          example: '281474976710662'
+        name:
+          type: string
+          description: Name of the alert suppression window.
+          example: Test dashboards
+        testIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+          - '281474976710661'
+        startTimes:
+          type: array
+          items:
+            type: string
+            format: date-time
+          example:
+          - '2023-05-16T10:14:28Z'
+        durationInSeconds:
+          type: integer
+          format: int64
+          example: 7200
+        repeat:
+          $ref: '#/components/schemas/AswRepeat'
+        repeatEvery:
+          type: integer
+          format: int32
+          example: 5
+        repeatUnit:
+          $ref: '#/components/schemas/AswRepeatUnit'
+    AswRepeat:
+      type: string
+      enum:
+      - none
+      - every-day
+      - alt-every-day
+      - every-week
+      - every-two-week
+      - every-month
+      - every-three-month
+      - custom
+      example: custom
+    AswRepeatUnit:
+      type: string
+      enum:
+      - day
+      - week
+      - month
+      example: week
+    ApiDataPointGroup:
+      type: object
+      description: Group of data points.
+      properties:
+        groupProperty:
+          type: string
+          description: Defines the criterion used to aggregate data points under specific group values.
+          example: COUNTRY
+        groupValue:
+          type: string
+          description: The value of a group.
+          example: US
+    ApiGraphletPoint:
+      type: object
+      description: A data point on a graphlet.
+      properties:
+        x:
+          type: integer
+          format: int64
+          description: Timestamp of the data point.
+          example: 1580403900
+        y:
+          type: number
+          format: double
+          description: Value of the data point.
+          example: 128.249
+    ApiMultiMetricColumnData:
+      type: object
+      description: The data presented within a single column of a Multi-Metric table.
+      properties:
+        columnId:
+          type: string
+          description: Identifier of the column.
+          example: 938to
+        binSize:
+          $ref: '#/components/schemas/BinSize'
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiWidgetDataPoint'
+        status:
+          $ref: '#/components/schemas/WidgetStatus'
+        alertSuppressionWindows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDashboardAsw'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiNumbersCardData:
+      type: object
+      description: The data displayed on a numbers card.
+      properties:
+        cardId:
+          type: string
+          description: Identifier of the card.
+          example: lrxxr
+        cardName:
+          type: string
+          description: Name of the card.
+          example: Card Name
+        startDate:
+          type: string
+          format: date-time
+          description: UTC start date of the data shown in the API output (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        endDate:
+          type: string
+          format: date-time
+          description: UTC end date of the data shown in the API output (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        previousValue:
+          type: number
+          format: double
+          description: Previous value if `compareToPreviousValue == true` in configuration.
+          example: 500
+        binSize:
+          $ref: '#/components/schemas/BinSize'
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        numberOfDataPoints:
+          type: integer
+          format: int64
+          description: Number of points aggregated into the data point
+          example: 24192
+        value:
+          $ref: '#/components/schemas/WidgetValue'
+        status:
+          $ref: '#/components/schemas/WidgetStatus'
+        alertSuppressionWindows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDashboardAsw'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ApiReportDataComponentLabelMap:
+      type: object
+      description: Map of group labels.
+      properties:
+        groupProperty:
+          type: string
+          description: Defines the criterion used to aggregate data points under specific group values.
+          example: AGENT
+        groupLabels:
+          type: array
+          description: List of group labels.
+          items:
+            $ref: '#/components/schemas/ApiReportDataComponentLabelMapEntry'
+    ApiReportDataComponentLabelMapEntry:
+      type: object
+      description: Represents a mapping entry of a group label.
+      properties:
+        groupId:
+          type: string
+          description: Identifier of the group.
+          example: '2565'
+        groupLabel:
+          type: string
+          description: Label of the group.
+          example: San Francisco, CA
+    ApiTestTableData:
+      type: object
+      description: Data shown in a test table widget.
+      properties:
+        testId:
+          type: string
+          description: Identifier of the test.
+          example: '68256'
+        testName:
+          type: string
+          description: Name of the test.
+          example: Http Test Name
+        target:
+          type: string
+          description: Configured target of the test.
+          example: www.google.com
+        testType:
+          type: string
+          description: Type of the test.
+          example: Web - HTTP Server
+        alertCount:
+          type: integer
+          format: int64
+          description: Number of active alerts of the test.
+          example: 398
+        isShared:
+          type: boolean
+          description: Set to `true` if test is shared, `false` otherwise.
+        graphlets:
+          type: array
+          description: List of time series points for test metrics in the last 12 hours.
+          items:
+            $ref: '#/components/schemas/ApiTestTableGraphletsData'
+    ApiTestTableGraphletsData:
+      type: object
+      description: Information displayed within a mini-graph associated with a specific test in a table.
+      properties:
+        metric:
+          type: string
+          description: Name of the metric.
+          example: Availability
+        testId:
+          type: string
+          description: Identifier of the test.
+          example: '68257'
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiGraphletPoint'
+    ApiWidgetDataPoint:
+      type: object
+      description: Data point of a widget.
+      properties:
+        timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        numberOfDataPoints:
+          type: integer
+          format: int64
+          description: Number of test data points aggregated into the widget data point.
+          example: 23304
+        value:
+          $ref: '#/components/schemas/WidgetValue'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDataPointGroup'
+    ApiWidgetDataSnapshotResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiWidgetData'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    ApiWidgetDataResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiWidgetData'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/PaginationLinks'
+    ApiWidgetData:
+      type: object
+      description: Response of a widget data request.
+      properties:
+        groupLabels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiReportDataComponentLabelMap'
+        binSize:
+          $ref: '#/components/schemas/BinSize'
+        data:
+          $ref: '#/components/schemas/ApiWidgetsDataV2'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+    ApiWidgetsDataV2:
+      type: object
+      description: Data of a widget.
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiNumbersCardData'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMultiMetricColumnData'
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiWidgetDataPoint'
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTestTableData'
+        startRound:
+          type: integer
+          format: int64
+          description: Epoch time (seconds) indicating the start time of the round.
+          example: 1384309800
+        alertSuppressionWindows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDashboardAsw'
+        totalAlerts:
+          type: integer
+          format: int64
+          description: Total number of active alerts within configured timespan.
+          example: 500
+        activeAlerts:
+          type: integer
+          format: int64
+          description: Total number of currently active alerts.
+          example: 483
+        alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiAlertListAlert'
+        summary:
+          $ref: '#/components/schemas/ApiAgentStatusSummary'
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiAgentStatusAgent'
+        rows:
+          $ref: '#/components/schemas/ApiListWidgetRows'
+        legend:
+          $ref: '#/components/schemas/ApiListWidgetLegend'
+        status:
+          $ref: '#/components/schemas/WidgetStatus'
+    DashboardSnapshotResponse:
+      type: object
+      properties:
+        snapshotId:
+          $ref: '#/components/schemas/DashboardSnapshotId'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    DashboardSnapshotId:
+      type: string
+      format: uuid
+      description: Identifier of the dashboard snapshot.
+      example: d28bb71f-5a47-4783-8f12-d4b115e61b0c
+    DashboardGlobalFilterId:
+      properties:
+        globalFilterId:
+          type: string
+          description: Default global dashboard filter ID (obtained from `/dashboards/filters` endpoint).
+          example: 65babd9bb90bf55b17c96c8d
+    LegacyDashboardSnapshot:
+      deprecated: true
+      type: object
+      properties:
+        accountId:
+          deprecated: true
+          type: integer
+          format: int64
+          description: Identifier of the account group that the snapshot belongs to.
+          example: 1234
+        createdDate:
+          deprecated: true
+          type: string
+          description: UTC date when dashboard snapshot was created.
+          example: '2023-05-16 10:14:28'
+        expirationDate:
+          deprecated: true
+          type: string
+          description: Expiration date of the snapshot. If unspecified, the snapshot expires 1 year from its creation date.
+            The expiration date must be set within 5 years from the current date.
+          example: '2023-05-16 10:14:28'
+        permalink:
+          deprecated: true
+          type: string
+          description: Hyperlink to dashboard snapshot in ThousandEyes Application
+          example: https://app.thousandeyes.com/dashboard/?snapshotId=d28bb71f-5a47-4783-8f12-d4b115e61b0c
+        apiLinks:
+          deprecated: true
+          type: array
+          description: A links array containing the self link.
+          items:
+            type: object
+            additionalProperties: true
+    ApiDashboardSnapshot:
+      allOf:
+      - type: object
+        properties:
+          snapshotId:
+            $ref: '#/components/schemas/DashboardSnapshotId'
+          snapshotName:
+            type: string
+            description: Name of the dashboard snapshot.
+            example: HTTP Server Dashboard Snapshot
+          aid:
+            type: string
+            description: Identifier of the account group that the snapshot belongs to.
+            example: '1234'
+          isShared:
+            type: boolean
+            description: Set `true` if dashboard snapshot is shared, `false` otherwise.
+          snapshotCreatedDate:
+            type: string
+            format: date-time
+            description: UTC date when dashboard snapshot was created (ISO date-time format).
+            example: '2023-05-16T10:14:28Z'
+          dashboard:
+            $ref: '#/components/schemas/ApiDashboard'
+          widgets:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiWidget'
+          isScheduled:
+            type: boolean
+            description: Set `true` if dashboard snapshot was generated from a schedule, `false` otherwise.
+          timeSpan:
+            $ref: '#/components/schemas/ApiReportSnapshotTimeSpan'
+          snapshotExpirationDate:
+            $ref: '#/components/schemas/SnapshotExpirationDate'
+          _links:
+            $ref: '#/components/schemas/AppAndSelfLinks'
+      - $ref: '#/components/schemas/LegacyDashboardSnapshot'
+    ApiReportSnapshotTimeSpan:
+      type: object
+      description: Time span of the dashboard snapshot.
+      properties:
+        startDate:
+          deprecated: true
+          type: string
+          description: UTC start date of dashboard snapshot.
+          example: '2023-05-16 10:14:28'
+        start:
+          type: string
+          format: date-time
+          description: UTC start date of dashboard snapshot (ISO date-time format).
+          example: '2023-05-16T10:14:28Z'
+        duration:
+          type: integer
+          format: int64
+          description: Duration of dashboard snapshot in seconds.
+          example: 60
+    DashboardSnapshotsPage:
+      type: object
+      description: Dashboard snapshots page.
+      properties:
+        pages:
+          deprecated: true
+          type: object
+          additionalProperties: true
+        dashboardSnapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiDashboardSnapshot'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    DashboardLayout:
+      description: Dashboard layout configuration for arranging widgets.
+      type: object
+      required:
+      - type
+      properties:
+        layoutId:
+          type: string
+          description: Unique identifier for the layout.
+          example: grid-layout-1
+        type:
+          $ref: '#/components/schemas/DashboardLayoutType'
+        details:
+          $ref: '#/components/schemas/DashboardLayoutDetails'
+      example:
+        layoutId: grid-layout-1
+        type: grid
+        details:
+          widgetPositioning:
+          - x: 0
+            y: 0
+            w: 9
+            h: 5
+            id: widgetId-71lbb
+    DashboardLayoutType:
+      type: string
+      description: Type of the layout.
+      enum:
+      - grid
+      - vertical
+      example: grid
+    DashboardLayoutDetails:
+      description: Layout details including widget positioning.
+      type: object
+      nullable: true
+      properties:
+        widgetPositioning:
+          type: array
+          description: List of widget positions within the layout.
+          items:
+            $ref: '#/components/schemas/WidgetPosition'
+          example:
+          - x: 0
+            y: 0
+            w: 9
+            h: 5
+            id: widgetId-71lbb
+      example:
+        widgetPositioning:
+        - x: 0
+          y: 0
+          w: 9
+          h: 5
+          id: widgetId-71lbb
+    WidgetPosition:
+      description: Position and size of a widget in the layout grid.
+      type: object
+      required:
+      - x
+      - y
+      - w
+      - h
+      properties:
+        x:
+          type: integer
+          format: int32
+          description: Horizontal position.
+          example: 0
+        y:
+          type: integer
+          format: int32
+          description: Vertical position.
+          example: 0
+        w:
+          type: integer
+          format: int32
+          description: Width in grid units.
+          example: 9
+        h:
+          type: integer
+          format: int32
+          description: Height in grid units.
+          example: 5
+        id:
+          type: string
+          description: Identifier of the widget this position applies to.
+          example: widgetId-71lbb
+    DashboardLinks:
+      type: object
+      description: A links object containing the self and the snapshots links.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+        snapshots:
+          $ref: '#/components/schemas/Link'
+    BinSize:
+      type: integer
+      format: int64
+      description: Duration of each bin.
+      example: 3600
+    Timestamp:
+      type: integer
+      format: int64
+      description: Timestamp of the aggregated data point.
+      example: 1567620000
+    WidgetValue:
+      type: number
+      format: double
+      description: Aggregated value.
+      example: 100
+    WidgetStatus:
+      type: string
+      description: Message for not fully configured card or no data.
+      example: No data
+    ApiContextFiltersResponse:
+      type: object
+      description: All global dashboard filters saved.
+      properties:
+        dashboardFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiContextFilterResponse'
+    ApiDashboardFilterName:
+      type: string
+      description: The name of the dashboard filter, this must be unique.
+      example: cea-filter
+    ApiDashboardFilterDescription:
+      type: string
+      description: An optional description of the filter.
+      example: Global filter for CEA widgets
+    ApiDashboardFilterUserDetails:
+      type: object
+      description: Details of user who created or modified the filter.
+      properties:
+        uid:
+          type: string
+          description: Unique ID of the user.
+          example: '1'
+        name:
+          type: string
+          description: Name of the user.
+          example: Test User
+    ApiContextFilterRequest:
+      type: object
+      description: Request containing dashboard filter name, description and context details.
+      properties:
+        context:
+          $ref: '#/components/schemas/ApiContextFilters'
+        name:
+          $ref: '#/components/schemas/ApiDashboardFilterName'
+        description:
+          $ref: '#/components/schemas/ApiDashboardFilterDescription'
+      required:
+      - name
+      - context
+    ApiContextFilterResponse:
+      description: Response containing dashboard filter settings and context details.
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/ApiContextFilters'
+        aid:
+          type: string
+          description: Account group ID of the filter.
+          example: '11'
+        id:
+          type: string
+          description: Unique ID of the dashboard filter.
+          example: 65bc18e8f2073a4a469cd958
+        name:
+          $ref: '#/components/schemas/ApiDashboardFilterName'
+        description:
+          $ref: '#/components/schemas/ApiDashboardFilterDescription'
+        createdBy:
+          $ref: '#/components/schemas/ApiDashboardFilterUserDetails'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the filter was last modified.
+          example: '2024-02-01T22:19:19+00:00'
+        createdDate:
+          type: string
+          format: date-time
+          description: Timestamp when the filter was created.
+          example: '2024-02-01T22:19:19+00:00'
+        modifiedBy:
+          $ref: '#/components/schemas/ApiDashboardFilterUserDetails'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+      required:
+      - id
+      - aid
+      - name
+      - context
+    ApiContextFilters:
+      type: array
+      description: List of filters to be applied to a dashboard.
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/ApiDataSourceFilters'
+    ApiDataSourceFilters:
+      type: object
+      description: List of different datasource filters.
+      properties:
+        dataSourceId:
+          type: string
+          description: Types of data source.
+          example: VIRTUAL_AGENT
+        filters:
+          type: array
+          description: List of different filter properties.
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ApiDataSourceFilter'
+      required:
+      - dataSourceId
+      - filters
+    ApiDataSourceFilter:
+      type: object
+      description: List of different filter properties for a single datasource.
+      properties:
+        filterId:
+          type: string
+          description: Data source property to filter by.
+          example: TEST_LABEL
+        values:
+          type: array
+          uniqueItems: true
+          description: Values to filter by based on the specified `filterId`.
+          example:
+          - '45862'
+          - '59749'
+          items:
+            type: string
+        metricIds:
+          type: array
+          uniqueItems: true
+          description: Dashboard metric associated with the filter property.
+          example:
+          - WEB_PAGE_LOAD_COMPLETION_RATE
+          - WEB_TTFB
+          - WEB_AVAILABILITY
+          items:
+            type: string
+      required:
+      - filterId
+      - values
+      - metricIds
+    DashboardSchedule:
+      description: Snapshot schedule for a dashboard. A `repeat` value of `NONE` represents a one-time schedule.
+      type: object
+      required:
+      - cronSpec
+      - dataSource
+      - dataTimespan
+      - flagEnabled
+      properties:
+        cronSpec:
+          $ref: '#/components/schemas/DashboardScheduleCronSpec'
+        dataSource:
+          $ref: '#/components/schemas/DashboardScheduleDataSource'
+        dataTimespan:
+          $ref: '#/components/schemas/DashboardScheduleTimespan'
+        flagEnabled:
+          type: boolean
+          description: When `true`, the schedule is active and snapshots are generated according to `cronSpec`.
+          example: true
+        flagLocked:
+          type: boolean
+          description: When `true`, the schedule configuration is locked and cannot be edited through the web application.
+          example: false
+        flagAutoShare:
+          type: boolean
+          description: When `true`, generated snapshots are automatically shared with schedule recipients.
+          example: false
+        flagIsIncludePiiUserData:
+          type: boolean
+          description: When `true`, generated snapshots include personally identifiable user data when permitted by account
+            policy.
+          example: false
+        flagAttachPdfToEmail:
+          type: boolean
+          description: When `true`, a PDF attachment is included in snapshot notification emails.
+          example: true
+        recipients:
+          type: array
+          description: Email addresses of active dashboard account users who receive snapshot notifications.
+          items:
+            type: string
+            format: email
+          example:
+          - alice@example.com
+          - bob@example.com
+        expiresAfter:
+          type: integer
+          format: int64
+          minimum: 86400
+          maximum: 157680000
+          description: Snapshot retention period in seconds. Allowed range is 24 hours to 5 years.
+          example: 157680000
+        nextDate:
+          type: string
+          format: date-time
+          readOnly: true
+          description: UTC date of the next scheduled snapshot run. Computed by the server.
+          example: '2026-10-01T07:00:00Z'
+    DashboardScheduleRequest:
+      description: Snapshot schedule configuration for create or update requests.
+      type: object
+      required:
+      - cronSpec
+      - dataSource
+      - dataTimespan
+      - flagEnabled
+      properties:
+        cronSpec:
+          $ref: '#/components/schemas/DashboardScheduleCronSpec'
+        dataSource:
+          $ref: '#/components/schemas/DashboardScheduleDataSource'
+        dataTimespan:
+          $ref: '#/components/schemas/DashboardScheduleTimespan'
+        flagEnabled:
+          type: boolean
+          description: When `true`, the schedule is active and snapshots are generated according to `cronSpec`.
+          example: true
+        flagLocked:
+          type: boolean
+          description: When `true`, the schedule configuration is locked and cannot be edited through the web application.
+          example: false
+        flagAutoShare:
+          type: boolean
+          description: When `true`, generated snapshots are automatically shared with schedule recipients.
+          example: false
+        flagIsIncludePiiUserData:
+          type: boolean
+          description: When `true`, generated snapshots include personally identifiable user data when permitted by account
+            policy.
+          example: false
+        flagAttachPdfToEmail:
+          type: boolean
+          description: When `true`, a PDF attachment is included in snapshot notification emails.
+          example: true
+        recipients:
+          type: array
+          uniqueItems: true
+          description: Email addresses of active dashboard account users who receive snapshot notifications. Unknown or duplicate
+            addresses are rejected.
+          items:
+            type: string
+            format: email
+          example:
+          - alice@example.com
+          - bob@example.com
+        expiresAfter:
+          type: integer
+          format: int64
+          default: 157680000
+          minimum: 86400
+          maximum: 157680000
+          description: Snapshot retention period in seconds. Allowed range is 24 hours to 5 years. Defaults to 5 years when
+            omitted.
+          example: 157680000
+    DashboardScheduleCronSpec:
+      description: Cron-style recurrence specification for a dashboard snapshot schedule.
+      type: object
+      required:
+      - repeat
+      - startTime
+      - zoneCode
+      oneOf:
+      - $ref: '#/components/schemas/DashboardScheduleNonCustomCronSpec'
+      - $ref: '#/components/schemas/DashboardScheduleCustomCronSpec'
+      not:
+        required:
+        - endRepeat
+        properties:
+          repeat:
+            $ref: '#/components/schemas/DashboardScheduleOneTimeRepeatType'
+      properties:
+        startTime:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Schedule start time as a Unix timestamp in seconds.
+          example: 1753200000
+        zoneCode:
+          type: string
+          description: An IANA time zone identifier used to interpret `startTime` and recurrence. For example, `America/Los_Angeles`.
+          example: America/Los_Angeles
+        repeat:
+          $ref: '#/components/schemas/DashboardScheduleRepeat'
+        endRepeat:
+          $ref: '#/components/schemas/DashboardScheduleEndCondition'
+    DashboardScheduleNonCustomCronSpec:
+      type: object
+      not:
+        required:
+        - customRepeat
+      properties:
+        repeat:
+          $ref: '#/components/schemas/DashboardScheduleNonCustomRepeat'
+    DashboardScheduleCustomCronSpec:
+      type: object
+      required:
+      - customRepeat
+      properties:
+        repeat:
+          $ref: '#/components/schemas/DashboardScheduleCustomRepeatType'
+        customRepeat:
+          $ref: '#/components/schemas/DashboardScheduleCustomRepeat'
+    DashboardScheduleRepeat:
+      type: string
+      description: Schedule repetition pattern. Use `NONE` to generate one snapshot at `startTime`.
+      enum:
+      - NONE
+      - EVERY_DAY
+      - ALT_EVERY_DAY
+      - EVERY_WEEK
+      - EVERY_MONTH
+      - EVERY_TWO_WEEKS
+      - EVERY_THREE_MONTHS
+      - CUSTOM
+      example: EVERY_WEEK
+    DashboardScheduleNonCustomRepeat:
+      type: string
+      enum:
+      - NONE
+      - EVERY_DAY
+      - ALT_EVERY_DAY
+      - EVERY_WEEK
+      - EVERY_MONTH
+      - EVERY_TWO_WEEKS
+      - EVERY_THREE_MONTHS
+      example: EVERY_WEEK
+    DashboardScheduleCustomRepeatType:
+      type: string
+      enum:
+      - CUSTOM
+      example: CUSTOM
+    DashboardScheduleOneTimeRepeatType:
+      type: string
+      enum:
+      - NONE
+      example: NONE
+    DashboardScheduleEndCondition:
+      description: Condition that determines when the recurring schedule ends.
+      discriminator:
+        propertyName: endConditionType
+        mapping:
+          NEVER: '#/components/schemas/DashboardScheduleNeverEndCondition'
+          AFTER: '#/components/schemas/DashboardScheduleAfterEndCondition'
+          DATE: '#/components/schemas/DashboardScheduleDateEndCondition'
+      oneOf:
+      - $ref: '#/components/schemas/DashboardScheduleNeverEndCondition'
+      - $ref: '#/components/schemas/DashboardScheduleAfterEndCondition'
+      - $ref: '#/components/schemas/DashboardScheduleDateEndCondition'
+    DashboardScheduleNeverEndCondition:
+      type: object
+      required:
+      - endConditionType
+      not:
+        required:
+        - value
+      properties:
+        endConditionType:
+          type: string
+          pattern: ^NEVER$
+          description: Identifies a schedule that never ends.
+          example: NEVER
+    DashboardScheduleAfterEndCondition:
+      type: object
+      required:
+      - endConditionType
+      - value
+      properties:
+        endConditionType:
+          type: string
+          pattern: ^AFTER$
+          description: Identifies a schedule that ends after a number of occurrences.
+          example: AFTER
+        value:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Number of schedule occurrences after which the recurrence ends.
+          example: 10
+    DashboardScheduleDateEndCondition:
+      type: object
+      required:
+      - endConditionType
+      - value
+      properties:
+        endConditionType:
+          type: string
+          pattern: ^DATE$
+          description: Identifies a schedule that ends on a specified date.
+          example: DATE
+        value:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Unix timestamp in seconds when the recurrence ends.
+          example: 1753200000
+    DashboardScheduleCustomRepeat:
+      type: object
+      required:
+      - repeatEvery
+      - repeatUnit
+      not:
+        required:
+        - daysOfWeek
+        properties:
+          repeatUnit:
+            $ref: '#/components/schemas/DashboardScheduleNonWeeklyCustomRepeatUnit'
+      properties:
+        repeatEvery:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 99
+          description: Interval count for custom recurrence.
+          example: 2
+        daysOfWeek:
+          type: array
+          uniqueItems: true
+          description: Days of the week for custom weekly recurrence (`1` = Monday through `7` = Sunday).
+          items:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 7
+          example:
+          - 1
+          - 3
+          - 5
+        repeatUnit:
+          $ref: '#/components/schemas/DashboardScheduleCustomRepeatUnit'
+    DashboardScheduleCustomRepeatUnit:
+      type: string
+      enum:
+      - DAY
+      - WEEK
+      - MONTH
+      example: WEEK
+    DashboardScheduleNonWeeklyCustomRepeatUnit:
+      type: string
+      enum:
+      - DAY
+      - MONTH
+      example: DAY
+    DashboardScheduleDataSource:
+      type: object
+      description: 'Naming configuration for snapshots generated by the schedule. The required `dataTimespan` property on
+        the schedule controls the snapshot data range.
+
+        '
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Name assigned to snapshots generated by the schedule.
+          example: Weekly network report
+    DashboardScheduleTimespan:
+      type: object
+      description: Amount of historical data to include in each scheduled snapshot.
+      required:
+      - n
+      - period
+      properties:
+        n:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Number of time units in the snapshot data range.
+          example: 1
+        period:
+          $ref: '#/components/schemas/DashboardScheduleTimespanPeriod'
+    DashboardScheduleTimespanPeriod:
+      type: string
+      enum:
+      - DAY
+      - WEEK
+      - MONTH
+      example: WEEK
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint.
+      example: '1234'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    EnterpriseAgentState:
+      type: string
+      description: State of the agent.
+      enum:
+      - online
+      - offline
+      - disabled
+      example: online
+      readOnly: true
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate`
+        field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field
+        indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    AppAndSelfLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+  headers:
+    DashboardSnapshotRateLimit:
+      schema:
+        type: integer
+        example: 100
+      description: The maximum number of dashboard snapshot requests allowed within a specified time frame. The limit is 100
+        requests per hour.
+    DashboardSnapshotRateLimitRemaining:
+      schema:
+        type: integer
+        example: 45
+      description: The number of remaining dashboard snapshot requests that can be made within the current time frame. This
+        value indicates how many of the allowed 100 requests per hour are still available.
+    DashboardSnapshotRateLimitReset:
+      schema:
+        type: integer
+        example: 160
+      description: The amount of time remaining until the rate limit resets and the full quota of requests is available again.
+        If the value is 0, it means the rate limit currently allows access.
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
+  responses:
+    '204':
+      description: No content
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7

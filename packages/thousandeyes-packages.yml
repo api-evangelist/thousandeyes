@@ -1,0 +1,500 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/libraries-sdks/ + PyPI, Maven Central,
+  Go module proxy and the Terraform Registry metadata endpoints
+note: ThousandEyes ships one modular SDK per API area rather than a single client. Python and Java are
+  published as 23 and 26 separate registry artifacts respectively, all released in lockstep. Every SDK
+  is generated from the same OpenAPI documents captured in openapi/. No npm/JavaScript client is published
+  — registry.npmjs.org has no first-party ThousandEyes package.
+registries_checked:
+- registry: pypi
+  result: 23 first-party packages, all 4.3.0 (2026-07-23)
+- registry: maven-central
+  result: 29 artifacts under com.thousandeyes.sdk; 26 current at 4.2.1 (2026-07-30); core/examples/labels
+    are stale v6-era artifacts last published 2024
+- registry: go-modules
+  result: thousandeyes-sdk-go v3.0.0 (2026-08-05); v2.4.3 (2024-05-10) is the superseded v6 line
+- registry: terraform-registry
+  result: thousandeyes/thousandeyes 3.2.4 (2026-07-23)
+- registry: npm
+  result: no first-party package (thousandeyes, @thousandeyes/sdk, thousandeyes-mcp all 404)
+- registry: rubygems
+  result: no first-party gem (thousandeyes 404)
+- registry: nuget
+  result: no first-party package (thousandeyes 404)
+- registry: crates.io
+  result: no first-party crate (thousandeyes 404)
+package_count: 52
+packages:
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-administrative
+  url: https://pypi.org/project/thousandeyes-sdk-administrative/
+  install: pip install thousandeyes-sdk-administrative
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-agents
+  url: https://pypi.org/project/thousandeyes-sdk-agents/
+  install: pip install thousandeyes-sdk-agents
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-alerts
+  url: https://pypi.org/project/thousandeyes-sdk-alerts/
+  install: pip install thousandeyes-sdk-alerts
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-bgp-monitors
+  url: https://pypi.org/project/thousandeyes-sdk-bgp-monitors/
+  install: pip install thousandeyes-sdk-bgp-monitors
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-connectors
+  url: https://pypi.org/project/thousandeyes-sdk-connectors/
+  install: pip install thousandeyes-sdk-connectors
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-core
+  url: https://pypi.org/project/thousandeyes-sdk-core/
+  install: pip install thousandeyes-sdk-core
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-credentials
+  url: https://pypi.org/project/thousandeyes-sdk-credentials/
+  install: pip install thousandeyes-sdk-credentials
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-dashboards
+  url: https://pypi.org/project/thousandeyes-sdk-dashboards/
+  install: pip install thousandeyes-sdk-dashboards
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-emulation
+  url: https://pypi.org/project/thousandeyes-sdk-emulation/
+  install: pip install thousandeyes-sdk-emulation
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-endpoint-agents
+  url: https://pypi.org/project/thousandeyes-sdk-endpoint-agents/
+  install: pip install thousandeyes-sdk-endpoint-agents
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-endpoint-instant-tests
+  url: https://pypi.org/project/thousandeyes-sdk-endpoint-instant-tests/
+  install: pip install thousandeyes-sdk-endpoint-instant-tests
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-endpoint-labels
+  url: https://pypi.org/project/thousandeyes-sdk-endpoint-labels/
+  install: pip install thousandeyes-sdk-endpoint-labels
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-endpoint-test-results
+  url: https://pypi.org/project/thousandeyes-sdk-endpoint-test-results/
+  install: pip install thousandeyes-sdk-endpoint-test-results
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-endpoint-tests
+  url: https://pypi.org/project/thousandeyes-sdk-endpoint-tests/
+  install: pip install thousandeyes-sdk-endpoint-tests
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-event-detection
+  url: https://pypi.org/project/thousandeyes-sdk-event-detection/
+  install: pip install thousandeyes-sdk-event-detection
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-instant-tests
+  url: https://pypi.org/project/thousandeyes-sdk-instant-tests/
+  install: pip install thousandeyes-sdk-instant-tests
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-internet-insights
+  url: https://pypi.org/project/thousandeyes-sdk-internet-insights/
+  install: pip install thousandeyes-sdk-internet-insights
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-snapshots
+  url: https://pypi.org/project/thousandeyes-sdk-snapshots/
+  install: pip install thousandeyes-sdk-snapshots
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-streaming
+  url: https://pypi.org/project/thousandeyes-sdk-streaming/
+  install: pip install thousandeyes-sdk-streaming
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-tags
+  url: https://pypi.org/project/thousandeyes-sdk-tags/
+  install: pip install thousandeyes-sdk-tags
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-test-results
+  url: https://pypi.org/project/thousandeyes-sdk-test-results/
+  install: pip install thousandeyes-sdk-test-results
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-tests
+  url: https://pypi.org/project/thousandeyes-sdk-tests/
+  install: pip install thousandeyes-sdk-tests
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: python
+  registry: pypi
+  name: thousandeyes-sdk-usage
+  url: https://pypi.org/project/thousandeyes-sdk-usage/
+  install: pip install thousandeyes-sdk-usage
+  official: true
+  version: 4.3.0
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-python
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:administrative
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/administrative
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>administrative</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:agents
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/agents
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>agents</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:alerts
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/alerts
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>alerts</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:authentication
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/authentication
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>authentication</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:bgp-monitors
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/bgp-monitors
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>bgp-monitors</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:client
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/client
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>client</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:client-native
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/client-native
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>client-native</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:configuration
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/configuration
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>configuration</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:connectors
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/connectors
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>connectors</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:credentials
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/credentials
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>credentials</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:dashboards
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/dashboards
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>dashboards</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:emulation
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/emulation
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>emulation</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:endpoint-agents
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-agents
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>endpoint-agents</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:endpoint-instant-tests
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-instant-tests
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>endpoint-instant-tests</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:endpoint-labels
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-labels
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>endpoint-labels</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:endpoint-test-results
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-test-results
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>endpoint-test-results</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:endpoint-tests
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-tests
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>endpoint-tests</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:event-detection
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/event-detection
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>event-detection</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:instant-tests
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/instant-tests
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>instant-tests</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:internet-insights
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/internet-insights
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>internet-insights</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:snapshots
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/snapshots
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>snapshots</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:streaming
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/streaming
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>streaming</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:tags
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/tags
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>tags</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:test-results
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/test-results
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>test-results</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:tests
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/tests
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>tests</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: java
+  registry: maven
+  name: com.thousandeyes.sdk:usage
+  url: https://central.sonatype.com/artifact/com.thousandeyes.sdk/usage
+  install: <dependency><groupId>com.thousandeyes.sdk</groupId><artifactId>usage</artifactId><version>4.2.1</version></dependency>
+  official: true
+  version: 4.2.1
+  published: '2026-07-30'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-java
+- language: go
+  registry: go-modules
+  name: github.com/thousandeyes/thousandeyes-sdk-go/v3
+  url: https://pkg.go.dev/github.com/thousandeyes/thousandeyes-sdk-go/v3
+  install: go get github.com/thousandeyes/thousandeyes-sdk-go/v3
+  official: true
+  version: v3.0.0
+  published: '2026-08-05'
+  source: https://github.com/thousandeyes/thousandeyes-sdk-go
+  note: First GA release of the Go SDK for API v7, announced in the API changelog on 2026-08-05. The v2
+    line (v2.4.3, 2024-05-10) targets API v6 and is superseded.
+- language: go
+  registry: go-modules
+  name: github.com/thousandeyes/thousandeyes-cli
+  url: https://github.com/thousandeyes/thousandeyes-cli
+  install: go install github.com/thousandeyes/thousandeyes-cli@latest
+  official: true
+  version: 0.0.3
+  published: '2026-07-01'
+  note: First-party CLI. Latest GitHub release 0.0.3; the Go module proxy only carries an untagged pseudo-version
+    (v0.0.0-20260629200336). See cli/thousandeyes-cli.yml.
+- language: hcl
+  registry: terraform-registry
+  name: thousandeyes/thousandeyes
+  url: https://registry.terraform.io/providers/thousandeyes/thousandeyes/latest
+  install: terraform { required_providers { thousandeyes = { source = "thousandeyes/thousandeyes" } }
+    }
+  official: true
+  version: 3.2.4
+  published: '2026-07-23'
+  source: https://github.com/thousandeyes/terraform-provider-thousandeyes

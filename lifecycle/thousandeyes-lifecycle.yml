@@ -1,0 +1,53 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/thousandeyes-api-license-terms-and-support-policy/
+  + https://developer.cisco.com/docs/thousandeyes/api-changelog/ + https://status.thousandeyes.com
+versioning:
+  scheme: uri-path
+  current: v7
+  spec_version: 7.0.100
+  base: https://api.thousandeyes.com/v7
+  explicit_version_required: true
+  note: v6 was the final version to accept unversioned requests; every version from v7 onward must name
+    the version in the path.
+  docs: https://developer.cisco.com/docs/thousandeyes/thousandeyes-api-license-terms-and-support-policy/
+deprecation:
+  policy_url: https://developer.cisco.com/docs/thousandeyes/thousandeyes-api-license-terms-and-support-policy/
+  policy: Only the most recent major release and the immediately prior major release are supported. When
+    a new major release reaches GA the prior version stays the default for 90 days; the prior version
+    is then supported for a further 12 months from the day it stops being the default.
+  transition_window_days: 90
+  prior_version_support_months: 12
+  sunset_header: false
+  deprecation_header: false
+  note: 'The policy is published and dated in terms, but ThousandEyes does not signal deprecation in-band
+    — no RFC 8594 Sunset or Deprecation response header is documented, and no operation in the 26 harvested
+    specs carries `deprecated: true`.'
+  unsupported_behaviour: Requests to an unsupported version return an error response (301 MOVED PERMANENTLY
+    for a nonexistent version).
+migration_guides:
+- from: v6
+  to: v7
+  url: https://developer.cisco.com/docs/thousandeyes/migration-guide-overview/
+status_page: https://status.thousandeyes.com
+status_page_platform: Atlassian Statuspage
+status_feeds:
+- https://status.thousandeyes.com/history.atom
+- https://status.thousandeyes.com/history.rss
+- https://status.thousandeyes.com/api/v2/summary.json
+sla:
+  url: null
+  uptime_target: null
+  note: No public uptime SLA is published for the API. Commercial terms are the Cisco Baseline API Terms
+    (https://www.cisco.com/c/dam/en_us/about/doing_business/legal/supplemental-terms/Baseline-API-Terms.pdf)
+    plus the ThousandEyes Offer Description.
+support:
+  developer_support: https://developer.cisco.com/docs/thousandeyes/developer-support/
+  guidelines: https://developer.cisco.com/docs/thousandeyes/api-support-guidelines/
+  community: https://community.cisco.com/t5/thousandeyes/bd-p/disc-thousandeyes
+  case_intake: ThousandEyes dashboard > Customer Engineering case
+changelog:
+  api: https://developer.cisco.com/docs/thousandeyes/api-changelog/
+  product: https://docs.thousandeyes.com/whats-new/changelog
+  artifact: changelog/thousandeyes-changelog.yml
+deprecated_operations: []

@@ -1,0 +1,79 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/pagination/, https://developer.cisco.com/docs/thousandeyes/rate-limits/,
+  https://developer.cisco.com/docs/thousandeyes/errors-and-troubleshooting/, https://developer.cisco.com/docs/thousandeyes/request-and-response-format/,
+  https://developer.cisco.com/docs/thousandeyes/time-ranges/, https://developer.cisco.com/docs/thousandeyes/account-group-context/,
+  https://developer.cisco.com/docs/thousandeyes/authentication/ + openapi/thousandeyes-*-openapi.yml
+auth:
+  style: bearer token in the Authorization header; OAuth 2.0 authorization-code and device-code flows
+    for clients that want their own rate-limit bucket
+  artifact: authentication/thousandeyes-authentication.yml
+idempotency:
+  supported: false
+  evidence: No Idempotency-Key (or equivalent) header appears in any of the 26 harvested OpenAPI documents,
+    and the developer reference documents no retry-safety mechanism for POST. Creates are not replay-safe;
+    a retried create makes a second object.
+  note: Recorded as an honest absence. No Idempotency pointer is emitted in apis.yml.
+pagination:
+  style: cursor
+  link_style: HAL-ish _links envelope
+  request_param: cursor
+  response_fields:
+  - _links.self.href
+  - _links.next.href
+  semantics: Follow _links.next.href until it is absent. Page size is server-decided and varies with test
+    type and agent count.
+  docs: https://developer.cisco.com/docs/thousandeyes/pagination/
+time_ranges:
+  params:
+  - window
+  - startDate
+  - endDate
+  window_format: relative duration such as 10d, 2h, 30m
+  absolute_format: ISO 8601 UTC; startDate and endDate are used together and are mutually exclusive with
+    window
+  docs: https://developer.cisco.com/docs/thousandeyes/time-ranges/
+tenancy:
+  param: aid
+  in: query
+  meaning: account group id; defaults to the login account group
+  docs: https://developer.cisco.com/docs/thousandeyes/account-group-context/
+field_expansion:
+  param: expand
+  in: query
+  meaning: inline related sub-resources on read operations (e.g. expand=agent on a test)
+  evidence: Tests_API_ExpandTest, Test_Results_API_HttpServerExpand and 20+ sibling parameters in components.parameters
+content_negotiation:
+  response_format: JSON only — responses are JSON regardless of request headers
+  error_format: application/problem+json
+  docs: https://developer.cisco.com/docs/thousandeyes/request-and-response-format/
+versioning:
+  style: uri-path
+  current: v7
+  base: https://api.thousandeyes.com/v7
+  explicit_required: Yes from v7 onward — v6 was the last version to accept unversioned requests
+  spec_version: 7.0.100
+error_envelope:
+  format: rfc9457
+  artifact: errors/thousandeyes-problem-types.yml
+rate_limit_signalling:
+  headers:
+  - X-Organization-Rate-Limit-Limit
+  - X-Organization-Rate-Limit-Remaining
+  - X-Organization-Rate-Limit-Reset
+  - X-Instant-Test-Rate-Limit-*
+  - X-Template-Deploy-Rate-Limit-*
+  status: 429
+  retry_after: false
+  artifact: rate-limits/thousandeyes-rate-limits.yml
+request_id_tracing:
+  supported: not documented
+  note: The developer reference names no correlation/request-id response header. RFC 9457 `instance` carries
+    the request path, not a trace id.
+metadata:
+  style: key/value tags
+  api: openapi/thousandeyes-tags-openapi.yml
+  note: Tags are the platform-wide metadata mechanism (branch:sfo, team:neteng) and can be static or dynamic;
+    they attach to tests, dashboards, agents and endpoint scheduled tests.
+lifecycle:
+  artifact: lifecycle/thousandeyes-lifecycle.yml

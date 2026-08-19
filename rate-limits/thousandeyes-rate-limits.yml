@@ -1,0 +1,55 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/thousandeyes/rate-limits/
+exhaustion_status: 429
+retry_after_header: false
+note: ThousandEyes signals rate limits with vendor-prefixed headers rather than the RFC 9239 RateLimit-*
+  family, and does not send Retry-After. Clients are told to wait for the UTC timestamp in the matching
+  *-Reset header. The 429 response body is application/problem+json.
+limit_count: 4
+limits:
+- scope: per-organization
+  window: 60s
+  limit: 240
+  burst: null
+  applies_to: all ThousandEyes v7 API operations and MCP requests made with an API bearer token
+  headers:
+  - X-Organization-Rate-Limit-Limit
+  - X-Organization-Rate-Limit-Remaining
+  - X-Organization-Rate-Limit-Reset
+  reset_semantics: X-Organization-Rate-Limit-Reset is the UTC timestamp of the next rollover
+  source: https://developer.cisco.com/docs/thousandeyes/rate-limits/
+- scope: per-organization (instant tests)
+  window: 60s
+  limit: 24
+  burst: null
+  applies_to: instant test operations (openapi/thousandeyes-instant-tests-openapi.yml)
+  headers:
+  - X-Instant-Test-Rate-Limit-Limit
+  - X-Instant-Test-Rate-Limit-Remaining
+  - X-Instant-Test-Rate-Limit-Reset
+  source: https://developer.cisco.com/docs/thousandeyes/rate-limits/
+- scope: per-endpoint
+  window: 60s
+  limit: 10
+  burst: null
+  applies_to: POST /v7/templates/{id}/deploy
+  headers:
+  - X-Template-Deploy-Rate-Limit-Limit
+  - X-Template-Deploy-Rate-Limit-Remaining
+  - X-Template-Deploy-Rate-Limit-Reset
+  reset_semantics: X-Template-Deploy-Rate-Limit-Reset is the seconds remaining until the quota resets;
+    0 means access is allowed again
+  source: https://developer.cisco.com/docs/thousandeyes/rate-limits/
+- scope: per-oauth2-client
+  window: 60s
+  limit: 240
+  burst: null
+  applies_to: MCP and API requests made with an OAuth 2.0 access token — a separate bucket that does not
+    consume the organization limit
+  headers:
+  - X-Organization-Rate-Limit-Limit
+  - X-Organization-Rate-Limit-Remaining
+  - X-Organization-Rate-Limit-Reset
+  source: https://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server
+increase: Contact ThousandEyes Support to raise the organization limit.

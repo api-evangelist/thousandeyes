@@ -1,0 +1,1839 @@
+openapi: 3.0.1
+security:
+- BearerAuth: []
+info:
+  title: Integrations API
+  description: '**Note:** The Webhook Operations APIs are not available for ThousandEyes for Government instance.
+
+
+    Manage connectors and operations.
+
+    '
+  version: 7.0.100
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet
+      CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- url: https://api.thousandeyes.com/v7
+  description: ThousandEyes API v7
+tags:
+- name: Credential Vault Operations
+  description: Credential Vault operations allow you to configure vault secrets.
+- name: Operation Connectors
+  description: Manage the connectors assigned to an operation.
+- name: CyberArk Conjur Connectors
+  description: The CyberArk Conjur instance you want the ThousandEyes platform to integrate with.
+- name: Webhook Operations
+  description: Webhook operations allow you to customize the payload of generic connectors.
+- name: Generic Connectors
+  description: A generic connector represents an instance of a third-party service that you can integrate with the ThousandEyes
+    platform.
+- name: Panorama Connectors
+  description: A Panorama connector represents an instance of Palo Alto Networks Panorama that you can integrate with the
+    ThousandEyes platform.
+paths:
+  /operations/{type}/{id}/connectors:
+    get:
+      tags:
+      - Operation Connectors
+      summary: Retrieve connectors assigned to an operation
+      description: Returns a list of connectors assigned to a specific operation.
+      operationId: getOperationConnectors
+      parameters:
+      - name: type
+        in: path
+        description: The operation type.
+        required: true
+        schema:
+          type: string
+        example: webhooks
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of assigned connectors.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Operation Connectors
+      summary: Assign connectors to an operation
+      description: 'Assigns one or more connectors to an operation. This replaces any existing assignments. Note: This operation
+        may disable affected objects (such as tests) if connectors are changed.'
+      operationId: setOperationConnectors
+      parameters:
+      - name: type
+        in: path
+        description: The operation type.
+        required: true
+        schema:
+          type: string
+        example: webhooks
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: confirmDisabledObjects
+        in: query
+        description: Confirmation to disable affected objects (for example, tests) for credential-vault operations.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: List of connector IDs to assign to the operation.
+        content:
+          application/json:
+            schema:
+              maxItems: 1
+              minItems: 0
+              type: array
+              items:
+                type: string
+            example:
+            - ca39314d-eb4f-496f-9435-b5d20b1bfbff
+        required: true
+      responses:
+        '200':
+          description: Operation Connectors updated successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /operations/webhooks/{id}:
+    get:
+      tags:
+      - Webhook Operations
+      summary: Retrieve webhook operation
+      description: Retrieves details of a webhook operation by its ID.
+      operationId: getWebhookOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Webhook operation with the given id.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Webhook Operations
+      summary: Update webhook operation
+      description: Updates the webhook operation specified by ID.
+      operationId: updateWebhookOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookOperation'
+        required: true
+      responses:
+        '200':
+          description: The updated webhook operation.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Webhook Operations
+      summary: Delete webhook operation
+      description: Deletes the webhook operation specified by ID.
+      operationId: deleteWebhookOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          description: No Content.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /operations/credential-vault/{id}:
+    get:
+      tags:
+      - Credential Vault Operations
+      summary: Get Credential Vault operation
+      description: Retrieve a single Credential Vault operation by its ID.
+      operationId: getCredentialVaultOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Credential Vault operation details.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CredentialVaultOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Credential Vault Operations
+      summary: Update Credential Vault operation
+      description: Update a single existing Credential Vault operation.
+      operationId: updateCredentialVaultOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialVaultOperation'
+        required: true
+      responses:
+        '200':
+          description: The updated Credential Vault operation.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CredentialVaultOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Credential Vault Operations
+      summary: Delete Credential Vault operation
+      description: 'Delete a single Credential Vault operation by its ID. Note: This operation may disable affected objects
+        (such as tests).'
+      operationId: deleteCredentialVaultOperation
+      parameters:
+      - $ref: '#/components/parameters/operationIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: confirmDisabledObjects
+        in: query
+        description: Confirmation to disable affected objects (for example, tests) for credential-vault operations.
+        required: true
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '204':
+          description: No Content.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/generic/{id}:
+    get:
+      tags:
+      - Generic Connectors
+      summary: Retrieve connector
+      description: Retrieves details of a connector by its ID.
+      operationId: getGenericConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Connector details.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GenericConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Generic Connectors
+      summary: Update connector
+      description: Updates the connector specified by ID.
+      operationId: updateGenericConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenericConnector'
+        required: true
+      responses:
+        '200':
+          description: The updated connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GenericConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Generic Connectors
+      summary: Delete connector
+      description: Deletes the connector specified by ID.
+      operationId: deleteGenericConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          description: No Content.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/panorama/{id}:
+    get:
+      tags:
+      - Panorama Connectors
+      summary: Retrieve Panorama connector
+      description: Retrieves details of a Panorama connector by its ID.
+      operationId: getPanoramaConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Panorama connector details.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PanoramaConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Panorama Connectors
+      summary: Update Panorama connector
+      description: Replaces the Panorama connector specified by ID. The request must include the complete connector configuration,
+        including authentication credentials; existing credentials are not retained when authentication is omitted.
+      operationId: updatePanoramaConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PanoramaConnector'
+            example:
+              type: panorama
+              name: Branch Panorama
+              target: https://panorama.example.com
+              authentication:
+                username: panorama-user
+                password: <panorama-password>
+                keyTtl: 40
+                type: pan-key-gen
+        required: true
+      responses:
+        '200':
+          description: The updated Panorama connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PanoramaConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Panorama Connectors
+      summary: Delete Panorama connector
+      description: Deletes the Panorama connector specified by ID.
+      operationId: deletePanoramaConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          description: No Content.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/panorama/{id}/operations:
+    get:
+      tags:
+      - Panorama Connectors
+      summary: List operation IDs for Panorama connector
+      description: Returns a list of operation IDs assigned to a Panorama connector.
+      operationId: getPanoramaConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Operation IDs assigned to the Panorama connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Panorama Connectors
+      summary: Assign operations to Panorama connector
+      description: Assigns operations to a Panorama connector. This replaces any existing assignments. Passing an empty array
+        removes all operation assignments from the connector.
+      operationId: setPanoramaConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: List of operation IDs to assign to the connector.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            example:
+            - ca39314d-eb4f-496f-9435-b5d20b1bfbff
+            - a32cfbab-32f6-41d8-9027-7127cba965dd
+        required: true
+      responses:
+        '200':
+          description: Operations assigned successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/generic/{id}/operations:
+    get:
+      tags:
+      - Generic Connectors
+      summary: List operation IDs for a connector
+      description: Returns a list of operation IDs assigned to a connector.
+      operationId: listGenericConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of assigned operation IDs.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Generic Connectors
+      summary: Assign operations to a connector
+      description: Assigns operations to a connector. This replaces any existing assignments.
+      operationId: setGenericConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: List of operation IDs to assign to the connector.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            example:
+            - ca39314d-eb4f-496f-9435-b5d20b1bfbff
+            - a32cfbab-32f6-41d8-9027-7127cba965dd
+        required: true
+      responses:
+        '200':
+          description: Operations assigned successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/conjur/{id}:
+    get:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: Retrieve a Conjur connector
+      description: Retrieves details of a CyberArk Conjur connector by its ID.
+      operationId: getConjurConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: CyberArk Conjur Connector details.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConjurConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: Update a Conjur connector
+      description: Updates the CyberArk Conjur connector specified by ID.
+      operationId: updateConjurConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConjurConnector'
+        required: true
+      responses:
+        '200':
+          description: The updated connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConjurConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: Delete a Conjur connector
+      description: 'Deleted the CyberArk Conjur connector specified by ID. Note: This operation may disable affected objects
+        (such as tests).'
+      operationId: deleteConjurConnector
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      - name: confirmDisabledObjects
+        in: query
+        description: Confirmation to disable affected objects (for example, tests) for Conjur connectors.
+        required: true
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '204':
+          description: No Content.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/conjur/{id}/operations:
+    get:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: List operation IDs for a Conjur connector
+      description: Returns a list of operation IDs assigned to a CyberArk Conjur connector.
+      operationId: getConjurConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of assigned operation IDs.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: Assign operations to a Conjur connector
+      description: 'Assigns operations to a CyberArk Conjur connector. This replaces any existing assignments. Note: This
+        operation may disable affected objects (such as tests) if operations are changed.'
+      operationId: setConjurConnectorOperations
+      parameters:
+      - $ref: '#/components/parameters/connectorIdPath'
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: confirmDisabledObjects
+        in: query
+        description: Confirmation to disable affected objects (for example, tests) for Conjur connectors.
+        required: true
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: List of operation IDs to assign to the connector.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            example:
+            - ca39314d-eb4f-496f-9435-b5d20b1bfbff
+            - a32cfbab-32f6-41d8-9027-7127cba965dd
+        required: true
+      responses:
+        '200':
+          description: Operations assigned successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Assignments'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /operations/webhooks:
+    get:
+      tags:
+      - Webhook Operations
+      summary: List webhook operations
+      description: Returns a list of webhook operations in the specified account group. If no account group is specified,
+        the user’s default account group is used.
+      operationId: getWebhookOperations
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of webhook operations.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Webhook Operations
+      summary: Create webhook operation
+      description: Creates a new webhook operation.
+      operationId: createWebhookOperation
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookOperation'
+        required: true
+      responses:
+        '201':
+          description: The created webhook operation.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /operations/credential-vault:
+    get:
+      tags:
+      - Credential Vault Operations
+      summary: List Credential Vault operations
+      description: Returns a list of Credential Vault operations in the specified account group. If no account group is specified,
+        the user's default account group is used.
+      operationId: getCredentialVaultOperations
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of Credential Vault operations.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CredentialVaultOperations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Credential Vault Operations
+      summary: Create Credential Vault operation
+      description: Create a new Credential Vault operation.
+      operationId: createCredentialVaultOperation
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialVaultOperation'
+        required: true
+      responses:
+        '201':
+          description: The created Credential Vault operation.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CredentialVaultOperation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/generic:
+    get:
+      tags:
+      - Generic Connectors
+      summary: List connectors
+      description: Returns a list of connectors in the specified account group. If no account group is specified, the user’s
+        default account group is used.
+      operationId: getGenericConnectors
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of connectors.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GenericConnectors'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Generic Connectors
+      summary: Create connector
+      description: Creates a new connector.
+      operationId: createGenericConnector
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenericConnector'
+        required: true
+      responses:
+        '201':
+          description: The created connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GenericConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/panorama:
+    get:
+      tags:
+      - Panorama Connectors
+      summary: List Panorama connectors
+      description: Returns a list of Panorama connectors in the specified account group. If no account group is specified,
+        the user’s default account group is used.
+      operationId: getPanoramaConnectors
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of Panorama connectors.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PanoramaConnectors'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Panorama Connectors
+      summary: Create Panorama connector
+      description: Creates a new Panorama connector.
+      operationId: createPanoramaConnector
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Panorama connector configuration.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PanoramaConnector'
+            example:
+              type: panorama
+              name: Branch Panorama
+              target: https://panorama.example.com
+              authentication:
+                username: panorama-user
+                password: <panorama-password>
+                keyTtl: 40
+                type: pan-key-gen
+        required: true
+      responses:
+        '201':
+          description: The created Panorama connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PanoramaConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /connectors/conjur:
+    get:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: List Conjur connectors
+      description: Returns a list of CyberArk Conjur connectors in the specified account group. If no account group is specified,
+        the user’s default account group is used.
+      operationId: getConjurConnectors
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: A list of Conjur connectors.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConjurConnectors'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - CyberArk Conjur Connectors
+      summary: Create Conjur connector
+      description: Creates a new CyberArk Conjur connector.
+      operationId: createConjurConnector
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConjurConnector'
+        required: true
+      responses:
+        '201':
+          description: The created Conjur connector.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConjurConnector'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+  schemas:
+    Assignments:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+      description: A list of assigned items.
+    Header:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+          example: Content-Type
+        value:
+          type: string
+          example: application/json
+    OperationCategory:
+      type: string
+      enum:
+      - alerts
+      - recommendations
+      - traffic-monitoring
+    OperationStatus:
+      type: string
+      description: 'The connectivity status of the operation to its target endpoint. Indicates whether the operation can successfully
+        connect and communicate with the target URL. Values: ''pending'' (initial state, not yet tested), ''connected'' (successfully
+        connected), ''failing'' (connection or execution issues), ''unverified'' (not yet verified/tested).'
+      enum:
+      - pending
+      - connected
+      - failing
+      - unverified
+    OperationType:
+      type: string
+      enum:
+      - webhook
+    WebhookOperation:
+      required:
+      - category
+      - name
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        name:
+          type: string
+          example: My operation
+        enabled:
+          type: boolean
+          example: true
+        category:
+          $ref: '#/components/schemas/OperationCategory'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        path:
+          type: string
+          example: /custom/path
+        payload:
+          type: string
+          description: Handlebars template for the payload.
+          example: '{"property1": {{numericVar}}, "property2": "{{stringVar}}"}'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+        queryParams:
+          type: string
+          description: Handlebars template for the query params. Most compile into a proper JSON object where each object
+            property will define the query param name and the object property value define the corresponding query param value.
+          example: '{"queryParam1":"{{stringVar}}"}'
+        type:
+          $ref: '#/components/schemas/OperationType'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    CredentialVaultOperation:
+      required:
+      - name
+      - secrets
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        name:
+          type: string
+          example: My operation
+        secrets:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialVaultSecret'
+        type:
+          $ref: '#/components/schemas/OperationType'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    CredentialVaultSecret:
+      required:
+      - name
+      - secretKey
+      type: object
+      properties:
+        id:
+          type: string
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        name:
+          type: string
+          example: secret_name
+        secretKey:
+          type: string
+          example: secret/key
+    AuthenticationType:
+      type: string
+      enum:
+      - basic
+      - bearer-token
+      - oauth-auth-code
+      - oauth-client-credentials
+      - other-token
+      - conjur-host
+    BasicAuthentication:
+      required:
+      - password
+      - type
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: user1
+        password:
+          type: string
+          example: abc123
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    BearerTokenAuthentication:
+      required:
+      - token
+      - type
+      type: object
+      properties:
+        token:
+          type: string
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    ConnectorType:
+      type: string
+      enum:
+      - generic
+    GenericConnector:
+      required:
+      - name
+      - target
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+        name:
+          type: string
+          example: Cisco Slack
+        target:
+          type: string
+          example: https://hooks.slack.com/services/REDACTED
+        lastModifiedDate:
+          type: integer
+          description: The date when the connector was last modified (Unix timestamp in milliseconds).
+          format: int64
+          readOnly: true
+          example: 1770293655756
+        authentication:
+          $ref: '#/components/schemas/GenericConnectorAuth'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    GenericConnectorAuth:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          basic: '#/components/schemas/BasicAuthentication'
+          bearer-token: '#/components/schemas/BearerTokenAuthentication'
+          other-token: '#/components/schemas/OtherTokenAuthentication'
+          oauth-auth-code: '#/components/schemas/OauthCodeAuthentication'
+          oauth-client-credentials: '#/components/schemas/OauthClientCredentialsAuthentication'
+      oneOf:
+      - $ref: '#/components/schemas/BasicAuthentication'
+      - $ref: '#/components/schemas/BearerTokenAuthentication'
+      - $ref: '#/components/schemas/OtherTokenAuthentication'
+      - $ref: '#/components/schemas/OauthCodeAuthentication'
+      - $ref: '#/components/schemas/OauthClientCredentialsAuthentication'
+    OauthClientCredentialsAuthentication:
+      required:
+      - oauthClientId
+      - oauthClientSecret
+      - oauthTokenUrl
+      - type
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        oauthClientId:
+          type: string
+          example: my-client-id
+        oauthTokenUrl:
+          type: string
+          example: https://oauth.example.com/token
+        oauthClientSecret:
+          type: string
+          example: client-secret-xyz123
+        scope:
+          type: string
+          example: read:data write:data
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    OauthCodeAuthentication:
+      required:
+      - code
+      - oauthAuthUrl
+      - oauthClientId
+      - oauthClientSecret
+      - oauthTokenUrl
+      - redirectUri
+      - type
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        refreshToken:
+          type: string
+          example: refresh-token-abc456
+        oauthClientId:
+          type: string
+          example: my-client-id
+        oauthAuthUrl:
+          type: string
+          example: https://oauth.example.com/authorize
+        oauthTokenUrl:
+          type: string
+          example: https://oauth.example.com/token
+        oauthClientSecret:
+          type: string
+          example: client-secret-xyz123
+        code:
+          type: string
+          example: auth-code-def789
+        redirectUri:
+          type: string
+          example: https://app.example.com/callback
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    OtherTokenAuthentication:
+      required:
+      - token
+      - type
+      type: object
+      properties:
+        token:
+          type: string
+          example: custom-token-abc123xyz
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    ConjurConnector:
+      required:
+      - account
+      - authentication
+      - name
+      - target
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        type:
+          $ref: '#/components/schemas/ConnectorType'
+        name:
+          type: string
+          example: Cisco Slack
+        target:
+          type: string
+          example: https://eval.conjur.org/secrets
+        lastModifiedDate:
+          type: integer
+          description: The date when the connector was last modified (Unix timestamp in milliseconds).
+          format: int64
+          readOnly: true
+          example: 1770293655756
+        account:
+          type: string
+          example: My CyberArk Account
+        authentication:
+          $ref: '#/components/schemas/ConjurHostAuthentication'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ConjurHostAuthentication:
+      required:
+      - apiKey
+      - hostId
+      - type
+      type: object
+      properties:
+        hostId:
+          type: string
+          example: host1
+        apiKey:
+          type: string
+          example: abc123
+        type:
+          $ref: '#/components/schemas/AuthenticationType'
+    PanoramaConnector:
+      description: Palo Alto Networks Panorama connector configuration.
+      required:
+      - authentication
+      - name
+      - target
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the Panorama connector.
+          readOnly: true
+          example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+        type:
+          type: string
+          description: Connector type.
+          enum:
+          - panorama
+          example: panorama
+        name:
+          type: string
+          description: Name of the Panorama connector.
+          example: Branch Panorama
+        target:
+          type: string
+          description: URL of the Panorama instance.
+          example: https://panorama.example.com
+        lastModifiedDate:
+          type: integer
+          description: Time when the connector was last modified, in milliseconds since the Unix epoch.
+          format: int64
+          readOnly: true
+          example: 1770293655756
+        authentication:
+          $ref: '#/components/schemas/PanoramaConnectorAuth'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    PanoramaConnectorAuth:
+      type: object
+      description: Authentication configuration for the Panorama connector.
+      discriminator:
+        propertyName: type
+        mapping:
+          other-token: '#/components/schemas/PanoramaTokenAuthentication'
+          pan-key-gen: '#/components/schemas/PanoramaKeyGenAuthentication'
+      oneOf:
+      - $ref: '#/components/schemas/PanoramaTokenAuthentication'
+      - $ref: '#/components/schemas/PanoramaKeyGenAuthentication'
+    PanoramaTokenAuthentication:
+      required:
+      - token
+      - type
+      type: object
+      description: Authentication using an existing Panorama API key.
+      properties:
+        token:
+          type: string
+          description: Panorama API key used for authentication.
+          writeOnly: true
+        type:
+          type: string
+          description: Authentication type.
+          enum:
+          - other-token
+    PanoramaKeyGenAuthentication:
+      required:
+      - keyTtl
+      - password
+      - type
+      - username
+      type: object
+      description: Authentication using credentials to generate a Panorama API key.
+      properties:
+        username:
+          type: string
+          description: Username used to generate the Panorama API key.
+          example: panorama-user
+        password:
+          type: string
+          description: Password used to generate the Panorama API key.
+          format: password
+          writeOnly: true
+        keyTtl:
+          type: integer
+          description: Time to live for the generated Panorama API key, in minutes.
+          format: int64
+          minimum: 30
+          example: 40
+        type:
+          type: string
+          enum:
+          - pan-key-gen
+    WebhookOperations:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookOperation'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    CredentialVaultOperations:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialVaultOperation'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    GenericConnectors:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenericConnector'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ConjurConnectors:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConjurConnector'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    PanoramaConnectors:
+      type: object
+      description: Collection of Panorama connectors.
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PanoramaConnector'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed
+            to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            nullable: true
+            type: array
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that
+            should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+  parameters:
+    operationIdPath:
+      name: id
+      in: path
+      description: The operation ID.
+      required: true
+      schema:
+        type: string
+      example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+    connectorIdPath:
+      name: id
+      in: path
+      description: The connector ID.
+      required: true
+      schema:
+        type: string
+      example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the
+        `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter
+        without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7

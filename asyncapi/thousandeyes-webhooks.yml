@@ -1,0 +1,118 @@
+generated: '2026-08-19'
+method: searched
+source: https://docs.thousandeyes.com/product-documentation/integration-guides/custom-webhooks + https://docs.thousandeyes.com/product-documentation/integration-guides/custom-webhooks/webhook-vars
+  + openapi/thousandeyes-integrations-openapi.yml + openapi/thousandeyes-opentelemetry-openapi.yml
+asyncapi_published: false
+note: 'ThousandEyes publishes no AsyncAPI document. Its event surface is real but is described in prose
+  plus two OpenAPI documents: outbound alert webhooks (configured through the Integrations API) and OpenTelemetry
+  data streams. The webhook payload is NOT a fixed provider schema — the operator authors the JSON body
+  in a Handlebars template, so what a receiver gets is customer-defined. That is exactly why an AsyncAPI
+  cannot be derived: there is no single message schema to describe.'
+delivery:
+  transport: https
+  method: POST
+  direction: outbound
+  payload: operator-authored JSON via Handlebars template
+  auth_options:
+  - custom request headers
+  - OAuth 2.0 client credentials
+  oauth_docs: https://docs.thousandeyes.com/product-documentation/integration-guides/custom-webhooks/oauth
+management_api:
+  spec: openapi/thousandeyes-integrations-openapi.yml
+  operations:
+  - GET /operations/webhooks
+  - POST /operations/webhooks
+  - GET /operations/webhooks/{id}
+  - PUT /operations/webhooks/{id}
+  - DELETE /operations/webhooks/{id}
+  - GET /operations/{type}/{id}/connectors
+  - PUT /operations/{type}/{id}/connectors
+  connector_types:
+  - generic
+  - panorama (Palo Alto Networks)
+  - conjur (CyberArk)
+  - credential-vault
+event_sources:
+- name: Alert notifications
+  trigger: an alert rule triggers or clears
+  types:
+  - Cloud and Enterprise Agent alerts
+  - Endpoint Agent alerts
+  - BGP alerts
+  - Connected Device alerts
+  - Cloud Insights alerts
+  - Traffic Insights alerts
+  docs: https://docs.thousandeyes.com/product-documentation/alerts/standard-notification-methods/classic-webhooks-for-alert-notifs
+- name: Event Detection alerts
+  trigger: ThousandEyes detects that error signals for a component deviated from baseline
+  docs: https://docs.thousandeyes.com/product-documentation/event-detection
+  api: openapi/thousandeyes-event-detection-openapi.yml
+payload_variables:
+- name: id
+  type: string
+  description: Identifier for the notification
+- name: type.id
+  type: numeric
+  description: Clear (1) or Trigger (2)
+- name: alert.id
+  type: string
+  description: Identifier for the alert
+- name: alert.severity.id
+  type: string
+  description: Severity of the alert
+- name: alert.firstSeen.epochSecond
+  type: datetime
+  description: When the alert triggered
+- name: alert.timeCleared.epochSecond
+  type: datetime
+  description: When the alert cleared
+- name: alert.rule.id
+  type: string
+  description: Identifier for the alert rule
+- name: alert.rule.name
+  type: string
+  description: Name of the alert rule
+- name: alert.rule.expression
+  type: string
+  description: Machine-readable alert rule expression
+- name: alert.rule.alertType.id
+  type: string
+  description: The alert rule alert type
+- name: alert.rule.account.organization.id
+  type: numeric
+  description: Owning organization
+- name: alert.test.id
+  type: string
+  description: Test that triggered the alert
+- name: alert.test.name
+  type: string
+  description: Name of the triggering test
+- name: alert.test.testType
+  type: string
+  description: Type of the triggering test
+- name: alert.details.size
+  type: numeric
+  description: Number of alert detail objects (agents, monitors) that triggered
+- name: alert.targets.size
+  type: numeric
+  description: Number of target objects (URLs, prefixes) involved
+streaming:
+  name: ThousandEyes for OpenTelemetry
+  spec: openapi/thousandeyes-opentelemetry-openapi.yml
+  operations:
+  - GET /streams
+  - POST /streams
+  - GET /streams/{id}
+  - PUT /streams/{id}
+  - DELETE /streams/{id}
+  signals:
+  - metrics
+  - traces
+  note: Push-based export of test metrics and traces to an OTLP endpoint or a supported observability
+    backend. Streams can be named (durable names added in API 7.0.100, 2026-08-14); duplicate names return
+    409. Failing streams are disabled automatically.
+  docs: https://docs.thousandeyes.com/product-documentation/integration-guides/opentelemetry
+  government_restrictions: Traces, Connected Devices and connector-based OTel integrations are not available
+    on ThousandEyes for Government.
+restrictions: Webhooks (including custom webhooks) are not available on the ThousandEyes for Government
+  instance for alert notifications.

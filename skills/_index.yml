@@ -1,0 +1,64 @@
+generated: '2026-08-19'
+method: generated
+source: openapi/thousandeyes-*-openapi.yml + conventions/thousandeyes-conventions.yml + errors/thousandeyes-problem-types.yml
+  + rate-limits/thousandeyes-rate-limits.yml
+note: ThousandEyes publishes no AGENTS.md or provider-authored Agent Skills. These four are generated
+  from the harvested v7 OpenAPI documents; every operationId in every frontmatter block was verified present
+  in a spec before the skill was written.
+skill_count: 4
+skills:
+- name: thousandeyes-export-telemetry-to-your-stack
+  file: thousandeyes-export-telemetry-to-your-stack.md
+  description: Get ThousandEyes data out — stand up an OpenTelemetry data stream for metrics and traces,
+    or wire an outbound alert webhook through the Integrations API.
+  api: ThousandEyes API v7
+  operations:
+  - getStreams
+  - createStream
+  - getStream
+  - updateStream
+  - deleteStream
+  - getWebhookOperations
+  - createWebhookOperation
+  - getGenericConnectors
+  - createGenericConnector
+  - setOperationConnectors
+- name: thousandeyes-investigate-an-internet-outage
+  file: thousandeyes-investigate-an-internet-outage.md
+  description: Work out whether a problem is yours or the internet's — search Internet Insights outages,
+    read the outage detail, then correlate with detected events and BGP routing.
+  api: ThousandEyes API v7
+  operations:
+  - filterOutages
+  - getNetworkOutage
+  - getAppOutage
+  - getEvents
+  - getEvent
+  - getTestBgpResults
+  - getTestBgpRoutesPrefixRoundResults
+- name: thousandeyes-stand-up-a-synthetic-test
+  file: thousandeyes-stand-up-a-synthetic-test.md
+  description: Create a monitored HTTP or agent-to-server synthetic test on ThousandEyes — pick agents,
+    create the test, tag it, attach an alert rule, then read the first results.
+  api: ThousandEyes API v7
+  operations:
+  - getAgents
+  - createHttpServerTest
+  - createAgentToServerTest
+  - getTests
+  - createTag
+  - assignTags
+  - createAlertRule
+  - getTestHttpServerResults
+- name: thousandeyes-triage-an-alert
+  file: thousandeyes-triage-an-alert.md
+  description: Triage a firing ThousandEyes alert end to end — list active alerts, open the alert, read
+    the rule that fired, then pull the test results and path visualization that explain it.
+  api: ThousandEyes API v7
+  operations:
+  - getAlerts
+  - getAlert
+  - getAlertsRules
+  - getAlertRule
+  - getTestNetworkResults
+  - getTestPathVisResults

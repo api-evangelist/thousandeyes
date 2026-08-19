@@ -1,0 +1,75 @@
+generated: '2026-08-19'
+method: probed
+source: live GET of /.well-known/* on every ThousandEyes host in apis.yml and every OpenAPI servers[]
+  host
+note: api.thousandeyes.com serves two real RFC 8414 / RFC 9728 documents anonymously and gates everything
+  else behind 401. The OAuth metadata advertises the mcp:manage scope, which is how the remote MCP server
+  at https://api.thousandeyes.com/mcp is discoverable without credentials. No host under thousandeyes.com
+  serves a security.txt; the disclosure surface belongs to the Cisco PSIRT (see security/thousandeyes-vulnerability-disclosure.yml).
+  www.thousandeyes.com answers 403 to every non-browser client, so its /.well-known/ surface could not
+  be read.
+hosts:
+- host: https://api.thousandeyes.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: thousandeyes-oauth-authorization-server.json
+    spec: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: thousandeyes-oauth-protected-resource.json
+    spec: RFC 9728
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 401
+  - path: /.well-known/api-catalog
+    status: 401
+  - path: /.well-known/ai-plugin.json
+    status: 401
+  - path: /.well-known/agent-card.json
+    status: 401
+  - path: /.well-known/agent.json
+    status: 401
+- host: https://docs.thousandeyes.com
+  documents:
+  - path: /llms.txt
+    status: 200
+    file: ../llms/thousandeyes-llms.txt
+    spec: llms.txt
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://www.thousandeyes.com
+  note: every path answers 403 to non-browser clients (bot challenge); not readable
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+  - path: /.well-known/agent-card.json
+    status: 403
+  - path: /.well-known/agent.json
+    status: 403
+- host: https://developer.cisco.com
+  note: documentation host (Cisco DevNet)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404

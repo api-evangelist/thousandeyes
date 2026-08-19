@@ -1,0 +1,375 @@
+generated: '2026-08-19'
+method: derived
+source: mcp/thousandeyes-mcp.yml + openapi/thousandeyes-*-openapi.yml
+note: The live MCP tools/list is auth-gated (HTTP 401), so no tool advertises its own inputSchema publicly.
+  Every row below is mapped by name and semantics against operationIds that were verified present in the
+  harvested OpenAPI documents. Where a tool has no confirmed backing operationId it is recorded in mcp_unbound[]
+  rather than guessed — most of those are composite or analysis surfaces (Cloud Insights metrics, anomalies,
+  service map, full path visualization) with no single public REST operation.
+surfaces:
+  openapi:
+    files: 26
+    operations: 326
+    servers: https://api.thousandeyes.com/v7
+    gated: false
+  mcp:
+    url: https://api.thousandeyes.com/mcp
+    tools_documented: 51
+    gated: true
+    gate: tools/list returns 401 without a ThousandEyes API token or OAuth access token
+  graphql: null
+coverage:
+  tools_named: 51
+  tools_bound_to_rest: 34
+  tools_unbound: 17
+  rest_operations_total: 326
+  rest_operations_with_a_tool: 34
+crosswalk:
+- tool: list_tests
+  category: Core Monitoring
+  rest:
+  - getTests
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_events
+  category: Core Monitoring
+  rest:
+  - getEvents
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_event_details
+  category: Core Monitoring
+  rest:
+  - getEvent
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_alerts
+  category: Core Monitoring
+  rest:
+  - getAlerts
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_alert_details
+  category: Core Monitoring
+  rest:
+  - getAlert
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: search_outages
+  category: Core Monitoring
+  rest:
+  - filterOutages
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_alert_rules
+  category: Alerting
+  rest:
+  - getAlertsRules
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_alert_rule
+  category: Alerting
+  rest:
+  - getAlertRule
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: create_alert_rule
+  category: Alerting
+  rest:
+  - createAlertRule
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: update_alert_rule
+  category: Alerting
+  rest:
+  - updateAlertRule
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: delete_alert_rule
+  category: Alerting
+  rest:
+  - deleteAlertRule
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_dashboards
+  category: Dashboards
+  rest:
+  - getDashboards
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_dashboard
+  category: Dashboards
+  rest:
+  - getDashboard
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_dashboard_widget_data
+  category: Dashboards
+  rest:
+  - getDashboardWidgetData
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: create_dashboard
+  category: Dashboards
+  rest:
+  - createDashboard
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: update_dashboard
+  category: Dashboards
+  rest:
+  - updateDashboard
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: delete_dashboard
+  category: Dashboards
+  rest:
+  - deleteDashboard
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_endpoint_agents_and_tests
+  category: Endpoint
+  rest:
+  - getEndpointAgents
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_endpoint_agent_dynamic_tests
+  category: Endpoint
+  rest:
+  - getAgentToServerEndpointDynamicTests
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_endpoint_scheduled_test_results
+  category: Endpoint
+  rest:
+  - filterScheduledTestNetworkResults
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_path_visualization
+  category: Network
+  rest:
+  - getTestPathVisResults
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_bgp_test_results
+  category: Network
+  rest:
+  - getTestBgpResults
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_cloud_and_enterprise_agents
+  category: Inventory
+  rest:
+  - getAgents
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_account_groups
+  category: Inventory
+  rest:
+  - getAccountGroups
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: list_tags
+  category: Tags
+  rest:
+  - getTags
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_tag
+  category: Tags
+  rest:
+  - getTag
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: create_tag
+  category: Tags
+  rest:
+  - createTag
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: update_tag
+  category: Tags
+  rest:
+  - updateTag
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: assign_tags
+  category: Tags
+  rest:
+  - assignTags
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: unassign_tags
+  category: Tags
+  rest:
+  - unassignTags
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: delete_tag
+  category: Tags
+  rest:
+  - deleteTag
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: search_templates
+  category: Templates
+  rest:
+  - getTemplates
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: deploy_template
+  category: Templates
+  rest:
+  - deployTemplate
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+- tool: get_bgp_route_details
+  category: Network
+  rest:
+  - getTestBgpRoutesPrefixRoundResults
+  binding: rest
+  confidence: medium
+  note: name/semantics match; MCP inputSchema is gated so the binding is unverified against the live tool
+mcp_unbound:
+- tool: instant_tests
+  category: Testing
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: create_synthetic_test
+  category: Testing
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: update_synthetic_test
+  category: Testing
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: delete_synthetic_test
+  category: Testing
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_cloud_insights_events_analysis_inputs
+  category: Cloud Insights
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: list_cloud_insights_inventory
+  category: Cloud Insights
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: resolve_cloud_insights_entity_filters
+  category: Cloud Insights
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_cloud_insights_metrics
+  category: Cloud Insights
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_endpoint_agent_metrics
+  category: Endpoint
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_endpoint_network_topologies_probes
+  category: Endpoint
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_connected_device
+  category: Endpoint
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_full_path_visualization
+  category: Network
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_anomalies
+  category: Analysis
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_metrics
+  category: Analysis
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_detailed_test_results
+  category: Analysis
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_service_map
+  category: Analysis
+  reason: no single public REST operationId maps to this tool; likely a server-side composite or an analysis
+    surface over several operations
+- tool: get_test_details
+  category: Core Monitoring
+  reason: the ThousandEyes v7 API has no single get-a-test operation; tests are retrieved per type (getAgentToServerTest,
+    getHttpServerTest, getBgpTest, ...), so the tool fans out over ~13 typed operations
+rest_only:
+- capability: Test results (network, HTTP server, page load, web transaction, DNS, DNSSEC, voice, BGP,
+    API)
+  operations: 21
+  spec: openapi/thousandeyes-test-results-openapi.yml
+- capability: Instant tests (13 test types)
+  operations: 13
+  spec: openapi/thousandeyes-instant-tests-openapi.yml
+- capability: Integrations / connectors (webhook, generic, CyberArk Conjur, Panorama, operations)
+  operations: 33
+  spec: openapi/thousandeyes-integrations-openapi.yml
+- capability: ThousandEyes for OpenTelemetry data streams
+  operations: 5
+  spec: openapi/thousandeyes-opentelemetry-openapi.yml
+- capability: Administrative (users, roles, permissions, account groups)
+  operations: 18
+  spec: openapi/thousandeyes-administrative-openapi.yml
+- capability: Credential vault
+  operations: 5
+  spec: openapi/thousandeyes-credentials-openapi.yml
+- capability: Usage and quotas
+  operations: 8
+  spec: openapi/thousandeyes-usage-openapi.yml
+- capability: Emulation (user-agent strings, emulated devices)
+  operations: 3
+  spec: openapi/thousandeyes-emulation-openapi.yml
+- capability: Endpoint agent labels
+  operations: 5
+  spec: openapi/thousandeyes-endpoint-agent-labels-openapi.yml
+- capability: API token management
+  operations: 1
+  spec: openapi/thousandeyes-api-token-management-openapi.yml
+- capability: Test snapshots
+  operations: 1
+  spec: openapi/thousandeyes-test-snapshots-openapi.yml
+- capability: BGP monitors
+  operations: 1
+  spec: openapi/thousandeyes-bgp-monitors-openapi.yml
+- capability: Autonomous system prefixes
+  operations: 1
+  spec: openapi/thousandeyes-autonomous-systems-openapi.yml
