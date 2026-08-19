@@ -1,0 +1,55 @@
+aid: thousandeyes
+name: ThousandEyes
+description: 'ThousandEyes is Cisco''s digital experience monitoring platform, acquired in 2020 and operated as
+  part of Cisco Networking. It runs a global fleet of cloud, enterprise and endpoint agents that measure network
+  paths, BGP routing, application response and internet outages end to end, and exposes that telemetry through the
+  ThousandEyes v7 REST API. The v7 API is documented on Cisco DevNet and backed by generated SDKs for Python, Go
+  and Java, a CLI, and a Terraform provider. Cisco publishes no anonymously fetchable OpenAPI document for it: api.thousandeyes.com/openapi.json
+  answers 401 rather than 404, so the contract exists but is gated behind credentials.'
+url: https://raw.githubusercontent.com/api-evangelist/thousandeyes/refs/heads/main/apis.yml
+type: Index
+access: 3rd-Party
+position: Consumer
+x-type: company
+x-source: cisco-family-buildout:2026-08-19
+x-parent: cisco
+x-relationship: acquisition
+x-contract-status: gated
+x-contract-note: A machine-readable contract exists but is credential-gated (the spec endpoint answers 401, not
+  404). API Evangelist has not authored a substitute.
+specificationVersion: '0.23'
+created: '2026-08-19'
+modified: '2026-08-19'
+tags:
+- Monitoring
+- Network Visibility
+- Digital Experience
+- Observability
+- Networking
+- Enterprise
+apis: []
+common:
+- type: Portal
+  url: https://developer.cisco.com/thousandeyes/
+- type: Documentation
+  url: https://developer.cisco.com/docs/thousandeyes/
+- type: APIReference
+  url: https://developer.cisco.com/docs/thousandeyes/
+- type: ParentCompany
+  url: https://apis.io/providers/cisco/
+  name: Cisco
+  x-acquired: 2020
+- type: GitHubOrganization
+  url: https://github.com/thousandeyes
+- type: MCPServer
+  url: https://github.com/CiscoDevNet/ThousandEyes-MCP-Server-official
+- type: SDKs
+  url: https://github.com/thousandeyes/thousandeyes-sdk-python
+- type: GitHubOrganization
+  url: https://github.com/CiscoDevNet
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
+x-acquired: 2020
