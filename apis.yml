@@ -19,11 +19,10 @@ x-type: company
 x-source: cisco-family-buildout:2026-08-19
 x-parent: cisco
 x-relationship: acquisition
-x-contract-status: published
-x-contract-note: Corrected 2026-08-19. The 2026-08-19 initial profile recorded the contract as gated because https://api.thousandeyes.com/openapi.json
-  answers 401. That host gates everything; the real OpenAPI documents are published anonymously on the Cisco DevNet
-  media host at https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/ — 26 per-area documents plus a
-  unified document (reference/unified-oas/api.yaml), all HTTP 200, all info.title/servers[] naming ThousandEyes.
+x-contract-status: real
+x-contract-note: 27 OpenAPI 3.0 documents (326 operations) served anonymously from Cisco's DevNet CDN at pubhub.devnetcloud.com.
+  The API host itself (api.thousandeyes.com) 401s every path, so the contract is public while the API is gated —
+  the initial 'gated' reading checked the API host, not the docs CDN.
 specificationVersion: '0.23'
 created: '2026-08-19'
 modified: '2026-08-19'
