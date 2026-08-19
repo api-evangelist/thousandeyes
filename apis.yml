@@ -1,11 +1,16 @@
 aid: thousandeyes
 name: ThousandEyes
-description: 'ThousandEyes is Cisco''s digital experience monitoring platform, acquired in 2020 and operated as
-  part of Cisco Networking. It runs a global fleet of cloud, enterprise and endpoint agents that measure network
-  paths, BGP routing, application response and internet outages end to end, and exposes that telemetry through the
-  ThousandEyes v7 REST API. The v7 API is documented on Cisco DevNet and backed by generated SDKs for Python, Go
-  and Java, a CLI, and a Terraform provider. Cisco publishes no anonymously fetchable OpenAPI document for it: api.thousandeyes.com/openapi.json
-  answers 401 rather than 404, so the contract exists but is gated behind credentials.'
+description: ThousandEyes is Cisco's digital experience monitoring platform, acquired in 2020 and operated as part
+  of Cisco Networking. It runs a global fleet of Cloud, Enterprise, Endpoint and Connected Device agents that measure
+  network paths, BGP routing, DNS, application response and internet outages end to end, then exposes that telemetry
+  through the ThousandEyes v7 REST API. The v7 API is documented on Cisco DevNet and publishes 26 downloadable OpenAPI
+  3.0 documents plus a unified document covering 326 operations across tests, instant tests, test results, agents,
+  endpoint agents, alerts, event detection, dashboards, tags, templates, integrations, credentials, Internet Insights,
+  Cloud Insights, usage and administration. Authentication is a bearer API token, with an OAuth 2.0 authorization-code
+  and device-code flow advertised anonymously at /.well-known/oauth-authorization-server. Cisco also runs a remote
+  MCP server at https://api.thousandeyes.com/mcp with about 51 documented tools, generated SDKs for Python, Java
+  and Go, a Go CLI, a Terraform provider, a public Postman collection and a ThousandEyes for Government FedRAMP
+  Moderate instance.
 url: https://raw.githubusercontent.com/api-evangelist/thousandeyes/refs/heads/main/apis.yml
 type: Index
 access: 3rd-Party
@@ -14,9 +19,11 @@ x-type: company
 x-source: cisco-family-buildout:2026-08-19
 x-parent: cisco
 x-relationship: acquisition
-x-contract-status: gated
-x-contract-note: A machine-readable contract exists but is credential-gated (the spec endpoint answers 401, not
-  404). API Evangelist has not authored a substitute.
+x-contract-status: published
+x-contract-note: Corrected 2026-08-19. The 2026-08-19 initial profile recorded the contract as gated because https://api.thousandeyes.com/openapi.json
+  answers 401. That host gates everything; the real OpenAPI documents are published anonymously on the Cisco DevNet
+  media host at https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/ — 26 per-area documents plus a
+  unified document (reference/unified-oas/api.yaml), all HTTP 200, all info.title/servers[] naming ThousandEyes.
 specificationVersion: '0.23'
 created: '2026-08-19'
 modified: '2026-08-19'
@@ -27,29 +34,654 @@ tags:
 - Observability
 - Networking
 - Enterprise
-apis: []
+- Synthetic Monitoring
+- BGP
+- Internet Insights
+- Endpoint Monitoring
+- OpenTelemetry
+- Cisco
+apis:
+- aid: thousandeyes:thousandeyes-administrative-api
+  name: ThousandEyes Administrative API
+  description: 'Manage users, accounts, and account groups in the ThousandEyes platform using the Administrative
+    API. This API provides the following operations to manage your organization: * `/account-groups`: Account groups
+    are used to divide an organization into different sections. These operations can be used to create, retrieve,
+    update and delete account groups. * `/users`: Create, retrieve, update and delete users within an organization.
+    * `/roles`: Create, retrieve and update roles for the current user. * `/permissions`: Retrieve all assignable
+    permissions. Used in the context of modifying roles. * `/audit-user-events`: Retrieve all activity log events.
+    For more information about the administrative models, see Account Management.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-administrative-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-administrative-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
+- aid: thousandeyes:thousandeyes-api-token-management-api
+  name: ThousandEyes API Token Management API
+  description: Manage your ThousandEyes OpenAPI bearer token.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/api-token-management-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - API Token
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-api-token-management-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-api-token-management-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/api-token-management-api-overview/
+- aid: thousandeyes:thousandeyes-agents-api
+  name: ThousandEyes Agents API
+  description: Manage Cloud and Enterprise Agents available to your account in ThousandEyes.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/agents-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-agents-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-agents-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/agents-api-overview/
+- aid: thousandeyes:thousandeyes-alerts-api
+  name: ThousandEyes Alerts API
+  description: 'You can manage the following alert functionalities on the ThousandEyes platform using the Alerts
+    API: * **Alerts**: Retrieve alert details. Alerts are assigned to tests through alert rules. * **Alert Rules**:
+    Conditions that you configure in order to highlight or be notified of events of interest in your ThousandEyes
+    tests. When an alert rule’s conditions are met, the associated alert is triggered and the alert becomes active.
+    It remains active until the alert is cleared. Alert rules are reusable across multiple tests.. * **Alert Suppression
+    Windows**: Suppress alerts for tests during periods such as planned maintenance. Windows can be one-time events
+    or recurring events to handle periodic occurrences such as monthly downtime for maintenance. For more information
+    about the alerts, see Alerts.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/alerts-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-alerts-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-alerts-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/alerts-api-overview/
+- aid: thousandeyes:thousandeyes-autonomous-systems-api
+  name: ThousandEyes Autonomous Systems API
+  description: Retrieve information that ThousandEyes holds about Autonomous Systems.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/autonomous-systems-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Autonomous Systems
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-autonomous-systems-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-autonomous-systems-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/autonomous-systems-api-overview/
+- aid: thousandeyes:thousandeyes-bgp-monitors-api
+  name: ThousandEyes BGP Monitors API
+  description: Retrieve information about BGP monitors available to your ThousandEyes account. ThousandEyes ingests
+    BGP routing data from dozens of global BGP collectors and automatically integrates that visibility as a configurable
+    layer under service, network, and path visualization layers. When you specify a service URL in a test, layered
+    BGP tests automatically track reachability and path changes for any relevant prefix. When you use an IP address
+    as the target for a test, the ThousandEyes platform monitors the relevant internet-routed prefix. You can also
+    create specific BGP monitoring for a prefix, and can alert on hijacks and leaks. For more information about
+    monitors, see Inside-Out BGP Visibility.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/bgp-monitors-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - BGP monitors
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-bgp-monitors-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-bgp-monitors-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/bgp-monitors-api-overview/
+- aid: thousandeyes:thousandeyes-cloud-insights-integrations-api
+  name: ThousandEyes Cloud Insights Integrations API
+  description: 'The Cloud Insights Integrations API lets you programmatically manage **AWS** and **Azure** monitoring
+    integrations in ThousandEyes. ### What You Can Do - **List** all integrations. - **Get** details for a specific
+    integration. - **Delete** an existing integration. - **Create** integrations for: - **AWS**: inventory monitoring
+    and flow logs monitoring. - **Azure**: inventory monitoring and flow logs monitoring. - **Update** integrations
+    for: - **Azure**: inventory monitoring and flow logs monitoring. - **Fetch AWS IAM policy documents** required
+    to configure AWS inventory and flow-logs integrations. - **Retrieve** the current AWS and Azure integration
+    policy settings to understand which AWS and Azure resource groups, AWS regions, Azure subscription rules are
+    enabled and whether CloudTrail is enabled for Cloud Insights for inventory monitoring. - **Update** policy settings
+    to change...'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/cloud-insights-integrations-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-cloud-insights-integrations-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-cloud-insights-integrations-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/cloud-insights-integrations-api-overview/
+- aid: thousandeyes:thousandeyes-credentials-api
+  name: ThousandEyes Credentials API
+  description: 'Manage credentials for transaction tests using the Credentials API. The following permissions are
+    required to access Credentials API operations: * `Settings Tests Read` for read operations. * `Settings Tests
+    Update` for write operations. * `View sensitive data in web transaction scripts` to view the encrypted value
+    property of credentials. * `Settings Tests Create Transaction (Tx) Tests` to create credentials. For more information
+    about credentials, see Working With Secure Credentials.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/credentials-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-credentials-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-credentials-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/credentials-api-overview/
+- aid: thousandeyes:thousandeyes-dashboards-api
+  name: ThousandEyes Dashboards API
+  description: Manage ThousandEyes Dashboards.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/dashboards-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-dashboards-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-dashboards-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/dashboards-api-overview/
+- aid: thousandeyes:thousandeyes-emulation-api
+  name: ThousandEyes Emulation API
+  description: 'The Emulation API facilitates the retrieval of user-agent strings for HTTP, pageload, and transaction
+    tests. It also enables the retrieval and addition of emulated devices for pageload and transaction tests. To
+    access Emulation API operations, the following permissions are required: * `Settings Tests Read` for read operations.
+    * `Settings Tests Update` for write operations.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/emulation-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Emulation
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-emulation-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-emulation-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/emulation-api-overview/
+- aid: thousandeyes:thousandeyes-endpoint-agents-api
+  name: ThousandEyes Endpoint Agents API
+  description: Manage ThousandEyes Endpoint Agents using this API. For more information about Endpoint Agents, see
+    Endpoint Agents.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/endpoint-agents-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-endpoint-agents-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-endpoint-agents-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/endpoint-agents-api-overview/
+- aid: thousandeyes:thousandeyes-endpoint-instant-scheduled-tests-api
+  name: ThousandEyes Endpoint Instant Scheduled Tests API
+  description: 'You can create and execute a new endpoint instant scheduled test within ThousandEyes using this
+    API. The test parameters are specified in the `POST` data. The following applies to the Endpoint Instant Scheduled
+    Tests API: * To initiate the creation and execution of an instant scheduled test, the user must possess the
+    `Edit endpoint tests` permission. * Upon successful creation of an instant scheduled test, the API responds
+    with an HTTP/201 CREATED status code and return the test definition. * It''s important to note that the response
+    does not include the results of the instant scheduled test. To retrieve test results, users can utilize the
+    Endpoint Test Data endpoints. The URLs for these API test data endpoints are provided within the test definition
+    output when an instant scheduled test is created.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/endpoint-instant-scheduled-tests-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-endpoint-instant-scheduled-tests-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-endpoint-instant-scheduled-tests-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/endpoint-instant-scheduled-tests-api-overview/
+- aid: thousandeyes:thousandeyes-endpoint-agent-labels-api
+  name: ThousandEyes Endpoint Agent Labels API
+  description: Manage labels applied to endpoint agents using this API.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/endpoint-labels-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Endpoint Agent Labels
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-endpoint-agent-labels-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-endpoint-agent-labels-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/endpoint-labels-api-overview/
+- aid: thousandeyes:thousandeyes-endpoint-test-results-api
+  name: ThousandEyes Endpoint Test Results API
+  description: Retrieve results for scheduled and dynamic tests on endpoint agents.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/endpoint-test-results-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-endpoint-test-results-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-endpoint-test-results-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/endpoint-test-results-api-overview/
+- aid: thousandeyes:thousandeyes-endpoint-tests-api
+  name: ThousandEyes Endpoint Tests API
+  description: Manage endpoint agent dynamic and scheduled tests using the Endpoint Tests API.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/endpoint-tests-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-endpoint-tests-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-endpoint-tests-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/endpoint-tests-api-overview/
+- aid: thousandeyes:thousandeyes-event-detection-api
+  name: ThousandEyes Event Detection API
+  description: Event detection occurs when ThousandEyes identifies that error signals related to a component (proxy,
+    network node, AS, server etc) have deviated from the baselines established by events. * To determine this, ThousandEyes
+    takes the test results from all accounts groups within an organization, and analyzes that data. * Noisy test
+    results (those that have too many errors in a short window) are removed until they stabilize, and the rest of
+    the results are tagged with the components associated with that test result (for example, proxy, network, or
+    server). * Next, any increase in failures from the test results and each component helps in determining the
+    problem domain and which component may be at fault. * When this failure rate increases beyond a pre-defined
+    threshold (set by the algorithm), an event is triggered and an email notification is sent to the user (if they've
+    enabled email...
+  humanURL: https://developer.cisco.com/docs/thousandeyes/event-detection-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-event-detection-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-event-detection-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/event-detection-api-overview/
+- aid: thousandeyes:thousandeyes-integrations-api
+  name: ThousandEyes Integrations API
+  description: Manage connectors and operations.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/integrations-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-integrations-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-integrations-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/integrations-api-overview/
+- aid: thousandeyes:thousandeyes-internet-insights-api
+  name: ThousandEyes Internet Insights API
+  description: 'We are happy to announce the release of the Internet Insights API set. This limited release includes
+    endpoints that: * Make our catalog provider and Internet outage data accessible to API users. * Provide access
+    to advanced filtering, which is part of our next-generation API efforts to allow API users to fine-tune queries
+    across all of our APIs in a consistent manner. Internet Insights provide visibility into core Internet infrastructure,
+    including ISPs, DNS providers, IaaS, CDNs , and SaaS providers. It tracks the macro-level impact of Internet
+    events on individual users and enterprise networks connecting at the edge of the Internet. These events include
+    Outages, Routing hijacks and leaks, DDoS attacks, And political interference, among others. Future releases
+    of the Internet Insights API set will further unlock access to core Internet Insights functionality, unlocking
+    potential...'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/internet-insights-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-internet-insights-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-internet-insights-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/internet-insights-api-overview/
+- aid: thousandeyes:thousandeyes-test-snapshots-api
+  name: ThousandEyes Test Snapshots API
+  description: Creates a new test snapshot in ThousandEyes.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/snapshots-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Test Snapshots
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-test-snapshots-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-test-snapshots-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/snapshots-api-overview/
+- aid: thousandeyes:thousandeyes-tags-api
+  name: ThousandEyes Tags API
+  description: 'The ThousandEyes Tags API provides a tagging system with key/value pairs. It allows you to tag assets
+    within the ThousandEyes platform (such as agents, tests, or dashboards) with meaningful metadata. For example:
+    `branch:sfo`, `branch:nyc`, and `team:netops`. This feature provides: * Support for automation. * Powerful and
+    flexible reports/dashboards. * Support for third-party integrations. Things to note with the ThousandEyes Tags
+    API: * Tags are backwards-compatible with existing labels. * Tags are separated by Tests (CEA), Agents (CEA),
+    Endpoint Agents, Scheduled Endpoint Tests, and Reports. A single tag can only apply to one type of target object,
+    so each tag must specify the target type of object via a `type` field. * Tags are defined in a single table
+    so that they can be represented using a single model - `Tag`.'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/tags-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Tags
+  - Tag Assignment
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-tags-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-tags-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/tags-api-overview/
+- aid: thousandeyes:thousandeyes-templates-api
+  name: ThousandEyes Templates API
+  description: 'Templates provide a streamlined approach to creating multiple tests (Synthetic/CEA and Endpoint),
+    tags, alert rules, dashboards, labels (deprecated) and other assets within ThousandEyes from a single configuration
+    file. Templates make it easy to configure monitoring for even the most complex monitoring scenarios. The following
+    applies to templates: * ThousandEyes provides a pre-defined set of templates for monitoring common services
+    and applications like Office365, Webex, Atlassian, Slack, custom network, HTTP, API, and Web targets. * You
+    can easily create tests for monitoring common services and applications such as Office365, Webex, and others
+    using the predefined set of ThousandEyes built-in templates. * Users can create their own templates, which are
+    visible to any other users in the account group the template was created in, provided they have the `View Templates
+    Read`...'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/templates-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-templates-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-templates-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/templates-api-overview/
+- aid: thousandeyes:thousandeyes-tests-api
+  name: ThousandEyes Tests API
+  description: This API allows you to list, create, edit, and delete Network and Application Synthetics tests.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/tests-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-tests-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-tests-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/tests-api-overview/
+- aid: thousandeyes:thousandeyes-instant-tests-api
+  name: ThousandEyes Instant Tests API
+  description: The Instant Tests API operations lets you create and run new instant tests. You will need to be an
+    Account Admin. The response does not include the immediate test results. Use the Test Results endpoints to get
+    test results after creating and executing an instant test. You can find the URLs for these endpoints in the
+    _links section of the test definition that is returned when you create the instant test.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/instant-tests-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-instant-tests-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-instant-tests-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/instant-tests-api-overview/
+- aid: thousandeyes:thousandeyes-test-results-api
+  name: ThousandEyes Test Results API
+  description: Get test result metrics for Network and Application Synthetics tests.
+  humanURL: https://developer.cisco.com/docs/thousandeyes/test-results-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-test-results-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-test-results-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/test-results-api-overview/
+- aid: thousandeyes:thousandeyes-opentelemetry-api
+  name: ThousandEyes ThousandEyes for OpenTelemetry API
+  description: '* Traces * Connected Devices * OTel-based integrations that rely on connectors and operations, including:
+    * Splunk Cloud Platform HEC * Splunk Enterprise HEC * Splunk Observability APM * Dynatrace Observability APM
+    ThousandEyes for OpenTelemetry provides machine-to-machine integration between ThousandEyes and its customers.
+    It allows you to export ThousandEyes telemetry data in OTel format, which is widely used in the industry. With
+    ThousandEyes for OTel, you can leverage frameworks widely used in the observability domain - such as Splunk,
+    Grafana, and Honeycomb - to capture and analyze ThousandEyes data. Any client that supports OTel can use ThousandEyes
+    for OpenTelemetry. ThousandEyes for OTel is made up of the following components: * Data streaming APIs that
+    you can use to configure and enable your ThousandEyes tests with OTel-compatible streams, in particular to configure
+    how...'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/thousandeyes-for-opentelemetry-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Streaming
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-opentelemetry-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-opentelemetry-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/thousandeyes-for-opentelemetry-api-overview/
+- aid: thousandeyes:thousandeyes-usage-api
+  name: ThousandEyes Usage API
+  description: 'These usage endpoints define the following operations: * **Usage**: Retrieve usage data for the
+    specified time period (default is one month). * Users must have the `View organization usage` permission to
+    access this endpoint. * This operation offers visibility across all account groups within the organization.
+    * Users with `View organization usage` permission in multiple organizations should query the operation with
+    the `aid` query string parameter (see optional parameters) for each organization. * The `agentId` field in enterprise
+    agent unit responses may be omitted when not available. * **Quotas**: Obtain organization and account usage
+    quotas. Additionally, users with the appropriate permissions can create, update, or delete these quotas. * Users
+    must have the necessary permissions to perform quota-related actions. Refer to the Usage API operations for
+    detailed usage instructions...'
+  humanURL: https://developer.cisco.com/docs/thousandeyes/usage-api-overview/
+  baseURL: https://api.thousandeyes.com/v7
+  tags:
+  - Usage
+  - Quotas
+  properties:
+  - type: OpenAPI
+    url: openapi/thousandeyes-usage-openapi.yml
+  - type: Overlay
+    url: overlays/thousandeyes-usage-overlay.yaml
+  - type: APIReference
+    url: https://developer.cisco.com/docs/thousandeyes/usage-api-overview/
 common:
-- type: Portal
-  url: https://developer.cisco.com/thousandeyes/
-- type: Documentation
-  url: https://developer.cisco.com/docs/thousandeyes/
-- type: APIReference
-  url: https://developer.cisco.com/docs/thousandeyes/
+- type: DomainSecurity
+  url: security/thousandeyes-domain-security.yml
+- type: Authentication
+  url: authentication/thousandeyes-authentication.yml
 - type: ParentCompany
   url: https://apis.io/providers/cisco/
   name: Cisco
+  x-relationship: acquisition
+  x-generated-by: cisco-family:2026-08-19
   x-acquired: 2020
+- type: Portal
+  url: https://developer.cisco.com/thousandeyes/
+- type: Documentation
+  url: https://docs.thousandeyes.com/
+- type: APIReference
+  url: https://developer.cisco.com/docs/thousandeyes/
 - type: GitHubOrganization
   url: https://github.com/thousandeyes
-- type: MCPServer
+- type: SourceCode
   url: https://github.com/CiscoDevNet/ThousandEyes-MCP-Server-official
-- type: SDKs
+  name: ThousandEyes MCP Server (official)
+- type: SourceCode
   url: https://github.com/thousandeyes/thousandeyes-sdk-python
+  name: ThousandEyes Python SDK
 - type: GitHubOrganization
   url: https://github.com/CiscoDevNet
+- type: Website
+  url: https://www.thousandeyes.com/
+- type: DeveloperPortal
+  url: https://developer.cisco.com/thousandeyes/
+- type: GettingStarted
+  url: https://developer.cisco.com/docs/thousandeyes/getting-started/
+- type: Quickstart
+  url: https://docs.thousandeyes.com/product-documentation/getting-started/getting-started-with-the-thousandeyes-api
+- type: Support
+  url: https://developer.cisco.com/docs/thousandeyes/developer-support/
+- type: HelpCenter
+  url: https://docs.thousandeyes.com/
+- type: Community
+  url: https://community.cisco.com/t5/thousandeyes/bd-p/disc-thousandeyes
+- type: Blog
+  url: https://blogs.cisco.com/tag/cisco-thousandeyes
+- type: StatusPage
+  url: https://status.thousandeyes.com
+- type: Login
+  url: https://app.thousandeyes.com/login
+- type: SignUp
+  url: https://app.thousandeyes.com/login?fwd=%2Fsignup
+- type: Pricing
+  url: https://www.cisco.com/c/en/us/products/collateral/security/cisco-thousandeyes-og.html
+  name: Cisco ThousandEyes Ordering Guide
+- type: TermsOfService
+  url: https://developer.cisco.com/site/license/terms-and-conditions/
+  name: Cisco DevNet Terms of Service (governs use of the ThousandEyes API)
+- type: PrivacyPolicy
+  url: https://www.cisco.com/c/en/us/about/legal/privacy-full.html
+  name: Cisco Online Privacy Statement
+- type: Postman
+  url: https://www.postman.com/cisco/cisco-devnet-s-public-workspace/collection/v2ogbsf/cisco-thousandeyes-api-v7
+- type: Deprecation
+  url: https://developer.cisco.com/docs/thousandeyes/thousandeyes-api-license-terms-and-support-policy/
+  name: ThousandEyes API version support policy
+- type: Security
+  url: https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html
+  name: Cisco Security Vulnerability Policy (PSIRT)
+- type: Compliance
+  url: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+  name: Cisco Trust Portal
+- type: SDKs
+  url: packages/thousandeyes-packages.yml
+- type: Packages
+  url: packages/thousandeyes-packages.yml
+- type: CLI
+  url: cli/thousandeyes-cli.yml
+- type: WellKnown
+  url: well-known/thousandeyes-well-known.yml
+- type: LLMsTxt
+  url: llms/thousandeyes-llms.txt
+- type: MCPServer
+  url: mcp/thousandeyes-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/thousandeyes-tool-crosswalk.yml
+- type: Conformance
+  url: conformance/thousandeyes-conformance.yml
+- type: ErrorCatalog
+  url: errors/thousandeyes-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/thousandeyes-lifecycle.yml
+- type: OAuthScopes
+  url: scopes/thousandeyes-scopes.yml
+- type: VulnerabilityDisclosure
+  url: security/thousandeyes-vulnerability-disclosure.yml
+- type: TrustCenter
+  url: security/thousandeyes-trust-center.yml
+- type: Conventions
+  url: conventions/thousandeyes-conventions.yml
+- type: ChangeLog
+  url: changelog/thousandeyes-changelog.yml
+- type: DataModel
+  url: data-model/thousandeyes-data-model.yml
+- type: Plans
+  url: plans/thousandeyes-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/thousandeyes-rate-limits.yml
+- type: Webhooks
+  url: asyncapi/thousandeyes-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 x-acquired: 2020
+image: https://docs.thousandeyes.com/~gitbook/image?url=https%3A%2F%2F1112912342-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-legacy-files%2Fo%2Fspaces%252F-M4QARF6s57qxMrOHDTZ%252Favatar-1586888079651.png%3Fgeneration%3D1586888079959831%26alt%3Dmedia&width=180&height=180&sign=8b5c0248&sv=2
+x-enrichment:
+  date: '2026-08-19'
+  status: enriched
+  artifacts_added: 70
+  pass: local-v1
