@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Cloud Insights Integrations Cloud Insights Integration Policy Settings API
+  description: "**Note:** All Cloud Insights APIs are not available for ThousandEyes for Government instance.\n\nThe Cloud Insights Integrations API lets you programmatically manage **AWS** and **Azure** monitoring integrations in ThousandEyes.\n\n\n### What You Can Do\n\n- **List** all integrations.\n\n- **Get** details for a specific integration.\n\n- **Delete** an existing integration.\n\n- **Create** integrations for:\n\n  - **AWS**: inventory monitoring and flow logs monitoring.\n  \n  - **Azure**: inventory monitoring and flow logs monitoring.\n\n- **Update** integrations for:\n\n  - **Azure**: inventory monitoring and flow logs monitoring.\n  \n- **Fetch AWS IAM policy documents** required to configure AWS inventory and flow-logs integrations.\n\n- **Retrieve** the current AWS and Azure integration policy settings to understand which AWS and Azure resource groups, AWS regions, Azure subscription rules are enabled and whether CloudTrail is enabled for Cloud Insights for inventory monitoring.\n\n- **Update** policy settings to change the approved AWS resource groups, AWS regions, and Azure subscription rules that ThousandEyes should inventory.\n\n\n### Scope and Tenancy\n\nAll operations are scoped to the authenticated account group. Responses include only resources associated with that group.\n\n\n### Payloads and formats\n\n- **Requests:** `application/json`\n\n- **Responses:** primarily `application/hal+json` for resource representations and `application/json` for policy documents.\n\n- HAL responses include `_links` with a `self` relation for direct navigation.\n\n\n### Integration Types\n\n- **Inventory monitoring**\n\n  - AWS: reads inventory and network topology via read-only IAM permissions.\n  \n  - Azure: authenticates with a Service Principal to read inventory and network topology.\n  \n- **Flow logs monitoring**\n\n  - AWS: reads flow logs from S3 buckets and uses SNS for notifications.\n  \n  - Azure: reads flow logs via **Service Bus Queue** (`serviceBusQueueUrl`).\n  \n\n### Policy Helpers (AWS)\n\nDedicated endpoints return **Trusted Policy**, **Permissions Policy**, and **SNS Topic Access Policy** documents to simplify role setup for inventory and flow logs integrations.\n\n\n### Notes\n\n- All example values in this specification are **fictitious**.\n\n\nFor more information about Cloud Insights, see [Cloud Insights](https://docs.thousandeyes.com/product-documentation/cloud-insights).\n"
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Cloud Insights Integration Policy Settings
+  description: Manage Cloud Insights integration policy settings for AWS and Azure.
+paths:
+  /cloud-insights/integration/aws/policy/settings:
+    get:
+      tags:
+      - Cloud Insights Integration Policy Settings
+      summary: Get AWS integration policy settings
+      operationId: getAWSIntegrationPolicySettings
+      description: 'Retrieves the AWS integration policy settings for the authenticated account group. Use this endpoint to audit which AWS resource group types and AWS regions are enabled, and whether CloudTrail is enabled, for Cloud Insights inventory monitoring.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: AWS integration policy settings returned successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AwsIntegrationPolicySetting'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Cloud Insights Integration Policy Settings
+      summary: Update AWS integration policy settings
+      operationId: updateAWSIntegrationPolicySettings
+      description: 'Updates the AWS integration policy settings for the authenticated account group. This endpoint lets you enable or disable specific AWS resource group types, adjust the set of AWS regions to inventory, and control whether CloudTrail is enabled for inventory monitoring.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AwsIntegrationPolicySetting'
+      responses:
+        '200':
+          description: AWS integration policy settings updated successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AwsIntegrationPolicySetting'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /cloud-insights/integration/azure/policy/settings:
+    get:
+      tags:
+      - Cloud Insights Integration Policy Settings
+      summary: Get Azure integration policy settings
+      operationId: getAzureIntegrationPolicySettings
+      description: 'Retrieves the Azure integration policy settings for the authenticated account group. Use this endpoint to review which Azure resource group types are monitored and inspect the subscriptions policy rules that gate which subscriptions ThousandEyes inventories.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: Azure integration policy settings returned successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AzureIntegrationPolicySetting'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Cloud Insights Integration Policy Settings
+      summary: Update Azure integration policy settings
+      operationId: updateAzureIntegrationPolicySettings
+      description: 'Updates the Azure integration policy settings for the authenticated account group. This endpoint lets you enable or disable Azure resource group types and manage the subscriptions policy (rules plus default action) that controls which Azure subscriptions are inventoried.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AzureIntegrationPolicySetting'
+      responses:
+        '200':
+          description: Azure integration policy settings updated successfully.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AzureIntegrationPolicySetting'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    SubscriptionsPolicyRuleAction:
+      type: string
+      description: Action applied when a subscriptions policy rule matches.
+      enum:
+      - include
+      - exclude
+      example: include
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    SubscriptionsPolicyRule:
+      type: object
+      required:
+      - field
+      - pattern
+      - action
+      description: A single subscription rule consisting of a field, pattern, and action.
+      properties:
+        field:
+          $ref: '#/components/schemas/SubscriptionsPolicyRuleField'
+        pattern:
+          type: string
+          description: String or regular expression used to match subscription identifiers or names.
+          example: ^prod-.*$
+        action:
+          $ref: '#/components/schemas/SubscriptionsPolicyRuleAction'
+    SubscriptionsPolicy:
+      type: object
+      required:
+      - rules
+      - defaultAction
+      description: 'Policy document that controls which Azure subscriptions are inventoried. Up to 10 rules can be provided. Rules are evaluated in order; if none match, the defaultAction is applied.
+
+        '
+      properties:
+        rules:
+          type: array
+          description: Ordered list of subscription policy rules. Maximum of 10 entries.
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/SubscriptionsPolicyRule'
+        defaultAction:
+          $ref: '#/components/schemas/SubscriptionsPolicyRuleAction'
+      example:
+        rules:
+        - field: subscription-name
+          pattern: ^prod-.*$
+          action: include
+        - field: subscription-id
+          pattern: 3145d332-e1c9-4670-a672-12e17d4f627e
+          action: exclude
+        defaultAction: exclude
+    SubscriptionsPolicyRuleField:
+      type: string
+      description: Identifies whether the rule evaluates subscription IDs or subscription names.
+      enum:
+      - subscription-id
+      - subscription-name
+      example: subscription-id
+    AwsRegion:
+      type: string
+      description: AWS region identifier that can be enabled for Cloud Insights inventory monitoring.
+      enum:
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-west-2
+      - ca-central-1
+      - ca-west-1
+      - mx-central-1
+      - sa-east-1
+      - eu-central-1
+      - eu-west-1
+      - eu-west-2
+      - eu-south-1
+      - eu-west-3
+      - eu-south-2
+      - eu-north-1
+      - eu-central-2
+      - il-central-1
+      - me-south-1
+      - me-central-1
+      - af-south-1
+      - ap-east-1
+      - ap-south-2
+      - ap-southeast-3
+      - ap-southeast-5
+      - ap-southeast-4
+      - ap-southeast-7
+      - ap-south-1
+      - ap-northeast-3
+      - ap-northeast-2
+      - ap-southeast-1
+      - ap-southeast-2
+      - ap-northeast-1
+      example: us-east-1
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    AwsIntegrationPolicySetting:
+      type: object
+      required:
+      - enabledResourceGroupTypes
+      - enabledRegions
+      - enabledCloudtrail
+      description: AWS integration policy configuration that controls which resource groups and regions ThousandEyes inventories, and whether CloudTrail is enabled.
+      properties:
+        enabledResourceGroupTypes:
+          type: array
+          description: The set of AWS resource group types included in inventory monitoring.
+          items:
+            $ref: '#/components/schemas/AwsResourceGroupType'
+          example:
+          - ec2
+          - s3-bucket
+          - global-network
+        enabledRegions:
+          type: array
+          description: The AWS regions that ThousandEyes inventories for the account group.
+          items:
+            $ref: '#/components/schemas/AwsRegion'
+          example:
+          - us-east-1
+          - eu-west-1
+          - ap-southeast-2
+        enabledCloudtrail:
+          type: boolean
+          description: Indicates whether CloudTrail integration is enabled for AWS inventory monitoring.
+          example: true
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    AwsResourceGroupType:
+      type: string
+      description: Supported AWS resource group types that can be toggled within policy settings. Note that ec2 is a mandatory resource group type and will be enabled regardless of user configuration.
+      enum:
+      - cloudfront
+      - ec2
+      - eks-ecs
+      - global-accelerator
+      - direct-connect
+      - s3-bucket
+      - network-firewall
+      - global-network
+      example: ec2
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    AzureIntegrationPolicySetting:
+      type: object
+      required:
+      - enabledResourceGroupTypes
+      - subscriptionsPolicy
+      description: Azure integration policy configuration that defines the monitored Azure resource groups and the subscription policy that ThousandEyes enforces.
+      properties:
+        enabledResourceGroupTypes:
+          type: array
+          description: The set of Azure resource group types included in inventory monitoring.
+          items:
+            $ref: '#/components/schemas/AzureResourceGroupType'
+          example:
+          - networking
+          - virtual-wan
+          - traffic-manager
+        subscriptionsPolicy:
+          $ref: '#/components/schemas/SubscriptionsPolicy'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    AzureResourceGroupType:
+      type: string
+      description: Supported Azure resource group types that can be toggled within policy settings. Note that networking is a mandatory resource group type and will be enabled regardless of user configuration.
+      enum:
+      - afd
+      - security
+      - express-route
+      - virtual-wan
+      - traffic-manager
+      - networking
+      example: networking
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

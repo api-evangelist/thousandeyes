@@ -1,0 +1,1690 @@
+openapi: 3.2.0
+info:
+  title: Endpoint Test Results HTTP Server Endpoint Scheduled Test Results API
+  version: 7.0.100
+  description: Retrieve results for scheduled and dynamic tests on endpoint agents.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: HTTP Server Endpoint Scheduled Test Results
+paths:
+  /endpoint/test-results/scheduled-tests/{testId}/http-server:
+    get:
+      tags:
+      - HTTP Server Endpoint Scheduled Test Results
+      summary: Retrieve HTTP server scheduled test results
+      description: 'Returns component-level (DNS, Connect, Wait and Receive) timing for the load of an object over HTTP.
+
+        '
+      operationId: getHttpServerScheduledTestResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/ExpandEndpointHttpServer'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpEndpointTestResults'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/scheduled-tests/{testId}/http-server/filter:
+    post:
+      tags:
+      - HTTP Server Endpoint Scheduled Test Results
+      summary: Filter HTTP server result for a scheduled test
+      description: 'Returns component-level timings for an object load over HTTP. These include DNS, connect, wait, and receive times for a single scheduled test.
+
+        '
+      operationId: getSingleTestFilteredHttpServerScheduledTestResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/ExpandEndpointHttpServer'
+      requestBody:
+        description: Test result search filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpEndpointTestsDataRoundsSearch'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpMultiEndpointTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/scheduled-tests/http-server/filter:
+    post:
+      tags:
+      - HTTP Server Endpoint Scheduled Test Results
+      summary: Filter HTTP server scheduled test results
+      description: 'Returns component-level (DNS, Connect, Wait and Receive) timing for the load of an object over HTTP.
+
+        '
+      operationId: getMultiTestFilteredHttpServerScheduledTestResults
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/UseAllPermittedAids'
+      - $ref: '#/components/parameters/ExpandEndpointHttpServer'
+      requestBody:
+        description: Test data search filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpEndpointTestsDataRoundsSearch'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpMultiEndpointTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+components:
+  schemas:
+    TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    HttpErrorType:
+      type: string
+      enum:
+      - connect
+      - dns
+      - http
+      - none
+      - send
+      - ssl
+      - receive
+      description: Type of error encountered; corresponds to phase of connection.
+      default: connect
+      example: connect
+      readOnly: true
+    TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    TestIsSavedEvent:
+      type: boolean
+      description: 'Indicates if the test is a saved event.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+        '
+      example: false
+      readOnly: true
+    EndpointTestAgents:
+      type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
+      items:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    TotalHits:
+      description: Total number of measurements that match the search criteria.
+      type: integer
+      example: 12
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    HttpEndpointTestsDataRoundsSearch:
+      type: object
+      properties:
+        searchSort:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpEndpointTestsDataSearchSort'
+        thresholdFilter:
+          $ref: '#/components/schemas/HttpEndpointTestsDataThresholdFilters'
+        searchFilters:
+          $ref: '#/components/schemas/HttpEndpointTestsDataSearchFilter'
+    TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
+      default: false
+      example: false
+    EndpointHttpServerBaseTest:
+      type: object
+      properties:
+        authType:
+          $ref: '#/components/schemas/EndpointTestAuthType'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        httpTimeLimit:
+          type: integer
+          description: Maximum amount of time in milliseconds the agents wait before a request times out.
+          default: 5000
+          example: 5000
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        username:
+          $ref: '#/components/schemas/TestUsername'
+        sslVersionId:
+          $ref: '#/components/schemas/TestSslVersionId'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        verifyCertificate:
+          type: boolean
+          description: Flag indicating if a certificate should be verified.
+          default: true
+          example: true
+        url:
+          $ref: '#/components/schemas/EndpointTestResultUrl'
+    HttpEndpointTestsDataThresholdFilters:
+      type: object
+      description: All filters are applied based on the conditional operator (and/or).
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpEndpointTestsDataThresholdFilter'
+        conditionalOperator:
+          $ref: '#/components/schemas/ConditionalOperator'
+    TestSslVersionId:
+      type: string
+      description: 'SSL version options:
+
+
+        * Use ''0'' for automatic selection.
+
+        * Use ''3'' for SSLv3.
+
+        * Use ''4'' for TLS v1.0.
+
+        * Use ''5'' for TLS v1.1.
+
+        * Use ''6'' for TLS v1.2.
+
+        * Use ''7'' for TLS v1.3.
+
+        '
+      enum:
+      - '0'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      default: '0'
+      example: '0'
+    EndpointScheduledTestType:
+      type: string
+      enum:
+      - agent-to-server
+      - http-server
+      description: Type of test being queried.
+      example: agent-to-server
+      readOnly: true
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    EndpointTestPort:
+      type: integer
+      description: Port number.
+      default: 443
+      example: 443
+    CellularProfile:
+      description: Cellular network profile information for a mobile endpoint agent.
+      type: object
+      readOnly: true
+      properties:
+        carrierName:
+          type: string
+          description: Carrier name
+          example: T-Mobile
+        networkGen:
+          $ref: '#/components/schemas/CellularNetworkGen'
+        networkSubtype:
+          type: string
+          description: A real network subtype. It may be different from an advertised network type.
+          example: LTE/HSPA
+        advertisedNetworkGen:
+          $ref: '#/components/schemas/CellularNetworkGen'
+        advertisedNetworkSubtype:
+          type: string
+          description: Advertised Network subtype
+          example: LTE/HSPA
+        rssi:
+          type: number
+          format: double
+          description: Received Signal Strength Indicator in dBm. Values are always negative.
+          example: -10
+        rsrp:
+          type: number
+          format: double
+          description: Reference Signal Received Power in dBm. Values are always negative.
+          example: -30
+        rscp:
+          type: number
+          format: double
+          description: Received Signal Code Power in dBm. Values are always negative or zero.
+          example: -30
+        rsrq:
+          type: number
+          format: double
+          description: Reference Signal Received Quality in dBm. Values are always negative.
+          example: -30
+        sinr:
+          type: number
+          format: double
+          description: Signal to Interference and Noise Ratio in dBm. It can be negative or positive.
+          example: 20
+    EndpointAgentLabels:
+      type: array
+      deprecated: true
+      description: 'Deprecated. Use `tagIds` instead.
+
+
+        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
+
+        '
+      items:
+        type: string
+      example:
+      - '567'
+      - '214'
+    NetworkProxyProfile:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Proxy profile method.
+          example: System
+          readOnly: true
+        proxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkProxy'
+    UserPrincipalName:
+      type: string
+      description: User login name in Internet-style format, typically used in Active Directory environments.
+      example: joeblogs32@c.com
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    UserPrincipalNameFilter:
+      description: Filters results based on an array of `userPrincipalName` values.
+      type: array
+      items:
+        $ref: '#/components/schemas/UserPrincipalName'
+    CpuUtilization:
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+          description: The minimum sampled usage value recorded during the monitored period.
+          example: 0.22
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        max:
+          type: number
+          format: double
+          description: The maximum sampled usage value recorded during the monitored period.
+          example: 0.75
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        mean:
+          type: number
+          format: double
+          description: The mean (average) sampled usage value recorded during the monitored period.
+          example: 0.55
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        median:
+          type: number
+          format: double
+          description: The median sampled usage value recorded during the monitored period.
+          example: 0.61
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        stdDev:
+          type: number
+          format: double
+          description: The standard deviation of sampled usage values recorded during the monitored period.
+          example: 0.01
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        count:
+          type: integer
+          description: The total number of samples collected during the monitored period.
+          example: 150
+          readOnly: true
+    TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    NicDriverVersionFilter:
+      description: Filters results to NIC driver versions that exactly match one of the provided values. Matching is case-sensitive.
+      type: array
+      items:
+        type: string
+        example: 22.250.0.9
+    HttpEndpointTestsDataThresholdFilter:
+      type: object
+      description: The metric is filtered based on the threshold value and operator provided.
+      properties:
+        name:
+          $ref: '#/components/schemas/HttpThresholdFilterName'
+        value:
+          type: number
+          description: The threshold value.
+          format: double
+          example: 10
+        operator:
+          $ref: '#/components/schemas/ThresholdFilterOperator'
+    NetworkWirelessProfile:
+      type: object
+      properties:
+        ssid:
+          type: string
+          description: Wireless network SSID.
+          example: Internet for the masses
+          readOnly: true
+        bssid:
+          type: string
+          description: Wireless network BSSID.
+          example: 4c:ba:ba:f4:fa:fa
+          readOnly: true
+        channel:
+          type: integer
+          description: Wireless network channel.
+          example: 1
+          readOnly: true
+        phyMode:
+          type: string
+          description: Wireless network PHY mode.
+          example: 802.11n
+          readOnly: true
+        rssi:
+          type: integer
+          description: Wireless network RSSI.
+          example: -38
+          readOnly: true
+        noise:
+          type: integer
+          description: Wireless network noise.
+          example: -95
+          readOnly: true
+        snr:
+          type: integer
+          description: Wireless network signal-to-noise ratio (SNR), in dB.
+          example: 57
+          readOnly: true
+        quality:
+          type: integer
+          description: Wireless network quality.
+          example: 100
+          readOnly: true
+        txRate:
+          type: integer
+          description: Wireless network transmitted rate.
+          example: 130
+          readOnly: true
+        vendor:
+          type: string
+          description: Wireless network device vendor.
+          example: Cisco
+          readOnly: true
+    SystemMetrics:
+      type: object
+      properties:
+        startTimeMs:
+          type: integer
+          format: int64
+          description: The start time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508857327
+          readOnly: true
+        endTimeMs:
+          type: integer
+          format: int64
+          description: The end time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508867333
+          readOnly: true
+        cpuUtilization:
+          $ref: '#/components/schemas/CpuUtilization'
+        physicalMemoryUsedBytes:
+          $ref: '#/components/schemas/PhysicalMemoryUsedBytes'
+        physicalMemoryTotalBytes:
+          type: integer
+          format: int64
+          description: Total physical memory of the system.
+          example: 1024
+          readOnly: true
+    HttpEndpointTestsDataSearchSortKey:
+      type: string
+      enum:
+      - round-id
+      - response-time
+      - dns-time
+      - connect-time
+      - ssl-time
+      - wait-time
+      - response-code
+      - wire-size
+      example: round-id
+    EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    EndpointTestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    HttpMultiEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpEndpointTestResult'
+        totalHits:
+          $ref: '#/components/schemas/TotalHits'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationNextAndSelfLink'
+    BatteryMetrics:
+      description: Battery metrics for the endpoint agent.
+      type: object
+      readOnly: true
+      properties:
+        batteryHealthNormalizedPercent:
+          type: number
+          format: double
+          description: Battery health as a normalized percentage (0-1).
+          example: 0.92
+          minimum: 0
+          maximum: 1
+        batteryLevel:
+          $ref: '#/components/schemas/BatteryLevel'
+        batteryLevelNormalizedPercent:
+          type: number
+          format: double
+          description: Battery level as a normalized percentage (0-1).
+          example: 0.3
+          minimum: 0
+          maximum: 1
+      required:
+      - batteryLevel
+      - batteryLevelNormalizedPercent
+    NetworkProfile:
+      allOf:
+      - $ref: '#/components/schemas/NetworkInterface'
+      - type: object
+        description: Contains basic network connectivity parameters.
+        properties:
+          error:
+            type: string
+            description: Only present when there is an error
+            example: An operation timed out.
+            readOnly: true
+          gateway:
+            type: string
+            description: Network gateway address.
+            example: 10.0.0.1
+            readOnly: true
+          wirelessProfile:
+            $ref: '#/components/schemas/NetworkWirelessProfile'
+          proxyProfile:
+            $ref: '#/components/schemas/NetworkProxyProfile'
+          ethernetProfile:
+            $ref: '#/components/schemas/EndpointTestEthernetProfile'
+          previousInterface:
+            $ref: '#/components/schemas/NetworkInterface'
+    VpnType:
+      type: string
+      description: Name of the VPN provider.
+      enum:
+      - cisco-anyconnect
+      - palo-alto-globalprotect
+      - ivanti-connect-secure
+      - zscaler-internet-access
+      - f5-big-ip
+      example: cisco-anyconnect
+    ExpandEndpointHttpServerOptions:
+      type: string
+      enum:
+      - header
+      - user-profile
+      example: header
+    TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    NetworkProxy:
+      type: object
+      properties:
+        bypass:
+          type: string
+          description: Proxy bypass expression.
+          example: '*.local;169.254/16'
+          readOnly: true
+        proxy:
+          type: string
+          description: Proxy mode.
+          example: <direct>
+          readOnly: true
+    HttpEndpointTestsDataSearchSort:
+      type: object
+      properties:
+        sort:
+          $ref: '#/components/schemas/HttpEndpointTestsDataSearchSortKey'
+        order:
+          $ref: '#/components/schemas/SortOrder'
+    ApplicationScoreQuality:
+      type: string
+      enum:
+      - great
+      - good
+      - poor
+      example: great
+    EndpointScoreNumeric:
+      type: number
+      format: double
+      description: A fine-grained score between 0 and 100.
+      example: 100
+    TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
+      example: true
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    BatteryLevel:
+      description: Battery level indicator.
+      type: string
+      example: medium
+      enum:
+      - high
+      - medium
+      - low
+    EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
+    TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    TestProbeModeResponse:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    EndpointTestProtocol:
+      type: string
+      enum:
+      - icmp
+      - icmp-with-tcp-connect
+      - tcp
+      - prefer-tcp
+      - ast-autodetect
+      - autodetect
+      description: Protocol requested for the test.
+      default: icmp
+      example: icmp
+    UserProfile:
+      type: object
+      description: Details of the logged-in user, including username and user principal name.
+      properties:
+        userName:
+          type: string
+          description: Machine username of the logged-in user.
+          example: joeblogs32
+        userPrincipalName:
+          $ref: '#/components/schemas/UserPrincipalName'
+    EndpointHttpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointTest'
+      - $ref: '#/components/schemas/EndpointHttpServerBaseTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/EndpointHttpServerType'
+          followRedirects:
+            $ref: '#/components/schemas/TestFollowRedirects'
+          httpTargetTime:
+            $ref: '#/components/schemas/TestHttpTargetTime'
+          httpVersion:
+            $ref: '#/components/schemas/TestHttpVersion'
+          isPrioritized:
+            $ref: '#/components/schemas/TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/TestInterval'
+          sslVersion:
+            $ref: '#/components/schemas/TestSslVersion'
+          useNtlm:
+            $ref: '#/components/schemas/TestUseNtlm'
+    PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    EndpointAgentLabelsSelectorType:
+      type: string
+      example: agent-labels
+      pattern: ^agent-labels$
+    TargetProfile:
+      type: object
+      properties:
+        remotePort:
+          type: integer
+          description: The remote port of a network flow towards the target.
+          example: 80
+          readOnly: true
+        remoteIpAddress:
+          type: string
+          description: The remote IP address of a network flow towards the target.
+          example: 120.98.134.7
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/TestProtocol'
+    TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestLabel'
+    Platform:
+      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+      type: string
+      enum:
+      - windows
+      - roomos
+      - phoneos
+      - elux
+      - cisco-wireless
+      - cisco-wireless-cloud
+      - linux
+      - mac
+      - android
+      - unknown
+      example: mac
+    NetworkInterface:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: Network IP address.
+          example: 10.0.0.13
+          readOnly: true
+        subnetMask:
+          type: string
+          description: Network subnet mask - only for IPv4.
+          example: 255.255.255.0
+          readOnly: true
+        publicIpAddress:
+          type: string
+          description: Network public IP address.
+          example: 84.255.241.1
+          readOnly: true
+        localPrefix:
+          type: string
+          description: Network local prefix.
+          example: 10.0.0.0
+          readOnly: true
+        publicIpRange:
+          type: string
+          description: Network public IP range.
+          example: 84.255.241.0-84.255.241.255
+          readOnly: true
+        dnsServers:
+          type: array
+          description: Network DNS servers.
+          example:
+          - 8.8.8.8
+          - 8.8.8.4
+          readOnly: true
+          items:
+            type: string
+        hardwareType:
+          $ref: '#/components/schemas/InterfaceHardwareType'
+        interfaceName:
+          type: string
+          description: Network interface name.
+          example: en0
+          readOnly: true
+    EndpointAgentTagsSelectorType:
+      type: string
+      example: agent-tags
+      pattern: ^agent-tags$
+    TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    EndpointTestSelfLink:
+      allOf:
+      - description: A reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Link'
+    EndpointAgentSelectorConfig:
+      type: object
+      description: Agents selection object based on agentSelectorType.
+      readOnly: true
+      oneOf:
+      - $ref: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    SortOrder:
+      type: string
+      example: desc
+      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
+      enum:
+      - asc
+      - desc
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    HttpEndpointTestResultHeaders:
+      type: object
+      description: Expandable object containing both request and response headers.
+      properties:
+        requestHeaders:
+          type: string
+          description: 'CRLF-delimited list of request headers in `header: value` format.'
+          example: 'GET / HTTP/1.1
+
+            Host: www.thousandeyes.com
+
+            User-Agent: curl/7.58.0-DEV
+
+            Accept: */*
+
+            Accept-Encoding: deflate, gzip
+
+            X-ThousandEyes-Agent: yes
+
+            '
+          readOnly: true
+        responseHeaders:
+          type: string
+          description: 'CRLF-delimited list of response headers in `header: value` format.'
+          example: 'HTTP/1.1 200 OK
+
+            Content-Type: text/html;charset=UTF-8
+
+            Content-Length: 9993
+
+            Connection: keep-alive
+
+            Date: Mon, 04 May 2020 16:13:00 GMT
+
+            Server: Apache
+
+            Content-Language: en-US
+
+            Content-Encoding: gzip
+
+            X-Frame-Options: sameorigin
+
+            Cache-Control: max-age=600, must-revalidate
+
+            Strict-Transport-Security: max-age=31536000
+
+            X-Content-Type-Options: nosniff
+
+            X-XSS-Protection: 1; mode=block
+
+            Vary: Accept-Encoding
+
+            X-Cache: Hit from cloudfront
+
+            Via: 1.1 7ba3caf71ae7a52dd411d1a543e80cd8.cloudfront.net (CloudFront)
+
+            X-Amz-Cf-Pop: SFO5-C3
+
+            X-Amz-Cf-Id: w4h42tkoJD-rEpkRDZUvnQBmy26GVGe6pUsuRr1Dphf7oajYbjXaOA==
+
+            Age: 132
+
+            '
+          readOnly: true
+    EndpointHttpDataPointScore:
+      type: object
+      properties:
+        applicationScore:
+          $ref: '#/components/schemas/EndpointScoreNumeric'
+        quality:
+          $ref: '#/components/schemas/ApplicationScoreQuality'
+    EndpointHttpServerType:
+      type: string
+      description: Type of test being queried.
+      example: http-server
+      pattern: ^http-server$
+      readOnly: true
+    TestHttpVersion:
+      type: integer
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    HttpThresholdFilterName:
+      type: string
+      description: Metric on which the threshold filter is applied.
+      enum:
+      - response-time
+      - dns-time
+      - connect-time
+      - throughput
+      - ssl-time
+      - wait-time
+      - application-score
+      example: response-time
+    HttpEndpointTestResult:
+      allOf:
+      - $ref: '#/components/schemas/EndpointTestResult'
+      - type: object
+        properties:
+          score:
+            $ref: '#/components/schemas/EndpointHttpDataPointScore'
+          connectTime:
+            type: integer
+            description: Time required to establish a TCP connection to the server in milliseconds.
+            example: 2
+            readOnly: true
+          dnsTime:
+            type: integer
+            description: Time required to resolve DNS in milliseconds.
+            example: 0
+            readOnly: true
+          errorType:
+            $ref: '#/components/schemas/HttpErrorType'
+          errorDetails:
+            type: string
+            description: Error details, if an error were encountered.
+            readOnly: true
+          headers:
+            $ref: '#/components/schemas/HttpEndpointTestResultHeaders'
+          numRedirects:
+            type: integer
+            description: Number of redirects.
+            example: 0
+            readOnly: true
+          receiveTime:
+            type: integer
+            description: Elapsed time between first and last byte of response in milliseconds.
+            example: 1
+            readOnly: true
+          redirectTime:
+            type: integer
+            description: Cumulative redirect timing in milliseconds.
+            example: 10
+            readOnly: true
+          responseCode:
+            type: integer
+            description: HTTP response code.
+            example: 200
+            readOnly: true
+          responseTime:
+            type: integer
+            description: Time to first byte in milliseconds.
+            example: 14
+            readOnly: true
+          serverIp:
+            type: string
+            description: IP address of destination server.
+            example: 193.2.1.88
+            readOnly: true
+          sslTime:
+            type: integer
+            description: Time to negotiate SSL/TLS in milliseconds.
+            example: 9
+            readOnly: true
+          totalTime:
+            type: integer
+            description: Total time is the response time + receive time.
+            example: 15
+            readOnly: true
+          waitTime:
+            type: integer
+            description: Time elapsed between completion of request and first byte of response in milliseconds.
+            example: 3
+            readOnly: true
+          wireSize:
+            type: integer
+            description: Size of content in bytes.
+            example: 9993
+            readOnly: true
+          throughput:
+            type: integer
+            description: Amount of data transmitted, in bytes.
+            example: 190
+            readOnly: true
+    EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    InterfaceHardwareType:
+      type: string
+      example: wireless
+      enum:
+      - unknown
+      - wireless
+      - ethernet
+      - modem
+      - virtual
+      - loopback
+      - other
+    EndpointTestResultUrl:
+      type: string
+      description: The test target URL.
+      example: https://example.com:443
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    RoundId:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round.
+      example: 1384309800
+      readOnly: true
+    PhysicalMemoryUsedBytes:
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+          description: The minimum sampled memory usage value recorded during the monitored period.
+          example: 1.2
+          readOnly: true
+        max:
+          type: number
+          format: double
+          description: The maximum sampled memory usage value recorded during the monitored period.
+          example: 2.5
+          readOnly: true
+        mean:
+          type: number
+          format: double
+          description: The mean (average) value of memory usage sampled over the monitored period.
+          example: 1.77
+          readOnly: true
+        median:
+          type: number
+          format: double
+          description: The median value of memory usage sampled over the monitored period.
+          example: 1.85
+          readOnly: true
+        stdDev:
+          type: number
+          format: double
+          description: The standard deviation of memory usage sampled during the monitored period.
+          example: 0.25
+          readOnly: true
+        count:
+          type: integer
+          description: The total number of samples collected during the monitored period.
+          example: 155
+          readOnly: true
+    TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    HttpEndpointTestsDataSearchFilter:
+      type: object
+      properties:
+        testId:
+          description: Filter by test
+          type: array
+          items:
+            type: string
+            example: '5'
+        agentId:
+          description: Filter using the `agent-id`.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 52455b09-ff1b-4849-8194-99026cc890e0
+        userPrincipalName:
+          $ref: '#/components/schemas/UserPrincipalNameFilter'
+        nicModel:
+          $ref: '#/components/schemas/NicModelFilter'
+        nicDriverVersion:
+          $ref: '#/components/schemas/NicDriverVersionFilter'
+    TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    TestProtocol:
+      type: string
+      enum:
+      - tcp
+      - icmp
+      - udp
+      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
+      default: tcp
+      example: tcp
+    ScheduledTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    CellularNetworkGen:
+      description: Cellular network generation.
+      type: string
+      example: 2g, 3g, 4g, 5g
+    TestId:
+      type: string
+      description: Unique ID of endpoint test.
+      example: '584739201'
+      readOnly: true
+    EndpointTestResult:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        testId:
+          $ref: '#/components/schemas/TestId'
+        agentId:
+          $ref: '#/components/schemas/EndpointAgentId'
+        roundId:
+          $ref: '#/components/schemas/RoundId'
+        serverIp:
+          type: string
+          description: IP address of target server.
+          example: 185.199.108.153
+          readOnly: true
+        networkProfile:
+          $ref: '#/components/schemas/NetworkProfile'
+        systemMetrics:
+          $ref: '#/components/schemas/SystemMetrics'
+        originalTargetProfile:
+          $ref: '#/components/schemas/TargetProfile'
+        userProfile:
+          $ref: '#/components/schemas/UserProfile'
+        vpnProfile:
+          $ref: '#/components/schemas/VpnProfile'
+        batteryMetrics:
+          $ref: '#/components/schemas/BatteryMetrics'
+        cellularProfile:
+          $ref: '#/components/schemas/CellularProfile'
+        platform:
+          $ref: '#/components/schemas/Platform'
+    VpnProfile:
+      type: object
+      properties:
+        vpnClientAddresses:
+          type: array
+          description: A list of private IP addresses assigned to the device by the VPN server.
+          example:
+          - 184.81.113.85
+          - 13.129.91.62
+          readOnly: true
+          items:
+            type: string
+        vpnClientNetworkRange:
+          type: array
+          description: A list of private networks assigned to the device by the VPN server.
+          readOnly: true
+          items:
+            type: string
+            example: 9.88.37.27
+        vpnGatewayAddress:
+          type: string
+          description: IP address of the VPN gateway.
+          example: 120.98.134.7
+          readOnly: true
+        vpnType:
+          $ref: '#/components/schemas/VpnType'
+    EndpointTest:
+      type: object
+      required:
+      - type
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        _links:
+          $ref: '#/components/schemas/EndpointTestLinks'
+        agentSelectorConfig:
+          $ref: '#/components/schemas/EndpointAgentSelectorConfig'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        isPrioritized:
+          $ref: '#/components/schemas/TestIsPrioritized'
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        isEnabled:
+          $ref: '#/components/schemas/TestIsEnabled'
+        isSavedEvent:
+          $ref: '#/components/schemas/TestIsSavedEvent'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        labels:
+          $ref: '#/components/schemas/TestLabels'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionOut'
+        server:
+          type: string
+          description: Target domain name or IP address.
+          example: www.example.com
+        testId:
+          type: string
+          description: Each test is assigned a unique ID to access test data from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        type:
+          $ref: '#/components/schemas/EndpointScheduledTestType'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        port:
+          $ref: '#/components/schemas/EndpointTestPort'
+    EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    ThresholdFilterOperator:
+      type: string
+      enum:
+      - gte
+      - lte
+      example: gte
+    EndpointAgentLabelsSelectorConfig:
+      type: object
+      description: Agent labels selection object.
+      readOnly: true
+      deprecated: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentLabelsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
+      type: string
+      example: V4_ONLY
+    HttpEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpEndpointTestResult'
+        totalHits:
+          $ref: '#/components/schemas/TotalHits'
+        test:
+          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
+          allOf:
+          - $ref: '#/components/schemas/EndpointHttpServerTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationNextAndSelfLink'
+    EndpointSpecificAgentsSelectorConfig:
+      type: object
+      description: Specific agents selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointSpecificAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        agents:
+          $ref: '#/components/schemas/EndpointTestAgents'
+      required:
+      - agentSelectorType
+    EndpointTestEthernetProfile:
+      type: object
+      properties:
+        linkSpeed:
+          type: integer
+          description: Ethernet profile link speed
+          example: 860
+          readOnly: true
+    ConditionalOperator:
+      type: string
+      enum:
+      - and
+      - or
+      example: and
+    NicModelFilter:
+      description: Filters results to NIC models that exactly match one of the provided values. Matching is case-sensitive.
+      type: array
+      items:
+        type: string
+        example: Intel(R) Wi-Fi 6 AX200 160MHz
+    EndpointAgentTagsSelectorConfig:
+      type: object
+      description: Agent tags selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentTagsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/EndpointTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/ScheduledTestResults'
+      readOnly: true
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    UseAllPermittedAids:
+      name: useAllPermittedAids
+      in: query
+      required: false
+      description: Set to `true` to load data from all accounts the user has access to.
+      schema:
+        type: boolean
+        example: false
+        default: false
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    ExpandEndpointHttpServer:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: This parameter is optional and determines whether to expand resources related to test results. By default, no expansion occurs when this query parameter is omitted. To expand a specific resource, such as "header," append `?expand=header` to the query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandEndpointHttpServerOptions'
+        example:
+        - header
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+  responses:
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

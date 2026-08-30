@@ -1,0 +1,1280 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: SIP Server Tests API
+  description: '**Note:** The Page Load Tests, API Tests, and Web Transaction Tests APIs are not available for ThousandEyes for Government instance.
+
+
+    This API allows you to list, create, edit, and delete Network and Application Synthetics tests.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: SIP Server Tests
+  description: SIP Server test management operations
+paths:
+  /tests/sip-server:
+    get:
+      tags:
+      - SIP Server Tests
+      summary: List SIP Server tests
+      operationId: getSipServerTests
+      description: 'Returns a list of SIP Server tests and saved events.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTests'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    post:
+      tags:
+      - SIP Server Tests
+      summary: Create SIP Server test
+      operationId: createSipServerTest
+      description: Creates a new SIP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SipServerTestRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /tests/sip-server/{testId}:
+    get:
+      tags:
+      - SIP Server Tests
+      summary: Get SIP Server test
+      operationId: getSipServerTest
+      description: Returns details for a SIP Server test, including name, intervals, targets, alert rules and agents.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/VersionId'
+      - $ref: '#/components/parameters/ExpandTest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    put:
+      tags:
+      - SIP Server Tests
+      summary: Update SIP Server test
+      operationId: updateSipServerTest
+      description: 'Updates a SIP Server test. Shared tests have limited updating capabilities. Only account-specific configurations may be updated, namely: alert rules, alert suppression windows, labels, tags. This method requires Account Admin permissions.
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.'
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandTest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SipServerTestRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SipServerTestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+    delete:
+      tags:
+      - SIP Server Tests
+      summary: Delete SIP Server test
+      operationId: deleteSipServerTest
+      description: Deletes the specified SIP Server test. This method requires Account Admin permissions.
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  parameters:
+    VersionId:
+      name: versionId
+      in: query
+      description: The unique identifier for a specific version of the test settings. If provided, returns the test configuration as it existed at that version. To retrieve available version IDs, use the `/tests/{testId}/history` endpoint. If not specified, the current version of the test settings is returned.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    ExpandTest:
+      name: expand
+      in: query
+      description: Optional parameter on whether or not to expand the test sub-resources. By default no expansion is going to take place if the query parameter is not present. If the user wishes to expand the `agents` sub-resource, they need to pass the `?expand=agent` query.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandTestOptions'
+        example:
+        - agent
+        - monitor
+  schemas:
+    TestMtuMeasurements:
+      type: boolean
+      description: Set `true` to measure MTU sizes on network from agents to the target.
+      example: false
+    SipServerTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnexpandedSipServerTest'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    MonitorType:
+      type: string
+      description: Type of monitor
+      enum:
+      - public
+      - private
+      example: public
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    SipServerTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+      - $ref: '#/components/schemas/TestRequest'
+      - $ref: '#/components/schemas/MonitorsRequest'
+      - type: object
+        required:
+        - interval
+        - targetSipCredentials
+        properties:
+          targetSipCredentials:
+            $ref: '#/components/schemas/TestSipCredentials'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    SipServerTest:
+      allOf:
+      - $ref: '#/components/schemas/BaseTest'
+      - $ref: '#/components/schemas/TestMonitorsProperties'
+      - $ref: '#/components/schemas/SipServerInstantTest'
+      - $ref: '#/components/schemas/TestSipCredentials'
+      required:
+      - interval
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    TestAgentRequest:
+      type: object
+      required:
+      - agentId
+      properties:
+        agentId:
+          type: string
+          description: The agent ID. Get `agentId` from `/agents` endpoint.
+        sourceIpAddress:
+          type: string
+          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses` from the `/agents` endpoint.
+      example:
+        agentId: '125'
+        sourceIpAddress: 1.1.1.1
+    TestPathTraceMode:
+      type: string
+      enum:
+      - classic
+      - in-session
+      description: Select `inSession` to perform the path trace within a TCP session.
+      default: classic
+      example: classic
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    TestIpv6Policy:
+      type: string
+      enum:
+      - force-ipv4
+      - prefer-ipv6
+      - force-ipv6
+      - use-agent-policy
+      description: IP version policy. Overrides the IPv6 policy configured at the agent level.
+      default: use-agent-policy
+      example: use-agent-policy
+    TestBgpMonitors:
+      type: array
+      description: Contains list of enabled BGP monitors.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Monitor'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    SharedWithAccount:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account group ID.
+          example: '1234'
+        name:
+          type: string
+          description: Account group name.
+          example: Account name
+    SipTestProtocol:
+      type: string
+      enum:
+      - tcp
+      - tls
+      - udp
+      description: Transport layer for SIP communication.
+      default: tcp
+      example: tcp
+    Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    TestTag:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          description: Unique tag ID.
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          format: uuid
+        key:
+          type: string
+          description: Tag key. For example, "Location" or "Department".
+          example: Location
+        value:
+          type: string
+          description: Tag value. For example, "San Francisco" or "Engineering".
+          example: San Francisco
+    AlertRule:
+      type: object
+      properties:
+        ruleId:
+          $ref: '#/components/schemas/RuleId'
+        ruleName:
+          type: string
+          description: Name of the alert rule
+          example: The End of the Internet
+          readOnly: true
+        expression:
+          type: string
+          description: String expression of alert rule
+          example: ((hops((hopDelay >= 100 ms))))
+          readOnly: true
+        direction:
+          $ref: '#/components/schemas/AlertDirection'
+        isDefault:
+          type: boolean
+          description: Alert rules allow up to 1 alert rule to be selected as a default for each type. By checking the default option, this alert rule will be automatically included on subsequently created tests that test a metric used in alerting here
+          example: true
+          readOnly: true
+        alertType:
+          $ref: '#/components/schemas/AlertType'
+        minimumSources:
+          type: integer
+          description: The minimum number of agents or monitors that must meet the specified criteria in order to trigger the alert
+          example: 10
+          readOnly: true
+        minimumSourcesPct:
+          type: integer
+          description: the minimum percentage of all assigned agents or monitors that must meet the specified criteria in order to trigger the alert
+          example: 99
+          readOnly: true
+        roundsViolatingMode:
+          $ref: '#/components/schemas/AlertRoundsViolationMode'
+        roundsViolatingOutOf:
+          type: integer
+          description: Specifies the divisor (y value) for the “X of Y times” condition.
+          example: 5
+          readOnly: true
+        roundsViolatingRequired:
+          type: integer
+          description: Specifies the numerator (x value) for the “X of Y times” condition
+          example: 2
+          readOnly: true
+        sensitivityLevel:
+          $ref: '#/components/schemas/SensitivityLevel'
+        severity:
+          $ref: '#/components/schemas/Severity'
+    BaseRequest:
+      type: object
+      properties:
+        labels:
+          type: array
+          description: Contains list of test label IDs (get `labelId` from `/labels` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '9842'
+          - '1283'
+        tags:
+          type: array
+          description: Contains list of test tag IDs (get `id` from `/tags` endpoint).
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+          - ec8e64fb-6f11-485c-a5d5-488098ad626a
+        sharedWithAccounts:
+          type: array
+          description: Contains list of account group IDs. Test is shared with the listed account groups (get `aid` from `/account-groups` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '1234'
+          - '12345'
+        alertRules:
+          type: array
+          items:
+            type: string
+          description: List of alert rules IDs to apply to the test (get `ruleId` from `/alerts/rules` endpoint. If `alertsEnabled` is set to `true` and `alertRules` is not included on test creation or update, applicable user default alert rules will be used)
+          writeOnly: true
+          readOnly: false
+          example:
+          - '344753'
+          - '212697'
+    TestSipAuthUser:
+      type: string
+      description: Username for authentication with SIP server.
+      example: username
+    AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/SimpleAgent'
+    UnexpandedSipServerTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+      - type: object
+        required:
+        - interval
+        - port
+        properties:
+          authUser:
+            $ref: '#/components/schemas/TestSipAuthUser'
+          password:
+            $ref: '#/components/schemas/TestPassword'
+          port:
+            $ref: '#/components/schemas/TestPort'
+          protocol:
+            $ref: '#/components/schemas/SipTestProtocol'
+          sipRegistrar:
+            $ref: '#/components/schemas/TestSipRegistrar'
+          user:
+            $ref: '#/components/schemas/TestSipUser'
+          bgpMeasurements:
+            $ref: '#/components/schemas/TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/TestUsePublicBgp'
+    SipServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/InstantTest'
+      - $ref: '#/components/schemas/SipServerProperties'
+    SimpleAgent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AgentBase'
+      - type: object
+        properties:
+          agentId:
+            type: string
+            description: Unique ID of the agent.
+            example: '281474976710706'
+            readOnly: true
+          agentName:
+            type: string
+            description: Name of the agent.
+            example: thousandeyes-stg-va-254
+          location:
+            type: string
+            description: Location of the agent.
+            example: San Francisco Bay Area
+            readOnly: true
+          countryId:
+            type: string
+            description: 2-digit ISO country code
+            example: US
+            readOnly: true
+          coordinates:
+            $ref: '#/components/schemas/Coordinates'
+          networkProviderInfo:
+            allOf:
+            - $ref: '#/components/schemas/NetworkProviderInfo'
+            readOnly: true
+            example:
+              asn: 7018
+              name: AT&T Services, Inc.
+              type: isp
+          enabled:
+            type: boolean
+            description: Flag indicating if the agent is enabled.
+            example: true
+          verifySslCertificates:
+            type: boolean
+            description: Flag indicating if has normal SSL operations or  if instead it's set to ignore SSL errors on browserbot-based tests.
+            example: true
+            readOnly: true
+          prefix:
+            type: string
+            description: Prefix containing agents public IP address.
+            example: 99.128.0.0/11
+            readOnly: true
+    AlertRoundsViolationMode:
+      type: string
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
+      enum:
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    InstantTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+      - type: object
+        properties:
+          labels:
+            $ref: '#/components/schemas/TestLabels'
+          tags:
+            $ref: '#/components/schemas/TestTags'
+          sharedWithAccounts:
+            $ref: '#/components/schemas/TestSharedAccounts'
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestAgentsResponse:
+      type: array
+      description: Contains list of agents.
+      items:
+        $ref: '#/components/schemas/AgentResponse'
+    TestSipRegistrar:
+      type: string
+      description: SIP server to be tested, specified by domain name or IP address.
+      example: voice.thousandeyes.com
+    TestRandomizedStartTime:
+      type: boolean
+      description: Indicates whether agents should randomize the start time in each test round.
+      default: false
+      example: false
+    TestBgpMeasurements:
+      type: boolean
+      description: Set to `true` to enable bgp measurements.
+      default: true
+      example: true
+    TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
+    BaseTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - type: object
+        properties:
+          alertRules:
+            type: array
+            description: Contains list of enabled alert rule objects.
+            items:
+              $ref: '#/components/schemas/AlertRule'
+    TestSipUser:
+      type: string
+      description: Username for SIP registration, should be unique within a ThousandEyes account group.
+      example: username
+    UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+    Monitor:
+      type: object
+      properties:
+        countryId:
+          type: string
+          description: Country ID
+          example: GB
+          readOnly: true
+        monitorId:
+          type: string
+          description: BGP monitor ID
+          example: '1234'
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the BGP monitor
+          example: 4.69.184.193
+        network:
+          type: string
+          description: Name of the autonomous system in which the monitor is found
+          example: Level 3 Communications, Inc. (AS 3356)
+        monitorType:
+          $ref: '#/components/schemas/MonitorType'
+        monitorName:
+          type: string
+          description: Display name of the BGP monitor
+          example: Seattle, WA
+    ExpandTestOptions:
+      type: string
+      enum:
+      - agent
+      - alert-rule
+      - monitor
+      - label
+      - tag
+      - shared-with-account
+      example: agent
+    TestAgentsRequest:
+      type: array
+      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
+      items:
+        $ref: '#/components/schemas/TestAgentRequest'
+    TestRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseRequest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsRequest'
+      required:
+      - agents
+    TestPort:
+      type: integer
+      minimum: 1
+      maximum: 65535
+      description: Target port.
+      default: 49153
+      example: 49153
+    TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestLabel'
+    SipServerProperties:
+      type: object
+      required:
+      - port
+      - targetSipCredentials
+      properties:
+        mtuMeasurements:
+          $ref: '#/components/schemas/TestMtuMeasurements'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        numPathTraces:
+          $ref: '#/components/schemas/TestNumPathTraces'
+        optionsRegex:
+          type: string
+          description: Options regex, this field does not require escaping.
+          example:
+          - a-z
+        pathTraceMode:
+          $ref: '#/components/schemas/TestPathTraceMode'
+        probeMode:
+          $ref: '#/components/schemas/TestProbeMode'
+        randomizedStartTime:
+          $ref: '#/components/schemas/TestRandomizedStartTime'
+        registerEnabled:
+          type: boolean
+          description: Set to true to perform SIP registration on the test target with the SIP REGISTER command.
+          default: false
+          example: false
+        sipTargetTime:
+          type: integer
+          minimum: 100
+          maximum: 5000
+          description: Target time for test completion in milliseconds.
+          example: 1000
+        sipTimeLimit:
+          type: integer
+          minimum: 5
+          maximum: 10
+          description: Time limit in milliseconds.
+          default: 5
+          example: 5
+        fixedPacketRate:
+          $ref: '#/components/schemas/TestFixedPacketRate'
+        ipv6Policy:
+          $ref: '#/components/schemas/TestIpv6Policy'
+        type:
+          type: string
+          example: sip-server
+          readOnly: true
+    RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    TestFixedPacketRate:
+      type: integer
+      minimum: 0
+      maximum: 100
+      description: Sets packets rate sent to measure the network in packets per second.
+      example: 50
+    TestPassword:
+      type: string
+      description: Password for Basic/NTLM authentication.
+      example: password
+      writeOnly: true
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    TestMonitorsProperties:
+      type: object
+      properties:
+        bgpMeasurements:
+          $ref: '#/components/schemas/TestBgpMeasurements'
+        usePublicBgp:
+          $ref: '#/components/schemas/TestUsePublicBgp'
+        monitors:
+          $ref: '#/components/schemas/TestBgpMonitors'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    TestSipCredentials:
+      type: object
+      required:
+      - port
+      properties:
+        authUser:
+          $ref: '#/components/schemas/TestSipAuthUser'
+        password:
+          $ref: '#/components/schemas/TestPassword'
+        port:
+          $ref: '#/components/schemas/TestPort'
+        protocol:
+          $ref: '#/components/schemas/SipTestProtocol'
+        sipRegistrar:
+          $ref: '#/components/schemas/TestSipRegistrar'
+        user:
+          $ref: '#/components/schemas/TestSipUser'
+    TestProbeMode:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      description: Probe mode used by network test, only valid when the protocol is set to TCP.
+      default: auto
+      example: auto
+    TestTags:
+      type: array
+      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestTag'
+    CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    TestNumPathTraces:
+      type: integer
+      minimum: 1
+      maximum: 10
+      description: Number of path traces executed by the agent.
+      default: 3
+      example: 3
+    MonitorsRequest:
+      type: object
+      properties:
+        monitors:
+          type: array
+          description: Contains list of BGP monitor IDs (get `monitorId` from `/monitors` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '17410'
+          - '5'
+    TestUsePublicBgp:
+      type: boolean
+      description: Indicate if all available public BGP monitors should be used, when ommited defaults to `bgpMeasurements` value.
+      default: true
+      example: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    SipServerTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/SipServerTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/TestAgentsResponse'
+    SensitivityLevel:
+      type: string
+      description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
+      enum:
+      - high
+      - medium
+      - low
+      example: medium
+      readOnly: true
+    TestSharedAccounts:
+      type: array
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/SharedWithAccount'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/NetworkProviderType'
+    NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+  responses:
+    GeneralError:
+      description: An error occurred
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '204':
+      description: No content
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about Network and Application Synthetics tests
+  url: https://docs.thousandeyes.com/product-documentation/internet-and-wan-monitoring/tests#cloud-and-enterprise-agent-based-tests

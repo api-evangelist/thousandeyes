@@ -1,0 +1,272 @@
+openapi: 3.2.0
+info:
+  title: Agents Agent Proxies API
+  version: 7.0.100
+  description: '
+
+    ## Overview
+
+    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Agent Proxies
+paths:
+  /agents/proxies:
+    get:
+      tags:
+      - Agent Proxies
+      summary: List Enterprise Agent Proxies
+      operationId: getAgentsProxies
+      description: 'List all enterprise agent proxies available under the account group.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AgentProxies'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  schemas:
+    AgentProxy:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account id that this proxy configuration belongs to
+          example: '1234'
+        authType:
+          $ref: '#/components/schemas/ProxyAuthType'
+        bypassList:
+          type: array
+          description: A list of hostnames, network prefixes, or wildcards used to determine which test targets should not be proxied. If all tests should be proxied, leave empty.
+          items:
+            type: string
+          example:
+          - 10.0.0.0/16
+          - '*.thousandeyes.com'
+        lastModified:
+          type: string
+          description: Last modification timestamp of the proxy. Expressed in UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+        location:
+          type: string
+          description: The location of the proxy. If proxyType is `static` use the format `hostname:port`. If location is `pac`, then specify the URL where the PAC file can be obtained.
+          example: proxy.thousandeyes.com:3128
+        isLocalConfigured:
+          type: boolean
+          description: Set to `true` if this proxy configuration comes from the agent’s config file. Specify `false` if the proxy configuration was created in the ThousandEyes application.
+          example: true
+        name:
+          type: string
+          description: Expression of agent notification rule.
+          example: Test Proxy - Auth Type - BASIC
+        password:
+          type: string
+          format: password
+          description: Password for proxy authentication
+          example: '**********'
+        proxyId:
+          type: string
+          description: Agent proxy's unique ID.
+          example: '281474976710706'
+        type:
+          $ref: '#/components/schemas/ProxyType'
+        user:
+          type: string
+          description: Username for proxy authentication.
+          example: user1
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    ProxyType:
+      type: string
+      description: The type of proxy, STATIC or PAC.
+      enum:
+      - static
+      - pac
+      example: static
+    AgentProxies:
+      type: object
+      properties:
+        agentProxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentProxy'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ProxyAuthType:
+      type: string
+      description: The type of authentication the proxy requires
+      enum:
+      - basic
+      - ntlm
+      - kerberos
+      - unknown
+      example: basic
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about Agents & Monitors
+  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings

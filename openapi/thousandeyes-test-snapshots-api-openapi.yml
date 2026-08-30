@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Test Snapshots API
+  description: Creates a new test snapshot in ThousandEyes.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Test Snapshots
+paths:
+  /tests/{testId}/snapshot:
+    post:
+      tags:
+      - Test Snapshots
+      summary: Create test snapshot
+      description: 'This operation creates a test snapshot based on the properties provided in the POST data.
+
+
+        * To use this endpoint, you need the `Create snapshot shares` permission.
+
+        * You can create a maximum of 5 snapshots per organization within a 5-minute interval.
+
+        * Snapshots generated through this operation have a 30-day expiration period.
+
+        * The time range specified with the `from` and `to` parameters must adhere to one of the following intervals: 1, 2, 4, 6, 12, 24, or 48 hours.
+
+        * The `endDate` field of the snapshot must be set to the present or a past date.
+
+        * Certain regions may not have public snapshots enabled for compliance reasons. In that case you will get a 403 Forbidden as a response.
+
+
+        **Note**: This operation does not support the creation of operation Agent snapshots.
+
+        '
+      operationId: createTestSnapshot
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SnapshotRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+    AppAndSelfLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    SnapshotLinks:
+      allOf:
+      - $ref: '#/components/schemas/AppAndSelfLinks'
+      - example:
+          self:
+            href: http://api.thousandeyes.com/v7/tests/227103/snapshot
+          appLink:
+            href: https://app.stg.thousandeyes.com/view/tests/?testId=227103&__a=105
+    SnapshotTest:
+      allOf:
+      - $ref: '#/components/schemas/UnexpandedTest'
+      - $ref: '#/components/schemas/UnexpandedInstantTest'
+    UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    SnapshotResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Snapshot ID.
+          example: wdiac
+        startRoundId:
+          type: integer
+          description: The start time of the test snapshot, represented in epoch time format (in seconds).
+          example: 1538784000
+          readOnly: true
+        endRoundId:
+          type: integer
+          description: The end time of the test snapshot, represented in epoch time format (in seconds).
+          example: 1538787600
+          readOnly: true
+        roundId:
+          type: integer
+          description: The selected time of the test snapshot, represented in epoch time format (in seconds).
+          example: 1538784000
+          readOnly: true
+        shareDate:
+          type: string
+          format: date-time
+          description: The date when the test snapshot was created in UTC time, formatted in ISO date-time.
+          example: '2023-06-06T00:00:00Z'
+        sourceTestId:
+          type: string
+          description: Snapshot test ID.
+          example: '281474976710706'
+        testId:
+          type: string
+          description: Snapshot test ID.
+          example: '281474976710801'
+        uid:
+          type: string
+          description: User ID.
+          example: '281474976810911'
+        displayName:
+          type: string
+          description: Snapshot title.
+          example: Snapshot created through API
+        extraParams:
+          type: string
+          description: Extra parameters.
+          example: params
+        test:
+          $ref: '#/components/schemas/SnapshotTest'
+        _links:
+          $ref: '#/components/schemas/SnapshotLinks'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    SnapshotRequest:
+      type: object
+      required:
+      - displayName
+      - startDate
+      - endDate
+      properties:
+        displayName:
+          type: string
+          description: Snapshot title.
+          example: Snapshot created through API
+        startDate:
+          type: string
+          format: date-time
+          description: The start date for the snapshot in UTC time, formatted in ISO date-time.
+          example: '2023-06-06T00:00:00Z'
+        endDate:
+          type: string
+          format: date-time
+          description: The end date for the snapshot in UTC time, formatted in ISO date-time.
+          example: '2023-06-06T01:00:00Z'
+        isPublic:
+          type: boolean
+          description: 'Set to `true` for saved events and `false` for share links. Its default value is `false`.
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.'
+          example: false
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+  parameters:
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

@@ -1,0 +1,1265 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Endpoint Agents API
+  description: "**Note:** The Endpoint Agents Transfer APIs are not available for ThousandEyes for Government instance.\n\nManage ThousandEyes Endpoint Agents using this API. \n\nFor more information about Endpoint Agents, see [Endpoint Agents](https://docs.thousandeyes.com/product-documentation/global-vantage-points/endpoint-agents)."
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Endpoint Agents
+paths:
+  /endpoint/agents:
+    get:
+      summary: List endpoint agents
+      tags:
+      - Endpoint Agents
+      description: 'Retrieves a list of endpoint agents in a given account group.
+
+
+        If there are no agents in the specified account group, it returns an empty array.
+
+        '
+      operationId: getEndpointAgents
+      parameters:
+      - $ref: '#/components/parameters/PaginationMax'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandEndpointAgent'
+      - $ref: '#/components/parameters/IncludeDeleted'
+      - $ref: '#/components/parameters/UseAllPermittedAids'
+      - in: query
+        name: agentName
+        required: false
+        description: "Returns only agents with the specified name. \nThis is an exact match only.\n"
+        schema:
+          $ref: '#/components/schemas/AgentName'
+      - in: query
+        name: computerName
+        required: false
+        description: 'Returns only agents with the specified computer name.
+
+          This is an exact match only.
+
+          '
+        schema:
+          $ref: '#/components/schemas/ComputerName'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ListEndpointAgentsResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/{agentId}:
+    parameters:
+    - $ref: '#/components/parameters/AccountGroupId'
+    - $ref: '#/components/parameters/EndpointAgentIdPath'
+    - $ref: '#/components/parameters/ExpandEndpointAgent'
+    get:
+      summary: Retrieve endpoint agent
+      tags:
+      - Endpoint Agents
+      description: Retrieves details of an agent with the specified `agent_id`.
+      operationId: getEndpointAgent
+      parameters:
+      - $ref: '#/components/parameters/IncludeDeleted'
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleAgent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+    patch:
+      summary: Update endpoint agent
+      tags:
+      - Endpoint Agents
+      description: 'Updates the agent with the specified `agent_id`. This API supports the modification of the following fields:
+
+
+        * `name`
+
+
+        * `licenseType`
+
+
+        Any attempt to update fields other than those listed above, with a value different from their current value, will result in a 400 Bad Request response.
+
+        '
+      operationId: updateEndpointAgent
+      requestBody:
+        description: Fields to modify on the agent
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointAgentUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleAgent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+    delete:
+      summary: Delete endpoint agent
+      tags:
+      - Endpoint Agents
+      description: 'Deletes the agent with the specified `agent_id`.
+
+        '
+      operationId: deleteEndpointAgent
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/filter:
+    post:
+      summary: Filter endpoint agents
+      tags:
+      - Endpoint Agents
+      description: 'Retrieves a list of endpoint agents within the specified account group that match the specified filters.
+
+
+        If no agents meet the filter criteria, the API returns an empty array.
+
+        '
+      requestBody:
+        $ref: '#/components/requestBodies/AgentSearch'
+      operationId: filterEndpointAgents
+      parameters:
+      - $ref: '#/components/parameters/PaginationMax'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ExpandEndpointAgent'
+      - $ref: '#/components/parameters/IncludeDeleted'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/FilterEndpointAgentsResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/connection-string:
+    get:
+      tags:
+      - Endpoint Agents
+      operationId: getEndpointAgentsConnectionString
+      summary: Get agent connection string
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConnectionString'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/{agentId}/enable:
+    post:
+      summary: Enable endpoint agent
+      operationId: enableEndpointAgent
+      tags:
+      - Endpoint Agents
+      description: Enables an endpoint agent. If it's already enabled, it has no effect (no operation).
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/EndpointAgentIdPath'
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleAgent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/{agentId}/disable:
+    post:
+      summary: Disable endpoint agent
+      tags:
+      - Endpoint Agents
+      description: Disables an endpoint agent. If it's already disabled, it has no effect (no operation).
+      operationId: disableEndpointAgent
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/EndpointAgentIdPath'
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleAgent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    ListEndpointAgentsResponse:
+      allOf:
+      - $ref: '#/components/schemas/EndpointAgents'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/PaginationNextAndSelfLink'
+    InterfaceHardwareType:
+      type: string
+      example: wireless
+      enum:
+      - unknown
+      - wireless
+      - ethernet
+      - modem
+      - virtual
+      - loopback
+      - other
+    EndpointUserProfile:
+      required:
+      - userName
+      type: object
+      properties:
+        userName:
+          type: string
+          example: joeblogs32
+        userPrincipalName:
+          type: string
+          example: joeblogs32@c.com
+    EndpointAgentEthernetProfile:
+      type: object
+      description: 'Information about the ethernet connectivity of this device.
+
+        Only present if the hardware type is `ethernet`.
+
+        '
+      properties:
+        linkSpeed:
+          type: integer
+          description: Link speed in Mbps.
+          format: int32
+    BatteryMetrics:
+      description: Battery metrics for the endpoint agent.
+      type: object
+      readOnly: true
+      properties:
+        batteryHealthNormalizedPercent:
+          type: number
+          format: double
+          description: Battery health as a normalized percentage (0-1).
+          example: 0.92
+          minimum: 0
+          maximum: 1
+        batteryLevel:
+          $ref: '#/components/schemas/BatteryLevel'
+        batteryLevelNormalizedPercent:
+          type: number
+          format: double
+          description: Battery level as a normalized percentage (0-1).
+          example: 0.3
+          minimum: 0
+          maximum: 1
+      required:
+      - batteryLevel
+      - batteryLevelNormalizedPercent
+    EndpointBrowserExtension:
+      type: object
+      properties:
+        browser:
+          $ref: '#/components/schemas/BrowserType'
+        profile:
+          type: string
+          description: Name of the browser profile where this extension is stored.
+          example: Profile 1
+        version:
+          type: string
+          description: Endpoint agent browser extension version.
+          example: 0.123.0
+        enabled:
+          type: boolean
+          description: Indicates if the extension is disabled or enabled in the web browser.
+        active:
+          type: boolean
+          description: 'Flag indicating if there is communication between the extension and ThousandEyes portal.
+
+            '
+        error:
+          type: string
+          description: Contains any errors encountered while getting extension status.
+          example: ''
+    ComputerName:
+      description: 'Returns only agents with the specified computer name.
+
+        This is an exact match only.
+
+        '
+      type: string
+      example: DESKTOP-45AE8
+    ExpandEndpointAgentOptions:
+      type: string
+      enum:
+      - clients
+      - vpnProfiles
+      - networkInterfaceProfiles
+    AgentSearchRequest:
+      description: Parameters for filtering a list of agents.
+      type: object
+      properties:
+        searchFilters:
+          $ref: '#/components/schemas/AgentSearchFilters'
+        thresholdFilter:
+          $ref: '#/components/schemas/AgentThresholdFilters'
+        searchSort:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentSearchSort'
+    AccountId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    FilterEndpointAgentsResponse:
+      allOf:
+      - $ref: '#/components/schemas/EndpointAgents'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/PaginationNextLink'
+    VpnType:
+      type: string
+      description: Name of the VPN provider.
+      enum:
+      - cisco-anyconnect
+      - palo-alto-globalprotect
+      - ivanti-connect-secure
+      - zscaler-internet-access
+      - f5-big-ip
+      example: cisco-anyconnect
+    InterfaceProfile:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+          example: en0
+        addressProfiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressProfile'
+        hardwareType:
+          $ref: '#/components/schemas/InterfaceHardwareType'
+        ethernetProfile:
+          $ref: '#/components/schemas/EndpointAgentEthernetProfile'
+        wirelessProfile:
+          $ref: '#/components/schemas/WirelessProfile'
+    AgentSearchSort:
+      type: object
+      properties:
+        sort:
+          $ref: '#/components/schemas/AgentSearchSortKey'
+        order:
+          $ref: '#/components/schemas/SortOrder'
+    BrowserType:
+      type: string
+      example: edge
+      enum:
+      - chrome
+      - chrome-canary
+      - chromium
+      - ie
+      - edge
+      - unknown
+    EndpointVpnProfile:
+      required:
+      - vpnClientAddresses
+      - vpnClientNetworkRange
+      type: object
+      properties:
+        interfaceName:
+          type: string
+          description: Interface name associated with `interfaceProfile`.
+        vpnType:
+          $ref: '#/components/schemas/VpnType'
+        vpnGatewayAddress:
+          type: string
+          description: IP address of the VPN gateway.
+        vpnClientAddresses:
+          type: array
+          description: List of private IP addresses assigned to the device, by the VPN server.
+          example:
+          - 10.100.0.10
+          items:
+            type: string
+            format: ip
+        vpnClientNetworkRange:
+          type: array
+          description: List of private networks assigned to the device, by the VPN server.
+          example:
+          - 10.100.0.0/22
+          items:
+            type: string
+    Platform:
+      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+      type: string
+      enum:
+      - windows
+      - roomos
+      - phoneos
+      - elux
+      - cisco-wireless
+      - cisco-wireless-cloud
+      - linux
+      - mac
+      - android
+      - unknown
+      example: mac
+    EndpointAsnDetails:
+      required:
+      - asNumber
+      type: object
+      readOnly: true
+      properties:
+        asNumber:
+          type: integer
+          format: int64
+          example: 5089
+          description: Autonomous system number.
+        asName:
+          type: string
+          example: Virgin Media Limited
+          description: Name of autonomous system.
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    CellularNetworkGen:
+      description: Cellular network generation.
+      type: string
+      example: 2g, 3g, 4g, 5g
+    AgentThresholdFilter:
+      type: object
+      description: The metric is filtered based on the threshold value and operator provided.
+      properties:
+        name:
+          type: string
+          enum:
+          - last-seen-ms
+        value:
+          type: number
+          description: The threshold value.
+          format: double
+        operator:
+          $ref: '#/components/schemas/ThresholdFilterOperator'
+    WirelessProfile:
+      type: object
+      properties:
+        bssid:
+          type: string
+          format: macaddress
+          example: 00:11:22:aa:bb:cc
+        ssid:
+          type: string
+          example: GuestWiFi
+        rssi:
+          type: integer
+          format: int32
+          example: -36
+        channel:
+          type: integer
+          format: int32
+          example: 48
+        phyMode:
+          type: string
+          example: 802.11ac
+    CellularProfile:
+      description: Cellular network profile information for a mobile endpoint agent.
+      type: object
+      readOnly: true
+      properties:
+        carrierName:
+          type: string
+          description: Carrier name
+          example: T-Mobile
+        networkGen:
+          $ref: '#/components/schemas/CellularNetworkGen'
+        networkSubtype:
+          type: string
+          description: A real network subtype. It may be different from an advertised network type.
+          example: LTE/HSPA
+        advertisedNetworkGen:
+          $ref: '#/components/schemas/CellularNetworkGen'
+        advertisedNetworkSubtype:
+          type: string
+          description: Advertised Network subtype
+          example: LTE/HSPA
+        rssi:
+          type: number
+          format: double
+          description: Received Signal Strength Indicator in dBm. Values are always negative.
+          example: -10
+        rsrp:
+          type: number
+          format: double
+          description: Reference Signal Received Power in dBm. Values are always negative.
+          example: -30
+        rscp:
+          type: number
+          format: double
+          description: Received Signal Code Power in dBm. Values are always negative or zero.
+          example: -30
+        rsrq:
+          type: number
+          format: double
+          description: Reference Signal Received Quality in dBm. Values are always negative.
+          example: -30
+        sinr:
+          type: number
+          format: double
+          description: Signal to Interference and Noise Ratio in dBm. It can be negative or positive.
+          example: 20
+    AgentSearchSortKey:
+      type: string
+      enum:
+      - platform
+      - osVersion
+      - name
+      - userName
+      - city
+      - serialNumber
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EndpointAgentLocation:
+      description: Approximate location of the agent.
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          example: 51.51279
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          example: -0.09184
+          readOnly: true
+        locationName:
+          type: string
+          example: London
+          readOnly: true
+    BatteryLevel:
+      description: Battery level indicator.
+      type: string
+      example: medium
+      enum:
+      - high
+      - medium
+      - low
+    AgentName:
+      description: "Returns only agents with the specified name. \nThis is an exact match only.\n"
+      type: string
+      example: myagent-1234
+    AgentThresholdFilters:
+      type: object
+      description: All filters are applied based on the conditional operator (and/or).
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentThresholdFilter'
+        conditionalOperator:
+          $ref: '#/components/schemas/ConditionalOperator'
+    ThresholdFilterOperator:
+      type: string
+      enum:
+      - gte
+      - lte
+      example: gte
+    EndpointClient:
+      description: Information about the user who has the agent installed.
+      type: object
+      properties:
+        userProfile:
+          $ref: '#/components/schemas/EndpointUserProfile'
+        browserExtensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointBrowserExtension'
+    SortOrder:
+      type: string
+      example: desc
+      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
+      enum:
+      - asc
+      - desc
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    EndpointAgent:
+      description: The `EndpointAgent` object, which may include multiple clients.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EndpointAgentId'
+        aid:
+          allOf:
+          - $ref: '#/components/schemas/AccountId'
+          - readOnly: true
+        name:
+          description: The name of the agent.
+          type: string
+          readOnly: false
+          example: Office Printer
+        computerName:
+          type: string
+          example: DESKJET-123
+          readOnly: true
+        freeDiskSpaceNormalized:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Free storage space as a normalized percentage (0-1).
+          example: 0.41
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        osVersion:
+          type: string
+          example: Version 10.15.2 (Build 19C57)
+          readOnly: true
+        platform:
+          $ref: '#/components/schemas/Platform'
+        kernelVersion:
+          type: string
+          example: Darwin 19.2.0
+          readOnly: true
+        manufacturer:
+          type: string
+          example: Apple, Inc.
+          readOnly: true
+        model:
+          type: string
+          example: MacBookAir7,2
+          readOnly: true
+        nicDriverVersion:
+          description: Network interface card driver version.
+          type:
+          - string
+          - 'null'
+          example: 22.250.0.9
+          readOnly: true
+        nicModel:
+          description: Network interface card model.
+          type:
+          - string
+          - 'null'
+          example: Intel(R) Wi-Fi 6 AX200 160MHz
+          readOnly: true
+        serialNumber:
+          type: string
+          example: xaab2ba4-d40f-4e80-9363-7e4826556055
+          readOnly: true
+        lastSeen:
+          description: The last time the agent checked-in.
+          type: string
+          format: date-time
+          example: '2022-05-26T23:37:16Z'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status'
+        deleted:
+          type: boolean
+          readOnly: true
+        version:
+          description: Version of the agent software running.
+          type: string
+          example: 0.123.4
+          readOnly: true
+        targetVersion:
+          description: The latest available version of the agent. This field is populated only if expand includes `targetVersion`.
+          type: string
+          example: 0.123.4
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2022-05-26T23:37:16Z'
+          readOnly: true
+        numberOfClients:
+          type: integer
+          format: int64
+          example: 3
+          readOnly: true
+        publicIP:
+          type: string
+          format: ip
+          example: 88.45.2.123
+          readOnly: true
+        location:
+          $ref: '#/components/schemas/EndpointAgentLocation'
+        clients:
+          type: array
+          readOnly: true
+          description: 'List of clients (user accounts) that the agent works with.
+
+            Not populated by default.
+
+            '
+          items:
+            $ref: '#/components/schemas/EndpointClient'
+        totalMemory:
+          type: string
+          example: 16384 MB
+          readOnly: true
+        agentType:
+          type: string
+          example: endpoint
+          readOnly: true
+        vpnProfiles:
+          type: array
+          readOnly: true
+          description: 'List of VPN connections on the agent.
+
+            Not populated by default.
+
+            '
+          items:
+            $ref: '#/components/schemas/EndpointVpnProfile'
+        externalMetadata:
+          $ref: '#/components/schemas/ExternalMetadata'
+        networkInterfaceProfiles:
+          description: 'List of network interfaces on the agent.
+
+            Not populated by default.
+
+            '
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/InterfaceProfile'
+        asnDetails:
+          $ref: '#/components/schemas/EndpointAsnDetails'
+        licenseType:
+          $ref: '#/components/schemas/AgentLicenseType'
+        tcpDriverAvailable:
+          type: boolean
+          readOnly: true
+          description: Status of TCP test support on the agent.
+        npcapVersion:
+          type: string
+          readOnly: true
+          description: For Windows agents, the version of the NPCAP driver that the agent has loaded.
+        batteryMetrics:
+          $ref: '#/components/schemas/BatteryMetrics'
+        cellularProfile:
+          $ref: '#/components/schemas/CellularProfile'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ConnectionString:
+      type: object
+      properties:
+        connectionString:
+          type: string
+          description: 'The connection string is used for some integrations and other client types.
+
+            '
+          example: D2xZSLlqo64Xe2EnYisklA==
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointAgents:
+      description: A list of `EndpointAgents`.
+      type: object
+      properties:
+        totalAgents:
+          type: integer
+          example: 1
+          description: The total number of agents.
+        agents:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgent'
+    AgentLicenseType:
+      type: string
+      example: essentials
+      enum:
+      - essentials
+      - advantage
+      - embedded
+    ExternalMetadata:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExternalMetadataItem'
+      description: "List of external metadata assigned to the endpoint agent. \nVisible only if the `expandAgent=externalMetadata` query parameter is included.\n"
+    ExternalMetadataItem:
+      properties:
+        key:
+          type: string
+          example: anyConnectDeviceId
+          description: ID of the device that has the Cisco Secure Client deployed with the Internet Security module.
+        value:
+          type: string
+          example: DF434343D
+          description: Value of the external metadata property.
+      example:
+        key: anyConnectDeviceId
+        value: DF434343D
+    AgentSearchFilters:
+      type: object
+      properties:
+        id:
+          description: Returns only agents that are an exact match of the provided identifiers.
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointAgentId'
+        agentName:
+          description: "Returns only agents with the given name. \nThis is an exact match only.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentName'
+        computerName:
+          description: 'Returns only agents with the given computer name.
+
+            This is an exact match only.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/ComputerName'
+        username:
+          description: 'Returns only agents that have at least one user with a name.
+
+            starting with the provided string. This is a case-insensitive prefix match.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - picard
+        userPrincipalName:
+          description: 'Returns only agents that have at least one user principal name, starting with one of the provided strings. This is a case-insensitive prefix match. User principle name is the user login name in an Internet-style format, typically used in Active Directory environments.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - picard@c.com
+        platform:
+          description: 'Filter on the platform on which the agent is running.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/Platform'
+        osVersion:
+          description: Case-insensitive prefix filter on the OS version.
+          type: array
+          items:
+            type: string
+            example: Version 10.15.2
+        nicModel:
+          description: Returns only agents whose NIC model is an exact, case-sensitive match for one of the provided values.
+          type: array
+          items:
+            type: string
+            example: Intel(R) Wi-Fi 6 AX200 160MHz
+        nicDriverVersion:
+          description: Returns only agents whose NIC driver version is an exact, case-sensitive match for one of the provided values.
+          type: array
+          items:
+            type: string
+            example: 22.250.0.9
+        serialNumber:
+          description: Case-insensitive prefix filter on the serial number.
+          type: array
+          maxItems: 50
+          items:
+            type: string
+            example: xaab2ba4-d40f-4e80-9363-7e4826556055
+        locationCountryISO:
+          description: 'Filter using the ISO country code of the location.
+
+            '
+          type: array
+          items:
+            type: string
+            example: FR
+        locationSubdivision1Code:
+          description: "Filter using the code for the first level administrative division within \nthe country. In US/Canada this is the State, in UK it's the country e.g. `ENG`\n"
+          type: array
+          items:
+            type: string
+            example: ENG
+        locationCity:
+          description: "This is a prefix match on the city name field. The endpoint expects this to contain the \nname of the city in English. e.g. 'Paris' or ''\n"
+          type: array
+          items:
+            type: string
+            example: Paris
+        licenseType:
+          description: 'Filter on the agent''s license type
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentLicenseType'
+        anyConnectDeviceId:
+          description: 'IDs of devices that has the Cisco Secure Client deployed with the Internet Security module.
+
+            Returns only agents that have at least one matching `anyConnectDeviceId`.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - JDLKSLFEIJER004334F
+    Status:
+      description: Status of the endpoint agent in ThousandEyes. Disabled agents don't report data.
+      type: string
+      example: enabled
+      enum:
+      - enabled
+      - disabled
+      readOnly: true
+    EndpointAgentUpdate:
+      description: The `EndpointAgentUpdate` object contains supported fields for updates.
+      type: object
+      properties:
+        name:
+          description: New agent name.
+          type: string
+          example: Office Printer
+        licenseType:
+          $ref: '#/components/schemas/AgentLicenseType'
+    PaginationNextLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    AddressType:
+      type: string
+      example: unique-local
+      enum:
+      - loopback
+      - unspecified
+      - unique-local
+      - link-local
+      - unique-global
+    AddressProfile:
+      type: object
+      description: A description of the IPs assigned to this machine.
+      properties:
+        addressType:
+          $ref: '#/components/schemas/AddressType'
+        ipAddress:
+          type: string
+          format: ip
+          example: 2001:db8:3333:4444:5555:6666:7777:8888
+          description: IP address of this interface in the network it's currently connected to.
+        prefixLength:
+          type: integer
+          format: int32
+          example: 24
+          description: The number of bits representing the network part of the `ipAddress`.
+        gateway:
+          type: string
+          format: ip
+          example: 192.168.0.254
+          description: The default gateway for this interface.
+        routerHardwareAddress:
+          type: string
+          format: macaddress
+          example: 5c:b1:3e:46:1c:84
+          description: The router's MAC address resolved from an ARP request.
+    ConditionalOperator:
+      type: string
+      enum:
+      - and
+      - or
+      example: and
+  parameters:
+    ExpandEndpointAgent:
+      name: expand
+      in: query
+      description: "This optional parameter allows you to control the expansion of test resources associated with the agent. By default, no expansion occurs when this query parameter is omitted.\nTo expand the \"clients\" resource, include the query parameter `?expand=clients`.\n\nFor multiple expansions, you have two options:\n  \n* Separate the values with commas. For example, `?expandAgent=clients,tasks`.\n* Specify the parameter multiple times. For example, `?expandAgent=clients&expandAgent=tasks`.\n\nThis parameter offers flexibility for users to customize the expansion of specific resources related to the agent.\n"
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandEndpointAgentOptions'
+      example:
+      - clients
+      - targetVersion
+      - vpnProfiles
+      - networkInterfaceProfiles
+      - externalMetadata
+    UseAllPermittedAids:
+      name: useAllPermittedAids
+      in: query
+      required: false
+      description: Set to `true` to load data from all accounts the user has access to.
+      schema:
+        type: boolean
+        example: false
+        default: false
+    IncludeDeleted:
+      name: includeDeleted
+      in: query
+      description: When requesting entities, set to `true` if you want to see deleted entities.
+      example: false
+      required: false
+      schema:
+        type: boolean
+    EndpointAgentIdPath:
+      name: agentId
+      in: path
+      required: true
+      description: The identifier of the agent to operate on.
+      schema:
+        $ref: '#/components/schemas/EndpointAgentId'
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SingleAgent:
+      description: The agent's current state.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/EndpointAgent'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '204':
+      description: No content
+  requestBodies:
+    AgentSearch:
+      description: The filter options for advanced search filtering for agents.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgentSearchRequest'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

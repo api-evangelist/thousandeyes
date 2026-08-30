@@ -1,0 +1,506 @@
+openapi: 3.2.0
+info:
+  title: Agents Cloud and Enterprise Agent Notification Rules API
+  version: 7.0.100
+  description: '
+
+    ## Overview
+
+    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Cloud and Enterprise Agent Notification Rules
+paths:
+  /agents/notification-rules:
+    get:
+      tags:
+      - Cloud and Enterprise Agent Notification Rules
+      summary: List agent notification rules
+      operationId: getAgentsNotificationRules
+      description: Returns a list of all agent notification rules configured under the account.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ListNotificationRulesResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /agents/notification-rules/{notificationRuleId}:
+    get:
+      tags:
+      - Cloud and Enterprise Agent Notification Rules
+      summary: Retrieve agent notification rule
+      operationId: getAgentsNotificationRule
+      description: 'Returns details of an agent notification rule, including agents it is assigned to.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/NotificationRuleId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/NotificationRuleDetail'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    NotificationRules:
+      type: object
+      properties:
+        agentAlertRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationRule'
+          example:
+          - ruleId: '281474976710706'
+            ruleName: Default Agent Offline Notification
+            expression: ((lastContact >= 30 min))
+            notifyOnClear: true
+            isDefault: false
+          - ruleId: '281474976710709'
+            ruleName: Test Rule
+            expression: ((lastContact >= 40 min))
+            notifyOnClear: true
+            isDefault: true
+    NotificationRuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/NotificationRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/AgentNotification'
+          agents:
+            type: array
+            items:
+              $ref: '#/components/schemas/AgentResponse'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    AgentNotification:
+      type: object
+      description: Alert notification object.
+      properties:
+        email:
+          $ref: '#/components/schemas/AlertEmail'
+        thirdParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertIntegrationBase'
+        webhook:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertIntegrationBase'
+    NotificationRule:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          description: Agent notification rule ID
+          example: '281474976710706'
+          readOnly: true
+        ruleName:
+          type: string
+          description: Name of the agent notification rule
+          example: Default Agent Offline Notification
+        expression:
+          type: string
+          description: Expression of agent notification rule
+          example: ((lastContact >= 30 min))
+        notifyOnClear:
+          type: boolean
+          description: Send notification when notification clears
+          example: true
+        isDefault:
+          type: boolean
+          description: Agent notification rule will be automatically included on all new Enterprise Agents.
+          example: false
+    AlertIntegrationBase:
+      type: object
+      properties:
+        integrationId:
+          type: string
+          description: Unique ID of the integration.
+          example: wb-78
+        integrationName:
+          type: string
+          description: Name of the integration.
+          example: integrationSlack1
+        integrationType:
+          $ref: '#/components/schemas/AlertIntegrationType'
+        target:
+          type: string
+          description: Target URL of the integration.
+          example: https://hooks.slack.com/services/REDACTED
+        authMethod:
+          type: string
+          description: (PagerDuty only) Authentication method.
+          example: Basic
+        authUser:
+          type: string
+          description: (PagerDuty only) Authentication user.
+          example: user123
+        authToken:
+          type: string
+          description: (PagerDuty only) Authentication token.
+          example: 0VqDYEpidpHVAK397x8PBsmZ
+        channel:
+          type: string
+          description: (Slack only) Slack `#channel` or `@user`.
+          example: '#slackChannel'
+    AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/SimpleAgent'
+    AlertEmail:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message used for email notification.
+          example: This test is failing, check as soon as possible.
+        recipients:
+          type: array
+          description: List of recipients emails that will be notified.
+          items:
+            type: string
+          example:
+          - user1@thousandeyes.com
+          - user2@cisco.com
+    SimpleAgent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AgentBase'
+      - type: object
+        properties:
+          agentId:
+            type: string
+            description: Unique ID of the agent.
+            example: '281474976710706'
+            readOnly: true
+          agentName:
+            type: string
+            description: Name of the agent.
+            example: thousandeyes-stg-va-254
+          location:
+            type: string
+            description: Location of the agent.
+            example: San Francisco Bay Area
+            readOnly: true
+          countryId:
+            type: string
+            description: 2-digit ISO country code
+            example: US
+            readOnly: true
+          coordinates:
+            $ref: '#/components/schemas/Coordinates'
+          networkProviderInfo:
+            allOf:
+            - $ref: '#/components/schemas/NetworkProviderInfo'
+            readOnly: true
+            example:
+              asn: 7018
+              name: AT&T Services, Inc.
+              type: isp
+          enabled:
+            type: boolean
+            description: Flag indicating if the agent is enabled.
+            example: true
+          verifySslCertificates:
+            type: boolean
+            description: Flag indicating if has normal SSL operations or  if instead it's set to ignore SSL errors on browserbot-based tests.
+            example: true
+            readOnly: true
+          prefix:
+            type: string
+            description: Prefix containing agents public IP address.
+            example: 99.128.0.0/11
+            readOnly: true
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
+    NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/NetworkProviderType'
+    AlertIntegrationType:
+      type: string
+      description: Type of the alert integration
+      enum:
+      - pager-duty
+      - slack
+      example: slack
+    ListNotificationRulesResponse:
+      allOf:
+      - $ref: '#/components/schemas/NotificationRules'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  parameters:
+    NotificationRuleId:
+      name: notificationRuleId
+      in: path
+      description: Unique ID for the agent notification rule.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about Agents & Monitors
+  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings

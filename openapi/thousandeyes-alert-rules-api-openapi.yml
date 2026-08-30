@@ -1,0 +1,836 @@
+openapi: 3.2.0
+info:
+  title: Alerts Alert Rules API
+  description: '**Note:** API operations for the creation or retrieval of API, Page Load, or Web-Transaction alert rules are not available for ThousandEyes for Government instance.
+
+
+    You can manage the following alert functionalities on the ThousandEyes platform using the Alerts API:
+
+
+    * **Alerts**: Retrieve alert details. Alerts are assigned to tests through alert rules.
+
+
+    * **Alert Rules**: Conditions that you configure in order to highlight or be notified of events of interest in your ThousandEyes tests. When an alert rule’s conditions are met, the associated alert is triggered and the alert becomes active. It remains active until the alert is cleared. Alert rules are reusable across multiple tests..
+
+
+    * **Alert Suppression Windows**: Suppress alerts for tests during periods such as planned maintenance. Windows can be one-time events or recurring events to handle periodic occurrences such as monthly downtime for maintenance.
+
+
+    For more information about the alerts, see [Alerts](https://docs.thousandeyes.com/product-documentation/alerts).
+
+    '
+  version: 7.0.100
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Alert Rules
+paths:
+  /alerts/rules:
+    get:
+      tags:
+      - Alert Rules
+      summary: List alert rules
+      operationId: getAlertsRules
+      description: Returns a list of alert rules. Default rules for each test type are indicated with a boolean response (true or false); these default alert rules automatically apply to their respective test types. This endpoint is limited to alert rules for Network & App Synthetics tests and Routing tests.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Rules'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Alert Rules
+      summary: Create alert rule
+      operationId: createAlertRule
+      description: 'Creates a new alert rule in your account, using the provided POST data. This endpoint is limited to alert rules for Network & App Synthetics tests and Routing tests. The `Edit alert rules` permission is required to create an alert rule.
+
+        Note: Assigning an alert rule to a test during creation requires the `Edit tests` permission.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleDetailUpdate'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /alerts/rules/{ruleId}:
+    get:
+      tags:
+      - Alert Rules
+      summary: Retrieve alert rule
+      operationId: getAlertRule
+      description: Returns detailed information about an alert rule using the `ruleId`. This endpoint is limited to alert rules for Network & App Synthetics tests and Routing tests. If the `ruleId` doesn’t exist or is inaccessible by your account, an empty response is returned.
+      parameters:
+      - $ref: '#/components/parameters/RuleId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RuleDetail'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Alert Rules
+      summary: Update alert rule
+      operationId: updateAlertRule
+      description: 'Modifies an existing alert rule in your account, using the provided POST data. This endpoint is limited to alert rules for Network & App Synthetics tests and Routing tests. The `Edit alert rules` permission is required to modify an alert rule.
+
+
+        Note: Assigning an alert rule to a test during creation requires the `Edit tests` permission.'
+      parameters:
+      - $ref: '#/components/parameters/RuleId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleDetailUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Alert Rules
+      summary: Delete alert rule
+      operationId: deleteAlertRule
+      description: Deletes an alert rule from your account. Users must have both `Edit alert rules` and `Edit tests` permissions, especially if the rule is linked to any tests. Without these permissions, an error occurs. This endpoint is limited to alert rules for Network & App Synthetics tests and Routing tests.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/RuleId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    WebhookIntegrationType:
+      type: string
+      description: Integration type.
+      example: webhook
+      enum:
+      - webhook
+    AlertSimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.'
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/AlertTestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    Rule:
+      allOf:
+      - $ref: '#/components/schemas/RuleDetailUpdate'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    Rules:
+      type: object
+      properties:
+        alertRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/BaseRule'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    AlertNotification:
+      type: object
+      description: Alert notification object. See Alert notification integrations.
+      properties:
+        email:
+          $ref: '#/components/schemas/NotificationEmail'
+        thirdParty:
+          type: array
+          description: Third party notifications.
+          items:
+            $ref: '#/components/schemas/NotificationThirdParty'
+        webhook:
+          type: array
+          description: Webhook notifications.
+          items:
+            $ref: '#/components/schemas/NotificationWebhook'
+        customWebhook:
+          type: array
+          description: Custom webhook notifications.
+          items:
+            $ref: '#/components/schemas/NotificationCustomWebhook'
+    SensitivityLevel:
+      type: string
+      description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
+      enum:
+      - high
+      - medium
+      - low
+      example: medium
+      readOnly: true
+    RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    BaseRule:
+      type: object
+      required:
+      - ruleName
+      - expression
+      - alertType
+      - roundsViolatingOutOf
+      properties:
+        ruleId:
+          $ref: '#/components/schemas/RuleId'
+        ruleName:
+          type: string
+          description: Name of the alert rule.
+          example: The End of the Internet
+        expression:
+          type: string
+          description: The expression of the alert rule.
+          example: ((hops((hopDelay >= 100 ms))))
+        description:
+          type: string
+          description: A description of the alert rule.
+          example: A rule description string
+        direction:
+          $ref: '#/components/schemas/AlertDirection'
+        notifyOnClear:
+          type: boolean
+          description: Send notification when alert clears.
+          example: true
+        isDefault:
+          type: boolean
+          description: If set to `true`, this alert rule becomes the default for its test type and is automatically applied to newly created tests with relevant metrics. Only one default alert rule is allowed per test type.
+          example: true
+        alertType:
+          $ref: '#/components/schemas/AlertType'
+        alertGroupType:
+          $ref: '#/components/schemas/AlertGroupType'
+        minimumSources:
+          type: integer
+          description: The minimum number of agents or monitors that must meet the specified criteria to trigger the alert.
+          example: 10
+        minimumSourcesPct:
+          type: integer
+          description: The minimum percentage of all assigned agents or monitors that must meet the specified criteria to trigger the alert.
+          example: 99
+        roundsViolatingMode:
+          $ref: '#/components/schemas/AlertRoundsViolationMode'
+        roundsViolatingOutOf:
+          type: integer
+          description: Specifies the divisor (y value) in the “X of Y times” condition.
+          example: 5
+        roundsViolatingRequired:
+          type: integer
+          description: Specifies the numerator (x value) in the “X of Y times” condition.
+          example: 2
+        includeCoveredPrefixes:
+          type: boolean
+          description: Set true to include covered prefixes in the BGP alert rule. Only applicable to BGP alert rules.
+          example: true
+        sensitivityLevel:
+          $ref: '#/components/schemas/SensitivityLevel'
+        severity:
+          $ref: '#/components/schemas/Severity'
+        endpointAgentIds:
+          description: An array of endpoint agent IDs associated with the rule (get `id` from `/endpoint/agents` API). This is applicable when `alertGroupType` is `browser-session`.
+          type: array
+          items:
+            description: Unique ID of the agent.
+            type: string
+            example: '281474976710706'
+        endpointLabelIds:
+          description: An array of label IDs used to assign specific Endpoint Agents to the test (get `id` from `/endpoint/labels`). This is applicable when `alertGroupType` is `browser-session`.
+          type: array
+          items:
+            description: An Endpoint label ID.
+            type: string
+            example: '123456'
+        visitedSitesFilter:
+          description: A list of website domains visited during the session. This is applicable when `alertGroupType` is `browser-session`.
+          type: array
+          items:
+            type: string
+          example:
+          - app.thousandeyes.com
+    AlertRoundsViolationMode:
+      type: string
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
+      enum:
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    CustomWebhookIntegrationType:
+      type: string
+      description: Integration type.
+      example: custom-webhook
+      enum:
+      - custom-webhook
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    ThirdPartyIntegrationType:
+      type: string
+      description: Integration type.
+      example: slack
+      enum:
+      - pager-duty
+      - slack
+      - app-dynamics
+      - service-now
+    RuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/BaseRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/AlertNotification'
+          tests:
+            type: array
+            items:
+              $ref: '#/components/schemas/AlertSimpleTest'
+            readOnly: true
+          testIds:
+            type: array
+            description: Array of test IDs to link to alert rule (get `testId` from `/tests` endpoint).
+            readOnly: true
+            items:
+              type: string
+            example:
+            - '281474976710706'
+            - '271659'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    AlertGroupType:
+      type: string
+      description: Category of alert type based on the application or network layer and source of the test.
+      enum:
+      - bgp
+      - browser-session
+      - cloud-enterprise
+      - endpoint
+      example: endpoint
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    RuleTestIds:
+      type: array
+      description: Array of test IDs to link to alert rule (get `testId` from `/tests` endpoint).
+      items:
+        type: string
+      example:
+      - '281474976710706'
+      - '271659'
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    RuleDetailUpdate:
+      allOf:
+      - $ref: '#/components/schemas/BaseRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/AlertNotification'
+          testIds:
+            $ref: '#/components/schemas/RuleTestIds'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    NotificationEmail:
+      type: object
+      description: Email notifications.
+      properties:
+        recipients:
+          type: array
+          description: An array containing the email addresses to receive notifications.
+          items:
+            type: string
+          example:
+          - noreply@thousandeyes.com
+        message:
+          type: string
+          description: Custom text included in alert email notifications sent to recipients.
+          example: Notification message
+    NotificationThirdParty:
+      type: object
+      description: Webhook notification.
+      properties:
+        integrationId:
+          type: string
+          description: Integration ID.
+          example: sl-101
+        integrationType:
+          $ref: '#/components/schemas/ThirdPartyIntegrationType'
+    AlertTestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      - endpoint-http-server
+      - endpoint-network-server
+      - endpoint-path-trace
+      description: Valid Alert Types for which to return test links.
+      readOnly: true
+      example: agent-to-server
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    NotificationWebhook:
+      type: object
+      description: Webhook notification.
+      properties:
+        integrationId:
+          type: string
+          description: Integration ID.
+          example: wb-201
+        integrationType:
+          $ref: '#/components/schemas/WebhookIntegrationType'
+        integrationName:
+          description: Name of the integration, configured by the user.
+          example: My webhook
+          type: string
+        target:
+          description: Webhook target URL.
+          example: https://example.com/test/webhooks/notifications
+          type: string
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
+    NotificationCustomWebhook:
+      type: object
+      description: Custom webhook notification.
+      properties:
+        integrationId:
+          type: string
+          format: uuid
+          description: Integration ID.
+          example: 6e069ae9-8537-4120-b988-61bf8e0d8b87
+        integrationType:
+          $ref: '#/components/schemas/CustomWebhookIntegrationType'
+        integrationName:
+          type: string
+          description: User-configured name of the integration.
+          example: My webhook
+        target:
+          type: string
+          description: Webhook target URL.
+          example: https://example.com/test/webhooks/notifications
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '204':
+      description: No content
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    RuleId:
+      name: ruleId
+      in: path
+      description: Unique alert rule ID.
+      example: '127094'
+      required: true
+      schema:
+        type: string
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

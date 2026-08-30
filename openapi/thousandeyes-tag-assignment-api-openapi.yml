@@ -1,0 +1,382 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Tags Tag Assignment API
+  description: 'The ThousandEyes Tags API provides a tagging system with key/value pairs. It allows you to tag assets within the ThousandEyes platform (such as agents, tests, or dashboards) with meaningful metadata. For example: `branch:sfo`, `branch:nyc`, and `team:netops`.
+
+
+    This feature provides:
+
+
+    * Support for automation.
+
+    * Powerful and flexible reports/dashboards.
+
+    * Support for third-party integrations.
+
+
+    Things to note with the ThousandEyes Tags API:
+
+
+    * Tags are backwards-compatible with existing labels.
+
+    * Tags are separated by Tests (CEA), Agents (CEA), Endpoint Agents, Scheduled Endpoint Tests, and Reports. A single tag can only apply to one type of target object, so each tag must specify the target type of object via a `type` field.
+
+    * Tags are defined in a single table so that they can be represented using a single model - `Tag`.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Tag Assignment
+  description: Assign tags to other objects
+paths:
+  /tags/assign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Assign multiple tags to multiple objects
+      description: 'Assigns the specified static tags to the specified objects. This operation has cumulative behavior: The tags are statically assigned to the specified objects, and the previous assignments persist. No unassignment takes place. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
+      operationId: assignTags
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/bulkAssignRequest'
+      responses:
+        '207':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/unassign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Remove multiple tags from multiple objects
+      description: 'Removes the specified static tags from one or more objects. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
+      operationId: unassignTags
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/bulkAssignRequest'
+      responses:
+        '207':
+          description: Tag assignments created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignments'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/{id}/assign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Assign tag to multiple objects
+      description: 'Assigns a static tag to one or more objects. This operation has cumulative behavior: The tag is statically assigned to the specified objects, and the previous assignments persist. No unassignment takes place. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
+      operationId: assignTag
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/assignRequest'
+      responses:
+        '207':
+          description: Assignment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignment'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkTagAssignment'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /tags/{id}/unassign:
+    post:
+      tags:
+      - Tag Assignment
+      summary: Remove tag from multiple objects
+      operationId: unassignTag
+      description: 'Removes a static tag from one or more objects. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/TagIdPath'
+      requestBody:
+        $ref: '#/components/requestBodies/assignRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  requestBodies:
+    bulkAssignRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkTagAssignments'
+    assignRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TagAssignment'
+  schemas:
+    AssignmentType:
+      type: string
+      enum:
+      - test
+      - v-agent
+      - endpoint-test
+      - dashboard
+      - connected-devices-test
+    ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    BulkTagAssignment:
+      allOf:
+      - type: object
+        properties:
+          tagId:
+            type: string
+            format: uuid
+            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+            description: The ID of the tag to assign
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+      - $ref: '#/components/schemas/TagAssignment'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Object Id
+          example: '123'
+        type:
+          $ref: '#/components/schemas/AssignmentType'
+    TagAssignment:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    BulkTagAssignments:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkTagAssignment'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+  parameters:
+    TagIdPath:
+      name: id
+      in: path
+      description: Tag ID
+      required: true
+      schema:
+        type: string
+      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '204':
+      description: No content
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

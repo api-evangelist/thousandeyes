@@ -1,0 +1,516 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Dashboards Filters API
+  description: Manage ThousandEyes Dashboards.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Dashboards Filters
+paths:
+  /dashboards/filters:
+    get:
+      tags:
+      - Dashboards Filters
+      summary: List dashboard filters
+      operationId: getDashboardsFilters
+      description: 'Returns a list of dashboard filters and its context within your account group.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterSearchPattern'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFiltersResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Dashboards Filters
+      summary: Create dashboard filter
+      operationId: createDashboardFilter
+      description: 'Creates a new dashboard filter in your account group. To create a filter,  you must have one of the following permissions:
+
+        * `Edit dashboard templates for all users in account group` permission (Account Admin). * `Edit own dashboard templates` permission (Regular User).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Dashboard filter object to be created and saved
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiContextFilterRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /dashboards/filters/{id}:
+    get:
+      tags:
+      - Dashboards Filters
+      summary: Get dashboard filter
+      operationId: getDashboardFilter
+      description: 'Returns a list of data source filters and their metadata within the dashboard filter.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+      - Dashboards Filters
+      summary: Update dashboard filter
+      operationId: updateDashboardFilter
+      description: "Updates an existing dashboard filter in your account group.\n                     \n **Note**:\n \n * Users with the `Edit dashboard templates for all users in account group` permission (Account Admin) can update any dashboard filter.\n \n * Users with the `Edit own dashboard templates` permission (Regular User) can only update the dashboard filters they have created themselves.\n"
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        description: Updated dashboard filter context object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiContextFilterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ApiContextFilterResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Dashboards Filters
+      summary: Delete dashboard filter
+      operationId: deleteDashboardFilter
+      description: "Deletes a dashboard filter using the `filterId` provided in the request.\n\n\n **Note**:\n\n * Users with the `Edit dashboard templates for all users in account group` permission (Account Admin) can delete any dashboard filter.\n\n * Users with the `Edit own dashboard templates` permission (Regular User) can only delete the dashboard filters they have created themselves.\n"
+      parameters:
+      - $ref: '#/components/parameters/DashboardFilterIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    ApiContextFilterRequest:
+      type: object
+      description: Request containing dashboard filter name, description and context details.
+      properties:
+        context:
+          $ref: '#/components/schemas/ApiContextFilters'
+        name:
+          $ref: '#/components/schemas/ApiDashboardFilterName'
+        description:
+          $ref: '#/components/schemas/ApiDashboardFilterDescription'
+      required:
+      - name
+      - context
+    ApiDashboardFilterUserDetails:
+      type: object
+      description: Details of user who created or modified the filter.
+      properties:
+        uid:
+          type: string
+          description: Unique ID of the user.
+          example: '1'
+        name:
+          type: string
+          description: Name of the user.
+          example: Test User
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    ApiContextFilters:
+      type: array
+      description: List of filters to be applied to a dashboard.
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/ApiDataSourceFilters'
+    ApiContextFiltersResponse:
+      type: object
+      description: All global dashboard filters saved.
+      properties:
+        dashboardFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiContextFilterResponse'
+    ApiContextFilterResponse:
+      description: Response containing dashboard filter settings and context details.
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/ApiContextFilters'
+        aid:
+          type: string
+          description: Account group ID of the filter.
+          example: '11'
+        id:
+          type: string
+          description: Unique ID of the dashboard filter.
+          example: 65bc18e8f2073a4a469cd958
+        name:
+          $ref: '#/components/schemas/ApiDashboardFilterName'
+        description:
+          $ref: '#/components/schemas/ApiDashboardFilterDescription'
+        createdBy:
+          $ref: '#/components/schemas/ApiDashboardFilterUserDetails'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the filter was last modified.
+          example: '2024-02-01T22:19:19+00:00'
+        createdDate:
+          type: string
+          format: date-time
+          description: Timestamp when the filter was created.
+          example: '2024-02-01T22:19:19+00:00'
+        modifiedBy:
+          $ref: '#/components/schemas/ApiDashboardFilterUserDetails'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+      required:
+      - id
+      - aid
+      - name
+      - context
+    ApiDashboardFilterDescription:
+      type: string
+      description: An optional description of the filter.
+      example: Global filter for CEA widgets
+    ApiDataSourceFilter:
+      type: object
+      description: List of different filter properties for a single datasource.
+      properties:
+        filterId:
+          type: string
+          description: Data source property to filter by.
+          example: TEST_LABEL
+        values:
+          type: array
+          uniqueItems: true
+          description: Values to filter by based on the specified `filterId`.
+          example:
+          - '45862'
+          - '59749'
+          items:
+            type: string
+        metricIds:
+          type: array
+          uniqueItems: true
+          description: Dashboard metric associated with the filter property.
+          example:
+          - WEB_PAGE_LOAD_COMPLETION_RATE
+          - WEB_TTFB
+          - WEB_AVAILABILITY
+          items:
+            type: string
+      required:
+      - filterId
+      - values
+      - metricIds
+    ApiDashboardFilterName:
+      type: string
+      description: The name of the dashboard filter, this must be unique.
+      example: cea-filter
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    ApiDataSourceFilters:
+      type: object
+      description: List of different datasource filters.
+      properties:
+        dataSourceId:
+          type: string
+          description: Types of data source.
+          example: VIRTUAL_AGENT
+        filters:
+          type: array
+          description: List of different filter properties.
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ApiDataSourceFilter'
+      required:
+      - dataSourceId
+      - filters
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+  parameters:
+    DashboardFilterSearchPattern:
+      in: query
+      name: searchPattern
+      description: Optional search pattern parameter to filter list of dashboard filters by either name or description values.
+      required: false
+      schema:
+        type: string
+        example: cea-filter
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    DashboardFilterIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique dashboard filter ID.
+      example: 65bc18e8f2073a4a469cd958
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '204':
+      description: No content
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

@@ -1,0 +1,562 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: DNS Trace Test Results API
+  description: Get test result metrics for Network and Application Synthetics tests.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: DNS Trace Test Results
+paths:
+  /test-results/{testId}/dns-trace:
+    get:
+      tags:
+      - DNS Trace Test Results
+      summary: Get DNS trace test results
+      description: 'Returns a DNS record from the requesting agent''s point of view. This is similar to dig +trace.
+
+        '
+      operationId: getTestDnsTraceResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/DnsTraceTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Link'
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    TestResultAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    DnsTraceTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          output:
+            type: string
+            description: Verbose output from the trace request
+            example: "com.\t172800\tIN\tNS\ta.gtld-servers.net.\ncom.\t172800\tIN\tNS\tf.gtld-servers.net.\ncom.\t172800\tIN\tNS\tc.gtld-servers.net.\ncom.\t172800\tIN\tNS\tb.gtld-servers.net.\ncom.\t172800\tIN\tNS\td.gtld-servers.net.\ncom.\t172800\tIN\tNS\te.gtld-servers.net.\ncom.\t172800\tIN\tNS\tg.gtld-servers.net.\ncom.\t172800\tIN\tNS\tm.gtld-servers.net.\ncom.\t172800\tIN\tNS\th.gtld-servers.net.\ncom.\t172800\tIN\tNS\tj.gtld-servers.net.\ncom.\t172800\tIN\tNS\ti.gtld-servers.net.\ncom.\t172800\tIN\tNS\tl.gtld-servers.net.\ncom.\t172800\tIN\tNS\tk.gtld-servers.net.\n;; Received 498 bytes from 199.7.91.13(d.root-servers.net.) in 119 ms\n\nthousandeyes.com.\t172800\tIN\tNS\ta1.verisigndns.com.\nthousandeyes.com.\t172800\tIN\tNS\ta2.verisigndns.com.\nthousandeyes.com.\t172800\tIN\tNS\ta3.verisigndns.com.\nthousandeyes.com.\t172800\tIN\tNS\tu1.verisigndns.com.\n;; Received 266 bytes from 192.5.6.30(a.gtld-servers.net.) in 178 ms\n\napp.thousandeyes.com.\t300\tIN\tCNAME\tweb.thousandeyes.com.\nweb.thousandeyes.com.\t300\tIN\tCNAME\tlb-app.thousandeyes.com.\nlb-app.thousandeyes.com.\t3600\tIN\tA\t208.185.7.120\n;; Received 173 bytes from 209.112.113.33(a1.verisigndns.com.) in 178 ms\n\n"
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          queries:
+            type: integer
+            description: How many queries were required to get to the requested result
+            example: 3
+            readOnly: true
+          failedQueries:
+            type: integer
+            description: How many queries failed while getting to the requested result
+            example: 0
+            readOnly: true
+          finalServerQueried:
+            type: string
+            description: DNS server that provided the final result
+            example: a1.verisigndns.com.
+            readOnly: true
+          finalQueryTime:
+            type: integer
+            description: How long the final query took to return a response
+            example: 178
+            readOnly: true
+          mappings:
+            type: string
+            description: Final mappings returned from the request
+            example: 208.185.7.120
+            readOnly: true
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    DnsTraceTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsTraceTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    EndTime:
+      type: integer
+      description: Epoch time (seconds) indicating the end time of the round
+      example: 1384309800
+      readOnly: true
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    TestResultAppLinks:
+      allOf:
+      - $ref: '#/components/schemas/AppLinks'
+      - example:
+          appLink:
+            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/StartTime'
+        endTime:
+          $ref: '#/components/schemas/EndTime'
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    TestResult:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Data point date UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        roundId:
+          type: integer
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/TestResultAppLinks'
+    StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
+  parameters:
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about Test Results
+  url: https://docs.thousandeyes.com/product-documentation/getting-started/getting-started-with-cloud-and-enterprise-agent-tests#interpreting-test-results

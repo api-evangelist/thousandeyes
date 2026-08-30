@@ -1,0 +1,334 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Endpoint Agents Transfer API
+  description: "**Note:** The Endpoint Agents Transfer APIs are not available for ThousandEyes for Government instance.\n\nManage ThousandEyes Endpoint Agents using this API. \n\nFor more information about Endpoint Agents, see [Endpoint Agents](https://docs.thousandeyes.com/product-documentation/global-vantage-points/endpoint-agents)."
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Endpoint Agents Transfer
+paths:
+  /endpoint/agents/{agentId}/transfer:
+    post:
+      summary: Transfer endpoint agent
+      operationId: transferEndpointAgent
+      tags:
+      - Endpoint Agents Transfer
+      description: 'Initiates the transfer of an agent from its current account, which must correspond to the provided aid, to the target account.
+
+
+        **Note:** It is essential to ensure that the `aid` parameter matches the current account of the agent for this operation to succeed.
+
+        '
+      requestBody:
+        $ref: '#/components/requestBodies/AgentTransfer'
+      parameters:
+      - $ref: '#/components/parameters/EndpointAgentIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '202':
+          description: Transfer initiated
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+  /endpoint/agents/transfer/bulk:
+    post:
+      summary: Bulk transfer agents
+      operationId: transferEndpointAgents
+      tags:
+      - Endpoint Agents Transfer
+      description: 'Initiates the transfer of multiple agents between accounts. The following conditions apply:
+
+
+        * The requester must possess ''write'' permissions for both the ''from'' and ''to'' accounts involved in each transfer.
+
+
+        * Multiple transfers may involve a mix of different source and destination accounts.
+
+        * For each transfer request, the ''from'' account must match the current account of the respective agent.
+
+        * Transfers are executed asynchronously.
+
+        * Progress tracking is not intended, but users can monitor the progress by periodically polling the ''get agent'' endpoint.
+
+        * Each transfer request is individually validated and completed; this operation is not atomic, meaning transfers can succeed or fail individually.
+
+        * The API response provides the status of each transfer request.
+
+        * There are no performance concerns for this API; any number of agents can be transferred in bulk.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/AgentTransfers'
+      responses:
+        '207':
+          description: Transfer initiated
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BulkAgentTransferResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+components:
+  schemas:
+    AgentTransfer:
+      example:
+        agentId: 5d0764ac-7e42-4ec8-a0d4-39fc53edccba
+        fromAid: '1234'
+        toAid: '12345'
+      allOf:
+      - type: object
+        properties:
+          agentId:
+            $ref: '#/components/schemas/EndpointAgentId'
+          fromAid:
+            $ref: '#/components/schemas/AccountId'
+          toAid:
+            $ref: '#/components/schemas/AccountId'
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    AccountId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    AgentTransferStatus:
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          request:
+            $ref: '#/components/schemas/AgentTransfer'
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    AgentTransferRequest:
+      type: object
+      properties:
+        toAid:
+          $ref: '#/components/schemas/AccountId'
+      example:
+        toAid: '1234'
+    BulkAgentTransferRequest:
+      type: object
+      properties:
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTransfer'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    BulkAgentTransferResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTransferStatus'
+          example:
+          - status: 200
+            detail: Initiated
+            request:
+              agentId: 5d0764ac-7e42-4ec8-a0d4-39fc53edccba
+              fromAid: '1234'
+              toAid: '12345'
+          - status: 400
+            detail: Missing from-account id
+            request:
+              agentId: 5d0764ac-7e42-4ec8-a0d5-39fc53ed1234
+              fromAid: xxx
+              toAid: '12345'
+          - status: 403
+            detail: User does not have permission on 'to' aid
+            request:
+              agentId: 5d0764ac-7e42-4ec8-a0d5-39fc53ed7890
+              fromAid: '1234'
+              toAid: '12345'
+  requestBodies:
+    AgentTransfers:
+      description: A collection of `AgentTransfers`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkAgentTransferRequest'
+        text/csv:
+          schema:
+            type: string
+          examples:
+            CSV File:
+              $ref: '#/components/examples/TransferCSV'
+        text/plain:
+          schema:
+            type: string
+          examples:
+            CSV File:
+              $ref: '#/components/examples/TransferCSV'
+    AgentTransfer:
+      description: The request to move an agent between accounts.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgentTransferRequest'
+  examples:
+    TransferCSV:
+      value: 'agent_id,from_aid,to_aid
+
+        5d0764ac-7e42-4ec8-a0d4-39fc53edccba,111,222
+
+        1234abcd-7e42-4ec8-a0d4-39fc53abcdef,222,333
+
+        '
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  parameters:
+    EndpointAgentIdPath:
+      name: agentId
+      in: path
+      required: true
+      description: The identifier of the agent to operate on.
+      schema:
+        $ref: '#/components/schemas/EndpointAgentId'
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

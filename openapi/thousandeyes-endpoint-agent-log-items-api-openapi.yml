@@ -1,0 +1,520 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Endpoint Agents Endpoint Agent Log Items API
+  description: "**Note:** The Endpoint Agents Transfer APIs are not available for ThousandEyes for Government instance.\n\nManage ThousandEyes Endpoint Agents using this API. \n\nFor more information about Endpoint Agents, see [Endpoint Agents](https://docs.thousandeyes.com/product-documentation/global-vantage-points/endpoint-agents)."
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Endpoint Agent Log Items
+paths:
+  /endpoint/agents/{agentId}/logs:
+    get:
+      tags:
+      - Endpoint Agent Log Items
+      summary: List endpoint agent log items
+      operationId: getEndpointAgentLogItems
+      description: Returns paginated logs for an endpoint agent within the requested time range.
+      parameters:
+      - $ref: '#/components/parameters/EndpointAgentIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/LogItemsMax'
+      - $ref: '#/components/parameters/LogItemsCursor'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      responses:
+        '200':
+          description: Paginated logs for the endpoint agent.
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentLogItemsResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    EndpointWifiLogItemType:
+      type: string
+      description: Wi-Fi log item type.
+      enum:
+      - wifi-change
+      - wifi-connect
+      - wifi-disconnect
+      - wifi-connection-failure
+      - unknown
+      example: wifi-connect
+      readOnly: true
+    EndpointOnlineOfflineLogItem:
+      type:
+      - object
+      - 'null'
+      properties:
+        logItemType:
+          $ref: '#/components/schemas/EndpointOnlineOfflineLogItemType'
+    EndpointWirelessConnectionFailureType:
+      type: string
+      description: Wireless connection failure phase.
+      enum:
+      - init
+      - auth
+      - assoc
+      - eap
+      - dhcp
+      - unknown
+      example: auth
+      readOnly: true
+    PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    EndpointAgentLogItemType:
+      type: string
+      description: Agent log item category.
+      enum:
+      - wifi
+      - vpn
+      - online-offline
+      - state-changes
+      example: wifi
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    EndpointVpnType:
+      type: string
+      description: VPN vendor or type.
+      enum:
+      - openvpn
+      - cisco-anyconnect
+      - palo-alto-globalprotect
+      - viscosity
+      - ivanti-connect-secure
+      - zscaler-internet-access
+      - f5-big-ip
+      - pptp
+      - l2tp
+      - sstp
+      - ikev2
+      - auto
+      - unknown
+      example: cisco-anyconnect
+      readOnly: true
+    EndpointAgentLogItemsResponse:
+      type: object
+      required:
+      - logs
+      properties:
+        logs:
+          x-paginated-items: true
+          type: array
+          description: Log items for the endpoint agent.
+          items:
+            $ref: '#/components/schemas/EndpointAgentLogItem'
+        _links:
+          $ref: '#/components/schemas/PaginationNextAndSelfLink'
+    EndpointVpnLogItem:
+      type:
+      - object
+      - 'null'
+      properties:
+        logItemType:
+          $ref: '#/components/schemas/EndpointVpnLogItemType'
+        vpnType:
+          $ref: '#/components/schemas/EndpointVpnType'
+        vpnServerName:
+          type:
+          - string
+          - 'null'
+          description: VPN server name.
+          example: vpn-us-west
+          readOnly: true
+        vpnServerAddress:
+          type:
+          - string
+          - 'null'
+          description: VPN server address.
+          example: 192.0.2.10
+          readOnly: true
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EndpointStateChangesLogItem:
+      type:
+      - object
+      - 'null'
+      properties:
+        logItemType:
+          $ref: '#/components/schemas/EndpointStateChangesLogItemType'
+    EndpointAgentLogItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the log item.
+          example: 8d23f1b7-74ef-4e0c-925c-58601fc0662d
+          readOnly: true
+        agentLogItemType:
+          $ref: '#/components/schemas/EndpointAgentLogItemType'
+        timestampMs:
+          type: integer
+          format: int64
+          description: Time when the log item was recorded, in milliseconds since the Unix epoch.
+          example: 1709240000000
+          readOnly: true
+        wifiLogItem:
+          $ref: '#/components/schemas/EndpointWifiLogItem'
+        vpnLogItem:
+          $ref: '#/components/schemas/EndpointVpnLogItem'
+        onlineOfflineLogItem:
+          $ref: '#/components/schemas/EndpointOnlineOfflineLogItem'
+        stateChangesLogItem:
+          $ref: '#/components/schemas/EndpointStateChangesLogItem'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    EndpointWirelessConnectionFailure:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          $ref: '#/components/schemas/EndpointWirelessConnectionFailureType'
+        context:
+          type:
+          - string
+          - 'null'
+          description: Additional context for the wireless connection failure.
+          example: WPA authentication failed
+          readOnly: true
+        code:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Wireless connection failure code.
+          example: 4
+          readOnly: true
+    EndpointOnlineOfflineLogItemType:
+      type: string
+      description: Online/offline log item type.
+      enum:
+      - online
+      - offline
+      - unknown
+      example: online
+      readOnly: true
+    EndpointWifiLogItem:
+      type:
+      - object
+      - 'null'
+      properties:
+        logItemType:
+          $ref: '#/components/schemas/EndpointWifiLogItemType'
+        ssid:
+          type:
+          - string
+          - 'null'
+          description: Wireless network SSID.
+          example: CorpWiFi
+          readOnly: true
+        bssid:
+          type:
+          - string
+          - 'null'
+          description: Wireless access point BSSID.
+          example: 00:11:22:33:44:55
+          readOnly: true
+        bssidFrom:
+          type:
+          - string
+          - 'null'
+          description: Previous wireless access point BSSID.
+          example: 00:11:22:33:44:54
+          readOnly: true
+        channel:
+          type:
+          - string
+          - 'null'
+          description: Wireless channel.
+          example: '36'
+          readOnly: true
+        channelFrom:
+          type:
+          - string
+          - 'null'
+          description: Previous wireless channel.
+          example: '11'
+          readOnly: true
+        physicalMode:
+          type:
+          - string
+          - 'null'
+          description: Wireless physical mode.
+          example: 802.11ac
+          readOnly: true
+        physicalModeFrom:
+          type:
+          - string
+          - 'null'
+          description: Previous wireless physical mode.
+          example: 802.11n
+          readOnly: true
+        failure:
+          $ref: '#/components/schemas/EndpointWirelessConnectionFailure'
+    EndpointVpnLogItemType:
+      type: string
+      description: VPN log item type.
+      enum:
+      - vpn-connect
+      - vpn-disconnect
+      - unknown
+      example: vpn-connect
+      readOnly: true
+    EndpointStateChangesLogItemType:
+      type: string
+      description: State change log item type.
+      enum:
+      - recover
+      - enabled
+      - deleted
+      - disabled
+      example: enabled
+      readOnly: true
+  parameters:
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    LogItemsCursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque cursor from the `_links.next.href` URL in the previous response.
+      schema:
+        type: string
+        example: WyIxNzA5MjQwMDAwMDAwIl0=
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    EndpointAgentIdPath:
+      name: agentId
+      in: path
+      required: true
+      description: The identifier of the agent to operate on.
+      schema:
+        $ref: '#/components/schemas/EndpointAgentId'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    LogItemsMax:
+      name: max
+      in: query
+      required: false
+      description: Maximum number of log items returned per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+        default: 1000
+        example: 1000
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

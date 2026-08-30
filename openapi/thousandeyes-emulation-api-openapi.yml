@@ -1,0 +1,360 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Emulation API
+  description: '**Note:** All Emulation APIs are not available for ThousandEyes for Government instance.
+
+
+    The Emulation API facilitates the retrieval of user-agent strings for HTTP, pageload, and transaction tests. It also enables the retrieval and addition of emulated devices for pageload and transaction tests.
+
+
+    To access Emulation API operations, the following permissions are required:
+
+
+    * `Settings Tests Read` for read operations.
+
+    * `Settings Tests Update` for write operations.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Emulation
+paths:
+  /user-agents:
+    get:
+      tags:
+      - Emulation
+      summary: List user-agents
+      operationId: getUserAgents
+      description: Retrieves a list of user-agent strings.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/UserAgents'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /emulated-devices:
+    get:
+      tags:
+      - Emulation
+      summary: List emulated devices
+      operationId: getEmulatedDevices
+      description: Retrieves a list of emulated devices available for browser tests.
+      parameters:
+      - $ref: '#/components/parameters/ExpandEmulatedDevice'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EmulatedDeviceResponses'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+      - Emulation
+      summary: Create emulated device
+      operationId: createEmulatedDevice
+      description: Creates a new device for emulation.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmulatedDevice'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EmulatedDeviceResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  schemas:
+    EmulatedDeviceCategory:
+      type: string
+      description: The type of device being emulated.
+      example: desktop
+      enum:
+      - desktop
+      - laptop
+      - phone
+      - tablet
+    UserAgent:
+      type: object
+      properties:
+        browser:
+          type: string
+          description: The name of the web browser.
+          example: Firefox
+        os:
+          type: string
+          description: The operating system for the user-agent HTTP header.
+          example: Windows
+        value:
+          type: string
+          description: The text of the user-agent header.
+          example: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Mobile Safari/537.36
+    EmulatedDeviceResponse:
+      allOf:
+      - $ref: '#/components/schemas/EmulatedDevice'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: The device name
+            example: iPad Pro 12.9-in
+          codeName:
+            type: string
+            description: A code corresponding to the device name.
+            example: IPAD_PRO_12_9
+          id:
+            type: string
+            description: ID of the emulated device.
+            example: '11'
+          availableUserAgents:
+            type: array
+            description: A list of user-agent strings for this emulated device.
+            items:
+              type: string
+            example:
+            - Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Mobile Safari/537.36
+            - Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36
+          defaultUserAgentTemplate:
+            type: string
+            description: The default user-agent template to use for this device.
+            example: Mozilla/5.0 (Android 4.4; Tablet; rv:70.0) Gecko/70.0 Firefox/70.0
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    EmulatedDevice:
+      type: object
+      required:
+      - category
+      - width
+      - height
+      properties:
+        category:
+          $ref: '#/components/schemas/EmulatedDeviceCategory'
+        width:
+          type: integer
+          description: The width of the display of the emulated device.
+          example: 1024
+          minimum: 50
+          maximum: 9999
+        height:
+          type: integer
+          description: The height of the display of the emulated device.
+          example: 768
+          minimum: 50
+          maximum: 9999
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    EmulatedDeviceResponses:
+      type: object
+      properties:
+        emulatedDevices:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmulatedDeviceResponse'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    ExpandEmulatedDeviceOptions:
+      type: string
+      enum:
+      - user-agent
+    UserAgents:
+      type: object
+      properties:
+        userAgents:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAgent'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    ExpandEmulatedDevice:
+      name: expand
+      in: query
+      description: 'Optional query parameter that controls whether user-agent templates are included in the response.
+
+        By default, user-agent templates are not included. To include them, add `?expand=user-agent` to the request.
+
+        '
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandEmulatedDeviceOptions'
+        example:
+        - user-agent
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

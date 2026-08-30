@@ -1,0 +1,636 @@
+openapi: 3.2.0
+info:
+  title: Agent to Server Endpoint Instant Scheduled Tests API
+  version: 7.0.100
+  description: 'You can create and execute a new endpoint instant scheduled test within ThousandEyes using this API. The test parameters are specified in the `POST` data.
+
+
+    The following applies to the Endpoint Instant Scheduled Tests API:
+
+
+    * To initiate the creation and execution of an instant scheduled test, the user must possess the `Edit endpoint tests` permission.
+
+
+    * Upon successful creation of an instant scheduled test, the API responds with an HTTP/201 CREATED status code and return the test definition.
+
+    * It''s important to note that the response does not include the results of the instant scheduled test. To retrieve test results, users can utilize the Endpoint Test Data endpoints.
+
+    The URLs for these API test data endpoints are provided within the test definition output when an instant scheduled test is created.
+
+    '
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Agent to Server Endpoint Instant Scheduled Tests
+paths:
+  /endpoint/tests/scheduled-tests/agent-to-server/instant:
+    post:
+      tags:
+      - Agent to Server Endpoint Instant Scheduled Tests
+      summary: Run agent to server instant scheduled test
+      operationId: createAgentToServerScheduledInstantTest
+      description: Creates and runs a new endpoint agent to server instant scheduled test in ThousandEyes.
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointAgentToServerInstantTest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EndpointAgentToServerTest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    TestIsSavedEvent:
+      type: boolean
+      description: 'Indicates if the test is a saved event.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+        '
+      example: false
+      readOnly: true
+    EndpointTestAgents:
+      type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
+      items:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
+      default: false
+      example: false
+    EndpointAgentLabelsSelectorType:
+      type: string
+      example: agent-labels
+      pattern: ^agent-labels$
+    EndpointTestAgentSelectorType:
+      type: string
+      enum:
+      - all-agents
+      - specific-agents
+      - agent-labels
+      - agent-tags
+      description: "Specifies how agents are selected for the endpoint test.\n\nAgents can be selected from:\n  - all available agents\n  - a specific list of agents\n  - agents matching tags\n  - agents matching labels (deprecated)\n"
+      default: all-agents
+      example: all-agents
+    TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/TestLabel'
+    ScheduledTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
+    EndpointScheduledTestType:
+      type: string
+      enum:
+      - agent-to-server
+      - http-server
+      description: Type of test being queried.
+      example: agent-to-server
+      readOnly: true
+    EndpointAgentToServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointInstantTest'
+      - type: object
+        required:
+        - server
+        properties:
+          serverName:
+            type: string
+            deprecated: true
+            description: A server address without a protocol or IP address. **Deprecated, use `server` instead**.
+            example: www.example.com
+          server:
+            type: string
+            description: Target domain name or IP address.
+            example: www.example.com
+          port:
+            $ref: '#/components/schemas/EndpointTestPort'
+    EndpointTestPort:
+      type: integer
+      description: Port number.
+      default: 443
+      example: 443
+    TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
+      example: true
+    EndpointTest:
+      type: object
+      required:
+      - type
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        _links:
+          $ref: '#/components/schemas/EndpointTestLinks'
+        agentSelectorConfig:
+          $ref: '#/components/schemas/EndpointAgentSelectorConfig'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        isPrioritized:
+          $ref: '#/components/schemas/TestIsPrioritized'
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        isEnabled:
+          $ref: '#/components/schemas/TestIsEnabled'
+        isSavedEvent:
+          $ref: '#/components/schemas/TestIsSavedEvent'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/TestHasPathTraceInSession'
+        labels:
+          $ref: '#/components/schemas/TestLabels'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        networkMeasurements:
+          $ref: '#/components/schemas/TestNetworkMeasurements'
+        protocol:
+          $ref: '#/components/schemas/EndpointTestProtocol'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionOut'
+        server:
+          type: string
+          description: Target domain name or IP address.
+          example: www.example.com
+        testId:
+          type: string
+          description: Each test is assigned a unique ID to access test data from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        type:
+          $ref: '#/components/schemas/EndpointScheduledTestType'
+        tcpProbeMode:
+          $ref: '#/components/schemas/TestProbeModeResponse'
+        port:
+          $ref: '#/components/schemas/EndpointTestPort'
+    EndpointAgentLabels:
+      type: array
+      deprecated: true
+      description: 'Deprecated. Use `tagIds` instead.
+
+
+        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
+
+        '
+      items:
+        type: string
+      example:
+      - '567'
+      - '214'
+    EndpointInstantTest:
+      type: object
+      required:
+      - testName
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointTestAgentSelectorType'
+        agents:
+          $ref: '#/components/schemas/EndpointTestAgents'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        testName:
+          $ref: '#/components/schemas/TestName'
+        ipVersion:
+          $ref: '#/components/schemas/EndpointIpVersionIn'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EndpointAgentTagsSelectorType:
+      type: string
+      example: agent-tags
+      pattern: ^agent-tags$
+    EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    EndpointTestSelfLink:
+      allOf:
+      - description: A reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Link'
+    EndpointAgentToServerType:
+      type: string
+      description: Type of test being queried.
+      example: agent-to-server
+      pattern: ^agent-to-server$
+      readOnly: true
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    EndpointAgentToServerTest:
+      allOf:
+      - $ref: '#/components/schemas/EndpointTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/EndpointAgentToServerType'
+    EndpointAgentSelectorConfig:
+      type: object
+      description: Agents selection object based on agentSelectorType.
+      readOnly: true
+      oneOf:
+      - $ref: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    EndpointTestProtocol:
+      type: string
+      enum:
+      - icmp
+      - icmp-with-tcp-connect
+      - tcp
+      - prefer-tcp
+      - ast-autodetect
+      - autodetect
+      description: Protocol requested for the test.
+      default: icmp
+      example: icmp
+    EndpointAgentLabelsSelectorConfig:
+      type: object
+      description: Agent labels selection object.
+      readOnly: true
+      deprecated: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentLabelsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
+      type: string
+      example: V4_ONLY
+    TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    EndpointSpecificAgentsSelectorConfig:
+      type: object
+      description: Specific agents selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointSpecificAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        agents:
+          $ref: '#/components/schemas/EndpointTestAgents'
+      required:
+      - agentSelectorType
+    EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
+    TestProbeModeResponse:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
+    EndpointIpVersionIn:
+      description: For configuring network tests, the IP version of the test.
+      type: string
+      enum:
+      - V4_ONLY
+      - V6_ONLY
+      - V6_PREFER
+      - OS_DEFAULT
+      example: V4_ONLY
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    EndpointAgentTagsSelectorConfig:
+      type: object
+      description: Agent tags selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/EndpointAgentTagsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/TagIds'
+      required:
+      - agentSelectorType
+    EndpointTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/EndpointTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/ScheduledTestResults'
+      readOnly: true
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  headers:
+    Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

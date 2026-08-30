@@ -1,0 +1,1025 @@
+openapi: 3.2.0
+info:
+  version: 7.0.100
+  title: Web HTTP Server Test Results API
+  description: Get test result metrics for Network and Application Synthetics tests.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Web HTTP Server Test Results
+paths:
+  /test-results/{testId}/http-server:
+    get:
+      tags:
+      - Web HTTP Server Test Results
+      summary: Get HTTP server test results
+      description: 'Returns results for requests made over HTTP. Components include DNS, Connect, Wait, Receive, and Fetch.
+
+
+        When DNS server measurement data is available for a round, each result includes a `dnsServerMeasurement`
+
+        object describing the DNS response used to resolve the target and any additional DNS responses observed
+
+        during resolution.
+
+        '
+      operationId: getTestHttpServerResults
+      parameters:
+      - $ref: '#/components/parameters/TestIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/HttpServerExpand'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HttpTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    DnsServerMeasurement:
+      type: object
+      description: DNS resolution details collected while locating the HTTP test target. Present when the agent captured DNS server measurement data for the round. The order of `unusedDnsResponses` matches the order returned by the DNS resolver.
+      readOnly: true
+      properties:
+        usedDnsResponse:
+          $ref: '#/components/schemas/DnsServerResponse'
+        unusedDnsResponses:
+          type: array
+          description: Additional DNS responses received while resolving the target.
+          items:
+            $ref: '#/components/schemas/DnsServerResponse'
+          example:
+          - id: 41838
+            responseCode: servfail
+            dnsResolver: 8.8.4.4
+            question:
+            - name: www.google.com
+              type: aaaa
+              class: in
+              ttl: 0
+              data: ''
+        usedHostsFile:
+          type: boolean
+          description: Indicates whether the hosts file (for example, `/etc/hosts`) was used to resolve the target.
+          example: false
+          readOnly: true
+        resolvedIp:
+          type: string
+          description: IP address resolved for the target, from DNS or the hosts file.
+          example: 142.250.191.132
+          readOnly: true
+    SslCert:
+      type: object
+      properties:
+        daysUntilExpiry:
+          type: integer
+          description: Days until certificate expires, rounded down. 0 is shown if there are less than 24 hours remaining. Calculated when the test was executed.
+          example: 0
+        isFetchDateInValidCertDateRange:
+          type: boolean
+          description: True when certificate fetch date is within the valid certificate date range, false otherwise
+          example: true
+        hasValidSigningCert:
+          type: boolean
+          description: This field is implicitly true; it is output only when false. false indicates this certificate was missing a valid signing certificate in the chain.
+          example: false
+        issuerName:
+          type: string
+          description: Certificate issuer
+          example: DigiCert SHA2 Extended Validation Server CA
+        validBefore:
+          type: string
+          format: date-time
+          description: Certificate is not valid after this date
+          example: '2020-05-12T12:00:00Z'
+        validAfter:
+          type: string
+          format: date-time
+          description: Certificate is not valid before this date
+          example: '2018-03-27T00:00:00Z'
+        subjectAlternativeNames:
+          type: array
+          description: Alternative name(s) of the certificate subject, extracted from the Subject Alternative Name (SAN) X.509 certificate extension, for example example.com, www2.example.com
+          items:
+            type: string
+          example:
+          - www.thousandeyes.com
+          - thousandeyes.com
+        subjectName:
+          type: string
+          description: certificate’s subject name - a value of the common name (CN) RDN from the certificate’s Subject attribute, for example www.example.com
+          example: www.thousandeyes.com
+    DnsResourceRecordClass:
+      type: string
+      description: DNS resource record class (IANA).
+      enum:
+      - unknown
+      - in
+      example: in
+      readOnly: true
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    HttpTestResultHeaders:
+      type: object
+      description: Expandable object containing both request and response headers
+      properties:
+        requestHeaders:
+          type: string
+          description: 'Crlf-delimited list of request headers in header: value format'
+          example: 'GET / HTTP/1.1
+
+            Host: www.thousandeyes.com
+
+            User-Agent: curl/7.58.0-DEV
+
+            Accept: */*
+
+            Accept-Encoding: deflate, gzip
+
+            X-ThousandEyes-Agent: yes
+
+            '
+        responseHeaders:
+          type: string
+          description: 'crlf-delimited list of response headers in header: value format'
+          example: 'HTTP/1.1 200 OK
+
+            Content-Type: text/html;charset=UTF-8
+
+            Content-Length: 9993
+
+            Connection: keep-alive
+
+            Date: Mon, 04 May 2020 16:13:00 GMT
+
+            Server: Apache
+
+            Content-Language: en-US
+
+            Content-Encoding: gzip
+
+            X-Frame-Options: sameorigin
+
+            Cache-Control: max-age=600, must-revalidate
+
+            Strict-Transport-Security: max-age=31536000
+
+            X-Content-Type-Options: nosniff
+
+            X-XSS-Protection: 1; mode=block
+
+            Vary: Accept-Encoding
+
+            X-Cache: Hit from cloudfront
+
+            Via: 1.1 7ba3caf71ae7a52dd411d1a543e80cd8.cloudfront.net (CloudFront)
+
+            X-Amz-Cf-Pop: SFO5-C3
+
+            X-Amz-Cf-Id: w4h42tkoJD-rEpkRDZUvnQBmy26GVGe6pUsuRr1Dphf7oajYbjXaOA==
+
+            Age: 132
+
+            '
+    TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Link'
+    DnsServerResponse:
+      type: object
+      description: A DNS response received while resolving the HTTP test target.
+      readOnly: true
+      properties:
+        id:
+          type: integer
+          description: DNS message ID.
+          example: 41837
+          readOnly: true
+        qr:
+          $ref: '#/components/schemas/DnsQr'
+        opcode:
+          $ref: '#/components/schemas/DnsOpcode'
+        authoritativeAnswer:
+          type: boolean
+          description: DNS header AA flag.
+          example: false
+          readOnly: true
+        truncation:
+          type: boolean
+          description: DNS header TC flag.
+          example: false
+          readOnly: true
+        recursionDesired:
+          type: boolean
+          description: DNS header RD flag.
+          example: true
+          readOnly: true
+        recursionAvailable:
+          type: boolean
+          description: DNS header RA flag.
+          example: true
+          readOnly: true
+        zero:
+          type: boolean
+          description: DNS header Z flag. Reserved and expected to be false.
+          example: false
+          readOnly: true
+        authenticData:
+          type: boolean
+          description: DNS header AD flag.
+          example: false
+          readOnly: true
+        checkingDisabled:
+          type: boolean
+          description: DNS header CD flag.
+          example: false
+          readOnly: true
+        responseCode:
+          $ref: '#/components/schemas/DnsResponseCode'
+        question:
+          type: array
+          description: Records in the DNS question section.
+          items:
+            $ref: '#/components/schemas/DnsResourceRecord'
+        answer:
+          type: array
+          description: Records in the DNS answer section.
+          items:
+            $ref: '#/components/schemas/DnsResourceRecord'
+        dnsResolver:
+          type: string
+          description: DNS resolver that returned this response.
+          example: 8.8.8.8
+          readOnly: true
+        timing:
+          $ref: '#/components/schemas/DnsTiming'
+        protocol:
+          $ref: '#/components/schemas/DnsMeasurementProtocol'
+    TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    DnsResourceRecord:
+      type: object
+      description: A DNS resource record from the question or answer section.
+      readOnly: true
+      properties:
+        name:
+          type: string
+          description: Record name.
+          example: www.google.com
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/DnsResourceRecordType'
+        class:
+          $ref: '#/components/schemas/DnsResourceRecordClass'
+        ttl:
+          type: integer
+          description: Time to live in seconds.
+          example: 300
+          readOnly: true
+        data:
+          type: string
+          description: Record data (RDATA).
+          example: 142.250.191.132
+          readOnly: true
+    HttpTestResult:
+      allOf:
+      - $ref: '#/components/schemas/TestResult'
+      - $ref: '#/components/schemas/EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/TestResultAgent'
+          serverIp:
+            type: string
+            description: IP address of destination server
+            example: 193.2.1.88
+            readOnly: true
+          responseCode:
+            type: integer
+            description: HTTP response code
+            example: 200
+          numRedirects:
+            type: integer
+            description: Number of redirects
+            example: 0
+          redirectTime:
+            type: integer
+            description: Cumulative redirect timing in milliseconds
+            example: 10
+          dnsTime:
+            type: integer
+            description: Time required to resolve DNS in milliseconds
+            example: 0
+          dnsServerMeasurement:
+            allOf:
+            - $ref: '#/components/schemas/DnsServerMeasurement'
+            example:
+              usedDnsResponse:
+                id: 41837
+                qr: response
+                opcode: query
+                authoritativeAnswer: false
+                truncation: false
+                recursionDesired: true
+                recursionAvailable: true
+                zero: false
+                authenticData: false
+                checkingDisabled: false
+                responseCode: noerror
+                question:
+                - name: www.example.com
+                  type: a
+                  class: in
+                  ttl: 0
+                  data: ''
+                answer:
+                - name: www.example.com
+                  type: a
+                  class: in
+                  ttl: 300
+                  data: 203.0.113.10
+                dnsResolver: 8.8.8.8
+                timing:
+                  startTimeUs: '1769706600000000'
+                  totalTimeUs: 19304
+                protocol: udp
+              unusedDnsResponses:
+              - id: 41838
+                qr: response
+                opcode: query
+                authoritativeAnswer: false
+                truncation: false
+                recursionDesired: true
+                recursionAvailable: true
+                zero: false
+                authenticData: false
+                checkingDisabled: false
+                responseCode: nxdomain
+                question:
+                - name: www.example.com
+                  type: aaaa
+                  class: in
+                  ttl: 0
+                  data: ''
+                dnsResolver: 8.8.4.4
+                timing:
+                  startTimeUs: '1769706600020000'
+                  totalTimeUs: 15420
+                protocol: udp
+              usedHostsFile: false
+              resolvedIp: 203.0.113.10
+          sslTime:
+            type: integer
+            description: Time to negotiate SSL/TLS in milliseconds
+            example: 9
+          connectTime:
+            type: integer
+            description: Time required to establish a TCP connection to the server
+            example: 2
+          waitTime:
+            type: integer
+            description: Time elapsed between completion of request and first byte of response in milliseconds
+            example: 3
+          receiveTime:
+            type: integer
+            description: Elapsed time between first and last byte of response in milliseconds
+            example: 1
+          wireSize:
+            type: integer
+            description: Size of content in bytes
+            example: 9993
+          responseTime:
+            type: integer
+            description: Time to first byte in milliseconds
+            example: 14
+          throughput:
+            type: number
+            format: double
+            description: WireSize divided by receiveTime in byter per second
+            example: 123
+          totalTime:
+            type: integer
+            description: response time + receive time
+            example: 15
+          headers:
+            $ref: '#/components/schemas/HttpTestResultHeaders'
+          errorType:
+            type: string
+            description: Type of error encountered; corresponds to phase of connection
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/TestResultErrorDetails'
+          sslCipher:
+            type: string
+            description: Cipher suite
+          sslVersion:
+            type: string
+            description: TLS version
+            example: TLSv1.3
+          sslCertificates:
+            type: array
+            items:
+              $ref: '#/components/schemas/SslCert'
+          healthScore:
+            type: number
+            description: A normalized value (0.0-1.0) representing the web application connection health of the test target. Returns negative values as error codes. -1.0 indicates there was insufficient data to calculate the health score.
+            example: 0.98
+    DnsResourceRecordType:
+      type: string
+      description: DNS resource record type (IANA). Values match `DnsRecordType` on DNS Server test configuration where applicable.
+      enum:
+      - unknown
+      - a
+      - cname
+      - aaaa
+      example: a
+      readOnly: true
+    TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/TestResults'
+      readOnly: true
+    DnsMeasurementProtocol:
+      type: string
+      description: Actual wire transport used to perform the DNS lookup. `tcp` indicates a TCP retry (for example, after a truncated UDP response).
+      enum:
+      - unspecified
+      - udp
+      - tcp
+      - dot
+      - doh
+      example: udp
+      readOnly: true
+    SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        createdBy:
+          $ref: '#/components/schemas/TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/TestType'
+        _links:
+          $ref: '#/components/schemas/TestLinks'
+    TestResultAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    HttpTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpTestResult'
+        test:
+          $ref: '#/components/schemas/SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    DnsOpcode:
+      type: string
+      description: DNS header OPCODE field (RFC 1035).
+      enum:
+      - query
+      - iquery
+      - status
+      - unknown-3
+      - unknown-4
+      - unknown-5
+      - unknown-6
+      - unknown-7
+      - unknown-8
+      - unknown-9
+      - unknown-10
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      example: query
+      readOnly: true
+    Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    DnsTiming:
+      type: object
+      description: Timing metrics for a DNS lookup.
+      readOnly: true
+      properties:
+        startTimeUs:
+          type: string
+          description: Unix epoch timestamp in microseconds when the DNS query started.
+          example: '1769706600000000'
+          readOnly: true
+        totalTimeUs:
+          type: integer
+          description: Total DNS lookup time in microseconds.
+          example: 19304
+          readOnly: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    DnsResponseCode:
+      type: string
+      description: DNS response code (RCODE), including extended RCODE values (RFC 1035 and RFC 6891).
+      enum:
+      - noerror
+      - formerr
+      - servfail
+      - nxdomain
+      - notimp
+      - refused
+      - yxdomain
+      - yxrrset
+      - nxrrset
+      - notauth
+      - notzone
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      - badvers
+      - badkey
+      - badtime
+      - badmode
+      - badname
+      - badalg
+      - badtrunc
+      - badcookie
+      example: noerror
+      readOnly: true
+    EndTime:
+      type: integer
+      description: Epoch time (seconds) indicating the end time of the round
+      example: 1384309800
+      readOnly: true
+    DnsQr:
+      type: string
+      description: DNS header QR flag.
+      enum:
+      - query
+      - response
+      example: response
+      readOnly: true
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    TestResultAppLinks:
+      allOf:
+      - $ref: '#/components/schemas/AppLinks'
+      - example:
+          appLink:
+            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/StartTime'
+        endTime:
+          $ref: '#/components/schemas/EndTime'
+    TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    TestResult:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Data point date UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        roundId:
+          type: integer
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/TestResultAppLinks'
+    Expand:
+      type: string
+      enum:
+      - header
+      - certificate
+      example: header
+    StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
+  parameters:
+    TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    HttpServerExpand:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: This parameter lets you decide if you want to see more details about test results. By default, no extra information is shown unless you use the query parameter. For instance, if you want more info about the "header," add ?expand=header to the query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Expand'
+        example:
+        - certificate
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GeneralError:
+      description: An error occurred
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about Test Results
+  url: https://docs.thousandeyes.com/product-documentation/getting-started/getting-started-with-cloud-and-enterprise-agent-tests#interpreting-test-results

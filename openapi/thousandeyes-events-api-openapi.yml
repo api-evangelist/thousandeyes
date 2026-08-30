@@ -1,0 +1,1209 @@
+openapi: 3.2.0
+info:
+  title: Event Detection Events API
+  description: 'Event detection occurs when ThousandEyes identifies that error signals related to a component (proxy, network node, AS, server etc) have deviated from the baselines established by events.
+
+    * To determine this, ThousandEyes takes the test results from all accounts groups within an organization, and analyzes that data.
+
+    * Noisy test results (those that have too many errors in a short window) are removed until they stabilize, and the rest of the results are tagged with the components associated with that test result (for example, proxy, network, or server).
+
+    * Next, any increase in failures from the test results and each component helps in determining the problem domain and which component may be at fault.
+
+    * When this failure rate increases beyond a pre-defined threshold (set by the algorithm), an event is triggered and an email notification is sent to the user (if they''ve enabled email alerts).
+
+
+    With the Events API, you can perform the following tasks on the ThousandEyes platform:
+
+    * **Retrieve Events**: Obtain a list of events and detailed information for each event. For more information about events, see [Event Detection](https://docs.thousandeyes.com/product-documentation/event-detection).
+
+    '
+  version: 7.0.100
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Events
+paths:
+  /events:
+    get:
+      tags:
+      - Events
+      summary: List events
+      operationId: getEvents
+      description: 'Retrieves a list of events within the specified time window. If no events are active during the specified time range, an empty response is returned.  **Note**: You must provide either a time window using the `window` parameter or specify `startDate` and `endDate`.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationMax'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/OngoingEventsParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Events'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+  /events/{id}:
+    get:
+      tags:
+      - Events
+      summary: Retrieve event
+      operationId: getEvent
+      description: Returns detailed information about an event using its ID.
+      parameters:
+      - $ref: '#/components/parameters/EventId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        default:
+          $ref: '#/components/responses/GeneralError'
+components:
+  schemas:
+    Events:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/AccountGroupId'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        events:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        _links:
+          $ref: '#/components/schemas/PaginationNextAndSelfLinks'
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    TargetEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/TargetEventType'
+          grouping:
+            $ref: '#/components/schemas/TargetEventGrouping'
+    TargetNetworkEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/TargetNetworkEventType'
+          grouping:
+            $ref: '#/components/schemas/TargetNetworkEventGrouping'
+    AffectedTests:
+      allOf:
+      - $ref: '#/components/schemas/AffectedCount'
+      - type: object
+        properties:
+          tests:
+            uniqueItems: true
+            type: array
+            description: List of affected tests.
+            items:
+              $ref: '#/components/schemas/EventApiAffectedTest'
+    DnsEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/DnsEventType'
+          grouping:
+            $ref: '#/components/schemas/DnsEventGrouping'
+    EventDetailBase:
+      allOf:
+      - $ref: '#/components/schemas/SimpleEventDetail'
+      - type: object
+        properties:
+          aid:
+            $ref: '#/components/schemas/AccountGroupId'
+          summary:
+            type: string
+            description: A brief summary describing the cause of the event.
+            example: Significant number of issues detected with 66.29.146.15
+            readOnly: true
+          agentType:
+            $ref: '#/components/schemas/EventAgentType'
+          affectedTests:
+            $ref: '#/components/schemas/AffectedTests'
+          affectedTargets:
+            $ref: '#/components/schemas/AffectedTargets'
+          affectedAgents:
+            $ref: '#/components/schemas/AffectedAgents'
+          cause:
+            $ref: '#/components/schemas/Cause'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    SimpleEventDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: A unique ID for each event.
+          example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+          readOnly: true
+        typeName:
+          type: string
+          description: Event type name. Examples include, Local Agent Issue, Network Path Issue, Network Outage, DNS Issue, Server Issue, and Proxy Issue.
+          example: Network Issue
+          readOnly: true
+        state:
+          $ref: '#/components/schemas/EventState'
+        startDate:
+          $ref: '#/components/schemas/EventStartDate'
+        endDate:
+          $ref: '#/components/schemas/EventEndDate'
+        severity:
+          $ref: '#/components/schemas/EventAlertSeverity'
+    GatewayEventGrouping:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: Gateway IP address (for gateway events).
+          example: 192.168.1.1
+          readOnly: true
+        macAddress:
+          type: string
+          description: Gateway MAC address (for gateway events).
+          example: 08:c7:f5:ac:34:88
+          readOnly: true
+    VpnEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/VpnEventType'
+          grouping:
+            $ref: '#/components/schemas/VpnEventGrouping'
+    DnsNameEventGrouping:
+      type: object
+      properties:
+        domainNameSuffix:
+          type: string
+          description: Domain name suffix (for dns-name events).
+          example: webex.com
+          readOnly: true
+    EventAlertSeverity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - high
+      - medium
+      - low
+      - unknown
+      example: medium
+    ApplicationEventType:
+      type: string
+      description: Application event type.
+      example: application
+      pattern: ^application$
+    DomainEventGrouping:
+      type: object
+      properties:
+        fqdn:
+          type: string
+          description: Fully qualified domain name (for domain events).
+          example: teams.microsoft.com
+          readOnly: true
+    AgentBranchEventGrouping:
+      type: object
+      properties:
+        asn:
+          type: integer
+          description: AS number of the agent's network (for agent-branch events).
+          example: 1234
+          readOnly: true
+        asnCity:
+          type: string
+          description: City associated with the agent's AS (for agent-branch events).
+          example: San Francisco
+          readOnly: true
+    ProxyEventGrouping:
+      type: object
+      properties:
+        proxy:
+          type: string
+          description: Proxy name or IP (for proxy events).
+          example: my.proxy.com
+          readOnly: true
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    AgentEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/AgentEventType'
+          grouping:
+            $ref: '#/components/schemas/AgentEventGrouping'
+    Event:
+      allOf:
+      - $ref: '#/components/schemas/SimpleEventDetail'
+      - type: object
+        properties:
+          title:
+            type: string
+            description: Event title
+            example: Affecting destinations in google.com
+            readOnly: true
+          type:
+            $ref: '#/components/schemas/EventType'
+          agentType:
+            $ref: '#/components/schemas/EventAgentType'
+          affectedTests:
+            $ref: '#/components/schemas/AffectedCount'
+          affectedTargets:
+            $ref: '#/components/schemas/AffectedCount'
+          affectedAgents:
+            $ref: '#/components/schemas/AffectedCount'
+          _links:
+            $ref: '#/components/schemas/SelfLinks'
+    NameServerEventGrouping:
+      type: object
+      properties:
+        serverName:
+          type: string
+          description: Name server hostname (for name-server events).
+          example: ns1.example.com
+          readOnly: true
+    ProxyEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/ProxyEventType'
+          grouping:
+            $ref: '#/components/schemas/ProxyEventGrouping'
+    GatewayEventType:
+      type: string
+      description: Gateway event type.
+      example: gateway
+      pattern: ^gateway$
+    DnsNameEventType:
+      type: string
+      description: DNS name event type.
+      example: dns-name
+      pattern: ^dns-name$
+    AgentEventType:
+      type: string
+      description: Agent event type.
+      example: agent
+      pattern: ^agent$
+    DomainEventType:
+      type: string
+      description: Domain event type.
+      example: domain
+      pattern: ^domain$
+    AgentBranchEventType:
+      type: string
+      description: Agent branch event type.
+      example: agent-branch
+      pattern: ^agent-branch$
+    VpnEventGrouping:
+      type: object
+      properties:
+        vpnType:
+          type: string
+          description: VPN type (for vpn events).
+          example: CiscoAnyConnect
+          readOnly: true
+        vpnServerIpAddress:
+          type: string
+          description: VPN server IP address (for vpn events).
+          example: 10.0.0.1
+          readOnly: true
+    AffectedAgents:
+      allOf:
+      - $ref: '#/components/schemas/AffectedCount'
+      - type: object
+        properties:
+          agents:
+            uniqueItems: true
+            type: array
+            description: List of affected agents.
+            items:
+              $ref: '#/components/schemas/EventApiAffectedAgent'
+    EventApiAffectedTest:
+      type: object
+      properties:
+        testId:
+          type: string
+          description: The ID of the affected test.
+          example: '226770'
+          readOnly: true
+        testType:
+          $ref: '#/components/schemas/TestType'
+        name:
+          type: string
+          description: The test name as configured in the test settings.
+          example: Google test
+          readOnly: true
+        affectedTargetIds:
+          type: array
+          description: An array of unique target IDs contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '123'
+          - '1234'
+        affectedAgentIds:
+          type: array
+          description: An array of unique agent IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '2954'
+          - '2953'
+        _links:
+          $ref: '#/components/schemas/EventTestLinks'
+    DnsServerEventGrouping:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: DNS server IP address (for dns-server events).
+          example: 8.8.8.8
+          readOnly: true
+    TargetEventGrouping:
+      type: object
+      properties:
+        target:
+          type: string
+          description: Target name (for target events).
+          example: google.com
+          readOnly: true
+    TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    EventEndDate:
+      type:
+      - string
+      - 'null'
+      format: date-time
+      description: The end date and time (in UTC, ISO 8601 format) when the event was resolved (due to timeout). This value is null for "ongoing" (active) events and is populated once the event is resolved.
+      example: '2020-04-23T13:43:16Z'
+      readOnly: true
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    AgentLinks:
+      type: object
+      description: A links object containing the agent link.
+      readOnly: true
+      properties:
+        agent:
+          $ref: '#/components/schemas/Link'
+    ProxyEventType:
+      type: string
+      description: Proxy event type.
+      example: proxy
+      pattern: ^proxy$
+    DnsEventType:
+      type: string
+      description: DNS event type.
+      example: dns
+      pattern: ^dns$
+    TargetNetworkEventGrouping:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: Prefix value for target-network events.
+          example: 0.0.0.0/0
+          readOnly: true
+    ApplicationEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/ApplicationEventType'
+          grouping:
+            $ref: '#/components/schemas/ApplicationEventGrouping'
+    AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    EventAffectedAgentType:
+      type: string
+      description: Type of the affected agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      - enterprise-lite
+      - enterprise-pulse
+      - enterprise-csc
+      example: enterprise
+      readOnly: true
+    WirelessEventType:
+      type: string
+      description: Wireless event type.
+      example: wireless
+      pattern: ^wireless$
+    AffectedTargets:
+      allOf:
+      - $ref: '#/components/schemas/AffectedCount'
+      - type: object
+        properties:
+          targets:
+            uniqueItems: true
+            type: array
+            description: List of affected targets.
+            items:
+              $ref: '#/components/schemas/ApiAffectedTarget'
+    TargetEventType:
+      type: string
+      description: Target event type.
+      example: target
+      pattern: ^target$
+    NetworkEventType:
+      type: string
+      description: Network event type.
+      example: network
+      pattern: ^network$
+    PaginationNextAndSelfLinks:
+      type: object
+      description: A links object containing pagination-related links, including only next and self.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    DnsNameEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/DnsNameEventType'
+          grouping:
+            $ref: '#/components/schemas/DnsNameEventGrouping'
+    GatewayEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/GatewayEventType'
+          grouping:
+            $ref: '#/components/schemas/GatewayEventGrouping'
+    EventApiAffectedAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: The ID of the virtual agent.
+          example: '2954'
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/EventAffectedAgentType'
+        name:
+          type: string
+          description: The name of the agent as defined in settings.
+          example: São Paulo, Brazil - agent
+          readOnly: true
+        location:
+          type: string
+          description: The name of the agent's location.
+          example: São Paulo, Brazil
+          readOnly: true
+        countryCode:
+          type: string
+          description: The country code of the agent's location .
+          example: BR
+          readOnly: true
+        affectedTargetIds:
+          type: array
+          description: An array of unique target IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '123'
+          - '1234'
+        affectedTestIds:
+          type: array
+          description: An array of unique agent IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '2954'
+          - '2953'
+        _links:
+          $ref: '#/components/schemas/AgentLinks'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    EventAgentType:
+      type: string
+      description: Specifies the agent type associated with the event. Allowed values are `cloud-enterprise-agent` and `endpoint-agent`.
+      enum:
+      - cloud-enterprise-agent
+      - endpoint-agent
+      example: cloud-enterprise-agent
+      readOnly: true
+    DomainEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/DomainEventType'
+          grouping:
+            $ref: '#/components/schemas/DomainEventGrouping'
+    AgentLocalEventGrouping:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Numeric Agent ID (for agent-local events).
+          example: '123456'
+          readOnly: true
+    NameServerEventType:
+      type: string
+      description: Name server event type.
+      example: name-server
+      pattern: ^name-server$
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    DnsServerEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/DnsServerEventType'
+          grouping:
+            $ref: '#/components/schemas/DnsServerEventGrouping'
+    NetworkEventGrouping:
+      type: object
+      properties:
+        sourceAsn:
+          type: integer
+          description: AS number of the source network (for network-pop and network events).
+          example: 1234
+          readOnly: true
+        destAsn:
+          type: integer
+          description: AS number of the destination network (for network events).
+          example: 4321
+          readOnly: true
+        sourceCountryCode:
+          type: string
+          description: The source network's country code (for network-pop and network events).
+          example: US
+          readOnly: true
+    EventStartDate:
+      type: string
+      format: date-time
+      description: The start date and time (in UTC, ISO 8601 format) when the event was first detected.
+      example: '2020-04-23T13:43:16Z'
+      readOnly: true
+    ApplicationEventGrouping:
+      type: object
+      properties:
+        fqdn:
+          type: string
+          description: Fully qualified domain name of the application (for application events).
+          example: teams.microsoft.com
+          readOnly: true
+    NetworkPopEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/NetworkPopEventType'
+          grouping:
+            $ref: '#/components/schemas/NetworkEventGrouping'
+    EventState:
+      type: string
+      description: Indicates the state of the event, whether it is ongoing (active) or has been resolved.
+      enum:
+      - active
+      - resolved
+      example: resolved
+      readOnly: true
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    AgentLocalEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/AgentLocalEventType'
+          grouping:
+            $ref: '#/components/schemas/AgentLocalEventGrouping'
+    DnsServerEventType:
+      type: string
+      description: DNS server event type.
+      example: dns-server
+      pattern: ^dns-server$
+    EventTestLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        test:
+          $ref: '#/components/schemas/Link'
+    EventDetail:
+      oneOf:
+      - $ref: '#/components/schemas/TargetEventDetail'
+      - $ref: '#/components/schemas/TargetNetworkEventDetail'
+      - $ref: '#/components/schemas/ProxyEventDetail'
+      - $ref: '#/components/schemas/DnsEventDetail'
+      - $ref: '#/components/schemas/AgentLocalEventDetail'
+      - $ref: '#/components/schemas/NetworkEventDetail'
+      - $ref: '#/components/schemas/NetworkPopEventDetail'
+      - $ref: '#/components/schemas/AgentEventDetail'
+      - $ref: '#/components/schemas/ApplicationEventDetail'
+      - $ref: '#/components/schemas/WirelessEventDetail'
+      - $ref: '#/components/schemas/GatewayEventDetail'
+      - $ref: '#/components/schemas/DnsServerEventDetail'
+      - $ref: '#/components/schemas/DnsNameEventDetail'
+      - $ref: '#/components/schemas/VpnEventDetail'
+      - $ref: '#/components/schemas/AgentBranchEventDetail'
+      - $ref: '#/components/schemas/DomainEventDetail'
+      - $ref: '#/components/schemas/NameServerEventDetail'
+      discriminator:
+        propertyName: type
+        mapping:
+          target: '#/components/schemas/TargetEventDetail'
+          target-network: '#/components/schemas/TargetNetworkEventDetail'
+          proxy: '#/components/schemas/ProxyEventDetail'
+          dns: '#/components/schemas/DnsEventDetail'
+          agent-local: '#/components/schemas/AgentLocalEventDetail'
+          network: '#/components/schemas/NetworkEventDetail'
+          network-pop: '#/components/schemas/NetworkPopEventDetail'
+          agent: '#/components/schemas/AgentEventDetail'
+          application: '#/components/schemas/ApplicationEventDetail'
+          wireless: '#/components/schemas/WirelessEventDetail'
+          gateway: '#/components/schemas/GatewayEventDetail'
+          dns-server: '#/components/schemas/DnsServerEventDetail'
+          dns-name: '#/components/schemas/DnsNameEventDetail'
+          vpn: '#/components/schemas/VpnEventDetail'
+          agent-branch: '#/components/schemas/AgentBranchEventDetail'
+          domain: '#/components/schemas/DomainEventDetail'
+          name-server: '#/components/schemas/NameServerEventDetail'
+    WirelessEventGrouping:
+      type: object
+      properties:
+        ssid:
+          type: string
+          description: Wireless network SSID (for wireless events).
+          example: CorpWiFi
+          readOnly: true
+        bssid:
+          type: string
+          description: Wireless network BSSID (for wireless events).
+          example: 08:c7:f5:ac:34:88
+          readOnly: true
+    AffectedCount:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: The total number affected.
+          example: 5
+          readOnly: true
+        inAccountGroup:
+          type: integer
+          description: Indicates if in the affected account group.
+          example: 2
+          readOnly: true
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    NetworkPopEventType:
+      type: string
+      description: Network pop event type.
+      example: network-pop
+      pattern: ^network-pop$
+    Cause:
+      uniqueItems: true
+      type: array
+      description: The cause of the error.
+      items:
+        type: string
+      example:
+      - Network Loss and/or High RTT
+    NetworkEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/NetworkEventType'
+          grouping:
+            $ref: '#/components/schemas/NetworkEventGrouping'
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EventType:
+      type: string
+      description: Specifies the event type in a machine-readable and backwards-compatible format, such as `agent` or `target`.
+      enum:
+      - agent-local
+      - network-pop
+      - network
+      - dns
+      - target
+      - target-network
+      - proxy
+      - agent
+      - application
+      - wireless
+      - gateway
+      - dns-server
+      - dns-name
+      - vpn
+      - agent-branch
+      - domain
+      - name-server
+      example: target
+      readOnly: true
+    VpnEventType:
+      type: string
+      description: VPN event type.
+      example: vpn
+      pattern: ^vpn$
+    NameServerEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/NameServerEventType'
+          grouping:
+            $ref: '#/components/schemas/NameServerEventGrouping'
+    AgentBranchEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/AgentBranchEventType'
+          grouping:
+            $ref: '#/components/schemas/AgentBranchEventGrouping'
+    AgentEventGrouping:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Agent identifier (for agent events). Represents the machine ID for Endpoint Agents or the virtual agent ID for Cloud and Enterprise Agents'.
+          example: '3379'
+          readOnly: true
+    ApiAffectedTarget:
+      type: object
+      properties:
+        serverId:
+          type: string
+          description: The ID of the target server.
+          example: '123'
+          readOnly: true
+        name:
+          type: string
+          description: The target name as configured in the test settings.
+          example: google.com
+          readOnly: true
+        ip:
+          type: string
+          description: The target server IP resolved by the agent. Depending on the failure type, the IP may not be present. For example, if the agent failed to resolve it or if the requests were routed through the proxy.
+          example: 216.239.32.10
+          readOnly: true
+        affectedTestIds:
+          type: array
+          description: An array of unique test IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '123'
+          - '1234'
+        affectedAgentIds:
+          type: array
+          description: An array of unique agent IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '2954'
+          - '2953'
+    DnsEventGrouping:
+      type: object
+      properties:
+        rootDomain:
+          type: string
+          description: Root domain name (for dns events).
+          example: thousandeyes.com
+          readOnly: true
+    TargetNetworkEventType:
+      type: string
+      description: Target network event type.
+      example: target-network
+      pattern: ^target-network$
+    WirelessEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/WirelessEventType'
+          grouping:
+            $ref: '#/components/schemas/WirelessEventGrouping'
+    AgentLocalEventType:
+      type: string
+      description: Agent local event type.
+      example: agent-local
+      pattern: ^agent-local$
+  responses:
+    GeneralError:
+      description: An error occurred
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    OngoingEventsParameter:
+      name: ongoing
+      in: query
+      description: When set to `true`, only ongoing (active) events whose start date is within the specified time window are included in the response. When set to `false`, ongoing events are excluded from the response. If not set, both ongoing and concluded events appear in the response.
+      schema:
+        type: boolean
+        example: true
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    EventId:
+      name: id
+      in: path
+      description: Unique event ID.
+      example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+      required: true
+      schema:
+        type: string
+        format: uuid
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

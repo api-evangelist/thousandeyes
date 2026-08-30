@@ -1,0 +1,580 @@
+openapi: 3.2.0
+info:
+  title: Alerts API
+  description: '**Note:** API operations for the creation or retrieval of API, Page Load, or Web-Transaction alert rules are not available for ThousandEyes for Government instance.
+
+
+    You can manage the following alert functionalities on the ThousandEyes platform using the Alerts API:
+
+
+    * **Alerts**: Retrieve alert details. Alerts are assigned to tests through alert rules.
+
+
+    * **Alert Rules**: Conditions that you configure in order to highlight or be notified of events of interest in your ThousandEyes tests. When an alert rule’s conditions are met, the associated alert is triggered and the alert becomes active. It remains active until the alert is cleared. Alert rules are reusable across multiple tests..
+
+
+    * **Alert Suppression Windows**: Suppress alerts for tests during periods such as planned maintenance. Windows can be one-time events or recurring events to handle periodic occurrences such as monthly downtime for maintenance.
+
+
+    For more information about the alerts, see [Alerts](https://docs.thousandeyes.com/product-documentation/alerts).
+
+    '
+  version: 7.0.100
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Alerts
+paths:
+  /alerts:
+    get:
+      tags:
+      - Alerts
+      summary: List alerts
+      operationId: getAlerts
+      description: 'Returns a list of alerts. Only active (triggered) alerts are returned by default.
+
+        When no time filter is specified, only triggered alerts from the last 90 days are returned. To retrieve triggered alerts from a specific date range, specify `state=trigger` with `startDate` and `endDate`. Only use `window` for a lookback interval ending at the current request time.
+
+        To retrieve cleared alerts, specify `clear` in the optional `state` parameter. Note that the `state` parameter only accepts a single value, so to get both active and cleared alerts within a time range, two separate requests are needed.
+
+        Time filters (`window`, `startDate`, `endDate`) are applied differently depending on state: - For `state=trigger`: filters by when the alert started. - For `state=clear`: filters by when the alert cleared. - When state is not specified: returns cleared alerts within the time range plus any currently active alerts that started before the end of the range.'
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationMax'
+      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Alerts'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /alerts/{alertId}:
+    get:
+      tags:
+      - Alerts
+      summary: Retrieve alert details
+      operationId: getAlert
+      description: Returns detailed information about an alert using its ID.
+      parameters:
+      - $ref: '#/components/parameters/AlertId'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AlertDetail'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    StartAlertMetrics:
+      type: object
+      description: String representation of the metric at the time that the source began alerting.   Note that the alert `start` and `startDate` for a particular source do not need to be the same,  as sources may change alerting status throughout an alert's lifecycle.
+      properties:
+        metrics:
+          type: string
+    Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    AlertMetricDetail:
+      type: object
+      properties:
+        end:
+          $ref: '#/components/schemas/EndAlertMetrics'
+        id:
+          type: string
+          description: Unique metric detail id.
+          example: '3379'
+        name:
+          type: string
+          description: Geolocation of the alert.
+          example: Bucharest, Romania
+        start:
+          $ref: '#/components/schemas/StartAlertMetrics'
+        state:
+          $ref: '#/components/schemas/State'
+        type:
+          description: Type of the alert metric.
+          type: string
+          example: cea_agent
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    BaseAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: A unique ID for each individual alert occurrence.
+          example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+          readOnly: true
+        alertType:
+          $ref: '#/components/schemas/AlertType'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        violationCount:
+          type: integer
+          description: Number of sources that meet the alert criteria.
+          example: 2
+        duration:
+          type: integer
+          format: int64
+          description: Duration in seconds the alert was active
+          example: 60
+        suppressed:
+          type: boolean
+          description: Indicates whether the alert is currently suppressed by a real-time ASW.
+          example: false
+        meta:
+          $ref: '#/components/schemas/AlertMeta'
+        _links:
+          $ref: '#/components/schemas/AlertLinks'
+    Asn:
+      type: object
+      description: Autonomous System Number (ASN) information for network outage alerts.
+      properties:
+        id:
+          type: string
+          description: ASN identifier.
+          example: '13445'
+        name:
+          type: string
+          description: Autonomous system name.
+          example: Cisco Webex LLC
+        type:
+          type: string
+          description: Resource type.
+          example: asn
+    AlertEmbedded:
+      type: object
+      description: Container for embedded resources in alert responses (HATEOAS).
+      properties:
+        asn:
+          $ref: '#/components/schemas/Asn'
+    AlertDetail:
+      allOf:
+      - $ref: '#/components/schemas/BaseAlert'
+      - $ref: '#/components/schemas/LegacyAlertDetail'
+      - type: object
+        properties:
+          alertState:
+            $ref: '#/components/schemas/State'
+          alertSeverity:
+            $ref: '#/components/schemas/Severity'
+          details:
+            type: array
+            items:
+              $ref: '#/components/schemas/AlertMetricDetail'
+          _embedded:
+            $ref: '#/components/schemas/AlertEmbedded'
+    EndAlertMetrics:
+      type: object
+      description: String representation of the metric or metrics being considered in the alert rule at the point that the alert was cleared.  If the alert is not yet cleared, this field reflects the last round of data gathered from the source.
+      properties:
+        metrics:
+          type: string
+    LegacyAlertDetail:
+      type: object
+      deprecated: true
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+        severity:
+          $ref: '#/components/schemas/Severity'
+    AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    AlertLinks:
+      type: object
+      description: An object containing the alert links.
+      readOnly: true
+      properties:
+        test:
+          $ref: '#/components/schemas/Link'
+        rule:
+          $ref: '#/components/schemas/Link'
+        appLink:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    AlertMeta:
+      type: object
+      properties:
+        version:
+          type: integer
+          format: int32
+          description: Indicates the number of times this alert has re-entered the 'trigger' state after being suppressed. It starts at 1 and increments whenever a real-time ASW ends and the alert conditions remain active.
+          example: 1
+    RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Alerts:
+      type: object
+      properties:
+        alerts:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        _links:
+          $ref: '#/components/schemas/PaginationLinks'
+    State:
+      type: string
+      description: 'Current state of the alert. Possible values: clear or trigger.'
+      enum:
+      - clear
+      - trigger
+      example: trigger
+      readOnly: true
+    PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Link'
+        next:
+          $ref: '#/components/schemas/Link'
+        self:
+          $ref: '#/components/schemas/Link'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Alert:
+      allOf:
+      - $ref: '#/components/schemas/BaseAlert'
+      - $ref: '#/components/schemas/LegacyAlert'
+      - type: object
+        properties:
+          alertRuleId:
+            $ref: '#/components/schemas/RuleId'
+          alertState:
+            $ref: '#/components/schemas/State'
+          alertSeverity:
+            $ref: '#/components/schemas/Severity'
+    LegacyAlert:
+      type: object
+      deprecated: true
+      properties:
+        alertId:
+          deprecated: true
+          type: string
+          format: uuid
+          description: A unique ID for each individual alert occurrence.
+          example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+          readOnly: true
+        dateStart:
+          deprecated: true
+          type: string
+          description: The start date and time for querying alerts.
+          example: '2020-04-23 13:43:16'
+          readOnly: true
+        dateEnd:
+          deprecated: true
+          type: string
+          description: The end date and time for querying alerts.
+          example: '2020-04-23 13:43:16'
+          readOnly: true
+        ruleId:
+          deprecated: true
+          type: integer
+          format: int64
+          description: Unique ID of the rule.
+          example: 127094
+          readOnly: true
+        state:
+          deprecated: true
+          type: string
+          description: 'Current state of the alert. Possible values: clear or trigger.'
+          enum:
+          - ACTIVE
+          - CLEARED
+          example: ACTIVE
+          readOnly: true
+        severity:
+          deprecated: true
+          type: string
+          description: The severity of the alert.
+          enum:
+          - INFO
+          - MAJOR
+          - MINOR
+          - CRITICAL
+          - UNKNOWN
+          example: MAJOR
+        permalink:
+          deprecated: true
+          type: string
+          description: Hyperlink to alerts list, with row expanded
+          example: https://app.thousandeyes.com/alerts/list?__a=75&alertId=2783&agentId=12
+        apiLinks:
+          deprecated: true
+          type: array
+          description: List of hyperlinks to other areas of the API
+          items:
+            type: object
+            additionalProperties: true
+  parameters:
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    State:
+      name: state
+      in: query
+      style: form
+      required: false
+      explode: false
+      description: Optional parameter to match a specific alert state. If not specified, it defaults to `trigger`.
+      schema:
+        allOf:
+        - $ref: '#/components/schemas/State'
+        - example: trigger
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    AlertId:
+      name: alertId
+      in: path
+      description: Unique alert ID.
+      example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token

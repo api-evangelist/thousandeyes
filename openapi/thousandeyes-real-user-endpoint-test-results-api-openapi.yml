@@ -1,0 +1,1529 @@
+openapi: 3.2.0
+info:
+  title: Real User Endpoint Test Results API
+  version: 7.0.100
+  description: Retrieve results for scheduled and dynamic tests on endpoint agents.
+  x-provenance:
+    method: harvested
+    authored_by: Cisco ThousandEyes
+    harvested_by: API Evangelist
+    harvested_on: '2026-08-19'
+    first_party: true
+    provider_published: true
+    source_host: pubhub.devnetcloud.com
+    note: 27 OpenAPI 3.0 documents (26 per-area plus a unified 326-operation document) served anonymously from Cisco's DevNet CDN. api.thousandeyes.com itself 401s every path, so the contract is public while the API host is gated.
+  x-evidence:
+  - type: source
+    url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
+  - type: source
+    url: https://developer.cisco.com/docs/thousandeyes/
+servers:
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
+security:
+- BearerAuth: []
+tags:
+- name: Real User Endpoint Test Results
+paths:
+  /endpoint/test-results/real-user-tests/filter:
+    post:
+      tags:
+      - Real User Endpoint Test Results
+      summary: List endpoint real user tests
+      description: "Returns a list of all endpoint real user tests.\nAll results are provided, oldest to newest (according to a specified page index and size) unless an explicit start and end is provided with `startDate`, `endDate` or `window` optional parameters.\n\n## Request body filters\nThis endpoint supports complex filtering using the request body.\nIt is important these filters remain unaltered when making use of pagination, otherwise the results will not be coherent with the original request.\n\n### Multiple filter fields\nWhen multiple filter fields are provided, a logical `AND` is applied between the filters.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"platform\": [ \"mac\" ],\n    \"domain\": [ \"thousandeyes.com\" ]\n  }}'\n```\n\n### Filter field with multiple values\nWhen a filter field contains multiple values, a logical `OR` is applied between the filter values.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n    \"searchFilters\": {\n      \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n    }\n  }'\n```\n\n### Combination of request parameters and body filters\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/filter?window=1w'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n    \"searchFilters\": {\n      \"platform\": [ \"mac\" ],\n      \"domain\": [ \"thousandeyes.com\" ],\n      \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n    }\n  }'\n```\n\nReturns a `results` array of endpoint real user tests.\nEither the latest results, or based on the time range and body filters specified.\n"
+      operationId: filterRealUserTestsResults
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RealUserEndpointTestResultsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RealUserEndpointTestResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/real-user-tests/{id}:
+    get:
+      tags:
+      - Real User Endpoint Test Results
+      summary: Retrieve endpoint real user test
+      description: 'Provides details for an endpoint real user test. Returns a results array containing detailed information about endpoint real user tests."
+
+        '
+      operationId: getRealUserTestResults
+      parameters:
+      - $ref: '#/components/parameters/IdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RealUserEndpointTestDetailResults'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/real-user-tests/pages/filter:
+    post:
+      tags:
+      - Real User Endpoint Test Results
+      summary: List endpoint real user tests visited pages
+      description: "Returns a list of all endpoint real user tests visited pages. \nSessions from the last round are provided unless an explicit start and end is provided with `startDate`, `endDate` or `window` optional parameters.\n\n## Request body filters\nThis endpoint supports complex filtering using the request body.\nIt is important these filters remain unaltered when making use of pagination, otherwise the results will not be coherent with the original request.\n\n### Multiple filter fields\nWhen multiple filter fields are provided, a logical `AND` is applied between the filters.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/pages/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"platform\": [ \"mac\" ],\n    \"domain\": [ \"thousandeyes.com\" ]\n  }}'\n```\n\n### Filter field with multiple values\nWhen a filter field contains multiple values, a logical `OR` is applied between the filter values.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/pages/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n  }}'\n```\n\n### Combination of request parameters and body filters\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/pages/filter?window=1w'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"platform\": [ \"mac\" ],\n    \"domain\": [ \"thousandeyes.com\" ],\n    \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n  }}'\n```\n\nReturns a `results` array of user loaded pages in an endpoint real user test. \nPages shown are from the latest round, or based on the time range specified.\n"
+      operationId: filterRealUserTestsVisitedPagesResults
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RealUserEndpointTestResultRequestFilter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RealUserEndpointTestPageResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/real-user-tests/{id}/pages/{pageId}:
+    get:
+      tags:
+      - Real User Endpoint Test Results
+      summary: Retrieve endpoint real user test page
+      description: "Returns details for endpoint real user test web page request. \nProvides complete waterfall information with all object requests.\n\nSends back detailed endpoint real user test web page request.\n\nReturned object has a single field: `har` which is an HAR object according to the HTTP Archive 1.2 specifications. \n[You can read more about the specification](http://www.softwareishard.com/blog/har-12-spec/).\n\nIn addition to standard fields, the object har includes a custom property `systemMetrics` which contain metrics about CPU and physical memory usage. \nCheck `SystemMetrics` on schemas tab for more information.\n"
+      operationId: getRealUserTestPageResults
+      parameters:
+      - $ref: '#/components/parameters/IdPath'
+      - $ref: '#/components/parameters/PageIdPath'
+      - $ref: '#/components/parameters/AccountGroupId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RealUserEndpointTestPageDetailResult'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+  /endpoint/test-results/real-user-tests/networks/filter:
+    post:
+      tags:
+      - Real User Endpoint Test Results
+      summary: List endpoint real user tests networks
+      description: "Returns a list of all endpoint real user tests. \nSessions from the last round are provided unless an explicit start and end is provided with `startDate`, `endDate` or `window` optional parameters.\n\n## Request body filters\nThis endpoint supports complex filtering using the request body.\nIt is important these filters remain unaltered when making use of pagination, otherwise the results will not be coherent with the original request.\n\n### Multiple filter fields\nWhen multiple filter fields are provided, a logical `AND` is applied between the filters.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/networks/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n   \"searchFilters\": {\n    \"platform\": [ \"mac\" ],\n    \"domain\": [ \"thousandeyes.com\" ]\n  }}'\n```\n\n### Filter field with multiple values\nWhen a filter field contains multiple values, a logical `OR` is applied between the filter values.\n ```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/networks/filter'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n  }}'\n```\n\n### Combination of request parameters and body filters\n```\ncurl --location --request POST 'https://api.thousandeyes.com/v7/endpoint/test-results/real-user-tests/networks/filter?window=1w'\n--header 'Authorization: Bearer $token'\n--header 'Content-Type: application/json'\n--data-raw '{\n  \"searchFilters\": {\n    \"platform\": [ \"mac\" ],\n    \"domain\": [ \"thousandeyes.com\" ],\n    \"networkId\": [ \"660b34109d12\", \"660b34109d15\" ]\n  }}'\n```\n\nReturns a `results` array of endpoint real user tests. \nNetwork sessions shown are from the latest round, or based on the time range specified.\n"
+      operationId: filterRealUserTestsNetworkResults
+      parameters:
+      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Window'
+      - $ref: '#/components/parameters/StartDateParameter'
+      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/PaginationCursor'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RealUserEndpointTestResultsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/RealUserEndpointTestNetworkResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+components:
+  schemas:
+    SystemMetrics:
+      type: object
+      properties:
+        startTimeMs:
+          type: integer
+          format: int64
+          description: The start time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508857327
+          readOnly: true
+        endTimeMs:
+          type: integer
+          format: int64
+          description: The end time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508867333
+          readOnly: true
+        cpuUtilization:
+          $ref: '#/components/schemas/CpuUtilization'
+        physicalMemoryUsedBytes:
+          $ref: '#/components/schemas/PhysicalMemoryUsedBytes'
+        physicalMemoryTotalBytes:
+          type: integer
+          format: int64
+          description: Total physical memory of the system.
+          example: 1024
+          readOnly: true
+    ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/ValidationErrorItem'
+    InterfaceHardwareType:
+      type: string
+      example: wireless
+      enum:
+      - unknown
+      - wireless
+      - ethernet
+      - modem
+      - virtual
+      - loopback
+      - other
+    NetworkPing:
+      type: object
+      properties:
+        avgRtt:
+          type: integer
+          description: Ping average response time.
+          example: 7
+          readOnly: true
+        maxRtt:
+          type: integer
+          description: Ping maximum response time.
+          example: 66
+          readOnly: true
+        loss:
+          type: number
+          format: double
+          description: Network loss.
+          example: 1
+          readOnly: true
+        meanDevRtt:
+          type: integer
+          description: Ping mean standard deviation response time.
+          example: 11
+          readOnly: true
+        minRtt:
+          type: integer
+          description: Ping minimum response time.
+          example: 1
+          readOnly: true
+        pktsReceived:
+          type: integer
+          description: Ping packets received.
+          example: 10
+          readOnly: true
+        pktsSent:
+          type: integer
+          description: Ping packets sent.
+          example: 10
+          readOnly: true
+        error:
+          type: string
+          description: Only present when there is an error.
+          example: An operation timed out.
+          readOnly: true
+        infoFlags:
+          $ref: '#/components/schemas/ErrorFlags'
+    RealUserEndpointTestDetailResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RealUserEndpointTestDetail'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    EndpointBrowser:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Browser name.
+          example: Google Chrome
+          readOnly: true
+        version:
+          type: string
+          description: Browser version.
+          example: 116.0.0.0
+          readOnly: true
+    RealUserEndpointTestDetail:
+      allOf:
+      - $ref: '#/components/schemas/RealUserEndpointTestBase'
+      - type: object
+        properties:
+          browser:
+            $ref: '#/components/schemas/EndpointBrowser'
+          coordinates:
+            $ref: '#/components/schemas/RealUserEndpointTestCoordinates'
+          pages:
+            type: array
+            description: Web site base domain visited during the session.
+            items:
+              $ref: '#/components/schemas/RealUserEndpointTestPage'
+          network:
+            $ref: '#/components/schemas/RealUserEndpointTestNetwork'
+    RealUserEndpointTestPageResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/RealUserEndpointTestPageResult'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationNextLink'
+    RealUserEndpointTestNetworkResult:
+      type: object
+      properties:
+        agentId:
+          $ref: '#/components/schemas/EndpointAgentId'
+        date:
+          type: string
+          format: date-time
+          description: UTC date when endpoint real user test took place (ISO date-time format).
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        id:
+          type: string
+          description: Endpoint real user test ID. Each endpoint real user test occurrence has a unique ID.
+          example: 07625:1490529480:aVDViw0i
+          readOnly: true
+        roundId:
+          $ref: '#/components/schemas/RoundId'
+        destination:
+          $ref: '#/components/schemas/NetworkMetrics'
+        vpn:
+          $ref: '#/components/schemas/NetworkMetrics'
+        proxy:
+          $ref: '#/components/schemas/NetworkMetrics'
+        systemMetrics:
+          $ref: '#/components/schemas/SystemMetrics'
+    RealUserEndpointTestPage:
+      type: object
+      properties:
+        pageId:
+          $ref: '#/components/schemas/EndpointPageId'
+        pageTitle:
+          type: string
+          description: Web page title.
+          example: Network Performance Resources | ThousandEyes
+          readOnly: true
+        pageUrl:
+          type: string
+          description: Web page url
+          example: https://app.thousandeyes.com/settings/integrations
+          readOnly: true
+        loadDate:
+          type: string
+          format: date-time
+          description: UTC date when page load started (ISO date-time format).
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        responseCode:
+          type: integer
+          description: HTTP response code.
+          example: 200
+          readOnly: true
+        pageTimings:
+          $ref: '#/components/schemas/RealUserEndpointTestPageTimings'
+    ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    NetworkProfile:
+      allOf:
+      - $ref: '#/components/schemas/NetworkInterface'
+      - type: object
+        description: Contains basic network connectivity parameters.
+        properties:
+          error:
+            type: string
+            description: Only present when there is an error
+            example: An operation timed out.
+            readOnly: true
+          gateway:
+            type: string
+            description: Network gateway address.
+            example: 10.0.0.1
+            readOnly: true
+          wirelessProfile:
+            $ref: '#/components/schemas/NetworkWirelessProfile'
+          proxyProfile:
+            $ref: '#/components/schemas/NetworkProxyProfile'
+          ethernetProfile:
+            $ref: '#/components/schemas/EndpointTestEthernetProfile'
+          previousInterface:
+            $ref: '#/components/schemas/NetworkInterface'
+    RoundId:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round.
+      example: 1384309800
+      readOnly: true
+    PhysicalMemoryUsedBytes:
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+          description: The minimum sampled memory usage value recorded during the monitored period.
+          example: 1.2
+          readOnly: true
+        max:
+          type: number
+          format: double
+          description: The maximum sampled memory usage value recorded during the monitored period.
+          example: 2.5
+          readOnly: true
+        mean:
+          type: number
+          format: double
+          description: The mean (average) value of memory usage sampled over the monitored period.
+          example: 1.77
+          readOnly: true
+        median:
+          type: number
+          format: double
+          description: The median value of memory usage sampled over the monitored period.
+          example: 1.85
+          readOnly: true
+        stdDev:
+          type: number
+          format: double
+          description: The standard deviation of memory usage sampled during the monitored period.
+          example: 0.25
+          readOnly: true
+        count:
+          type: integer
+          description: The total number of samples collected during the monitored period.
+          example: 155
+          readOnly: true
+    TargetNetworkPing:
+      allOf:
+      - description: Contains number parameters representing results of a ping test performed against the target website.
+      - $ref: '#/components/schemas/NetworkPing'
+    TracerouteHop:
+      allOf:
+      - $ref: '#/components/schemas/Hop'
+      - type: object
+        properties:
+          asn:
+            type: integer
+            description: Unique number assigned to an organization (also referred to as service provider).
+            example: 34779
+            readOnly: true
+          delay:
+            type: integer
+            description: Hop delay
+            example: 5
+            readOnly: true
+          mpls:
+            type: array
+            description: Hop Multiprotocol Label Switching.
+            items:
+              type: string
+            example:
+            - L=301472,E=0,S=1,T=1
+            readOnly: true
+          name:
+            type: string
+            description: The hop name.
+            example: 89-210-88-65.access.t-2.net
+            readOnly: true
+    NetworkProxy:
+      type: object
+      properties:
+        bypass:
+          type: string
+          description: Proxy bypass expression.
+          example: '*.local;169.254/16'
+          readOnly: true
+        proxy:
+          type: string
+          description: Proxy mode.
+          example: <direct>
+          readOnly: true
+    RealUserEndpointTestBase:
+      allOf:
+      - type: object
+        properties:
+          agentId:
+            $ref: '#/components/schemas/EndpointAgentId'
+          committed:
+            type: string
+            format: date-time
+            description: UTC date when endpoint real user test was committed to the controller (ISO date-time format).
+            example: '2022-07-17T22:00:54Z'
+            readOnly: true
+          date:
+            type: string
+            format: date-time
+            description: UTC date when endpoint real user test took place (ISO date-time format).
+            example: '2022-07-17T22:00:54Z'
+            readOnly: true
+          experienceScore:
+            type: number
+            format: double
+            description: Score rating a user’s experience when loading a particular page, from 0 (the worst) to 1 (the best). [More details](https://docs.thousandeyes.com/product-documentation/end-user-monitoring/viewing-data/endpoint-agent-views-reference#user-experience-score).
+            minimum: 0
+            maximum: 1
+            example: 0.5
+            readOnly: true
+          numberOfPages:
+            type: integer
+            description: Number of web pages visited on target website.
+            example: 2
+            readOnly: true
+          organizationName:
+            type: string
+            description: Name of the AS organization `sourceAddress` belongs to.
+            example: T-2 Access Network
+            readOnly: true
+          port:
+            type: integer
+            description: Port used to visit target website.
+            example: 443
+            readOnly: true
+          protocol:
+            type: string
+            description: Protocol used to visit target website.
+            example: https
+            readOnly: true
+          roundId:
+            $ref: '#/components/schemas/RoundId'
+          sourceAddress:
+            type: string
+            description: Public IP address of the endpoint agent during the session.
+            example: 84.255.241.1
+            readOnly: true
+          id:
+            type: string
+            description: Endpoint real user test ID. Each endpoint real user test occurrence has a unique ID.
+            example: 07625:1490529480:aVDViw0i
+            readOnly: true
+          visitedSite:
+            type: string
+            description: Domain used to visit target website.
+            example: www.thousandeyes.com
+            readOnly: true
+    RealUserEndpointTest:
+      allOf:
+      - $ref: '#/components/schemas/RealUserEndpointTestBase'
+      - type: object
+        properties:
+          pageId:
+            $ref: '#/components/schemas/EndpointPageId'
+    Platform:
+      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+      type: string
+      enum:
+      - windows
+      - roomos
+      - phoneos
+      - elux
+      - cisco-wireless
+      - cisco-wireless-cloud
+      - linux
+      - mac
+      - android
+      - unknown
+      example: mac
+    RealUserEndpointTestResultsRequest:
+      type: object
+      properties:
+        searchFilters:
+          $ref: '#/components/schemas/RealUserEndpointTestResultRequestFilter'
+    EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    RealUserEndpointTestNetworkResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/RealUserEndpointTestNetworkResult'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationNextLink'
+    RealUserEndpointTestPageDetailResult:
+      type: object
+      properties:
+        har:
+          $ref: '#/components/schemas/RealUserEndpointTestPageHar'
+        _links:
+          $ref: '#/components/schemas/SelfLinks'
+    EndpointResultRequestFilter:
+      type: object
+      properties:
+        location:
+          type: array
+          description: Location of the endpoint agent.
+          items:
+            type: string
+          example:
+          - San Francisco Bay Area
+          - Germany
+        connection:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterfaceHardwareType'
+        platform:
+          type: array
+          items:
+            $ref: '#/components/schemas/Platform'
+        gateway:
+          type: array
+          description: Endpoint agent default gateway IP address.
+          items:
+            type: string
+          example:
+          - 78.153.54.204
+          - 78.153.54.206
+        proxyTarget:
+          type: array
+          description: Endpoint agent proxy IP address.
+          items:
+            type: string
+          example:
+          - 78.153.54.204
+          - 78.153.54.206
+        vpnTarget:
+          type: array
+          description: Endpoint agent VPN endpoint IP address.
+          items:
+            type: string
+          example:
+          - 78.153.54.204
+          - 78.153.54.206
+        agentId:
+          type: array
+          description: Endpoint agent ID.
+          items:
+            type: string
+            format: uuid
+          example:
+          - 3fde6422-f119-40e1-ae32-d08a1243c038
+          - 236e6f18-9637-4a2f-b15f-7aa6a29c9fce
+        networkId:
+          type: array
+          description: Network ID.
+          items:
+            type: string
+          example:
+          - 660b34109d12
+          - 660b34109d15
+        ssid:
+          type: array
+          description: WiFi SSID.
+          items:
+            type: string
+          example:
+          - wifi-name
+          - other-room-wifi
+        bssid:
+          type: array
+          description: WiFi BSSID.
+          items:
+            type: string
+          example:
+          - 8c:68:c8:a5:0a:8c
+          - 0c:51:01:e4:3e:d0
+        nicModel:
+          $ref: '#/components/schemas/NicModelFilter'
+        nicDriverVersion:
+          $ref: '#/components/schemas/NicDriverVersionFilter'
+    RealUserEndpointTestCoordinates:
+      type: object
+      description: Contains approximate GPS location of the endpoint agent, based on endpoint agent’s public IP address.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: Numeric representations of GPS coordinates.
+          example: 46.0552778
+          readOnly: true
+        location:
+          type: string
+          description: Represents named geographical location.
+          example: Slovenia
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: Numeric representations of GPS coordinates.
+          example: 14.5144444
+          readOnly: true
+    EndpointTestEthernetProfile:
+      type: object
+      properties:
+        linkSpeed:
+          type: integer
+          description: Ethernet profile link speed
+          example: 860
+          readOnly: true
+    RealUserEndpointTestNetwork:
+      type: object
+      description: Contains details about network profile and conditions during session.
+      properties:
+        networkProfile:
+          $ref: '#/components/schemas/NetworkProfile'
+        systemMetrics:
+          $ref: '#/components/schemas/SystemMetrics'
+        gatewayPing:
+          $ref: '#/components/schemas/GatewayNetworkPing'
+        ping:
+          $ref: '#/components/schemas/TargetNetworkPing'
+        traceroute:
+          $ref: '#/components/schemas/TargetTraceroute'
+        connectRtt:
+          type: number
+          format: double
+          description: Represents the number of milliseconds required to establish TCP connectivity with the target.
+          example: 77.777
+          readOnly: true
+        isIcmpBlocked:
+          $ref: '#/components/schemas/IcmpBlocked'
+        errors:
+          type: array
+          description: Array of string representing possible network errors.
+          items:
+            type: string
+          example:
+          - 'ping: Request timed out before getting response'
+          readOnly: true
+        vpnPing:
+          $ref: '#/components/schemas/VpnNetworkPing'
+        vpnTraceroute:
+          $ref: '#/components/schemas/VpnTraceroute'
+    ErrorFlags:
+      type: array
+      items:
+        type: string
+      example:
+      - TE_INFO_ICMP_BLOCKED_BY_FIREWALL
+      readOnly: true
+    NetworkInterface:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: Network IP address.
+          example: 10.0.0.13
+          readOnly: true
+        subnetMask:
+          type: string
+          description: Network subnet mask - only for IPv4.
+          example: 255.255.255.0
+          readOnly: true
+        publicIpAddress:
+          type: string
+          description: Network public IP address.
+          example: 84.255.241.1
+          readOnly: true
+        localPrefix:
+          type: string
+          description: Network local prefix.
+          example: 10.0.0.0
+          readOnly: true
+        publicIpRange:
+          type: string
+          description: Network public IP range.
+          example: 84.255.241.0-84.255.241.255
+          readOnly: true
+        dnsServers:
+          type: array
+          description: Network DNS servers.
+          example:
+          - 8.8.8.8
+          - 8.8.8.4
+          readOnly: true
+          items:
+            type: string
+        hardwareType:
+          $ref: '#/components/schemas/InterfaceHardwareType'
+        interfaceName:
+          type: string
+          description: Network interface name.
+          example: en0
+          readOnly: true
+    NetworkProxyProfile:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Proxy profile method.
+          example: System
+          readOnly: true
+        proxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkProxy'
+    UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    EndpointPageId:
+      type: string
+      description: Web page ID. The page ID is unique only within an endpoint real user test.
+      example: C31gBrYJ
+      readOnly: true
+    TargetTraceroute:
+      allOf:
+      - description: Contains parameters representing results of a trace route test performed against the target.
+      - $ref: '#/components/schemas/Traceroute'
+    IcmpBlocked:
+      type: boolean
+      description: Set to `true` if network target is blocking ICMP echo (ping) queries.
+      example: true
+      readOnly: true
+    Traceroute:
+      type: object
+      properties:
+        destination:
+          type: string
+          description: The target IP address.
+          example: 13.32.22.232
+          readOnly: true
+        error:
+          type: string
+          description: Only present when there is an error
+          example: An operation timed out.
+          readOnly: true
+        infoFlags:
+          $ref: '#/components/schemas/ErrorFlags'
+        internalErrors:
+          $ref: '#/components/schemas/ErrorFlags'
+        hops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TracerouteHop'
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    VpnNetworkPing:
+      allOf:
+      - description: Contains number parameters representing results of a ping test performed against the target website on the VPN.
+      - $ref: '#/components/schemas/NetworkPing'
+    Trigger:
+      type: string
+      enum:
+      - auto
+      - user
+      example: auto
+    RealUserEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/RealUserEndpointTest'
+        startDate:
+          $ref: '#/components/schemas/StartDate'
+        endDate:
+          $ref: '#/components/schemas/EndDate'
+        _links:
+          $ref: '#/components/schemas/PaginationNextLink'
+    CpuUtilization:
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+          description: The minimum sampled usage value recorded during the monitored period.
+          example: 0.22
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        max:
+          type: number
+          format: double
+          description: The maximum sampled usage value recorded during the monitored period.
+          example: 0.75
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        mean:
+          type: number
+          format: double
+          description: The mean (average) sampled usage value recorded during the monitored period.
+          example: 0.55
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        median:
+          type: number
+          format: double
+          description: The median sampled usage value recorded during the monitored period.
+          example: 0.61
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        stdDev:
+          type: number
+          format: double
+          description: The standard deviation of sampled usage values recorded during the monitored period.
+          example: 0.01
+          minimum: 0
+          maximum: 1
+          readOnly: true
+        count:
+          type: integer
+          description: The total number of samples collected during the monitored period.
+          example: 150
+          readOnly: true
+    NicDriverVersionFilter:
+      description: Filters results to NIC driver versions that exactly match one of the provided values. Matching is case-sensitive.
+      type: array
+      items:
+        type: string
+        example: 22.250.0.9
+    RealUserEndpointTestPageTimings:
+      type: object
+      properties:
+        onContentLoad:
+          type: integer
+          description: DOM load time in milliseconds.
+          example: 1483
+          readOnly: true
+        onLoad:
+          type: integer
+          description: Page load time in milliseconds.
+          example: 4569
+          readOnly: true
+    RealUserEndpointTestPageResult:
+      allOf:
+      - $ref: '#/components/schemas/RealUserEndpointTestPage'
+      - type: object
+        properties:
+          agentId:
+            $ref: '#/components/schemas/EndpointAgentId'
+          id:
+            type: string
+            description: Endpoint real user test ID. Each endpoint real user test occurrence has a unique ID.
+            example: 07625:1490529480:aVDViw0i
+            readOnly: true
+          roundId:
+            $ref: '#/components/schemas/RoundId'
+          responseTime:
+            type: integer
+            description: HTTP server response in milliseconds.
+            example: 240
+            readOnly: true
+          systemMetrics:
+            $ref: '#/components/schemas/SystemMetrics'
+    Hop:
+      type: object
+      properties:
+        hop:
+          type: integer
+          description: The hop index.
+          example: 1
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the hop.
+          example: 196.40.106.237
+          readOnly: true
+        prefix:
+          type: string
+          description: Prefix of IP address shown in CIDR.
+          example: 196.40.96.0/20
+          readOnly: true
+    VpnTraceroute:
+      allOf:
+      - description: Contains parameters representing results of a trace route test performed against the target on the VPN.
+      - $ref: '#/components/schemas/Traceroute'
+    GatewayNetworkPing:
+      allOf:
+      - description: Contains numeric parameters representing results of a ping test performed against the endpoint agent default gateway.
+      - $ref: '#/components/schemas/NetworkPing'
+    PaginationNextLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Link'
+    SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Link'
+    NetworkWirelessProfile:
+      type: object
+      properties:
+        ssid:
+          type: string
+          description: Wireless network SSID.
+          example: Internet for the masses
+          readOnly: true
+        bssid:
+          type: string
+          description: Wireless network BSSID.
+          example: 4c:ba:ba:f4:fa:fa
+          readOnly: true
+        channel:
+          type: integer
+          description: Wireless network channel.
+          example: 1
+          readOnly: true
+        phyMode:
+          type: string
+          description: Wireless network PHY mode.
+          example: 802.11n
+          readOnly: true
+        rssi:
+          type: integer
+          description: Wireless network RSSI.
+          example: -38
+          readOnly: true
+        noise:
+          type: integer
+          description: Wireless network noise.
+          example: -95
+          readOnly: true
+        snr:
+          type: integer
+          description: Wireless network signal-to-noise ratio (SNR), in dB.
+          example: 57
+          readOnly: true
+        quality:
+          type: integer
+          description: Wireless network quality.
+          example: 100
+          readOnly: true
+        txRate:
+          type: integer
+          description: Wireless network transmitted rate.
+          example: 130
+          readOnly: true
+        vendor:
+          type: string
+          description: Wireless network device vendor.
+          example: Cisco
+          readOnly: true
+    RealUserEndpointTestResultRequestFilter:
+      allOf:
+      - $ref: '#/components/schemas/EndpointResultRequestFilter'
+      - type: object
+        properties:
+          destinationIp:
+            type: array
+            description: Web site destination IP address.
+            items:
+              type: string
+            example:
+            - 84.255.241.1
+            - 193.2.1.88
+          domain:
+            type: array
+            description: Web site base domain visited during the session.
+            items:
+              type: string
+            example:
+            - thousandeyes.com
+          trigger:
+            type: array
+            description: Real user test trigger.
+            items:
+              $ref: '#/components/schemas/Trigger'
+            example:
+            - user
+          visitedSite:
+            type: array
+            description: Web site domain visited during the session.
+            items:
+              type: string
+            example:
+            - app.thousandeyes.com
+    RealUserEndpointTestPageHar:
+      type: object
+      description: A HAR object according to the [HTTP Archive 1.2 specifications](http://www.softwareishard.com/blog/har-12-spec/), with an additional `systemMetrics` property.
+      example:
+        log:
+          browser:
+            name: Google Chrome
+            version: 57.0.2987.98
+          creator:
+            name: ThousandEyes Endpoint Agent
+            version: 0.47.0
+          entries:
+          - pageref: page_1
+            request:
+              headers:
+              - name: Upgrade-Insecure-Requests
+                value: '1'
+              - name: User-Agent
+                value: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36
+              - name: Accept
+                value: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+              - name: Referer
+                value: https://www.thousandeyes.com/
+              - name: Accept-Encoding
+                value: gzip, deflate, sdch, br
+              - name: Accept-Language
+                value: en-US,en;q=0.6
+              - name: Cookie
+                value: (removed)
+              method: GET
+              queryString:
+              - name: locale
+                value: en-US
+              url: https://www.thousandeyes.com/resources
+            response:
+              bodySize: 17776
+              content:
+                mimeType: text/html;charset=ISO-8859-1
+                size: 17776
+              headers:
+              - name: Content-Type
+                value: text/html;charset=ISO-8859-1
+              - name: Content-Length
+                value: '17776'
+              - name: Connection
+                value: keep-alive
+              - name: Date
+                value: Sun, 26 Mar 2017 11:58:54 GMT
+              - name: Server
+                value: Apache
+              - name: Cache-Control
+                value: max-age=600, must-revalidate
+              - name: Content-Language
+                value: en-US
+              - name: Content-Encoding
+                value: gzip
+              - name: X-Frame-Options
+                value: sameorigin
+              - name: Strict-Transport-Security
+                value: max-age=31536000
+              - name: Vary
+                value: Accept-Encoding
+              - name: X-Cache
+                value: Miss from cloudfront
+              - name: Via
+                value: 1.1 5dbe09af3a2c87121e31ffa67f174f66.cloudfront.net (CloudFront)
+              - name: X-Amz-Cf-Id
+                value: YkvlkBNKgHt5aMu9vcS22Z8kHn1MUr-8adupwhDk3j9vF-TpSyIxZA==
+              headersSize: 527
+              redirectURL: ''
+              status: 200
+              statusText: OK
+            serverIPAddress: 13.32.22.80
+            startedDateTime: '2017-03-22T11:58:54.123+02:00'
+            time: 177
+            timings:
+              blocked: -1
+              connect: -1
+              dns: -1
+              receive: 27
+              send: -1
+              ssl: -1
+              wait: 150
+          - pageref: page_1
+            request:
+              headers:
+              - name: User-Agent
+                value: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36
+              - name: Accept
+                value: '*/*'
+              - name: Referer
+                value: https://www.thousandeyes.com/resources
+              - name: Accept-Encoding
+                value: gzip, deflate, sdch, br
+              - name: Accept-Language
+                value: en-US,en;q=0.6
+              method: GET
+              queryString: []
+              url: https://use.typekit.net/cjy5myw.js
+            response:
+              bodySize: 0
+              content:
+                mimeType: text/javascript;charset=utf-8
+                size: 7814
+              headers:
+              - name: status
+                value: '200'
+              - name: access-control-allow-origin
+                value: '*'
+              - name: cache-control
+                value: public, max-age=600, stale-while-revalidate=604800
+              - name: content-encoding
+                value: gzip
+              - name: content-type
+                value: text/javascript;charset=utf-8
+              - name: server
+                value: nginx
+              - name: status
+                value: 200 OK
+              - name: timing-allow-origin
+                value: '*'
+              - name: vary
+                value: Accept-Encoding
+              - name: content-length
+                value: '7814'
+              - name: date
+                value: Sun, 26 Mar 2017 11:58:43 GMT
+              headersSize: 334
+              redirectURL: ''
+              status: 200
+              statusText: OK
+            serverIPAddress: 104.103.103.234
+            startedDateTime: '2017-03-22T11:58:54.123+02:00'
+            time: 72
+            timings:
+              blocked: -1
+              connect: -1
+              dns: -1
+              receive: 10
+              send: -1
+              ssl: -1
+              wait: 62
+          pages:
+          - id: page_1
+            pageTimings:
+              onContentLoad: 874
+              onLoad: 3492
+            responseCode: 200
+            startedDateTime: '2017-03-22T11:58:54.123+02:00'
+            title: Network Performance Resources | ThousandEyes
+          version: '1.2'
+          systemMetrics:
+            startTimeMs: 1581508857327
+            endTimeMs: 1581508867333
+            cpuUtilization:
+              min: 0.30859375
+              max: 0.5625
+              mean: 0.38931831001805056
+              median: 0.353515625
+              stdDev: 0.08389194281742307
+              count: 10
+            physicalMemoryUsedBytes:
+              min: 12805128192
+              max: 12825530368
+              mean: 12819145821.09091
+              median: 12818219008
+              stdDev: 5741124.05691331
+              count: 11
+            physicalMemoryTotalBytes: 17069891584
+    NetworkMetrics:
+      type: object
+      properties:
+        jitter:
+          type: integer
+          description: Network jitter.
+          example: 46
+          readOnly: true
+        latency:
+          type: integer
+          description: Network latency.
+          example: 150
+          readOnly: true
+        loss:
+          type: number
+          format: double
+          description: Network loss.
+          example: 0.1
+          readOnly: true
+        target:
+          type: string
+          description: Network target IP address.
+          example: 54.208.6.220
+          readOnly: true
+    NicModelFilter:
+      description: Filters results to NIC models that exactly match one of the provided values. Matching is case-sensitive.
+      type: array
+      items:
+        type: string
+        example: Intel(R) Wi-Fi 6 AX200 160MHz
+  parameters:
+    StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    IdPath:
+      name: id
+      description: The real user test id.
+      required: true
+      in: path
+      schema:
+        type: string
+        example: 07625:1490529480:h3qJQTpl
+    EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    PageIdPath:
+      name: pageId
+      description: Web page ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+    Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    '502':
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '429':
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    '500':
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    '400':
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    '403':
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
