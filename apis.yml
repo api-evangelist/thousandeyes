@@ -395,7 +395,8 @@ apis:
   humanURL: >-
     https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
   baseURL: https://api.thousandeyes.com/v7
-  tags:
+  tags: []
+  tags_raw:
   - Agent to Server Endpoint Instant Scheduled Tests
   properties:
   - type: OpenAPI
@@ -3188,6 +3189,8 @@ apis:
     https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
   baseURL: https://api.thousandeyes.com/v7
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -5729,6 +5732,8 @@ apis:
     https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
   baseURL: https://api.thousandeyes.com/v7
   tags:
+  - user-events
+  tags_raw:
   - User Events
   properties:
   - type: OpenAPI
@@ -5795,6 +5800,8 @@ apis:
     https://developer.cisco.com/docs/thousandeyes/administration-administrative-api-overview/
   baseURL: https://api.thousandeyes.com/v7
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
