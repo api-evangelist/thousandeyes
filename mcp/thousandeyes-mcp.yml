@@ -12,6 +12,11 @@ deployment:
     names api.thousandeyes.com as the authorization server and mcp:manage as the scope. A local-stdio
     option exists only as the generic mcp-remote@latest bridge that the docs show for AWS Kiro; ThousandEyes
     publishes no stdio package of its own, so the mode is remote.'
+  probe_prior: (never probed)
+  probe: gated
+  probe_why: RFC 9728 challenge on the MCP path only
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
 server:
   name: ThousandEyes MCP Server
   transport: http
