@@ -1,0 +1,590 @@
+slug: thousandeyes
+provider: ThousandEyes
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Telecommunications
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 55
+edges:
+- tag: Network Test Results
+  spec_file: thousandeyes-network-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.85
+  evidence: '"Get test result metrics for Network and Application Synthetics tests"; GET /test-results/{testId}/network
+    getTestNetworkResults'
+  reason: Retrieving synthetic network/path measurement telemetry is observability management (logs, metrics,
+    traces, synthetic monitoring) for a running service, not a business-domain capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Page Load Tests
+  spec_file: thousandeyes-page-load-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.85
+  evidence: '"List Page Load tests" / "Create Page Load test"; "list, create, edit, and delete Network
+    and Application Synthetics tests"'
+  reason: CRUD over synthetic page-load monitoring tests is synthetic monitoring configuration, i.e. observability
+    management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: SIP Server Instant Tests
+  spec_file: thousandeyes-sip-server-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.85
+  evidence: '"Create SIP server instant test"; schemas SipServerProperties, TestNumPathTraces'
+  reason: Creation and running of synthetic SIP service probes is synthetic monitoring of service availability/performance.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: SIP Server Tests
+  spec_file: thousandeyes-sip-server-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.85
+  evidence: '"List SIP Server tests" / "Create SIP Server test"; "list, create, edit, and delete Network
+    and Application Synthetics tests"'
+  reason: Lifecycle management of scheduled synthetic SIP monitoring tests — observability/synthetic monitoring
+    configuration.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Agent To Server Endpoint Dynamic Tests
+  spec_file: thousandeyes-agent-to-server-endpoint-dynamic-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: '"Manage endpoint agent dynamic and scheduled tests using the Endpoint Tests API" — createAgentToServerEndpointDynamicTest'
+  reason: Creating scheduled synthetic tests from endpoint agents to servers is synthetic monitoring,
+    part of Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Agent to Agent Instant Tests
+  spec_file: thousandeyes-agent-to-agent-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: POST /tests/agent-to-agent/instant  createAgentToAgentInstantTest — "lets you create and run
+    new instant tests"
+  reason: On-demand network synthetic test execution between agents; observability/synthetic monitoring
+    rather than software QA testing.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Agent to Server Endpoint Instant Scheduled Tests
+  spec_file: thousandeyes-agent-to-server-endpoint-instant-scheduled-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: POST /endpoint/tests/scheduled-tests/agent-to-server/instant  "Run agent to server instant
+    scheduled test"
+  reason: Execution of endpoint synthetic tests against servers; synthetic monitoring of running services.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Agent to Server Endpoint Scheduled Tests
+  spec_file: thousandeyes-agent-to-server-endpoint-scheduled-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: GET /endpoint/tests/scheduled-tests/agent-to-server  "List agent to server endpoint scheduled
+    tests"
+  reason: CRUD over scheduled endpoint-to-server monitoring tests = synthetic monitoring within observability.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Agent to Server Instant Tests
+  spec_file: thousandeyes-agent-to-server-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: POST /tests/agent-to-server/instant  createAgentToServerInstantTest  "Create agent-to-server
+    instant test"
+  reason: Ad-hoc network path/server reachability measurement; synthetic monitoring capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Permissions
+  spec_file: thousandeyes-permissions-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.8
+  evidence: '"List assignable permissions"; "`/permissions`: Retrieve all assignable permissions. Used
+    in the context of modifying roles"'
+  reason: Permission catalogue underpinning role-based access control for platform users — identity and
+    access management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Real User Endpoint Test Results
+  spec_file: thousandeyes-real-user-endpoint-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: '"Retrieve results for scheduled and dynamic tests on endpoint agents"; schemas SystemMetrics,
+    NetworkPing, TracerouteHop'
+  reason: Retrieval of real-user endpoint monitoring telemetry (metrics, network measurements) is observability
+    management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Roles
+  spec_file: thousandeyes-roles-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.8
+  evidence: '`/roles`: Create, retrieve and update roles for the current user. * `/permissions`: Retrieve
+    all assignable permissions'
+  reason: Role and permission administration for platform users is identity and access management (RBAC),
+    a Cross-Industry IT security capability, not a telecom business capability.
+- tag: Run Endpoint Instant Scheduled Tests
+  spec_file: thousandeyes-run-endpoint-instant-scheduled-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.8
+  evidence: '"Run endpoint instant scheduled test"; "create and execute a new endpoint instant scheduled
+    test within ThousandEyes"'
+  reason: On-demand execution of a synthetic monitoring test from endpoint agents — synthetic monitoring
+    within observability management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Voice SIP Server Test Results
+  spec_file: thousandeyes-voice-sip-server-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.78
+  evidence: '"Get test result metrics for Network and Application Synthetics tests." — GET /test-results/{testId}/sip-server  "Get
+    SIP server test results"'
+  reason: Retrieval of synthetic test measurement results for a SIP/voice service is production monitoring
+    telemetry; the Observability sub-capability explicitly covers metrics and synthetic monitoring. Not
+    a voice/telecom business capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Web FTP Server Test Results
+  spec_file: thousandeyes-web-ftp-server-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.78
+  evidence: GET /test-results/{testId}/ftp-server "Get FTP server test results"; "Get test result metrics
+    for Network and Application Synthetics tests."
+  reason: Synthetic monitoring result metrics for an FTP endpoint — observability telemetry retrieval.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Endpoint Real User Tests
+  spec_file: thousandeyes-endpoint-real-user-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: '"Manage endpoint agent dynamic and scheduled tests using the Endpoint Tests API"; "List endpoint
+    real user tests"; schema EndpointMonitoringSettings'
+  reason: Real user / endpoint monitoring test definitions are synthetic and real-user monitoring of running
+    services, which is Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Endpoint Scheduled Tests
+  spec_file: thousandeyes-endpoint-scheduled-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: '"List endpoint scheduled tests"; schemas ScheduledTestResults, EndpointTest, TestHasPathTraceInSession'
+  reason: Scheduled endpoint tests are recurring synthetic monitoring probes producing test results; matches
+    'synthetic monitoring that make the running service understandable in production'.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: FTP Server Instant Tests
+  spec_file: thousandeyes-ftp-server-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: '"Create FTP server instant test"; "The Instant Tests API operations lets you create and run
+    new instant tests"'
+  reason: On-demand synthetic test execution against an FTP target to measure availability/response —
+    synthetic monitoring under Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Network BGP Test Results
+  spec_file: thousandeyes-network-bgp-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: GET /test-results/{testId}/bgp  "Get BGP test results"; "Get test result metrics for Network
+    and Application Synthetics tests."
+  reason: Retrieval of BGP routing measurement metrics from synthetic tests — network telemetry consumption,
+    i.e. Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Network Dynamic Endpoint Test Results
+  spec_file: thousandeyes-network-dynamic-endpoint-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: GET /endpoint/test-results/dynamic-tests/{testId}/path-vis  "Retrieve path visualization network
+    dynamic test results"
+  reason: Path-visualisation and network measurement results from endpoint monitoring agents; this is
+    production network telemetry retrieval, mapping to Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Network Endpoint Scheduled Test Results
+  spec_file: thousandeyes-network-endpoint-scheduled-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: POST /endpoint/test-results/scheduled-tests/{testId}/network/filter  "Retrieve network scheduled
+    test results"; "Retrieve results for scheduled and dynamic tests on endpoint agents."
+  reason: Scheduled network-probe results and path visualisation from endpoint agents — continuous synthetic
+    monitoring telemetry, i.e. Observability Management, not software quality testing.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Users
+  spec_file: thousandeyes-users-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: 'POST /users createUser; ''/roles`: Create, retrieve and update roles for the current user.
+    * `/permissions`: Retrieve all assignable permissions'''
+  reason: CRUD over users, roles and permissions within an organisation is user account and access administration,
+    i.e. Identity & Access Management. It is an admin surface of a devtool, so the cross-industry IAM
+    capability is the honest mapping rather than any telecom-specific subscriber capability.
+- tag: Voice RTP Server Test Results
+  spec_file: thousandeyes-voice-rtp-server-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: '"Retrieve RTP server test metrics"; "Get test result metrics for Network and Application
+    Synthetics tests"'
+  reason: Retrieves monitoring metrics from synthetic voice tests, i.e. consumption of observability telemetry.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: API Test Results
+  spec_file: thousandeyes-api-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: '"Get test result metrics for Network and Application Synthetics tests."; "Get API test results
+    by agent and round"'
+  reason: Retrieval of synthetic monitoring metrics for network/application tests — observability telemetry
+    of running services.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: DNSSEC Instant Tests
+  spec_file: thousandeyes-dnssec-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: POST /tests/dnssec/instant  createDnsSecInstantTest  Create DNSSEC instant test
+  reason: On-demand DNSSEC synthetic probe creation on a monitoring platform; synthetic monitoring under
+    Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: DNSSEC Test Results
+  spec_file: thousandeyes-dnssec-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: GET /test-results/{testId}/dnssec  getTestDnsSecResults — 'Get test result metrics for Network
+    and Application Synthetics tests.'
+  reason: Synthetic test result metrics retrieval is observability telemetry consumption.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: DNSSEC Tests
+  spec_file: thousandeyes-dnssec-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: GET /tests/dnssec  getDnsSecTests  List DNSSEC tests; 'list, create, edit, and delete Network
+    and Application Synthetics tests'
+  reason: Lifecycle management of synthetic monitoring test definitions maps to Observability Management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: FTP Server Tests
+  spec_file: thousandeyes-ftp-server-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.72
+  evidence: '"This API allows you to list, create, edit, and delete Network and Application Synthetics
+    tests." — POST /tests/ftp-server createFtpServerTest'
+  reason: Configuration of synthetic monitoring tests (FTP server reachability/response) run by monitoring
+    agents. This is IT operations monitoring tooling, not a telecom operator's OSS; nearest honest fit
+    is IT Operations Management (monitoring).
+- tag: HTTP Server Endpoint Scheduled Tests
+  spec_file: thousandeyes-http-server-endpoint-scheduled-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.72
+  evidence: '"Manage endpoint agent dynamic and scheduled tests using the Endpoint Tests API." — createHttpServerEndpointScheduledTest'
+  reason: Lifecycle management of scheduled synthetic HTTP monitoring tests on endpoint agents — IT operations
+    monitoring configuration.
+- tag: HTTP Server Tests
+  spec_file: thousandeyes-http-server-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.72
+  evidence: '"list, create, edit, and delete Network and Application Synthetics tests" — GET /tests/http-server
+    getHttpServerTests'
+  reason: Management of recurring synthetic HTTP monitoring tests across the agent fleet — IT operations
+    monitoring.
+- tag: Local Network Endpoint Test Results
+  spec_file: thousandeyes-local-network-endpoint-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: GET /endpoint/test-results/local-networks "List local networks"; schemas SystemMetrics, CpuUtilization,
+    NetworkPing, LocalNetworkTopologyResults
+  reason: Returns endpoint device and local-network telemetry (system metrics, ping, topology probes)
+    collected by monitoring agents — observability data for the running environment.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Streaming
+  spec_file: thousandeyes-streaming-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: '"allows you to export ThousandEyes telemetry data in OTel format" ... operations "List data
+    streams", "Create data stream", schemas ExporterConfigSplunkHec'
+  reason: The tag manages outbound telemetry export streams (OpenTelemetry to Splunk/Grafana/Honeycomb),
+    i.e. plumbing of logs/metrics/traces for observability. Mapped to Observability Management; some ambiguity
+    vs generic IT operations monitoring, hence moderate confidence.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Voice Instant Tests
+  spec_file: thousandeyes-voice-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: '"Create voice instant test"; "The Instant Tests API operations lets you create and run new
+    instant tests"; schemas VoiceProperties, RtpStream-like test artefacts'
+  reason: Creates on-demand synthetic voice (RTP/SIP) monitoring tests — synthetic monitoring within observability
+    management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Web Transaction Instant Tests
+  spec_file: thousandeyes-web-transaction-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: '"The Instant Tests API operations lets you create and run new instant tests." — POST /tests/web-transactions/instant
+    "Create web transactions instant test"'
+  reason: On-demand synthetic transaction probes run by monitoring agents against live endpoints; this
+    is synthetic monitoring execution rather than pre-release software QA.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: API Instant Tests
+  spec_file: thousandeyes-api-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Create API instant test"; description: "lets you create and run new instant tests ... Use
+    the Test Results endpoints to get test results"'
+  reason: On-demand synthetic API tests against endpoints, with agent selection and certificate verification
+    options — synthetic monitoring, which Observability Management explicitly covers. It is a monitoring
+    devtool, so telecom-specific network capabilities would be a reach; some chance the intended home
+    is generic IT operations monitoring.
+- tag: Alert Rules
+  spec_file: thousandeyes-alert-rules-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Alert Rules: Conditions that you configure in order to highlight or be notified of events
+    of interest in your ThousandEyes tests"'
+  reason: Monitoring alert rule configuration — observability alerting, not financial-crime or business
+    alerting. Could arguably be incident detection, hence moderate confidence on sub-capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: BGP monitors
+  spec_file: thousandeyes-bgp-monitors-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Retrieve information about BGP monitors available to your ThousandEyes account. ThousandEyes
+    ingests BGP routing data from dozens of global BGP collectors"'
+  reason: Lists monitoring sources used for network route observability — monitoring/observability of
+    running services. Could equally be framed as IT Operations Management monitoring.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: DNS Server Instant Tests
+  spec_file: thousandeyes-dns-server-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"POST /tests/dns-server/instant  createDnsServerInstantTest  Create DNS server instant test";
+    "The Instant Tests API operations lets you create and run new instant tests"'
+  reason: Creates on-demand synthetic DNS-server probes from the agent fleet. This is synthetic monitoring
+    instrumentation, matching Observability Management ('synthetic monitoring that make the running service
+    understandable in production'). Vendor is a monitoring devtool, so cross-industry/technology capability
+    is the honest mapping rather than telecom network domain capabilities.
+- tag: DNS Server Test Results
+  spec_file: thousandeyes-dns-server-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Get test result metrics for Network and Application Synthetics tests."; getTestDnsServerResult'
+  reason: Retrieves measured metrics from synthetic DNS-server tests — telemetry read path of an observability
+    platform. Maps to Observability Management; the telecom network-performance readings are not warranted
+    for a generic DEM tool.
+- tag: DNS Server Tests
+  spec_file: thousandeyes-dns-server-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"This API allows you to list, create, edit, and delete Network and Application Synthetics
+    tests."; "GET /tests/dns-server  getDnsServerTests"'
+  reason: Lifecycle management of recurring synthetic DNS monitoring tests (interval, alert rules, agents).
+    This is configuration of monitoring/synthetic checks, i.e. Observability Management, not a business-domain
+    capability.
+- tag: DNS Trace Instant Tests
+  spec_file: thousandeyes-dns-trace-instant-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"POST /tests/dns-trace/instant  createDnsTraceInstantTest  Create DNS trace instant test"'
+  reason: On-demand synthetic DNS delegation-trace probe creation from monitoring agents — synthetic monitoring
+    instrumentation under Observability Management.
+- tag: DNS Trace Test Results
+  spec_file: thousandeyes-dns-trace-test-results-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Get test result metrics for Network and Application Synthetics tests."; DnsTraceTestResult'
+  reason: Read access to synthetic DNS-trace measurement results; telemetry retrieval of a monitoring
+    platform, mapped to Observability Management.
+- tag: DNS Trace Tests
+  spec_file: thousandeyes-dns-trace-tests-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"GET /tests/dns-trace  getDnsTraceTests  List DNS Trace tests"; "list, create, edit, and
+    delete Network and Application Synthetics tests"'
+  reason: CRUD over scheduled synthetic DNS-trace monitoring tests with alert rules — configuration of
+    synthetic monitoring, i.e. Observability Management.
+- tag: Endpoint Agents
+  spec_file: thousandeyes-endpoint-agents-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Manage ThousandEyes Endpoint Agents using this API"; operations "List endpoint agents",
+    "Enable endpoint agent"'
+  reason: Endpoint agents are the vantage points that collect network/application telemetry; managing
+    their fleet is stewardship of the monitoring (synthetic/observability) estate. Some ambiguity as this
+    is agent administration rather than telemetry consumption, hence moderate confidence.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: HTTP Page Load Instant Tests
+  spec_file: thousandeyes-http-page-load-instant-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: POST /tests/page-load/instant  createPageLoadInstantTest  "Create HTTP page load instant test"
+  reason: On-demand synthetic page-load measurement of web application performance — IT operations monitoring,
+    not a telecom-specific capability.
+- tag: HTTP Server Endpoint Instant Scheduled Tests
+  spec_file: thousandeyes-http-server-endpoint-instant-scheduled-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: POST /endpoint/tests/scheduled-tests/http-server/instant  "Run http server instant scheduled
+    test"
+  reason: Creates and runs synthetic HTTP tests from endpoint agents to measure digital experience — IT
+    operations monitoring.
+- tag: HTTP Server Endpoint Scheduled Test Results
+  spec_file: thousandeyes-http-server-endpoint-scheduled-test-results-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: '"Retrieve results for scheduled and dynamic tests on endpoint agents." — getHttpServerScheduledTestResults'
+  reason: Retrieval of monitoring telemetry (HTTP response metrics, error types) from endpoint agents;
+    monitoring data consumption within IT operations.
+- tag: HTTP Server Instant Tests
+  spec_file: thousandeyes-http-server-instant-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: POST /tests/http-server/instant  createHttpServerInstantTest  "Create HTTP server instant
+    test"
+  reason: On-demand synthetic HTTP availability/response measurement — IT operations monitoring.
+- tag: Internet Insights Outages
+  spec_file: thousandeyes-internet-insights-outages-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: POST /internet-insights/outages/filter  "List network and application outages"; GET /internet-insights/outages/net/{outageId}
+    "Retrieve network outage"
+  reason: Detection and retrieval of network/application outage events observed by the monitoring fleet
+    — production monitoring signal. Chose Observability over Incident Response because these are externally
+    observed internet outages, not the operator's own incident coordination records.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Tests Assignment on Agents
+  spec_file: thousandeyes-tests-assignment-on-agents-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: '"Assign tests to an agent" / "Unassign tests from an agent"; "Manage Cloud and Enterprise
+    Agents available to your account"'
+  reason: Configures which synthetic monitoring tests run on which measurement agents — monitoring fleet
+    configuration, part of observability management.
+  recovered_from: sweep-20260828T235257Z-edges.json
+- tag: Voice Tests
+  spec_file: thousandeyes-voice-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: GET /tests/voice  getVoiceTests  List Voice tests; 'This API allows you to list, create, edit,
+    and delete Network and Application Synthetics tests.'
+  reason: Lifecycle management of synthetic voice monitoring tests (with alert rules and monitors) is
+    configuration of IT monitoring, i.e. day-to-day IT operations monitoring and automation.
+- tag: Web HTTP Server Test Results
+  spec_file: thousandeyes-web-http-server-test-results-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: GET /test-results/{testId}/http-server  getTestHttpServerResults  Get HTTP server test results
+  reason: HTTP synthetic measurement results (schemas HttpTestResult, SslCert, DnsServerMeasurement) are
+    application/network availability monitoring data, which is IT operations monitoring.
+- tag: Web Page Load Test Results
+  spec_file: thousandeyes-web-page-load-test-results-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: GET /test-results/{testId}/page-load  getTestPageLoadResults  Get page load server test results
+  reason: Page load performance measurement results from synthetic agents are digital-experience monitoring
+    telemetry, mapping to IT operations monitoring.
+- tag: Web Transaction Tests
+  spec_file: thousandeyes-web-transaction-tests-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: GET /tests/web-transactions  getWebTransactionsTests  List Web Transactions tests; 'list,
+    create, edit, and delete Network and Application Synthetics tests'
+  reason: Lifecycle management of scripted synthetic web-transaction monitors (with AlertType/MonitorType
+    schemas) is configuration of production monitoring, under IT operations monitoring.
+- tag: Web Transactions Test Results
+  spec_file: thousandeyes-web-transactions-test-results-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.7
+  evidence: GET /test-results/{testId}/web-transactions  getTestWebTransactionResults  Get web transactions
+    test results
+  reason: Retrieval of web-transaction synthetic results including per-agent rounds and console logs is
+    monitoring telemetry access, mapping to IT operations monitoring.
