@@ -1,12 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Agents Agent Proxies API
   version: 7.0.100
-  description: '
-
-    ## Overview
-
-    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  title: ThousandEyes Agent Proxies API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -24,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Agent Proxies
+  x-displayName: Agent Proxies
 paths:
   /agents/proxies:
     get:
@@ -35,86 +29,102 @@ paths:
       - Agent Proxies
       summary: List Enterprise Agent Proxies
       operationId: getAgentsProxies
-      description: 'List all enterprise agent proxies available under the account group.
-
-        '
+      description: List all enterprise agent proxies available under the account group.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Agents_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/AgentProxies'
+                $ref: '#/components/schemas/Agents_API_AgentProxies'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Agents_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Agents_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Agents_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Agents_API_GeneralError'
+      security:
+      - Agents_API_BearerAuth: []
 components:
   responses:
-    '500':
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    '403':
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '502':
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
+    Agents_API_GeneralError:
       description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
+    Agents_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '404':
+            $ref: '#/components/schemas/Agents_API_UnauthorizedError'
+    Agents_API_404:
       description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Agents_API_Error'
           example:
             type: about:blank
             title: URI Resource Not Found
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    '401':
-      description: Unauthorized
+    Agents_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Agents_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+  parameters:
+    Agents_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   schemas:
-    AgentProxy:
+    Agents_API_ProxyType:
+      type: string
+      description: The type of proxy, STATIC or PAC.
+      enum:
+      - static
+      - pac
+      example: static
+    Agents_API_AgentProxy:
       type: object
       properties:
         aid:
@@ -122,7 +132,7 @@ components:
           description: Account id that this proxy configuration belongs to
           example: '1234'
         authType:
-          $ref: '#/components/schemas/ProxyAuthType'
+          $ref: '#/components/schemas/Agents_API_ProxyAuthType'
         bypassList:
           type: array
           description: A list of hostnames, network prefixes, or wildcards used to determine which test targets should not be proxied. If all tests should be proxied, leave empty.
@@ -158,53 +168,30 @@ components:
           description: Agent proxy's unique ID.
           example: '281474976710706'
         type:
-          $ref: '#/components/schemas/ProxyType'
+          $ref: '#/components/schemas/Agents_API_ProxyType'
         user:
           type: string
           description: Username for proxy authentication.
           example: user1
-    UnauthorizedError:
+    Agents_API_Error:
       type: object
       properties:
-        error:
+        type:
           type: string
-          example: invalid_token
-        error_description:
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
           type: string
-          example: Invalid access token
-    ProxyType:
-      type: string
-      description: The type of proxy, STATIC or PAC.
-      enum:
-      - static
-      - pac
-      example: static
-    AgentProxies:
-      type: object
-      properties:
-        agentProxies:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgentProxy'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    ProxyAuthType:
-      type: string
-      description: The type of authentication the proxy requires
-      enum:
-      - basic
-      - ntlm
-      - kerberos
-      - unknown
-      example: basic
-    SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-    Link:
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Agents_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -235,38 +222,297 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Error:
+    Agents_API_ProxyAuthType:
+      type: string
+      description: The type of authentication the proxy requires
+      enum:
+      - basic
+      - ntlm
+      - kerberos
+      - unknown
+      example: basic
+    Agents_API_AgentProxies:
       type: object
       properties:
-        type:
+        agentProxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agents_API_AgentProxy'
+        _links:
+          $ref: '#/components/schemas/Agents_API_SelfLinks'
+    Agents_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Agents_API_Link'
+    Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
           type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
+          example: invalid_token
+        error_description:
           type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-  parameters:
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+          example: Invalid access token
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about Agents & Monitors
-  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

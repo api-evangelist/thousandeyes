@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: Test Snapshots API
-  description: Creates a new test snapshot in ThousandEyes.
+  title: ThousandEyes Test Snapshots API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -20,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Test Snapshots
+  x-displayName: Test Snapshots
 paths:
   /tests/{testId}/snapshot:
     post:
@@ -46,176 +44,45 @@ paths:
         * Certain regions may not have public snapshots enabled for compliance reasons. In that case you will get a 403 Forbidden as a response.
 
 
-        **Note**: This operation does not support the creation of operation Agent snapshots.
-
-        '
+        **Note**: This operation does not support the creation of operation Agent snapshots.'
       operationId: createTestSnapshot
       parameters:
-      - $ref: '#/components/parameters/TestIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Test_Snapshots_API_TestIdPath'
+      - $ref: '#/components/parameters/Test_Snapshots_API_AccountGroupId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotRequest'
+              $ref: '#/components/schemas/Test_Snapshots_API_SnapshotRequest'
       responses:
         '201':
           description: Created
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/SnapshotResponse'
+                $ref: '#/components/schemas/Test_Snapshots_API_SnapshotResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Test_Snapshots_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Test_Snapshots_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Test_Snapshots_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Test_Snapshots_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Test_Snapshots_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Test_Snapshots_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Test_Snapshots_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Test_Snapshots_API_GeneralError'
+      security:
+      - Test_Snapshots_API_BearerAuth: []
 components:
   schemas:
-    ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    UnexpandedTest:
-      type: object
-      properties:
-        interval:
-          $ref: '#/components/schemas/TestInterval'
-        alertsEnabled:
-          type: boolean
-          description: Indicates if alerts are enabled.
-          example: true
-        enabled:
-          $ref: '#/components/schemas/Enabled'
-    AppAndSelfLinks:
-      type: object
-      description: A links object containing the ThousandEyes App link
-      readOnly: true
-      properties:
-        appLink:
-          $ref: '#/components/schemas/Link'
-        self:
-          $ref: '#/components/schemas/Link'
-    TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
-    TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/TestResults'
-      readOnly: true
-    SnapshotLinks:
-      allOf:
-      - $ref: '#/components/schemas/AppAndSelfLinks'
-      - example:
-          self:
-            href: http://api.thousandeyes.com/v7/tests/227103/snapshot
-          appLink:
-            href: https://app.stg.thousandeyes.com/view/tests/?testId=227103&__a=105
-    SnapshotTest:
-      allOf:
-      - $ref: '#/components/schemas/UnexpandedTest'
-      - $ref: '#/components/schemas/UnexpandedInstantTest'
-    UnexpandedInstantTest:
-      type: object
-      properties:
-        createdBy:
-          $ref: '#/components/schemas/TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
-          readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/TestType'
-        _links:
-          $ref: '#/components/schemas/TestLinks'
-    Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
-    TestType:
+    Test_Snapshots_API_TestType:
       type: string
       enum:
       - api
@@ -234,7 +101,41 @@ components:
       description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
       example: agent-to-server
-    SnapshotResponse:
+    Test_Snapshots_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Test_Snapshots_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Test_Snapshots_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Test_Snapshots_API_UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Test_Snapshots_API_Enabled'
+    Test_Snapshots_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Test_Snapshots_API_SnapshotResponse:
       type: object
       properties:
         id:
@@ -282,19 +183,164 @@ components:
           description: Extra parameters.
           example: params
         test:
-          $ref: '#/components/schemas/SnapshotTest'
+          $ref: '#/components/schemas/Test_Snapshots_API_SnapshotTest'
         _links:
-          $ref: '#/components/schemas/SnapshotLinks'
-    UnauthorizedError:
+          $ref: '#/components/schemas/Test_Snapshots_API_SnapshotLinks'
+    Test_Snapshots_API_AppAndSelfLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Test_Snapshots_API_Link'
+        self:
+          $ref: '#/components/schemas/Test_Snapshots_API_Link'
+    Test_Snapshots_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Test_Snapshots_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Test_Snapshots_API_ValidationErrorItem'
+    Test_Snapshots_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestResults'
+      readOnly: true
+    Test_Snapshots_API_SnapshotRequest:
+      type: object
+      required:
+      - displayName
+      - startDate
+      - endDate
+      properties:
+        displayName:
+          type: string
+          description: Snapshot title.
+          example: Snapshot created through API
+        startDate:
+          type: string
+          format: date-time
+          description: The start date for the snapshot in UTC time, formatted in ISO date-time.
+          example: '2023-06-06T00:00:00Z'
+        endDate:
+          type: string
+          format: date-time
+          description: The end date for the snapshot in UTC time, formatted in ISO date-time.
+          example: '2023-06-06T01:00:00Z'
+        isPublic:
+          type: boolean
+          description: 'Set to `true` for saved events and `false` for share links. Its default value is `false`.
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.'
+          example: false
+    Test_Snapshots_API_Error:
       type: object
       properties:
-        error:
+        type:
           type: string
-          example: invalid_token
-        error_description:
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
           type: string
-          example: Invalid access token
-    Link:
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Test_Snapshots_API_SnapshotLinks:
+      allOf:
+      - $ref: '#/components/schemas/Test_Snapshots_API_AppAndSelfLinks'
+      - example:
+          self:
+            href: http://api.thousandeyes.com/v7/tests/227103/snapshot
+          appLink:
+            href: https://app.stg.thousandeyes.com/view/tests/?testId=227103&__a=105
+    Test_Snapshots_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Test_Snapshots_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Test_Snapshots_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Test_Snapshots_API_UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Test_Snapshots_API_TestLinks'
+    Test_Snapshots_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -325,140 +371,81 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Error:
+    Test_Snapshots_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Test_Snapshots_API_UnauthorizedError:
       type: object
       properties:
-        type:
+        error:
           type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
+          example: invalid_token
+        error_description:
           type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    SnapshotRequest:
-      type: object
-      required:
-      - displayName
-      - startDate
-      - endDate
-      properties:
-        displayName:
-          type: string
-          description: Snapshot title.
-          example: Snapshot created through API
-        startDate:
-          type: string
-          format: date-time
-          description: The start date for the snapshot in UTC time, formatted in ISO date-time.
-          example: '2023-06-06T00:00:00Z'
-        endDate:
-          type: string
-          format: date-time
-          description: The end date for the snapshot in UTC time, formatted in ISO date-time.
-          example: '2023-06-06T01:00:00Z'
-        isPublic:
-          type: boolean
-          description: 'Set to `true` for saved events and `false` for share links. Its default value is `false`.
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.'
-          example: false
-    TestSelfLink:
+          example: Invalid access token
+    Test_Snapshots_API_SnapshotTest:
       allOf:
-      - $ref: '#/components/schemas/Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-  parameters:
-    TestIdPath:
-      name: testId
-      description: Test ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '202701'
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+      - $ref: '#/components/schemas/Test_Snapshots_API_UnexpandedTest'
+      - $ref: '#/components/schemas/Test_Snapshots_API_UnexpandedInstantTest'
+    Test_Snapshots_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
   responses:
-    '502':
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
-      description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
+    Test_Snapshots_API_404:
       description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Test_Snapshots_API_Error'
           example:
             type: about:blank
             title: URI Resource Not Found
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    '500':
+    Test_Snapshots_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Snapshots_API_UnauthorizedError'
+    Test_Snapshots_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Snapshots_API_Error'
+    Test_Snapshots_API_GeneralError:
+      description: An error occurred
+    Test_Snapshots_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Snapshots_API_Error'
+    Test_Snapshots_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Test_Snapshots_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Test_Snapshots_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Test_Snapshots_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -472,20 +459,286 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Test_Snapshots_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Test_Snapshots_API_Error'
+  parameters:
+    Test_Snapshots_API_TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    Test_Snapshots_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

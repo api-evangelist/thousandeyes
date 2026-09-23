@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: ThousandEyes for OpenTelemetry Streaming API
   version: 7.0.100
-  description: "**Note:** The following ThousandEyes for OpenTelemetry API capabilities are not available for ThousandEyes for Government instance:\n\n* Traces\n* Connected Devices\n* OTel-based integrations that rely on connectors and operations, including:\n  * Splunk Cloud Platform HEC\n  * Splunk Enterprise HEC\n  * Splunk Observability APM\n  * Dynatrace Observability APM\n\nThousandEyes for OpenTelemetry provides machine-to-machine integration between ThousandEyes and its customers. It allows you to export ThousandEyes telemetry data in OTel format, which is widely used in the industry. With ThousandEyes for OTel, you can leverage frameworks widely used in the observability domain - such as Splunk, Grafana, and Honeycomb - to capture and analyze ThousandEyes data. Any client that supports OTel can use ThousandEyes for OpenTelemetry.\n\nThousandEyes for OTel is made up of the following components:\n\n* Data streaming APIs that you can use to configure and enable your ThousandEyes tests with OTel-compatible streams,\nin particular to configure how ThousandEyes telemetry data is exported to client integrations.\n* A set of streaming pipelines called _collectors_ that actively fetch ThousandEyes network test data, enrich the data with some additional\ndetail, filter, and push the data to the customer-configured endpoints, depending on what you configure via the public APIs.\n* Third-party OTel collectors that receive, transform, filter, and export different metrics to client applications such as AppD, or any other OTel-capable client\nconfiguration.\n\nFor more information about ThousandEyes for OpenTelemetry, see the [product documentation](https://docs.thousandeyes.com/product-documentation/integration-guides/opentelemetry).\n"
+  title: ThousandEyes Streaming API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -17,14 +16,14 @@ info:
     url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
   - type: source
     url: https://developer.cisco.com/docs/thousandeyes/
+  description: Configure data streaming
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Streaming
   description: Configure data streaming
+  x-displayName: Streaming
 paths:
   /streams:
     get:
@@ -34,28 +33,28 @@ paths:
       summary: List data streams
       description: Retrieves a list of configured data streams. Empty list is returned if no streams are configured.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ThousandEyes_for_OpenTelemetry_API_AccountGroupId'
       - name: type
         in: query
         description: Optional filter on type of Stream; should match one of Stream `type` enum
         required: false
         schema:
-          $ref: '#/components/schemas/StreamType'
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamType'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/StreamCollection'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamCollection'
         '400':
           description: Bad Request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/BadRequestError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_BadRequestError'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_401'
         '403':
           description: Forbidden
         '429':
@@ -65,7 +64,9 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiError'
+      security:
+      - ThousandEyes_for_OpenTelemetry_API_BearerAuth: []
     post:
       tags:
       - Streaming
@@ -73,22 +74,22 @@ paths:
       operationId: createStream
       description: Creates a new data stream.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ThousandEyes_for_OpenTelemetry_API_AccountGroupId'
       responses:
         '201':
           description: item created
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/CreateStreamResponse'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_CreateStreamResponse'
         '400':
           description: Bad Request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/BadRequestError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_BadRequestError'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_401'
         '409':
           description: An existing item already exists
         '412':
@@ -96,19 +97,21 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiErrorIntegrationLimits'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiErrorIntegrationLimits'
         '500':
           description: Internal Server Error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiError'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Stream'
+              $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_Stream'
         description: Stream to configure
+      security:
+      - ThousandEyes_for_OpenTelemetry_API_BearerAuth: []
   /streams/{id}:
     get:
       operationId: getStream
@@ -123,22 +126,22 @@ paths:
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ThousandEyes_for_OpenTelemetry_API_AccountGroupId'
       - name: type
         in: query
         description: Optional filter on type of Stream; should match one of Stream `type` enum
         required: false
         schema:
-          $ref: '#/components/schemas/StreamType'
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamType'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/GetStreamResponse'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_GetStreamResponse'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_401'
         '403':
           description: Forbidden
         '404':
@@ -150,7 +153,9 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiError'
+      security:
+      - ThousandEyes_for_OpenTelemetry_API_BearerAuth: []
     put:
       operationId: updateStream
       tags:
@@ -164,24 +169,24 @@ paths:
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ThousandEyes_for_OpenTelemetry_API_AccountGroupId'
       responses:
         '200':
           description: Stream updated
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/GetStreamResponse'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_GetStreamResponse'
         '204':
-          $ref: '#/components/responses/204'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_204'
         '400':
           description: Bad Request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/BadRequestError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_BadRequestError'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_401'
         '403':
           description: Forbidden
         '404':
@@ -195,12 +200,14 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiError'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PutStream'
+              $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_PutStream'
+      security:
+      - ThousandEyes_for_OpenTelemetry_API_BearerAuth: []
     delete:
       operationId: deleteStream
       tags:
@@ -214,12 +221,12 @@ paths:
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/ThousandEyes_for_OpenTelemetry_API_AccountGroupId'
       responses:
         '204':
-          $ref: '#/components/responses/204'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_204'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/ThousandEyes_for_OpenTelemetry_API_401'
         '403':
           description: Forbidden
         '404':
@@ -231,42 +238,149 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ApiError'
+      security:
+      - ThousandEyes_for_OpenTelemetry_API_BearerAuth: []
 components:
   schemas:
-    Stream:
+    ThousandEyes_for_OpenTelemetry_API_ConnectedDevices:
+      type: object
+      description: Configuration for Connected Devices metric data in the stream integration.
+      required:
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: Flag to enable or disable Connected Devices data.
+          example: true
+          default: false
+    ThousandEyes_for_OpenTelemetry_API_Filters:
+      type: object
+      description: Provides the ability to filter data points based on the specified test types.
+      properties:
+        testTypes:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_FiltersTestTypes'
+    ThousandEyes_for_OpenTelemetry_API_FiltersTestTypes:
+      type: object
+      description: Test types that can be used for filtering data points.
+      properties:
+        values:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_FiltersTestTypesValues'
+    ThousandEyes_for_OpenTelemetry_API_StreamLinks:
+      type: object
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamSelfLink'
+    ThousandEyes_for_OpenTelemetry_API_StreamStatus:
+      type: object
+      properties:
+        lastSuccess:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Last timestamp when data was successfully sent to the stream endpoint.
+          example: 1679677853573
+        lastFailure:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Last timestamp when data failed to send the stream endpoint.
+          example: 1679677853573
+        status:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamStatusType'
+    ThousandEyes_for_OpenTelemetry_API_ExporterConfigSplunkHec:
+      type: object
+      description: Splunk HEC configuration. This can only be configured when the `type` is `splunk-hec`.
+      properties:
+        token:
+          type: string
+          description: The Splunk HEC `token`. This is a required field.
+          example: d0a91307-be2f-4218-a9f8-71c02d98846b
+        source:
+          type: string
+          description: The Splunk HEC `source`. This field is optional.
+          example: ThousandEyesOTel
+          default: ThousandEyesOTel
+        sourceType:
+          type: string
+          description: The Splunk HEC `sourceType`. This field is optional.
+          example: ThousandEyesOTel
+          default: ThousandEyesOTel
+        index:
+          type: string
+          description: The name of the Splunk HEC index where the event data will be stored.  This field is optional.
+          example: thousandeyes_otel_events_index
+    ThousandEyes_for_OpenTelemetry_API_StreamSelfLink:
+      type: object
+      properties:
+        href:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/streams/575766da-9664-4e85-94fe-facbe1154799
+    ThousandEyes_for_OpenTelemetry_API_InputConfigMetric:
+      type: object
+      description: Configuration for metric input data in the stream integration.
+      properties:
+        connectedDevices:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ConnectedDevices'
+    ThousandEyes_for_OpenTelemetry_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    ThousandEyes_for_OpenTelemetry_API_AuditOperationWithUpdate:
       allOf:
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_AuditOperation'
       - type: object
         properties:
-          type:
-            $ref: '#/components/schemas/StreamType'
-          signal:
-            $ref: '#/components/schemas/Signal'
-          endpointType:
-            $ref: '#/components/schemas/EndpointType'
-          streamEndpointUrl:
-            $ref: '#/components/schemas/StreamEndpointUrl'
-          dataModelVersion:
-            $ref: '#/components/schemas/DataModelVersion'
-      - $ref: '#/components/schemas/PutStream'
-    TestMatchDomain:
+          updatedBy:
+            type:
+            - integer
+            - 'null'
+            format: int64
+            description: ID of the user who last updated the integration
+            example: 3962
+          updatedDate:
+            type:
+            - integer
+            - 'null'
+            format: int64
+            description: Date of the last update to the integration
+            example: 1679677853573
+    ThousandEyes_for_OpenTelemetry_API_BadRequestError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        httpStatus:
+          type: string
+          example: BAD_REQUEST
+        errors:
+          type: array
+          items:
+            type: string
+            example: 'JSON parse error: invalid type'
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/streams
+    ThousandEyes_for_OpenTelemetry_API_StreamType:
+      description: "The type of data stream to configure.\nWhen using `splunk-hec`:\n  - `endpointType` must be `http`.\n  - `exporterConfig.splunkHec.token` must contain the *Splunk HEC Token*."
       type: string
-      description: "The domain of the test to match.\n `cea` - Cloud and Enterprise Agent\n `endpoint` - Endpoint Agent"
-      example: cea
       enum:
-      - cea
-      - endpoint
-    EndpointType:
-      type: string
-      description: 'The type of connection used to send data to the endpoint.
-
-        **Note**: When using the `splunk-hec` ''type'', the `EndpointType` must be `http`.'
-      default: grpc
-      example: grpc
-      enum:
-      - grpc
-      - http
-    Signal:
+      - opentelemetry
+      - splunk-hec
+      example: opentelemetry
+    ThousandEyes_for_OpenTelemetry_API_Signal:
       type: string
       description: "The OpenTelemetry signal of the stream integration.\nWhen using `trace` or `log`:\n  - `dataModelVersion` must be `v2`."
       default: metric
@@ -275,51 +389,47 @@ components:
       - metric
       - trace
       - log
-    ApiError:
-      type: object
-      properties:
-        timestamp:
-          type: integer
-          format: int64
-          example: 1679677853573
-        status:
-          type: integer
-          example: 500
-        errors:
-          type: string
-          example: Internal Server Error
-        path:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/request/path
-    FiltersTestTypes:
-      type: object
-      description: Test types that can be used for filtering data points.
-      properties:
-        values:
-          $ref: '#/components/schemas/FiltersTestTypesValues'
-    StreamResponse:
+    ThousandEyes_for_OpenTelemetry_API_TestMatch:
       type: object
       properties:
         id:
           type: string
-          example: 342ieu09
-          description: The data stream ID
-          readOnly: true
-        enabled:
-          type: boolean
-          example: true
-          description: Flag to indicate if the stream integration is currently enabled.
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/StreamLinks'
-    StreamName:
-      type: string
-      minLength: 1
-      maxLength: 255
-      description: Name of the data stream. When omitted, a name is generated on creation and the existing name is preserved on update.
-      example: Production metrics stream
-    ExporterConfigOAuth2:
+          description: The ID of the test to match.
+          example: '1234'
+        domain:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_TestMatchDomain'
+    ThousandEyes_for_OpenTelemetry_API_Stream:
+      allOf:
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamType'
+          signal:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_Signal'
+          endpointType:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_EndpointType'
+          streamEndpointUrl:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamEndpointUrl'
+          dataModelVersion:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_DataModelVersion'
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_PutStream'
+    ThousandEyes_for_OpenTelemetry_API_GetStreamResponse:
+      allOf:
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamResponse'
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_Stream'
+      - type: object
+        properties:
+          auditOperation:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_AuditOperationWithUpdate'
+          streamStatus:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamStatus'
+    ThousandEyes_for_OpenTelemetry_API_InputConfig:
+      type: object
+      description: Configuration that specifies which input data is included for each signal.
+      properties:
+        metric:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_InputConfigMetric'
+    ThousandEyes_for_OpenTelemetry_API_ExporterConfigOAuth2:
       type: object
       description: OAuth2 authentication configuration.
       properties:
@@ -343,86 +453,7 @@ components:
           example:
           - read
           - write
-    InputConfig:
-      type: object
-      description: Configuration that specifies which input data is included for each signal.
-      properties:
-        metric:
-          $ref: '#/components/schemas/InputConfigMetric'
-    ConnectedDevices:
-      type: object
-      description: Configuration for Connected Devices metric data in the stream integration.
-      required:
-      - enabled
-      properties:
-        enabled:
-          type: boolean
-          description: Flag to enable or disable Connected Devices data.
-          example: true
-          default: false
-    CreateStreamResponse:
-      allOf:
-      - $ref: '#/components/schemas/StreamResponse'
-      - $ref: '#/components/schemas/Stream'
-      - type: object
-        properties:
-          auditOperation:
-            $ref: '#/components/schemas/AuditOperation'
-          streamStatus:
-            $ref: '#/components/schemas/StreamStatus'
-    ExporterConfigSplunkHec:
-      type: object
-      description: Splunk HEC configuration. This can only be configured when the `type` is `splunk-hec`.
-      properties:
-        token:
-          type: string
-          description: The Splunk HEC `token`. This is a required field.
-          example: d0a91307-be2f-4218-a9f8-71c02d98846b
-        source:
-          type: string
-          description: The Splunk HEC `source`. This field is optional.
-          example: ThousandEyesOTel
-          default: ThousandEyesOTel
-        sourceType:
-          type: string
-          description: The Splunk HEC `sourceType`. This field is optional.
-          example: ThousandEyesOTel
-          default: ThousandEyesOTel
-        index:
-          type: string
-          description: The name of the Splunk HEC index where the event data will be stored.  This field is optional.
-          example: thousandeyes_otel_events_index
-    AuditOperationWithUpdate:
-      allOf:
-      - $ref: '#/components/schemas/AuditOperation'
-      - type: object
-        properties:
-          updatedBy:
-            type:
-            - integer
-            - 'null'
-            format: int64
-            description: ID of the user who last updated the integration
-            example: 3962
-          updatedDate:
-            type:
-            - integer
-            - 'null'
-            format: int64
-            description: Date of the last update to the integration
-            example: 1679677853573
-    TagMatch:
-      type: object
-      properties:
-        key:
-          type: string
-          description: The name of the tag key to match. The key is invalid if it includes characters that are not allowed by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
-          example: keyA
-        value:
-          type: string
-          description: The value of the tag to match
-          example: valueA
-    DataModelVersion:
+    ThousandEyes_for_OpenTelemetry_API_DataModelVersion:
       description: "The version of the data model used in the data stream.\nWhen using `v1`:\n  - The `signal` cannot be `trace`."
       default: v2
       type: string
@@ -430,90 +461,7 @@ components:
       - v1
       - v2
       example: v2
-    EndpointAgentTag:
-      type: object
-      description: Endpoint Agent tag configuration.
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          description: The tag ID of Endpoint Agent tags.
-          example: 91863f70-e5a6-4a1c-a266-caf02db3607d
-    StreamStatus:
-      type: object
-      properties:
-        lastSuccess:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: Last timestamp when data was successfully sent to the stream endpoint.
-          example: 1679677853573
-        lastFailure:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: Last timestamp when data failed to send the stream endpoint.
-          example: 1679677853573
-        status:
-          $ref: '#/components/schemas/StreamStatusType'
-    StreamCollection:
-      type: array
-      items:
-        $ref: '#/components/schemas/GetStreamResponse'
-    FiltersTestTypesValues:
-      type: array
-      description: A list of test types to filter data points.
-      items:
-        $ref: '#/components/schemas/TestType'
-      example:
-      - agent-to-server
-      - bgp
-      - http-server
-    InputConfigMetric:
-      type: object
-      description: Configuration for metric input data in the stream integration.
-      properties:
-        connectedDevices:
-          $ref: '#/components/schemas/ConnectedDevices'
-    TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    StreamType:
-      description: "The type of data stream to configure.\nWhen using `splunk-hec`:\n  - `endpointType` must be `http`.\n  - `exporterConfig.splunkHec.token` must contain the *Splunk HEC Token*."
-      type: string
-      enum:
-      - opentelemetry
-      - splunk-hec
-      example: opentelemetry
-    TestMatch:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The ID of the test to match.
-          example: '1234'
-        domain:
-          $ref: '#/components/schemas/TestMatchDomain'
-    ApiErrorIntegrationLimits:
+    ThousandEyes_for_OpenTelemetry_API_ApiErrorIntegrationLimits:
       type: object
       properties:
         timestamp:
@@ -532,16 +480,40 @@ components:
           type: string
           format: url
           example: https://api.thousandeyes.com/v7/streams
-    UnauthorizedError:
+    ThousandEyes_for_OpenTelemetry_API_StreamCollection:
+      type: array
+      items:
+        $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_GetStreamResponse'
+    ThousandEyes_for_OpenTelemetry_API_EndpointAgentTag:
+      type: object
+      description: Endpoint Agent tag configuration.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The tag ID of Endpoint Agent tags.
+          example: 91863f70-e5a6-4a1c-a266-caf02db3607d
+    ThousandEyes_for_OpenTelemetry_API_StreamEndpointUrl:
+      type: string
+      description: "The URL ThousandEyes sends data stream to.\nFor a URL to be valid, it needs to: - Be syntactically correct. - Be reachable. - Use the HTTPS protocol. - When using the `grpc` endpointType, streamEndpointUrl cannot contain paths:\n    - Valid . `grpc` - `https://example.com`\n    - Invalid . `grpc` - `https://example.com/collector`.\n    - Valid . `http` - `https://example.com/collector`.\n\n- When using the `http` endpointType, the operation must match the exact final full URL (including the path if there is one) to which the data will be sent. Examples below:\n    - `https://api.honeycomb.io:443/v1/metrics`\n    - `https://ingest.eu0.signalfx.com/v2/datapoint/otlp`"
+      example: https://api.thousandeyes.otel-collector
+    ThousandEyes_for_OpenTelemetry_API_StreamResponse:
       type: object
       properties:
-        error:
+        id:
           type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    StreamStatusType:
+          example: 342ieu09
+          description: The data stream ID
+          readOnly: true
+        enabled:
+          type: boolean
+          example: true
+          description: Flag to indicate if the stream integration is currently enabled.
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamLinks'
+    ThousandEyes_for_OpenTelemetry_API_StreamStatusType:
       type: string
       description: 'The status of the stream integration. pending: No data is currently being sent to the stream endpoint. failing: Data is being sent but not successfully reaching the stream endpoint. connected: Data is being sent successfully to the stream endpoint.'
       example: connected
@@ -549,7 +521,89 @@ components:
       - connected
       - pending
       - failing
-    EndpointAgentLabel:
+    ThousandEyes_for_OpenTelemetry_API_ExporterConfigAuthorization:
+      type: object
+      description: Authentication configuration type.
+      properties:
+        oAuth2:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ExporterConfigOAuth2'
+    ThousandEyes_for_OpenTelemetry_API_PutStream:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamName'
+        customHeaders:
+          description: Custom headers.
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            Authorization: '*****'
+            Content-Type: '*****'
+        streamEndpointUrl:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamEndpointUrl'
+        tagMatch:
+          description: A collection of tags that determine what tests are included in the data stream. These tag values are also included as attributes in the data stream metrics. Tags are invalid if the tag key includes characters that are not allowed by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
+          type: array
+          items:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_TagMatch'
+          example:
+          - key: keyA
+            value: valueA
+          - key: keyB
+            value: valueB
+        testMatch:
+          description: A collection of tests to be included in the data stream.
+          type: array
+          items:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_TestMatch'
+          example:
+          - id: '1234'
+            domain: cea
+          - id: '5678'
+            domain: endpoint
+        enabled:
+          description: Flag to enable or disable the stream integration.
+          type: boolean
+          example: true
+        filters:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_Filters'
+        inputConfig:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_InputConfig'
+        exporterConfig:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ExporterConfig'
+        endpointAgentLabel:
+          description: A collection of Endpoint Agent label IDs that determines what local network data is included in the data stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are synchronized.
+          type: array
+          items:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_EndpointAgentLabel'
+        endpointAgentTag:
+          description: A collection of Endpoint Agent Tag IDs that determines what local network data is included in the data stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are synchronized.
+          type: array
+          items:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_EndpointAgentTag'
+    ThousandEyes_for_OpenTelemetry_API_TagMatch:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The name of the tag key to match. The key is invalid if it includes characters that are not allowed by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
+          example: keyA
+        value:
+          type: string
+          description: The value of the tag to match
+          example: valueA
+    ThousandEyes_for_OpenTelemetry_API_EndpointType:
+      type: string
+      description: 'The type of connection used to send data to the endpoint.
+
+        **Note**: When using the `splunk-hec` ''type'', the `EndpointType` must be `http`.'
+      default: grpc
+      example: grpc
+      enum:
+      - grpc
+      - http
+    ThousandEyes_for_OpenTelemetry_API_EndpointAgentLabel:
       type: object
       description: Endpoint Agent label configuration.
       required:
@@ -559,15 +613,66 @@ components:
           type: string
           description: The label ID of Endpoint Agent labels.
           example: '1234'
-    ExporterConfig:
+    ThousandEyes_for_OpenTelemetry_API_StreamName:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Name of the data stream. When omitted, a name is generated on creation and the existing name is preserved on update.
+      example: Production metrics stream
+    ThousandEyes_for_OpenTelemetry_API_ExporterConfig:
       type: object
       description: Capability to set exporter configuration.
       properties:
         splunkHec:
-          $ref: '#/components/schemas/ExporterConfigSplunkHec'
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ExporterConfigSplunkHec'
         authorization:
-          $ref: '#/components/schemas/ExporterConfigAuthorization'
-    AuditOperation:
+          $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_ExporterConfigAuthorization'
+    ThousandEyes_for_OpenTelemetry_API_ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    ThousandEyes_for_OpenTelemetry_API_FiltersTestTypesValues:
+      type: array
+      description: A list of test types to filter data points.
+      items:
+        $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_TestType'
+      example:
+      - agent-to-server
+      - bgp
+      - http-server
+    ThousandEyes_for_OpenTelemetry_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    ThousandEyes_for_OpenTelemetry_API_AuditOperation:
       type: object
       properties:
         createdBy:
@@ -580,121 +685,34 @@ components:
           format: int64
           description: Creation date of the integration
           example: 1679677853573
-    PutStream:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/StreamName'
-        customHeaders:
-          description: Custom headers.
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            Authorization: '*****'
-            Content-Type: '*****'
-        streamEndpointUrl:
-          $ref: '#/components/schemas/StreamEndpointUrl'
-        tagMatch:
-          description: A collection of tags that determine what tests are included in the data stream. These tag values are also included as attributes in the data stream metrics. Tags are invalid if the tag key includes characters that are not allowed by the [OpenTelemetry naming recommendations for attributes](https://opentelemetry.io/docs/specs/semconv/general/naming/#recommendations-for-application-developers).
-          type: array
-          items:
-            $ref: '#/components/schemas/TagMatch'
-          example:
-          - key: keyA
-            value: valueA
-          - key: keyB
-            value: valueB
-        testMatch:
-          description: A collection of tests to be included in the data stream.
-          type: array
-          items:
-            $ref: '#/components/schemas/TestMatch'
-          example:
-          - id: '1234'
-            domain: cea
-          - id: '5678'
-            domain: endpoint
-        enabled:
-          description: Flag to enable or disable the stream integration.
-          type: boolean
-          example: true
-        filters:
-          $ref: '#/components/schemas/Filters'
-        inputConfig:
-          $ref: '#/components/schemas/InputConfig'
-        exporterConfig:
-          $ref: '#/components/schemas/ExporterConfig'
-        endpointAgentLabel:
-          description: A collection of Endpoint Agent label IDs that determines what local network data is included in the data stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are synchronized.
-          type: array
-          items:
-            $ref: '#/components/schemas/EndpointAgentLabel'
-        endpointAgentTag:
-          description: A collection of Endpoint Agent Tag IDs that determines what local network data is included in the data stream. `endpointAgentLabel` and `endpointAgentTag` represent the same data. Configure only one; both are synchronized.
-          type: array
-          items:
-            $ref: '#/components/schemas/EndpointAgentTag'
-    StreamLinks:
-      type: object
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/StreamSelfLink'
-    StreamSelfLink:
-      type: object
-      properties:
-        href:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/streams/575766da-9664-4e85-94fe-facbe1154799
-    BadRequestError:
-      type: object
-      properties:
-        timestamp:
-          type: integer
-          format: int64
-          example: 1679677853573
-        httpStatus:
-          type: string
-          example: BAD_REQUEST
-        errors:
-          type: array
-          items:
-            type: string
-            example: 'JSON parse error: invalid type'
-        path:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/streams
-    Filters:
-      type: object
-      description: Provides the ability to filter data points based on the specified test types.
-      properties:
-        testTypes:
-          $ref: '#/components/schemas/FiltersTestTypes'
-    GetStreamResponse:
+    ThousandEyes_for_OpenTelemetry_API_CreateStreamResponse:
       allOf:
-      - $ref: '#/components/schemas/StreamResponse'
-      - $ref: '#/components/schemas/Stream'
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamResponse'
+      - $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_Stream'
       - type: object
         properties:
           auditOperation:
-            $ref: '#/components/schemas/AuditOperationWithUpdate'
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_AuditOperation'
           streamStatus:
-            $ref: '#/components/schemas/StreamStatus'
-    StreamEndpointUrl:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_StreamStatus'
+    ThousandEyes_for_OpenTelemetry_API_TestMatchDomain:
       type: string
-      description: "The URL ThousandEyes sends data stream to.\nFor a URL to be valid, it needs to: - Be syntactically correct. - Be reachable. - Use the HTTPS protocol. - When using the `grpc` endpointType, streamEndpointUrl cannot contain paths:\n    - Valid . `grpc` - `https://example.com`\n    - Invalid . `grpc` - `https://example.com/collector`.\n    - Valid . `http` - `https://example.com/collector`.\n\n- When using the `http` endpointType, the operation must match the exact final full URL (including the path if there is one) to which the data will be sent. Examples below:\n    - `https://api.honeycomb.io:443/v1/metrics`\n    - `https://ingest.eu0.signalfx.com/v2/datapoint/otlp`"
-      example: https://api.thousandeyes.otel-collector
-    ExporterConfigAuthorization:
-      type: object
-      description: Authentication configuration type.
-      properties:
-        oAuth2:
-          $ref: '#/components/schemas/ExporterConfigOAuth2'
+      description: "The domain of the test to match.\n `cea` - Cloud and Enterprise Agent\n `endpoint` - Endpoint Agent"
+      example: cea
+      enum:
+      - cea
+      - endpoint
+  responses:
+    ThousandEyes_for_OpenTelemetry_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ThousandEyes_for_OpenTelemetry_API_UnauthorizedError'
+    ThousandEyes_for_OpenTelemetry_API_204:
+      description: No content
   parameters:
-    AccountGroupId:
+    ThousandEyes_for_OpenTelemetry_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -702,17 +720,263 @@ components:
       schema:
         type: string
         example: '1234'
-  responses:
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-    '204':
-      description: No content
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

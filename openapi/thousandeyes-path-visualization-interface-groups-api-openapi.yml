@@ -1,13 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: Tests Path Visualization Interface Groups API
-  description: '**Note:** The Page Load Tests, API Tests, and Web Transaction Tests APIs are not available for ThousandEyes for Government instance.
-
-
-    This API allows you to list, create, edit, and delete Network and Application Synthetics tests.
-
-    '
+  title: ThousandEyes Path Visualization Interface Groups API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -25,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Path Visualization Interface Groups
+  x-displayName: Path Visualization Interface Groups
 paths:
   /network/path-vis/interface-groups:
     get:
@@ -38,28 +31,30 @@ paths:
       operationId: getPathVisInterfaceGroups
       description: Returns a list of all path visualization interface groups. For more information about interface groups, see https://docs.thousandeyes.com/product-documentation/end-user-monitoring/viewing-data/endpoint-agent-views-reference#grouping.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tests_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/InterfaceGroups'
+                $ref: '#/components/schemas/Tests_API_InterfaceGroups'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tests_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tests_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tests_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tests_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Tests_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Tests_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Tests_API_GeneralError'
+      security:
+      - Tests_API_BearerAuth: []
     post:
       tags:
       - Path Visualization Interface Groups
@@ -67,39 +62,41 @@ paths:
       operationId: createPathVisInterfaceGroups
       description: Creates a new path visualization interface group.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tests_API_AccountGroupId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InterfaceGroup'
+              $ref: '#/components/schemas/Tests_API_InterfaceGroup'
       responses:
         '201':
           description: Created
           headers:
             Location:
-              $ref: '#/components/headers/Location'
+              $ref: '#/components/headers/Tests_API_Location'
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/InterfaceGroup'
+                $ref: '#/components/schemas/Tests_API_InterfaceGroup'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Tests_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tests_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tests_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tests_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tests_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Tests_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Tests_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Tests_API_GeneralError'
+      security:
+      - Tests_API_BearerAuth: []
   /network/path-vis/interface-groups/{interfaceGroupId}:
     put:
       tags:
@@ -108,37 +105,39 @@ paths:
       operationId: updatePathVisInterfaceGroup
       description: Updates a path visualization interface group..
       parameters:
-      - $ref: '#/components/parameters/InterfaceGroupId'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tests_API_InterfaceGroupId'
+      - $ref: '#/components/parameters/Tests_API_AccountGroupId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InterfaceGroup'
+              $ref: '#/components/schemas/Tests_API_InterfaceGroup'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/InterfaceGroup'
+                $ref: '#/components/schemas/Tests_API_InterfaceGroup'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Tests_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tests_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tests_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tests_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tests_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Tests_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Tests_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Tests_API_GeneralError'
+      security:
+      - Tests_API_BearerAuth: []
     delete:
       tags:
       - Path Visualization Interface Groups
@@ -146,70 +145,48 @@ paths:
       operationId: deletePathVisInterfaceGroup
       description: Deletes a path visualization interface group.
       parameters:
-      - $ref: '#/components/parameters/InterfaceGroupId'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tests_API_InterfaceGroupId'
+      - $ref: '#/components/parameters/Tests_API_AccountGroupId'
       responses:
         '204':
-          $ref: '#/components/responses/204'
+          $ref: '#/components/responses/Tests_API_204'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tests_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tests_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tests_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tests_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Tests_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Tests_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Tests_API_GeneralError'
+      security:
+      - Tests_API_BearerAuth: []
 components:
-  parameters:
-    InterfaceGroupId:
-      name: interfaceGroupId
-      description: ID of the network path vis interface group
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '281474976710706'
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
   schemas:
-    ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    ValidationErrorItem:
+    Tests_API_Error:
       type: object
       properties:
-        code:
+        type:
           type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
           type: string
-          description: Identifies the field that triggered this particular error.
-        message:
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
           type: string
-          description: A short, human-readable summary of the error.
-    UnauthorizedError:
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Tests_API_UnauthorizedError:
       type: object
       properties:
         error:
@@ -218,7 +195,16 @@ components:
         error_description:
           type: string
           example: Invalid access token
-    Link:
+    Tests_API_InterfaceGroups:
+      type: object
+      properties:
+        pathVisInterfaceGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tests_API_InterfaceGroup'
+        _links:
+          $ref: '#/components/schemas/Tests_API_SelfLinks'
+    Tests_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -249,34 +235,7 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    InterfaceGroups:
-      type: object
-      properties:
-        pathVisInterfaceGroups:
-          type: array
-          items:
-            $ref: '#/components/schemas/InterfaceGroup'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    InterfaceGroup:
+    Tests_API_InterfaceGroup:
       type: object
       properties:
         aid:
@@ -310,58 +269,63 @@ components:
           example:
           - aggr403b-1.iad3.rackspace.net
           - aggr403c-1.iad3.rackspace.net
-    SelfLinks:
+    Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Tests_API_SelfLinks:
       type: object
       description: A links object containing the self link.
       readOnly: true
       properties:
         self:
-          $ref: '#/components/schemas/Link'
+          $ref: '#/components/schemas/Tests_API_Link'
+    Tests_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
   responses:
-    '502':
-      description: Bad Gateway
+    Tests_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
-      description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+            $ref: '#/components/schemas/Tests_API_UnauthorizedError'
+    Tests_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Tests_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Tests_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Tests_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -375,32 +339,321 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
+    Tests_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_Error'
+    Tests_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
+            $ref: '#/components/schemas/Tests_API_Error'
+    Tests_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-    '204':
+            $ref: '#/components/schemas/Tests_API_Error'
+    Tests_API_204:
       description: No content
+    Tests_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Tests_API_GeneralError:
+      description: An error occurred
+  parameters:
+    Tests_API_InterfaceGroupId:
+      name: interfaceGroupId
+      description: ID of the network path vis interface group
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+    Tests_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   headers:
-    Location:
+    Tests_API_Location:
       schema:
         type: string
         format: uri
         example: https://api.thousandeyes.com/v7/link/to/resource/id
       description: The absolute path to created resource.
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about Network and Application Synthetics tests
-  url: https://docs.thousandeyes.com/product-documentation/internet-and-wan-monitoring/tests#cloud-and-enterprise-agent-based-tests
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

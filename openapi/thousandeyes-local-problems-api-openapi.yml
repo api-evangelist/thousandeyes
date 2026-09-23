@@ -1,12 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Agents Local Problems API
   version: 7.0.100
-  description: '
-
-    ## Overview
-
-    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  title: ThousandEyes Local Problems API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -24,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Local Problems
+  x-displayName: Local Problems
 paths:
   /agents/local-problems:
     get:
@@ -38,48 +32,72 @@ paths:
       description: 'Returns local problem intervals for Cloud Agents available to your account in ThousandEyes. FedRAMP Cloud Agents are not included. Local problems indicate agent-side impairment detected by ThousandEyes and do not indicate that a monitored target or service was down.
 
 
-        If no time range is specified, this operation returns active local problems.
-
-        '
+        If no time range is specified, this operation returns active local problems.'
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/Window'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
+      - $ref: '#/components/parameters/Agents_API_AccountGroupId'
+      - $ref: '#/components/parameters/Agents_API_Window'
+      - $ref: '#/components/parameters/Agents_API_StartDateParameter'
+      - $ref: '#/components/parameters/Agents_API_EndDateParameter'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/LocalProblemAgentResults'
+                $ref: '#/components/schemas/Agents_API_LocalProblemAgentResults'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Agents_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Agents_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Agents_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Agents_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Agents_API_GeneralError'
+      security:
+      - Agents_API_BearerAuth: []
 components:
   schemas:
-    LocalProblemAgentId:
+    Agents_API_LocalProblemAgentName:
       type: string
-      description: Agent ID.
-      example: '281474976710706'
+      description: Agent name.
+      example: thousandeyes-stg-va-254
       readOnly: true
-    ValidationError:
+    Agents_API_LocalProblemActive:
+      type: boolean
+      description: Indicates whether the local problem is active.
+      example: false
+      readOnly: true
+    Agents_API_StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Agents_API_LocalProblemAgentResults:
+      type: object
+      properties:
+        localProblems:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agents_API_LocalProblem'
+        startDate:
+          $ref: '#/components/schemas/Agents_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Agents_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Agents_API_SelfLinks'
+    Agents_API_ValidationError:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Error'
+      - $ref: '#/components/schemas/Agents_API_Error'
       - type: object
         properties:
           errors:
@@ -88,105 +106,30 @@ components:
             - 'null'
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    EndDate:
-      type: string
-      format: date-time
-      example: '2022-07-18T22:00:54Z'
-      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    LocalProblemStartDate:
-      type: string
-      description: Date and time when the local problem interval started, in UTC.
-      format: date-time
-      example: '2026-05-18T03:14:00Z'
-      readOnly: true
-    LocalProblemAgentName:
-      type: string
-      description: Agent name.
-      example: thousandeyes-stg-va-254
-      readOnly: true
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    LocalProblemAgentLocation:
+              $ref: '#/components/schemas/Agents_API_ValidationErrorItem'
+    Agents_API_LocalProblemAgentLocation:
       type:
       - string
       - 'null'
       description: Agent location.
       example: San Francisco Bay Area
       readOnly: true
-    LocalProblemActive:
-      type: boolean
-      description: Indicates whether the local problem is active.
-      example: false
-      readOnly: true
-    LocalProblem:
-      type: object
-      required:
-      - agent
-      - startDate
-      - duration
-      - active
-      properties:
-        agent:
-          $ref: '#/components/schemas/LocalProblemAgent'
-        startDate:
-          $ref: '#/components/schemas/LocalProblemStartDate'
-        endDate:
-          $ref: '#/components/schemas/LocalProblemEndDate'
-        duration:
-          $ref: '#/components/schemas/LocalProblemDuration'
-        active:
-          $ref: '#/components/schemas/LocalProblemActive'
-    StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    LocalProblemDuration:
-      type: integer
-      description: Duration of the local problem interval in seconds.
-      example: 480
-      readOnly: true
-    LocalProblemAgentResults:
-      type: object
-      properties:
-        localProblems:
-          type: array
-          items:
-            $ref: '#/components/schemas/LocalProblem'
-        startDate:
-          $ref: '#/components/schemas/StartDate'
-        endDate:
-          $ref: '#/components/schemas/EndDate'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    LocalProblemAgentCountryId:
+    Agents_API_LocalProblemAgentCountryId:
       type: string
       description: Two-letter ISO country code where the agent is located.
       example: US
       readOnly: true
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
+    Agents_API_LocalProblemDuration:
+      type: integer
+      description: Duration of the local problem interval in seconds.
+      example: 480
+      readOnly: true
+    Agents_API_LocalProblemAgentId:
+      type: string
+      description: Agent ID.
+      example: '281474976710706'
+      readOnly: true
+    Agents_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -217,7 +160,56 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Error:
+    Agents_API_LocalProblem:
+      type: object
+      required:
+      - agent
+      - startDate
+      - duration
+      - active
+      properties:
+        agent:
+          $ref: '#/components/schemas/Agents_API_LocalProblemAgent'
+        startDate:
+          $ref: '#/components/schemas/Agents_API_LocalProblemStartDate'
+        endDate:
+          $ref: '#/components/schemas/Agents_API_LocalProblemEndDate'
+        duration:
+          $ref: '#/components/schemas/Agents_API_LocalProblemDuration'
+        active:
+          $ref: '#/components/schemas/Agents_API_LocalProblemActive'
+    Agents_API_LocalProblemEndDate:
+      type:
+      - string
+      - 'null'
+      description: Date and time when the local problem interval ended, in UTC. This value is `null` when the local problem is active.
+      format: date-time
+      example: '2026-05-18T03:22:00Z'
+      readOnly: true
+    Agents_API_EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Agents_API_LocalProblemStartDate:
+      type: string
+      description: Date and time when the local problem interval started, in UTC.
+      format: date-time
+      example: '2026-05-18T03:14:00Z'
+      readOnly: true
+    Agents_API_LocalProblemAgent:
+      type: object
+      properties:
+        agentId:
+          $ref: '#/components/schemas/Agents_API_LocalProblemAgentId'
+        agentName:
+          $ref: '#/components/schemas/Agents_API_LocalProblemAgentName'
+        countryId:
+          $ref: '#/components/schemas/Agents_API_LocalProblemAgentCountryId'
+        location:
+          $ref: '#/components/schemas/Agents_API_LocalProblemAgentLocation'
+    Agents_API_Error:
       type: object
       properties:
         type:
@@ -235,112 +227,53 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    LocalProblemAgent:
-      type: object
-      properties:
-        agentId:
-          $ref: '#/components/schemas/LocalProblemAgentId'
-        agentName:
-          $ref: '#/components/schemas/LocalProblemAgentName'
-        countryId:
-          $ref: '#/components/schemas/LocalProblemAgentCountryId'
-        location:
-          $ref: '#/components/schemas/LocalProblemAgentLocation'
-    LocalProblemEndDate:
-      type:
-      - string
-      - 'null'
-      description: Date and time when the local problem interval ended, in UTC. This value is `null` when the local problem is active.
-      format: date-time
-      example: '2026-05-18T03:22:00Z'
-      readOnly: true
-    SelfLinks:
+    Agents_API_SelfLinks:
       type: object
       description: A links object containing the self link.
       readOnly: true
       properties:
         self:
-          $ref: '#/components/schemas/Link'
-  parameters:
-    StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
-    Window:
-      name: window
-      in: query
-      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
-
-        For a precise date range, use `startDate` and `endDate`.'
-      schema:
-        type: string
-        pattern: ^\d+(?:[smhdw]{1})?$
-        example: 12h
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+          $ref: '#/components/schemas/Agents_API_Link'
+    Agents_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
   responses:
-    '502':
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
-      description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
+    Agents_API_404:
       description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Agents_API_Error'
           example:
             type: about:blank
             title: URI Resource Not Found
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    '500':
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    '400':
+    Agents_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Agents_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -354,23 +287,336 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
+    Agents_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Agents_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_GeneralError:
+      description: An error occurred
+    Agents_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Agents_API_UnauthorizedError'
+    Agents_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+  parameters:
+    Agents_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Agents_API_Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    Agents_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Agents_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about Agents & Monitors
-  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

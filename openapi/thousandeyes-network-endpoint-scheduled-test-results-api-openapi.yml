@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Endpoint Test Results Network Endpoint Scheduled Test Results API
   version: 7.0.100
-  description: Retrieve results for scheduled and dynamic tests on endpoint agents.
+  title: ThousandEyes Network Endpoint Scheduled Test Results API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -20,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Network Endpoint Scheduled Test Results
+  x-displayName: Network Endpoint Scheduled Test Results
 paths:
   /endpoint/test-results/scheduled-tests/{testId}/network/filter:
     post:
@@ -32,43 +30,43 @@ paths:
       summary: Retrieve network scheduled test results
       description: 'Returns network metrics (loss, latency, and jitter) from each endpoint agent, for each roundId within the specified time window, as determined by search filters. If a time frame is provided, the rounds relevant to that time frame are returned, and the order is not predefined unless the user specifies a sort order in the filter.
 
-        When no time frame is provided, the latest rounds are returned.
-
-        '
+        When no time frame is provided, the latest rounds are returned.'
       operationId: filterScheduledTestNetworkResults
       parameters:
-      - $ref: '#/components/parameters/TestIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/Window'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationCursor'
-      - $ref: '#/components/parameters/ExpandEndpointNetwork'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_TestIdPath'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_Window'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_StartDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_EndDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_PaginationCursor'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_ExpandEndpointNetwork'
       requestBody:
         description: Tests data search filters.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EndpointTestsDataRoundsSearch'
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataRoundsSearch'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/NetworkEndpointTestResults'
+                $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkEndpointTestResults'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_502'
+      security:
+      - Endpoint_Test_Results_API_BearerAuth: []
   /endpoint/test-results/scheduled-tests/network/filter:
     post:
       tags:
@@ -76,351 +74,302 @@ paths:
       summary: Retrieve network scheduled test results from multiple tests
       description: 'Returns network metrics, including loss, latency, and jitter, for multiple test IDs obtained from each endpoint agent. It allows you to specify a time window using search filters to retrieve metrics for specific round IDs within that time frame. The default order of results is unspecified unless you include a sorting preference in the filter.
 
-        When no time frame is provided, the API returns metrics for the most recent rounds. Access to all accounts associated with the specified test IDs is required to use this endpoint.
-
-        '
+        When no time frame is provided, the API returns metrics for the most recent rounds. Access to all accounts associated with the specified test IDs is required to use this endpoint.'
       operationId: filterScheduledTestsNetworkResults
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/Window'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationMax'
-      - $ref: '#/components/parameters/PaginationCursor'
-      - $ref: '#/components/parameters/UseAllPermittedAids'
-      - $ref: '#/components/parameters/ExpandEndpointNetwork'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_Window'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_StartDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_EndDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_PaginationMax'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_PaginationCursor'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_UseAllPermittedAids'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_ExpandEndpointNetwork'
       requestBody:
         description: Test data search filters.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MultiTestIdEndpointTestsDataRoundsSearch'
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_MultiTestIdEndpointTestsDataRoundsSearch'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/MultiTestIdNetworkEndpointTestResults'
+                $ref: '#/components/schemas/Endpoint_Test_Results_API_MultiTestIdNetworkEndpointTestResults'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_502'
+      security:
+      - Endpoint_Test_Results_API_BearerAuth: []
   /endpoint/test-results/scheduled-tests/{testId}/path-vis:
     get:
       tags:
       - Network Endpoint Scheduled Test Results
       summary: Retrieve path visualization network scheduled test results
-      description: 'Returns a summary of the path visualization data collected from each endpoint agent to the destination. In each path visualization attempt, one attempt is made to reach the destination. Each set of data is summarized, based on response time, number of hops, and response time to the target. A time frame must be specified, or the most recent round within last 2 hours is returned.
-
-        '
+      description: Returns a summary of the path visualization data collected from each endpoint agent to the destination. In each path visualization attempt, one attempt is made to reach the destination. Each set of data is summarized, based on response time, number of hops, and response time to the target. A time frame must be specified, or the most recent round within last 2 hours is returned.
       operationId: getScheduledTestPathVisResults
       parameters:
-      - $ref: '#/components/parameters/TestIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/Window'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_TestIdPath'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_Window'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_StartDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_EndDateParameter'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_PaginationCursor'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PathVisEndpointTestResults'
+                $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisEndpointTestResults'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_502'
+      security:
+      - Endpoint_Test_Results_API_BearerAuth: []
   /endpoint/test-results/scheduled-tests/{testId}/path-vis/agent/{agentId}/round/{roundId}:
     get:
       tags:
       - Network Endpoint Scheduled Test Results
       summary: Retrieve path visualization network scheduled test results details
-      description: 'Returns a hop-by-hop summary of the path trace data collected during path visualization. In each round, one path discovery attempt is made to reach the destination. The entire path is returned. A `roundId` must be specified.
-
-        '
+      description: Returns a hop-by-hop summary of the path trace data collected during path visualization. In each round, one path discovery attempt is made to reach the destination. The entire path is returned. A `roundId` must be specified.
       operationId: getScheduledTestPathVisAgentRoundResults
       parameters:
-      - $ref: '#/components/parameters/TestIdPath'
-      - $ref: '#/components/parameters/AgentIdPath'
-      - $ref: '#/components/parameters/RoundIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_TestIdPath'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_AgentIdPath'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_RoundIdPath'
+      - $ref: '#/components/parameters/Endpoint_Test_Results_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PathVisDetailEndpointTestResults'
+                $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisDetailEndpointTestResults'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Endpoint_Test_Results_API_502'
+      security:
+      - Endpoint_Test_Results_API_BearerAuth: []
 components:
-  parameters:
-    AgentIdPath:
-      name: agentId
-      description: Agent ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '11'
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    ExpandEndpointNetwork:
-      name: expand
-      in: query
-      style: form
-      explode: false
-      description: This parameter is optional and determines whether to expand resources related to test results. By default, no expansion occurs when this query parameter is omitted. To expand a specific resource, such as "user-profile," append `?expand=user-profile` to the query.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ExpandEndpointNetworkOptions'
-        example:
-        - header
-    TestIdPath:
-      name: testId
-      description: Test ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '202701'
-    UseAllPermittedAids:
-      name: useAllPermittedAids
-      in: query
-      required: false
-      description: Set to `true` to load data from all accounts the user has access to.
-      schema:
-        type: boolean
-        example: false
-        default: false
-    PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    RoundIdPath:
-      name: roundId
-      description: Round ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '1384309800'
-    StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
-    Window:
-      name: window
-      in: query
-      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
-
-        For a precise date range, use `startDate` and `endDate`.'
-      schema:
-        type: string
-        pattern: ^\d+(?:[smhdw]{1})?$
-        example: 12h
-    PaginationMax:
-      name: max
-      in: query
-      description: (Optional) Maximum number of objects to return.
-      schema:
-        type: integer
-        example: 5
   schemas:
-    TestUseNtlm:
-      type: boolean
-      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
-      example: false
-    TcpPathTraceModeResponse:
-      type: string
-      enum:
-      - auto
-      - syn
-      - syn-pcap
-      - unknown
-      - data-in-session-with-decrementing-ttl
-      - data-in-session
-      description: Path trace mode used by network test. Only valid when the protocol is set to TCP.
-      default: auto
-      example: syn-pcap
-    TestName:
+    Endpoint_Test_Results_API_MultiTestIdNetworkEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkEndpointTestResult'
+        totalHits:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TotalHits'
+        startDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_PaginationNextLink'
+    Endpoint_Test_Results_API_UserPrincipalNameFilter:
+      description: Filters results based on an array of `userPrincipalName` values.
+      type: array
+      items:
+        $ref: '#/components/schemas/Endpoint_Test_Results_API_UserPrincipalName'
+    Endpoint_Test_Results_API_EndpointSpecificAgentsSelectorConfig:
+      type: object
+      description: Specific agents selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointSpecificAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestMaxMachines'
+        agents:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestAgents'
+      required:
+      - agentSelectorType
+    Endpoint_Test_Results_API_NetworkEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkEndpointTestResult'
+        totalHits:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TotalHits'
+        test:
+          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
+          allOf:
+          - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointScheduledTest'
+        startDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_PaginationNextLink'
+    Endpoint_Test_Results_API_NetworkProxy:
+      type: object
+      properties:
+        bypass:
+          type: string
+          description: Proxy bypass expression.
+          example: '*.local;169.254/16'
+          readOnly: true
+        proxy:
+          type: string
+          description: Proxy mode.
+          example: <direct>
+          readOnly: true
+    Endpoint_Test_Results_API_TestName:
       type: string
       description: Name of the test.
       example: Test name
-    TestIsSavedEvent:
-      type: boolean
-      description: 'Indicates if the test is a saved event.
-
-
-        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-        '
-      example: false
-      readOnly: true
-    EndpointTestsDataSearchFilter:
-      type: object
-      properties:
-        agentId:
-          description: Filter using the `agent-id`.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 52455b09-ff1b-4849-8194-99026cc890e0
-        userPrincipalName:
-          $ref: '#/components/schemas/UserPrincipalNameFilter'
-        nicModel:
-          $ref: '#/components/schemas/NicModelFilter'
-        nicDriverVersion:
-          $ref: '#/components/schemas/NicDriverVersionFilter'
-    EndpointTestAgents:
-      type: array
-      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
-      items:
-        type: string
-        format: uuid
-      example:
-      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
-      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
-    TotalHits:
-      description: Total number of measurements that match the search criteria.
-      type: integer
-      example: 12
-    EndDate:
+    Endpoint_Test_Results_API_EndpointScheduledTest:
+      oneOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentToServerTest'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointHttpServerTest'
+      discriminator:
+        propertyName: type
+        mapping:
+          agent-to-server: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentToServerTest'
+          http-server: '#/components/schemas/Endpoint_Test_Results_API_EndpointHttpServerTest'
+    Endpoint_Test_Results_API_EndpointAgentToServerType:
       type: string
-      format: date-time
-      example: '2022-07-18T22:00:54Z'
-      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      description: Type of test being queried.
+      example: agent-to-server
+      pattern: ^agent-to-server$
       readOnly: true
-    TestCreatedDate:
+    Endpoint_Test_Results_API_CellularNetworkGen:
+      description: Cellular network generation.
       type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
-    AsnDetails:
-      type: object
-      properties:
-        asName:
-          type: string
-          description: Name of the provider.
-          example: ThousandEyes, Inc
-          readOnly: true
-        asNumber:
-          type: integer
-          description: Unique number assigned to an organization (also referred to as service provider).
-          example: 394101
-          readOnly: true
-    ThresholdFilterName:
-      type: string
-      description: Metric on which the threshold filter is applied.
-      enum:
-      - loss
-      - latency
-      - jitter
-      - cpu
-      - memory
-      - signal-quality
-      - application-score
-      - zta-ingress-loss
-      - zta-service-loss
-      - zta-ingress-avg-latency
-      - zta-service-avg-latency
-      - zta-ingress-jitter
-      - zta-service-jitter
-      example: loss
-    TestIsPrioritized:
-      type: boolean
-      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
-      default: false
-      example: false
-    EndpointHttpServerBaseTest:
-      type: object
-      properties:
-        authType:
-          $ref: '#/components/schemas/EndpointTestAuthType'
-        hasPathTraceInSession:
-          $ref: '#/components/schemas/TestHasPathTraceInSession'
-        httpTimeLimit:
-          type: integer
-          description: Maximum amount of time in milliseconds the agents wait before a request times out.
-          default: 5000
-          example: 5000
-        protocol:
-          $ref: '#/components/schemas/EndpointTestProtocol'
-        username:
-          $ref: '#/components/schemas/TestUsername'
-        sslVersionId:
-          $ref: '#/components/schemas/TestSslVersionId'
-        tcpProbeMode:
-          $ref: '#/components/schemas/TestProbeModeResponse'
-        verifyCertificate:
-          type: boolean
-          description: Flag indicating if a certificate should be verified.
-          default: true
-          example: true
-        url:
-          $ref: '#/components/schemas/EndpointTestResultUrl'
-    EndpointTestsDataSearchSort:
+      example: 2g, 3g, 4g, 5g
+    Endpoint_Test_Results_API_EndpointTestsDataSearchSort:
       type: object
       properties:
         sort:
-          $ref: '#/components/schemas/EndpointTestsDataSearchSortKey'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataSearchSortKey'
         order:
-          $ref: '#/components/schemas/SortOrder'
-    TestSslVersionId:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_SortOrder'
+    Endpoint_Test_Results_API_PathVisEndpointTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisEndpointTestResult'
+        test:
+          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
+          allOf:
+          - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointScheduledTest'
+        startDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_PaginationNextAndSelfLink'
+    Endpoint_Test_Results_API_VpnType:
+      type: string
+      description: Name of the VPN provider.
+      enum:
+      - cisco-anyconnect
+      - palo-alto-globalprotect
+      - ivanti-connect-secure
+      - zscaler-internet-access
+      - f5-big-ip
+      example: cisco-anyconnect
+    Endpoint_Test_Results_API_VpnProfile:
+      type: object
+      properties:
+        vpnClientAddresses:
+          type: array
+          description: A list of private IP addresses assigned to the device by the VPN server.
+          example:
+          - 184.81.113.85
+          - 13.129.91.62
+          readOnly: true
+          items:
+            type: string
+        vpnClientNetworkRange:
+          type: array
+          description: A list of private networks assigned to the device by the VPN server.
+          readOnly: true
+          items:
+            type: string
+            example: 9.88.37.27
+        vpnGatewayAddress:
+          type: string
+          description: IP address of the VPN gateway.
+          example: 120.98.134.7
+          readOnly: true
+        vpnType:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_VpnType'
+    Endpoint_Test_Results_API_EndpointPathVisHop:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_Hop'
+      - type: object
+        properties:
+          rdns:
+            type: string
+            description: Reverse DNS entry of IP, if available.
+            example: core-router1.cpt2.host-h.net
+            readOnly: true
+          network:
+            type: string
+            description: Autonomous System originating the prefix.
+            example: HETZNER (Pty) Ltd (AS 37153)
+            readOnly: true
+          responseTime:
+            type: integer
+            description: RTT to the hop’s IP in milliseconds.
+            example: 1
+            readOnly: true
+          location:
+            type: string
+            description: Location information for the hop.
+            example: Cape Town, South Africa
+            readOnly: true
+    Endpoint_Test_Results_API_ExpandEndpointNetworkOptions:
+      type: string
+      enum:
+      - user-profile
+      example: user-profile
+    Endpoint_Test_Results_API_NicDriverVersionFilter:
+      description: Filters results to NIC driver versions that exactly match one of the provided values. Matching is case-sensitive.
+      type: array
+      items:
+        type: string
+        example: 22.250.0.9
+    Endpoint_Test_Results_API_TestSslVersionId:
       type: string
       description: 'SSL version options:
 
@@ -447,120 +396,117 @@ components:
       - '7'
       default: '0'
       example: '0'
-    EndpointScheduledTestType:
+    Endpoint_Test_Results_API_EndpointTestSelfLink:
+      allOf:
+      - description: A reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+    Endpoint_Test_Results_API_NetworkProfile:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkInterface'
+      - type: object
+        description: Contains basic network connectivity parameters.
+        properties:
+          error:
+            type: string
+            description: Only present when there is an error
+            example: An operation timed out.
+            readOnly: true
+          gateway:
+            type: string
+            description: Network gateway address.
+            example: 10.0.0.1
+            readOnly: true
+          wirelessProfile:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkWirelessProfile'
+          proxyProfile:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkProxyProfile'
+          ethernetProfile:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestEthernetProfile'
+          previousInterface:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkInterface'
+    Endpoint_Test_Results_API_StartDate:
       type: string
-      enum:
-      - agent-to-server
-      - http-server
-      description: Type of test being queried.
-      example: agent-to-server
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
       readOnly: true
-    EndpointAgentId:
-      type: string
-      format: uuid
-      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
-      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
-      readOnly: true
-    EndpointTestPort:
-      type: integer
-      description: Port number.
-      default: 443
-      example: 443
-    CellularProfile:
-      description: Cellular network profile information for a mobile endpoint agent.
+    Endpoint_Test_Results_API_EndpointAgentSelectorConfig:
       type: object
+      description: Agents selection object based on agentSelectorType.
       readOnly: true
-      properties:
-        carrierName:
-          type: string
-          description: Carrier name
-          example: T-Mobile
-        networkGen:
-          $ref: '#/components/schemas/CellularNetworkGen'
-        networkSubtype:
-          type: string
-          description: A real network subtype. It may be different from an advertised network type.
-          example: LTE/HSPA
-        advertisedNetworkGen:
-          $ref: '#/components/schemas/CellularNetworkGen'
-        advertisedNetworkSubtype:
-          type: string
-          description: Advertised Network subtype
-          example: LTE/HSPA
-        rssi:
-          type: number
-          format: double
-          description: Received Signal Strength Indicator in dBm. Values are always negative.
-          example: -10
-        rsrp:
-          type: number
-          format: double
-          description: Reference Signal Received Power in dBm. Values are always negative.
-          example: -30
-        rscp:
-          type: number
-          format: double
-          description: Received Signal Code Power in dBm. Values are always negative or zero.
-          example: -30
-        rsrq:
-          type: number
-          format: double
-          description: Reference Signal Received Quality in dBm. Values are always negative.
-          example: -30
-        sinr:
-          type: number
-          format: double
-          description: Signal to Interference and Noise Ratio in dBm. It can be negative or positive.
-          example: 20
-    EndpointAgentLabels:
-      type: array
-      deprecated: true
-      description: 'Deprecated. Use `tagIds` instead.
-
-
-        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
-
-        '
-      items:
-        type: string
-      example:
-      - '567'
-      - '214'
-    NetworkProxyProfile:
+      oneOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/Endpoint_Test_Results_API_EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/Endpoint_Test_Results_API_EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    Endpoint_Test_Results_API_MultiTestIdEndpointTestsDataSearchFilter:
       type: object
       properties:
-        method:
-          type: string
-          description: Proxy profile method.
-          example: System
-          readOnly: true
-        proxies:
+        agentId:
+          description: Filter using the `agent-id`.
           type: array
           items:
-            $ref: '#/components/schemas/NetworkProxy'
-    UserPrincipalName:
+            type: string
+            format: uuid
+            example: 52455b09-ff1b-4849-8194-99026cc890e0
+        testId:
+          type: array
+          items:
+            type: string
+            example: '5'
+        nicModel:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_NicModelFilter'
+        nicDriverVersion:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_NicDriverVersionFilter'
+    Endpoint_Test_Results_API_EndpointScoreNumeric:
+      type: number
+      format: double
+      description: A fine-grained score between 0 and 100.
+      example: 100
+    Endpoint_Test_Results_API_EndpointAgentLabelsSelectorType:
       type: string
-      description: User login name in Internet-style format, typically used in Active Directory environments.
-      example: joeblogs32@c.com
-    IcmpBlocked:
-      type: boolean
-      description: Set to `true` if network target is blocking ICMP echo (ping) queries.
-      example: true
-      readOnly: true
-    TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    TestLabel:
+      example: agent-labels
+      pattern: ^agent-labels$
+    Endpoint_Test_Results_API_EndpointTestsDataThresholdFilters:
+      type: object
+      description: All filters are applied based on the conditional operator (and/or).
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataThresholdFilter'
+        conditionalOperator:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ConditionalOperator'
+    Endpoint_Test_Results_API_Hop:
+      type: object
+      properties:
+        hop:
+          type: integer
+          description: The hop index.
+          example: 1
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the hop.
+          example: 196.40.106.237
+          readOnly: true
+        prefix:
+          type: string
+          description: Prefix of IP address shown in CIDR.
+          example: 196.40.96.0/20
+          readOnly: true
+    Endpoint_Test_Results_API_TestLabel:
       type: object
       properties:
         labelId:
@@ -576,12 +522,238 @@ components:
         labelId: '961'
         name: Artem label
         isBuiltin: false
-    UserPrincipalNameFilter:
-      description: Filters results based on an array of `userPrincipalName` values.
+    Endpoint_Test_Results_API_TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
+      default: false
+      example: false
+    Endpoint_Test_Results_API_EndpointAgentToServerTest:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentToServerType'
+    Endpoint_Test_Results_API_EndpointZtaSegmentType:
+      type: string
+      description: Type of ZTA segment.
+      enum:
+      - zta_ingress
+      - zta_service
+      example: zta_service
+    Endpoint_Test_Results_API_EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    Endpoint_Test_Results_API_EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    Endpoint_Test_Results_API_PathVisDetailEndpointTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisBaseEndpointTestResult'
+      - type: object
+        properties:
+          pathTraces:
+            type: array
+            description: Shows iterations of path trace, with each iteration specified by a pathId.
+            items:
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointPathVisRoute'
+          vpnPathTraces:
+            type: array
+            description: Shows iterations of the VPN path trace, with each iteration specified by a pathId.
+            items:
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointPathVisRoute'
+    Endpoint_Test_Results_API_PhysicalMemoryUsedBytes:
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+          description: The minimum sampled memory usage value recorded during the monitored period.
+          example: 1.2
+          readOnly: true
+        max:
+          type: number
+          format: double
+          description: The maximum sampled memory usage value recorded during the monitored period.
+          example: 2.5
+          readOnly: true
+        mean:
+          type: number
+          format: double
+          description: The mean (average) value of memory usage sampled over the monitored period.
+          example: 1.77
+          readOnly: true
+        median:
+          type: number
+          format: double
+          description: The median value of memory usage sampled over the monitored period.
+          example: 1.85
+          readOnly: true
+        stdDev:
+          type: number
+          format: double
+          description: The standard deviation of memory usage sampled during the monitored period.
+          example: 0.25
+          readOnly: true
+        count:
+          type: integer
+          description: The total number of samples collected during the monitored period.
+          example: 155
+          readOnly: true
+    Endpoint_Test_Results_API_TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    Endpoint_Test_Results_API_TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    Endpoint_Test_Results_API_EndpointHttpServerTest:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTest'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointHttpServerBaseTest'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointHttpServerType'
+          followRedirects:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestFollowRedirects'
+          httpTargetTime:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestHttpTargetTime'
+          httpVersion:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestHttpVersion'
+          isPrioritized:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestInterval'
+          sslVersion:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestSslVersion'
+          useNtlm:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_TestUseNtlm'
+    Endpoint_Test_Results_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Endpoint_Test_Results_API_PathVisBaseEndpointTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestResult'
+      - type: object
+        properties:
+          asnDetails:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_AsnDetails'
+          server:
+            type: string
+            description: Target server, including port.
+            example: www.google.com:443
+            readOnly: true
+          sourceIp:
+            type: string
+            description: IP address of source endpoint agent.
+            example: 196.40.106.237
+            readOnly: true
+          sourcePrefix:
+            type: string
+            description: IP prefix of source endpoint agent.
+            example: 196.40.96.0/20
+            readOnly: true
+    Endpoint_Test_Results_API_EndpointAgentLabelsSelectorConfig:
+      type: object
+      description: Agent labels selection object.
+      readOnly: true
+      deprecated: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentLabelsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TagIds'
+      required:
+      - agentSelectorType
+    Endpoint_Test_Results_API_NetworkProxyProfile:
+      type: object
+      properties:
+        method:
+          type: string
+          description: Proxy profile method.
+          example: System
+          readOnly: true
+        proxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkProxy'
+    Endpoint_Test_Results_API_EndpointTestsDataRoundsSearch:
+      type: object
+      properties:
+        searchSort:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataSearchSort'
+        thresholdFilter:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataThresholdFilters'
+        searchFilters:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataSearchFilter'
+    Endpoint_Test_Results_API_SortOrder:
+      type: string
+      example: desc
+      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
+      enum:
+      - asc
+      - desc
+    Endpoint_Test_Results_API_Platform:
+      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+      type: string
+      enum:
+      - windows
+      - roomos
+      - phoneos
+      - elux
+      - cisco-wireless
+      - cisco-wireless-cloud
+      - linux
+      - mac
+      - android
+      - unknown
+      example: mac
+    Endpoint_Test_Results_API_EndpointTestsDataSearchSortKey:
+      type: string
+      enum:
+      - round-id
+      - loss
+      - latency
+      - jitter
+      - cpu
+      - memory
+      - signal-quality
+      example: round-id
+    Endpoint_Test_Results_API_EndpointTestAgents:
       type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
       items:
-        $ref: '#/components/schemas/UserPrincipalName'
-    CpuUtilization:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    Endpoint_Test_Results_API_CpuUtilization:
       type: object
       properties:
         min:
@@ -629,40 +801,643 @@ components:
           description: The total number of samples collected during the monitored period.
           example: 150
           readOnly: true
-    NicDriverVersionFilter:
-      description: Filters results to NIC driver versions that exactly match one of the provided values. Matching is case-sensitive.
+    Endpoint_Test_Results_API_IcmpBlocked:
+      type: boolean
+      description: Set to `true` if network target is blocking ICMP echo (ping) queries.
+      example: true
+      readOnly: true
+    Endpoint_Test_Results_API_EndpointTest:
+      type: object
+      required:
+      - type
+      properties:
+        aid:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_AccountGroupId'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestLinks'
+        agentSelectorConfig:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentSelectorConfig'
+        createdDate:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestCreatedDate'
+        isPrioritized:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestIsPrioritized'
+        interval:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestInterval'
+        isEnabled:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestIsEnabled'
+        isSavedEvent:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestIsSavedEvent'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestHasPathTraceInSession'
+        labels:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestLabels'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        networkMeasurements:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestNetworkMeasurements'
+        protocol:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestProtocol'
+        ipVersion:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointIpVersionOut'
+        server:
+          type: string
+          description: Target domain name or IP address.
+          example: www.example.com
+        testId:
+          type: string
+          description: Each test is assigned a unique ID to access test data from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestName'
+        type:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointScheduledTestType'
+        tcpProbeMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestProbeModeResponse'
+        port:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestPort'
+    Endpoint_Test_Results_API_TestIsSavedEvent:
+      type: boolean
+      description: 'Indicates if the test is a saved event.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+        '
+      example: false
+      readOnly: true
+    Endpoint_Test_Results_API_RoundId:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round.
+      example: 1384309800
+      readOnly: true
+    Endpoint_Test_Results_API_TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    Endpoint_Test_Results_API_EndpointTestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    Endpoint_Test_Results_API_EndpointAgentLabels:
+      type: array
+      deprecated: true
+      description: 'Deprecated. Use `tagIds` instead.
+
+
+        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
+
+        '
+      items:
+        type: string
+      example:
+      - '567'
+      - '214'
+    Endpoint_Test_Results_API_EndpointHttpServerType:
+      type: string
+      description: Type of test being queried.
+      example: http-server
+      pattern: ^http-server$
+      readOnly: true
+    Endpoint_Test_Results_API_TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    Endpoint_Test_Results_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Test_Results_API_EndpointScheduledTestType:
+      type: string
+      enum:
+      - agent-to-server
+      - http-server
+      description: Type of test being queried.
+      example: agent-to-server
+      readOnly: true
+    Endpoint_Test_Results_API_EndpointTestEthernetProfile:
+      type: object
+      properties:
+        linkSpeed:
+          type: integer
+          description: Ethernet profile link speed
+          example: 860
+          readOnly: true
+    Endpoint_Test_Results_API_EndpointAgentTagsSelectorType:
+      type: string
+      example: agent-tags
+      pattern: ^agent-tags$
+    Endpoint_Test_Results_API_TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
+      example: true
+    Endpoint_Test_Results_API_EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
+      type: string
+      example: V4_ONLY
+    Endpoint_Test_Results_API_EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    Endpoint_Test_Results_API_TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    Endpoint_Test_Results_API_TestHttpVersion:
+      type: integer
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    Endpoint_Test_Results_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Endpoint_Test_Results_API_EndpointTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ScheduledTestResults'
+      readOnly: true
+    Endpoint_Test_Results_API_EndpointZtaMetrics:
+      type: object
+      properties:
+        loss:
+          type: number
+          format: double
+          description: Percentage of packets that failed to reach the destination.
+          example: 50
+        avgLatency:
+          type: integer
+          format: int64
+          description: Average latency in milliseconds.
+          example: 3
+        jitter:
+          type: integer
+          format: int64
+          description: Standard deviation of latency in milliseconds.
+          example: 5
+        errorMessage:
+          type: string
+          description: Error message if an error occurred.
+          example: ERR_NAME_NOT_RESOLVED
+        type:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointZtaSegmentType'
+    Endpoint_Test_Results_API_AsnDetails:
+      type: object
+      properties:
+        asName:
+          type: string
+          description: Name of the provider.
+          example: ThousandEyes, Inc
+          readOnly: true
+        asNumber:
+          type: integer
+          description: Unique number assigned to an organization (also referred to as service provider).
+          example: 394101
+          readOnly: true
+    Endpoint_Test_Results_API_TestProbeModeResponse:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
+    Endpoint_Test_Results_API_PaginationNextLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+    Endpoint_Test_Results_API_NicModelFilter:
+      description: Filters results to NIC models that exactly match one of the provided values. Matching is case-sensitive.
       type: array
       items:
         type: string
-        example: 22.250.0.9
-    TestFollowRedirects:
-      type: boolean
-      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
-      default: true
-      example: true
-    PathVisDetailEndpointTestResult:
+        example: Intel(R) Wi-Fi 6 AX200 160MHz
+    Endpoint_Test_Results_API_NetworkEndpointTestResult:
       allOf:
-      - $ref: '#/components/schemas/PathVisBaseEndpointTestResult'
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestResult'
       - type: object
         properties:
-          pathTraces:
+          avgLatency:
+            type: number
+            description: Average RTT for packets sent to destination.
+            example: 167.04
+            format: double
+            readOnly: true
+          errorDetails:
+            type: string
+            description: Error details, if an error was encountered.
+            example: Error
+            readOnly: true
+          jitter:
+            type: number
+            description: Standard deviation of latency.
+            example: 0.076808
+            format: double
+            readOnly: true
+          score:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointPingDataPointScore'
+          ztaMetrics:
             type: array
-            description: Shows iterations of path trace, with each iteration specified by a pathId.
             items:
-              $ref: '#/components/schemas/EndpointPathVisRoute'
-          vpnPathTraces:
-            type: array
-            description: Shows iterations of the VPN path trace, with each iteration specified by a pathId.
-            items:
-              $ref: '#/components/schemas/EndpointPathVisRoute'
-    SelfLinks:
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointZtaMetrics'
+          isIcmpBlocked:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_IcmpBlocked'
+          loss:
+            type: number
+            description: Percentage of packets not reaching destination.
+            example: 0
+            format: double
+            readOnly: true
+          maxLatency:
+            type: number
+            description: Maximum RTT for packets sent to destination.
+            example: 168
+            format: double
+            readOnly: true
+          minLatency:
+            type: number
+            description: Minimum RTT for packets sent to destination.
+            example: 167
+            format: double
+            readOnly: true
+    Endpoint_Test_Results_API_EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
+    Endpoint_Test_Results_API_TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    Endpoint_Test_Results_API_TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
+    Endpoint_Test_Results_API_EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Endpoint_Test_Results_API_EndpointHttpServerBaseTest:
+      type: object
+      properties:
+        authType:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestAuthType'
+        hasPathTraceInSession:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestHasPathTraceInSession'
+        httpTimeLimit:
+          type: integer
+          description: Maximum amount of time in milliseconds the agents wait before a request times out.
+          default: 5000
+          example: 5000
+        protocol:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestProtocol'
+        username:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestUsername'
+        sslVersionId:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestSslVersionId'
+        tcpProbeMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestProbeModeResponse'
+        verifyCertificate:
+          type: boolean
+          description: Flag indicating if a certificate should be verified.
+          default: true
+          example: true
+        url:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestResultUrl'
+    Endpoint_Test_Results_API_ThresholdFilterOperator:
+      type: string
+      enum:
+      - gte
+      - lte
+      example: gte
+    Endpoint_Test_Results_API_EndpointTestResult:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_AccountGroupId'
+        testId:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestId'
+        agentId:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentId'
+        roundId:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_RoundId'
+        serverIp:
+          type: string
+          description: IP address of target server.
+          example: 185.199.108.153
+          readOnly: true
+        networkProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_NetworkProfile'
+        systemMetrics:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_SystemMetrics'
+        originalTargetProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TargetProfile'
+        userProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_UserProfile'
+        vpnProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_VpnProfile'
+        batteryMetrics:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_BatteryMetrics'
+        cellularProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_CellularProfile'
+        platform:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_Platform'
+    Endpoint_Test_Results_API_TotalHits:
+      description: Total number of measurements that match the search criteria.
+      type: integer
+      example: 12
+    Endpoint_Test_Results_API_MultiTestIdEndpointTestsDataRoundsSearch:
+      type: object
+      properties:
+        searchSort:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataSearchSort'
+        thresholdFilter:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestsDataThresholdFilters'
+        searchFilters:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_MultiTestIdEndpointTestsDataSearchFilter'
+    Endpoint_Test_Results_API_ScheduledTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
+    Endpoint_Test_Results_API_EndpointTestsDataSearchFilter:
+      type: object
+      properties:
+        agentId:
+          description: Filter using the `agent-id`.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 52455b09-ff1b-4849-8194-99026cc890e0
+        userPrincipalName:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_UserPrincipalNameFilter'
+        nicModel:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_NicModelFilter'
+        nicDriverVersion:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_NicDriverVersionFilter'
+    Endpoint_Test_Results_API_EndpointTestsDataThresholdFilter:
+      type: object
+      description: The metric is filtered based on the threshold value and operator provided.
+      properties:
+        name:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ThresholdFilterName'
+        value:
+          type: number
+          description: The threshold value.
+          format: double
+          example: 10
+        operator:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ThresholdFilterOperator'
+    Endpoint_Test_Results_API_ApplicationScoreQuality:
+      type: string
+      enum:
+      - great
+      - good
+      - poor
+      example: great
+    Endpoint_Test_Results_API_SystemMetrics:
+      type: object
+      properties:
+        startTimeMs:
+          type: integer
+          format: int64
+          description: The start time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508857327
+          readOnly: true
+        endTimeMs:
+          type: integer
+          format: int64
+          description: The end time of metrics collection, expressed in milliseconds since the Epoch.
+          example: 1581508867333
+          readOnly: true
+        cpuUtilization:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_CpuUtilization'
+        physicalMemoryUsedBytes:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_PhysicalMemoryUsedBytes'
+        physicalMemoryTotalBytes:
+          type: integer
+          format: int64
+          description: Total physical memory of the system.
+          example: 1024
+          readOnly: true
+    Endpoint_Test_Results_API_EndpointPathVisRoute:
+      type: object
+      properties:
+        pathId:
+          type: string
+          description: Unique ID of path trace.
+          example: '4711301366345855606023718047703941305741293841502186803'
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestResultProtocol'
+        tcpPathTraceMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TcpPathTraceModeResponse'
+        udpPathTraceMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_UdpPathTraceModeResponse'
+        hops:
+          type: array
+          description: Array of hop objects indicating each step in the traceroute.
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointPathVisHop'
+    Endpoint_Test_Results_API_UdpPathTraceModeResponse:
+      type: string
+      enum:
+      - stun-pcap
+      - unknown
+      description: Path trace mode used by network test. Only valid when the protocol is set to UDP.
+      default: unknown
+      example: unknown
+      readOnly: true
+    Endpoint_Test_Results_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Endpoint_Test_Results_API_BatteryLevel:
+      description: Battery level indicator.
+      type: string
+      example: medium
+      enum:
+      - high
+      - medium
+      - low
+    Endpoint_Test_Results_API_TestProtocol:
+      type: string
+      enum:
+      - tcp
+      - icmp
+      - udp
+      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
+      default: tcp
+      example: tcp
+    Endpoint_Test_Results_API_EndpointTestPort:
+      type: integer
+      description: Port number.
+      default: 443
+      example: 443
+    Endpoint_Test_Results_API_SelfLinks:
       type: object
       description: A links object containing the self link.
       readOnly: true
       properties:
         self:
-          $ref: '#/components/schemas/Link'
-    NetworkWirelessProfile:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+    Endpoint_Test_Results_API_InterfaceHardwareType:
+      type: string
+      example: wireless
+      enum:
+      - unknown
+      - wireless
+      - ethernet
+      - modem
+      - virtual
+      - loopback
+      - other
+    Endpoint_Test_Results_API_PathVisEndpointTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisBaseEndpointTestResult'
+      - type: object
+        properties:
+          location:
+            type: string
+            description: Geographic location of the path visualization.
+            example: San Francisco Area
+            readOnly: true
+          pathTraces:
+            type: array
+            description: Shows an iteration of path trace, with each iteration specified by a pathId.
+            items:
+              $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointPathTrace'
+    Endpoint_Test_Results_API_UserProfile:
+      type: object
+      description: Details of the logged-in user, including username and user principal name.
+      properties:
+        userName:
+          type: string
+          description: Machine username of the logged-in user.
+          example: joeblogs32
+        userPrincipalName:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_UserPrincipalName'
+    Endpoint_Test_Results_API_ThresholdFilterName:
+      type: string
+      description: Metric on which the threshold filter is applied.
+      enum:
+      - loss
+      - latency
+      - jitter
+      - cpu
+      - memory
+      - signal-quality
+      - application-score
+      - zta-ingress-loss
+      - zta-service-loss
+      - zta-ingress-avg-latency
+      - zta-service-avg-latency
+      - zta-ingress-jitter
+      - zta-service-jitter
+      example: loss
+    Endpoint_Test_Results_API_TargetProfile:
+      type: object
+      properties:
+        remotePort:
+          type: integer
+          description: The remote port of a network flow towards the target.
+          example: 80
+          readOnly: true
+        remoteIpAddress:
+          type: string
+          description: The remote IP address of a network flow towards the target.
+          example: 120.98.134.7
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TestProtocol'
+    Endpoint_Test_Results_API_TcpPathTraceModeResponse:
+      type: string
+      enum:
+      - auto
+      - syn
+      - syn-pcap
+      - unknown
+      - data-in-session-with-decrementing-ttl
+      - data-in-session
+      description: Path trace mode used by network test. Only valid when the protocol is set to TCP.
+      default: auto
+      example: syn-pcap
+    Endpoint_Test_Results_API_NetworkWirelessProfile:
       type: object
       properties:
         ssid:
@@ -715,45 +1490,53 @@ components:
           description: Wireless network device vendor.
           example: Cisco
           readOnly: true
-    SystemMetrics:
+    Endpoint_Test_Results_API_CellularProfile:
+      description: Cellular network profile information for a mobile endpoint agent.
       type: object
+      readOnly: true
       properties:
-        startTimeMs:
-          type: integer
-          format: int64
-          description: The start time of metrics collection, expressed in milliseconds since the Epoch.
-          example: 1581508857327
-          readOnly: true
-        endTimeMs:
-          type: integer
-          format: int64
-          description: The end time of metrics collection, expressed in milliseconds since the Epoch.
-          example: 1581508867333
-          readOnly: true
-        cpuUtilization:
-          $ref: '#/components/schemas/CpuUtilization'
-        physicalMemoryUsedBytes:
-          $ref: '#/components/schemas/PhysicalMemoryUsedBytes'
-        physicalMemoryTotalBytes:
-          type: integer
-          format: int64
-          description: Total physical memory of the system.
-          example: 1024
-          readOnly: true
-    EndpointSpecificAgentsSelectorType:
-      type: string
-      example: specific-agents
-      pattern: ^specific-agents$
-    EndpointTestAuthType:
-      type: string
-      description: HTTP authentication type.
-      enum:
-      - none
-      - basic
-      - ntlm
-      default: none
-      example: none
-    BatteryMetrics:
+        carrierName:
+          type: string
+          description: Carrier name
+          example: T-Mobile
+        networkGen:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_CellularNetworkGen'
+        networkSubtype:
+          type: string
+          description: A real network subtype. It may be different from an advertised network type.
+          example: LTE/HSPA
+        advertisedNetworkGen:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_CellularNetworkGen'
+        advertisedNetworkSubtype:
+          type: string
+          description: Advertised Network subtype
+          example: LTE/HSPA
+        rssi:
+          type: number
+          format: double
+          description: Received Signal Strength Indicator in dBm. Values are always negative.
+          example: -10
+        rsrp:
+          type: number
+          format: double
+          description: Reference Signal Received Power in dBm. Values are always negative.
+          example: -30
+        rscp:
+          type: number
+          format: double
+          description: Received Signal Code Power in dBm. Values are always negative or zero.
+          example: -30
+        rsrq:
+          type: number
+          format: double
+          description: Reference Signal Received Quality in dBm. Values are always negative.
+          example: -30
+        sinr:
+          type: number
+          format: double
+          description: Signal to Interference and Noise Ratio in dBm. It can be negative or positive.
+          example: 20
+    Endpoint_Test_Results_API_BatteryMetrics:
       description: Battery metrics for the endpoint agent.
       type: object
       readOnly: true
@@ -766,7 +1549,7 @@ components:
           minimum: 0
           maximum: 1
         batteryLevel:
-          $ref: '#/components/schemas/BatteryLevel'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_BatteryLevel'
         batteryLevelNormalizedPercent:
           type: number
           format: double
@@ -777,393 +1560,35 @@ components:
       required:
       - batteryLevel
       - batteryLevelNormalizedPercent
-    PathVisEndpointTestResults:
-      type: object
-      properties:
-        results:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/PathVisEndpointTestResult'
-        test:
-          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
-          allOf:
-          - $ref: '#/components/schemas/EndpointScheduledTest'
-        startDate:
-          $ref: '#/components/schemas/StartDate'
-        endDate:
-          $ref: '#/components/schemas/EndDate'
-        _links:
-          $ref: '#/components/schemas/PaginationNextAndSelfLink'
-    NetworkProfile:
-      allOf:
-      - $ref: '#/components/schemas/NetworkInterface'
-      - type: object
-        description: Contains basic network connectivity parameters.
-        properties:
-          error:
-            type: string
-            description: Only present when there is an error
-            example: An operation timed out.
-            readOnly: true
-          gateway:
-            type: string
-            description: Network gateway address.
-            example: 10.0.0.1
-            readOnly: true
-          wirelessProfile:
-            $ref: '#/components/schemas/NetworkWirelessProfile'
-          proxyProfile:
-            $ref: '#/components/schemas/NetworkProxyProfile'
-          ethernetProfile:
-            $ref: '#/components/schemas/EndpointTestEthernetProfile'
-          previousInterface:
-            $ref: '#/components/schemas/NetworkInterface'
-    VpnType:
-      type: string
-      description: Name of the VPN provider.
-      enum:
-      - cisco-anyconnect
-      - palo-alto-globalprotect
-      - ivanti-connect-secure
-      - zscaler-internet-access
-      - f5-big-ip
-      example: cisco-anyconnect
-    PathVisBaseEndpointTestResult:
-      allOf:
-      - $ref: '#/components/schemas/EndpointTestResult'
-      - type: object
-        properties:
-          asnDetails:
-            $ref: '#/components/schemas/AsnDetails'
-          server:
-            type: string
-            description: Target server, including port.
-            example: www.google.com:443
-            readOnly: true
-          sourceIp:
-            type: string
-            description: IP address of source endpoint agent.
-            example: 196.40.106.237
-            readOnly: true
-          sourcePrefix:
-            type: string
-            description: IP prefix of source endpoint agent.
-            example: 196.40.96.0/20
-            readOnly: true
-    TestIsEnabled:
-      type: boolean
-      description: Indicates if test is enabled.
-      example: true
-      default: true
-    NetworkProxy:
-      type: object
-      properties:
-        bypass:
-          type: string
-          description: Proxy bypass expression.
-          example: '*.local;169.254/16'
-          readOnly: true
-        proxy:
-          type: string
-          description: Proxy mode.
-          example: <direct>
-          readOnly: true
-    ApplicationScoreQuality:
-      type: string
-      enum:
-      - great
-      - good
-      - poor
-      example: great
-    PathVisDetailEndpointTestResults:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PathVisDetailEndpointTestResult'
-        test:
-          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
-          allOf:
-          - $ref: '#/components/schemas/EndpointScheduledTest'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    EndpointPathTrace:
-      type: object
-      properties:
-        ipAddress:
-          type: string
-          description: IP address of the hop destination.
-          example: 196.40.106.237
-          readOnly: true
-        numberOfHops:
-          type: integer
-          description: Number of hops for path trace to destination.
-          example: 15
-          readOnly: true
-        protocol:
-          $ref: '#/components/schemas/EndpointTestResultProtocol'
-        tcpPathTraceMode:
-          $ref: '#/components/schemas/TcpPathTraceModeResponse'
-        udpPathTraceMode:
-          $ref: '#/components/schemas/UdpPathTraceModeResponse'
-        pathId:
-          type: string
-          description: Unique ID of path trace.
-          example: '1230899668701775614109128428722974545787322404682781961521'
-          readOnly: true
-        responseTime:
-          type: integer
-          description: RTT of the path trace to the destination in milliseconds.
-          example: 1500
-          readOnly: true
-    EndpointScoreNumeric:
-      type: number
-      format: double
-      description: A fine-grained score between 0 and 100.
-      example: 100
-    TestHasPathTraceInSession:
-      type: boolean
-      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
-      example: true
-    EndpointZtaMetrics:
-      type: object
-      properties:
-        loss:
-          type: number
-          format: double
-          description: Percentage of packets that failed to reach the destination.
-          example: 50
-        avgLatency:
-          type: integer
-          format: int64
-          description: Average latency in milliseconds.
-          example: 3
-        jitter:
-          type: integer
-          format: int64
-          description: Standard deviation of latency in milliseconds.
-          example: 5
-        errorMessage:
-          type: string
-          description: Error message if an error occurred.
-          example: ERR_NAME_NOT_RESOLVED
-        type:
-          $ref: '#/components/schemas/EndpointZtaSegmentType'
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    BatteryLevel:
-      description: Battery level indicator.
-      type: string
-      example: medium
-      enum:
-      - high
-      - medium
-      - low
-    EndpointAllAgentsSelectorType:
-      type: string
-      example: all-agents
-      pattern: ^all-agents$
-    EndpointAgentToServerType:
-      type: string
-      description: Type of test being queried.
-      example: agent-to-server
-      pattern: ^agent-to-server$
-      readOnly: true
-    TestSslVersion:
-      type: string
-      description: Reflects the verbose SSL protocol version used by a test.
-      readOnly: true
-      example: Auto
-    TestNetworkMeasurements:
-      type: boolean
-      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
-      default: true
-      example: true
-    PaginationNextLink:
-      type: object
-      description: A links object containing a related link for forward pagination.
-      properties:
-        next:
-          $ref: '#/components/schemas/Link'
-    TestProbeModeResponse:
-      type: string
-      enum:
-      - auto
-      - sack
-      - syn
-      - syn-pcap
-      - syn-socket
-      - unknown
-      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
-      default: auto
-      example: auto
-    EndpointPathVisRoute:
-      type: object
-      properties:
-        pathId:
-          type: string
-          description: Unique ID of path trace.
-          example: '4711301366345855606023718047703941305741293841502186803'
-          readOnly: true
-        protocol:
-          $ref: '#/components/schemas/EndpointTestResultProtocol'
-        tcpPathTraceMode:
-          $ref: '#/components/schemas/TcpPathTraceModeResponse'
-        udpPathTraceMode:
-          $ref: '#/components/schemas/UdpPathTraceModeResponse'
-        hops:
-          type: array
-          description: Array of hop objects indicating each step in the traceroute.
-          items:
-            $ref: '#/components/schemas/EndpointPathVisHop'
-    AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    EndpointTestProtocol:
-      type: string
-      enum:
-      - icmp
-      - icmp-with-tcp-connect
-      - tcp
-      - prefer-tcp
-      - ast-autodetect
-      - autodetect
-      description: Protocol requested for the test.
-      default: icmp
-      example: icmp
-    EndpointTestsDataThresholdFilter:
-      type: object
-      description: The metric is filtered based on the threshold value and operator provided.
-      properties:
-        name:
-          $ref: '#/components/schemas/ThresholdFilterName'
-        value:
-          type: number
-          description: The threshold value.
-          format: double
-          example: 10
-        operator:
-          $ref: '#/components/schemas/ThresholdFilterOperator'
-    MultiTestIdEndpointTestsDataRoundsSearch:
-      type: object
-      properties:
-        searchSort:
-          type: array
-          items:
-            $ref: '#/components/schemas/EndpointTestsDataSearchSort'
-        thresholdFilter:
-          $ref: '#/components/schemas/EndpointTestsDataThresholdFilters'
-        searchFilters:
-          $ref: '#/components/schemas/MultiTestIdEndpointTestsDataSearchFilter'
-    UserProfile:
-      type: object
-      description: Details of the logged-in user, including username and user principal name.
-      properties:
-        userName:
-          type: string
-          description: Machine username of the logged-in user.
-          example: joeblogs32
-        userPrincipalName:
-          $ref: '#/components/schemas/UserPrincipalName'
-    EndpointHttpServerTest:
-      allOf:
-      - $ref: '#/components/schemas/EndpointTest'
-      - $ref: '#/components/schemas/EndpointHttpServerBaseTest'
-      - type: object
-        properties:
-          type:
-            $ref: '#/components/schemas/EndpointHttpServerType'
-          followRedirects:
-            $ref: '#/components/schemas/TestFollowRedirects'
-          httpTargetTime:
-            $ref: '#/components/schemas/TestHttpTargetTime'
-          httpVersion:
-            $ref: '#/components/schemas/TestHttpVersion'
-          isPrioritized:
-            $ref: '#/components/schemas/TestIsPrioritized'
-          interval:
-            $ref: '#/components/schemas/TestInterval'
-          sslVersion:
-            $ref: '#/components/schemas/TestSslVersion'
-          useNtlm:
-            $ref: '#/components/schemas/TestUseNtlm'
-    PaginationNextAndSelfLink:
-      type: object
-      description: A links object containing a related link for forward pagination.
-      properties:
-        next:
-          $ref: '#/components/schemas/Link'
-        self:
-          $ref: '#/components/schemas/Link'
-    EndpointTestsDataSearchSortKey:
-      type: string
-      enum:
-      - round-id
-      - loss
-      - latency
-      - jitter
-      - cpu
-      - memory
-      - signal-quality
-      example: round-id
-    EndpointAgentLabelsSelectorType:
-      type: string
-      example: agent-labels
-      pattern: ^agent-labels$
-    TargetProfile:
-      type: object
-      properties:
-        remotePort:
-          type: integer
-          description: The remote port of a network flow towards the target.
-          example: 80
-          readOnly: true
-        remoteIpAddress:
-          type: string
-          description: The remote IP address of a network flow towards the target.
-          example: 120.98.134.7
-          readOnly: true
-        protocol:
-          $ref: '#/components/schemas/TestProtocol'
-    EndpointZtaSegmentType:
-      type: string
-      description: Type of ZTA segment.
-      enum:
-      - zta_ingress
-      - zta_service
-      example: zta_service
-    TestLabels:
+    Endpoint_Test_Results_API_TestLabels:
       type: array
       description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
       items:
-        $ref: '#/components/schemas/TestLabel'
-    Platform:
-      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+        $ref: '#/components/schemas/Endpoint_Test_Results_API_TestLabel'
+    Endpoint_Test_Results_API_UserPrincipalName:
+      type: string
+      description: User login name in Internet-style format, typically used in Active Directory environments.
+      example: joeblogs32@c.com
+    Endpoint_Test_Results_API_PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+        self:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_Link'
+    Endpoint_Test_Results_API_ConditionalOperator:
       type: string
       enum:
-      - windows
-      - roomos
-      - phoneos
-      - elux
-      - cisco-wireless
-      - cisco-wireless-cloud
-      - linux
-      - mac
-      - android
-      - unknown
-      example: mac
-    NetworkInterface:
+      - and
+      - or
+      example: and
+    Endpoint_Test_Results_API_EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    Endpoint_Test_Results_API_NetworkInterface:
       type: object
       properties:
         ipAddress:
@@ -1201,66 +1626,47 @@ components:
           items:
             type: string
         hardwareType:
-          $ref: '#/components/schemas/InterfaceHardwareType'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_InterfaceHardwareType'
         interfaceName:
           type: string
           description: Network interface name.
           example: en0
           readOnly: true
-    UdpPathTraceModeResponse:
-      type: string
-      enum:
-      - stun-pcap
-      - unknown
-      description: Path trace mode used by network test. Only valid when the protocol is set to UDP.
-      default: unknown
-      example: unknown
-      readOnly: true
-    EndpointAgentTagsSelectorType:
-      type: string
-      example: agent-tags
-      pattern: ^agent-tags$
-    TagIds:
-      type: array
-      description: List of tag IDs (obtained from `/tags` endpoint).
-      items:
-        type: string
-        format: uuid
-      example:
-      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
-    EndpointTestSelfLink:
-      allOf:
-      - description: A reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
-      - $ref: '#/components/schemas/Link'
-    SortOrder:
-      type: string
-      example: desc
-      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
-      enum:
-      - asc
-      - desc
-    EndpointAgentSelectorConfig:
+    Endpoint_Test_Results_API_EndpointPathTrace:
       type: object
-      description: Agents selection object based on agentSelectorType.
+      properties:
+        ipAddress:
+          type: string
+          description: IP address of the hop destination.
+          example: 196.40.106.237
+          readOnly: true
+        numberOfHops:
+          type: integer
+          description: Number of hops for path trace to destination.
+          example: 15
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestResultProtocol'
+        tcpPathTraceMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TcpPathTraceModeResponse'
+        udpPathTraceMode:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_UdpPathTraceModeResponse'
+        pathId:
+          type: string
+          description: Unique ID of path trace.
+          example: '1230899668701775614109128428722974545787322404682781961521'
+          readOnly: true
+        responseTime:
+          type: integer
+          description: RTT of the path trace to the destination in milliseconds.
+          example: 1500
+          readOnly: true
+    Endpoint_Test_Results_API_TestId:
+      type: string
+      description: Unique ID of endpoint test.
+      example: '584739201'
       readOnly: true
-      oneOf:
-      - $ref: '#/components/schemas/EndpointAllAgentsSelectorConfig'
-      - $ref: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
-      - $ref: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
-      - $ref: '#/components/schemas/EndpointAgentTagsSelectorConfig'
-      discriminator:
-        propertyName: agentSelectorType
-        mapping:
-          all-agents: '#/components/schemas/EndpointAllAgentsSelectorConfig'
-          specific-agents: '#/components/schemas/EndpointSpecificAgentsSelectorConfig'
-          agent-labels: '#/components/schemas/EndpointAgentLabelsSelectorConfig'
-          agent-tags: '#/components/schemas/EndpointAgentTagsSelectorConfig'
-      required:
-      - agentSelectorType
-    Error:
+    Endpoint_Test_Results_API_Error:
       type: object
       properties:
         type:
@@ -1278,536 +1684,41 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    EndpointTestsDataRoundsSearch:
-      type: object
-      properties:
-        searchSort:
-          type: array
-          items:
-            $ref: '#/components/schemas/EndpointTestsDataSearchSort'
-        thresholdFilter:
-          $ref: '#/components/schemas/EndpointTestsDataThresholdFilters'
-        searchFilters:
-          $ref: '#/components/schemas/EndpointTestsDataSearchFilter'
-    EndpointHttpServerType:
+    Endpoint_Test_Results_API_EndpointTestProtocol:
       type: string
-      description: Type of test being queried.
-      example: http-server
-      pattern: ^http-server$
-      readOnly: true
-    TestHttpVersion:
-      type: integer
-      minimum: 1
-      maximum: 2
-      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
-      default: 2
-      example: 2
-    EndpointAllAgentsSelectorConfig:
-      type: object
-      description: Any agent selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/EndpointAllAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/EndpointTestMaxMachines'
-      required:
-      - agentSelectorType
-    MultiTestIdNetworkEndpointTestResults:
-      type: object
-      properties:
-        results:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/NetworkEndpointTestResult'
-        totalHits:
-          $ref: '#/components/schemas/TotalHits'
-        startDate:
-          $ref: '#/components/schemas/StartDate'
-        endDate:
-          $ref: '#/components/schemas/EndDate'
-        _links:
-          $ref: '#/components/schemas/PaginationNextLink'
-    InterfaceHardwareType:
-      type: string
-      example: wireless
       enum:
-      - unknown
-      - wireless
-      - ethernet
-      - modem
-      - virtual
-      - loopback
-      - other
-    EndpointTestsDataThresholdFilters:
-      type: object
-      description: All filters are applied based on the conditional operator (and/or).
-      properties:
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/EndpointTestsDataThresholdFilter'
-        conditionalOperator:
-          $ref: '#/components/schemas/ConditionalOperator'
-    EndpointPingDataPointScore:
+      - icmp
+      - icmp-with-tcp-connect
+      - tcp
+      - prefer-tcp
+      - ast-autodetect
+      - autodetect
+      description: Protocol requested for the test.
+      default: icmp
+      example: icmp
+    Endpoint_Test_Results_API_EndpointPingDataPointScore:
       type: object
       properties:
         applicationScore:
-          $ref: '#/components/schemas/EndpointScoreNumeric'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointScoreNumeric'
         quality:
-          $ref: '#/components/schemas/ApplicationScoreQuality'
-    EndpointTestResultUrl:
-      type: string
-      description: The test target URL.
-      example: https://example.com:443
-    RoundId:
-      type: integer
-      description: Epoch time (seconds) indicating the start time of the round.
-      example: 1384309800
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ApplicationScoreQuality'
+    Endpoint_Test_Results_API_EndpointAgentTagsSelectorConfig:
+      type: object
+      description: Agent tags selection object.
       readOnly: true
-    PhysicalMemoryUsedBytes:
-      type: object
-      properties:
-        min:
-          type: number
-          format: double
-          description: The minimum sampled memory usage value recorded during the monitored period.
-          example: 1.2
-          readOnly: true
-        max:
-          type: number
-          format: double
-          description: The maximum sampled memory usage value recorded during the monitored period.
-          example: 2.5
-          readOnly: true
-        mean:
-          type: number
-          format: double
-          description: The mean (average) value of memory usage sampled over the monitored period.
-          example: 1.77
-          readOnly: true
-        median:
-          type: number
-          format: double
-          description: The median value of memory usage sampled over the monitored period.
-          example: 1.85
-          readOnly: true
-        stdDev:
-          type: number
-          format: double
-          description: The standard deviation of memory usage sampled during the monitored period.
-          example: 0.25
-          readOnly: true
-        count:
-          type: integer
-          description: The total number of samples collected during the monitored period.
-          example: 155
-          readOnly: true
-    NetworkEndpointTestResults:
-      type: object
-      properties:
-        results:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/NetworkEndpointTestResult'
-        totalHits:
-          $ref: '#/components/schemas/TotalHits'
-        test:
-          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
-          allOf:
-          - $ref: '#/components/schemas/EndpointScheduledTest'
-        startDate:
-          $ref: '#/components/schemas/StartDate'
-        endDate:
-          $ref: '#/components/schemas/EndDate'
-        _links:
-          $ref: '#/components/schemas/PaginationNextLink'
-    PathVisEndpointTestResult:
-      allOf:
-      - $ref: '#/components/schemas/PathVisBaseEndpointTestResult'
-      - type: object
-        properties:
-          location:
-            type: string
-            description: Geographic location of the path visualization.
-            example: San Francisco Area
-            readOnly: true
-          pathTraces:
-            type: array
-            description: Shows an iteration of path trace, with each iteration specified by a pathId.
-            items:
-              $ref: '#/components/schemas/EndpointPathTrace'
-    TestUsername:
-      type: string
-      description: Username for Basic/NTLM authentication.
-      example: username
-    TestHttpTargetTime:
-      type: integer
-      minimum: 100
-      maximum: 5000
-      description: Target time for HTTP server completion, specified in milliseconds.
-      example: 100
-    TestProtocol:
-      type: string
-      enum:
-      - tcp
-      - icmp
-      - udp
-      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
-      default: tcp
-      example: tcp
-    ScheduledTestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
-    NetworkEndpointTestResult:
-      allOf:
-      - $ref: '#/components/schemas/EndpointTestResult'
-      - type: object
-        properties:
-          avgLatency:
-            type: number
-            description: Average RTT for packets sent to destination.
-            example: 167.04
-            format: double
-            readOnly: true
-          errorDetails:
-            type: string
-            description: Error details, if an error was encountered.
-            example: Error
-            readOnly: true
-          jitter:
-            type: number
-            description: Standard deviation of latency.
-            example: 0.076808
-            format: double
-            readOnly: true
-          score:
-            $ref: '#/components/schemas/EndpointPingDataPointScore'
-          ztaMetrics:
-            type: array
-            items:
-              $ref: '#/components/schemas/EndpointZtaMetrics'
-          isIcmpBlocked:
-            $ref: '#/components/schemas/IcmpBlocked'
-          loss:
-            type: number
-            description: Percentage of packets not reaching destination.
-            example: 0
-            format: double
-            readOnly: true
-          maxLatency:
-            type: number
-            description: Maximum RTT for packets sent to destination.
-            example: 168
-            format: double
-            readOnly: true
-          minLatency:
-            type: number
-            description: Minimum RTT for packets sent to destination.
-            example: 167
-            format: double
-            readOnly: true
-    StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    CellularNetworkGen:
-      description: Cellular network generation.
-      type: string
-      example: 2g, 3g, 4g, 5g
-    TestId:
-      type: string
-      description: Unique ID of endpoint test.
-      example: '584739201'
-      readOnly: true
-    EndpointTestEthernetProfile:
-      type: object
-      properties:
-        linkSpeed:
-          type: integer
-          description: Ethernet profile link speed
-          example: 860
-          readOnly: true
-    EndpointTestResult:
-      type: object
-      properties:
-        aid:
-          $ref: '#/components/schemas/AccountGroupId'
-        testId:
-          $ref: '#/components/schemas/TestId'
-        agentId:
-          $ref: '#/components/schemas/EndpointAgentId'
-        roundId:
-          $ref: '#/components/schemas/RoundId'
-        serverIp:
-          type: string
-          description: IP address of target server.
-          example: 185.199.108.153
-          readOnly: true
-        networkProfile:
-          $ref: '#/components/schemas/NetworkProfile'
-        systemMetrics:
-          $ref: '#/components/schemas/SystemMetrics'
-        originalTargetProfile:
-          $ref: '#/components/schemas/TargetProfile'
-        userProfile:
-          $ref: '#/components/schemas/UserProfile'
-        vpnProfile:
-          $ref: '#/components/schemas/VpnProfile'
-        batteryMetrics:
-          $ref: '#/components/schemas/BatteryMetrics'
-        cellularProfile:
-          $ref: '#/components/schemas/CellularProfile'
-        platform:
-          $ref: '#/components/schemas/Platform'
-    VpnProfile:
-      type: object
-      properties:
-        vpnClientAddresses:
-          type: array
-          description: A list of private IP addresses assigned to the device by the VPN server.
-          example:
-          - 184.81.113.85
-          - 13.129.91.62
-          readOnly: true
-          items:
-            type: string
-        vpnClientNetworkRange:
-          type: array
-          description: A list of private networks assigned to the device by the VPN server.
-          readOnly: true
-          items:
-            type: string
-            example: 9.88.37.27
-        vpnGatewayAddress:
-          type: string
-          description: IP address of the VPN gateway.
-          example: 120.98.134.7
-          readOnly: true
-        vpnType:
-          $ref: '#/components/schemas/VpnType'
-    EndpointTest:
-      type: object
-      required:
-      - type
-      properties:
-        aid:
-          $ref: '#/components/schemas/AccountGroupId'
-        _links:
-          $ref: '#/components/schemas/EndpointTestLinks'
-        agentSelectorConfig:
-          $ref: '#/components/schemas/EndpointAgentSelectorConfig'
-        createdDate:
-          $ref: '#/components/schemas/TestCreatedDate'
-        isPrioritized:
-          $ref: '#/components/schemas/TestIsPrioritized'
-        interval:
-          $ref: '#/components/schemas/TestInterval'
-        isEnabled:
-          $ref: '#/components/schemas/TestIsEnabled'
-        isSavedEvent:
-          $ref: '#/components/schemas/TestIsSavedEvent'
-        hasPathTraceInSession:
-          $ref: '#/components/schemas/TestHasPathTraceInSession'
-        labels:
-          $ref: '#/components/schemas/TestLabels'
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        networkMeasurements:
-          $ref: '#/components/schemas/TestNetworkMeasurements'
-        protocol:
-          $ref: '#/components/schemas/EndpointTestProtocol'
-        ipVersion:
-          $ref: '#/components/schemas/EndpointIpVersionOut'
-        server:
-          type: string
-          description: Target domain name or IP address.
-          example: www.example.com
-        testId:
-          type: string
-          description: Each test is assigned a unique ID to access test data from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          $ref: '#/components/schemas/TestName'
-        type:
-          $ref: '#/components/schemas/EndpointScheduledTestType'
-        tcpProbeMode:
-          $ref: '#/components/schemas/TestProbeModeResponse'
-        port:
-          $ref: '#/components/schemas/EndpointTestPort'
-    EndpointPathVisHop:
-      allOf:
-      - $ref: '#/components/schemas/Hop'
-      - type: object
-        properties:
-          rdns:
-            type: string
-            description: Reverse DNS entry of IP, if available.
-            example: core-router1.cpt2.host-h.net
-            readOnly: true
-          network:
-            type: string
-            description: Autonomous System originating the prefix.
-            example: HETZNER (Pty) Ltd (AS 37153)
-            readOnly: true
-          responseTime:
-            type: integer
-            description: RTT to the hop’s IP in milliseconds.
-            example: 1
-            readOnly: true
-          location:
-            type: string
-            description: Location information for the hop.
-            example: Cape Town, South Africa
-            readOnly: true
-    EndpointTestMaxMachines:
-      type: integer
-      description: Maximum number of agents which can execute the test.
-      default: 25
-      example: 25
-    Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    ThresholdFilterOperator:
-      type: string
-      enum:
-      - gte
-      - lte
-      example: gte
-    MultiTestIdEndpointTestsDataSearchFilter:
-      type: object
-      properties:
-        agentId:
-          description: Filter using the `agent-id`.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 52455b09-ff1b-4849-8194-99026cc890e0
-        testId:
-          type: array
-          items:
-            type: string
-            example: '5'
-        nicModel:
-          $ref: '#/components/schemas/NicModelFilter'
-        nicDriverVersion:
-          $ref: '#/components/schemas/NicDriverVersionFilter'
-    EndpointAgentToServerTest:
-      allOf:
-      - $ref: '#/components/schemas/EndpointTest'
-      - type: object
-        properties:
-          type:
-            $ref: '#/components/schemas/EndpointAgentToServerType'
-    EndpointAgentLabelsSelectorConfig:
-      type: object
-      description: Agent labels selection object.
-      readOnly: true
-      deprecated: true
       properties:
         agentSelectorType:
-          $ref: '#/components/schemas/EndpointAgentLabelsSelectorType'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentTagsSelectorType'
         maxMachines:
-          $ref: '#/components/schemas/EndpointTestMaxMachines'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointTestMaxMachines'
         endpointAgentLabels:
-          $ref: '#/components/schemas/EndpointAgentLabels'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointAgentLabels'
         tagIds:
-          $ref: '#/components/schemas/TagIds'
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_TagIds'
       required:
       - agentSelectorType
-    EndpointIpVersionOut:
-      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
-      type: string
-      example: V4_ONLY
-    ExpandEndpointNetworkOptions:
-      type: string
-      enum:
-      - user-profile
-      example: user-profile
-    Hop:
-      type: object
-      properties:
-        hop:
-          type: integer
-          description: The hop index.
-          example: 1
-          readOnly: true
-        ipAddress:
-          type: string
-          description: IP address of the hop.
-          example: 196.40.106.237
-          readOnly: true
-        prefix:
-          type: string
-          description: Prefix of IP address shown in CIDR.
-          example: 196.40.96.0/20
-          readOnly: true
-    EndpointSpecificAgentsSelectorConfig:
-      type: object
-      description: Specific agents selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/EndpointSpecificAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/EndpointTestMaxMachines'
-        agents:
-          $ref: '#/components/schemas/EndpointTestAgents'
-      required:
-      - agentSelectorType
-    EndpointScheduledTest:
-      oneOf:
-      - $ref: '#/components/schemas/EndpointAgentToServerTest'
-      - $ref: '#/components/schemas/EndpointHttpServerTest'
-      discriminator:
-        propertyName: type
-        mapping:
-          agent-to-server: '#/components/schemas/EndpointAgentToServerTest'
-          http-server: '#/components/schemas/EndpointHttpServerTest'
-    EndpointTestResultProtocol:
+    Endpoint_Test_Results_API_EndpointTestResultProtocol:
       type: string
       enum:
       - icmp
@@ -1820,93 +1731,435 @@ components:
       description: Protocol used to perform the test.
       default: unknown
       example: tcp
-    ConditionalOperator:
+    Endpoint_Test_Results_API_TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    Endpoint_Test_Results_API_TestCreatedDate:
       type: string
-      enum:
-      - and
-      - or
-      example: and
-    NicModelFilter:
-      description: Filters results to NIC models that exactly match one of the provided values. Matching is case-sensitive.
-      type: array
-      items:
-        type: string
-        example: Intel(R) Wi-Fi 6 AX200 160MHz
-    EndpointAgentTagsSelectorConfig:
-      type: object
-      description: Agent tags selection object.
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
       readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/EndpointAgentTagsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/EndpointTestMaxMachines'
-        endpointAgentLabels:
-          $ref: '#/components/schemas/EndpointAgentLabels'
-        tagIds:
-          $ref: '#/components/schemas/TagIds'
-      required:
-      - agentSelectorType
-    EndpointTestLinks:
+    Endpoint_Test_Results_API_PathVisDetailEndpointTestResults:
       type: object
-      description: A list of links that can be accessed to get more information.
       properties:
-        self:
-          $ref: '#/components/schemas/EndpointTestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/ScheduledTestResults'
-      readOnly: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_PathVisDetailEndpointTestResult'
+        test:
+          description: The scheduled test configuration. Omitted when the user lacks the `View endpoint experience tests` permission.
+          allOf:
+          - $ref: '#/components/schemas/Endpoint_Test_Results_API_EndpointScheduledTest'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_SelfLinks'
+    Endpoint_Test_Results_API_EndpointTestResultUrl:
+      type: string
+      description: The test target URL.
+      example: https://example.com:443
   responses:
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+    Endpoint_Test_Results_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '502':
+    Endpoint_Test_Results_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_UnauthorizedError'
+    Endpoint_Test_Results_API_502:
       description: Bad Gateway
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '403':
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_Error'
+    Endpoint_Test_Results_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_Error'
+    Endpoint_Test_Results_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_Error'
+    Endpoint_Test_Results_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Test_Results_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+  parameters:
+    Endpoint_Test_Results_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    Endpoint_Test_Results_API_AgentIdPath:
+      name: agentId
+      description: Agent ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '11'
+    Endpoint_Test_Results_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Endpoint_Test_Results_API_UseAllPermittedAids:
+      name: useAllPermittedAids
+      in: query
+      required: false
+      description: Set to `true` to load data from all accounts the user has access to.
+      schema:
+        type: boolean
+        example: false
+        default: false
+    Endpoint_Test_Results_API_ExpandEndpointNetwork:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: This parameter is optional and determines whether to expand resources related to test results. By default, no expansion occurs when this query parameter is omitted. To expand a specific resource, such as "user-profile," append `?expand=user-profile` to the query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Endpoint_Test_Results_API_ExpandEndpointNetworkOptions'
+        example:
+        - header
+    Endpoint_Test_Results_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Endpoint_Test_Results_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Endpoint_Test_Results_API_PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+    Endpoint_Test_Results_API_Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    Endpoint_Test_Results_API_RoundIdPath:
+      name: roundId
+      description: Round ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '1384309800'
+    Endpoint_Test_Results_API_TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

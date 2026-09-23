@@ -1,13 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Integrations Panorama Connectors API
-  description: '**Note:** The Webhook Operations APIs are not available for ThousandEyes for Government instance.
-
-
-    Manage connectors and operations.
-
-    '
   version: 7.0.100
+  title: ThousandEyes Panorama Connectors API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -22,14 +16,14 @@ info:
     url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
   - type: source
     url: https://developer.cisco.com/docs/thousandeyes/
+  description: A Panorama connector represents an instance of Palo Alto Networks Panorama that you can integrate with the ThousandEyes platform.
 servers:
-- url: https://api.thousandeyes.com/v7
-  description: ThousandEyes API v7
-security:
-- BearerAuth: []
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
 tags:
 - name: Panorama Connectors
   description: A Panorama connector represents an instance of Palo Alto Networks Panorama that you can integrate with the ThousandEyes platform.
+  x-displayName: Panorama Connectors
 paths:
   /connectors/panorama/{id}:
     get:
@@ -39,30 +33,32 @@ paths:
       description: Retrieves details of a Panorama connector by its ID.
       operationId: getPanoramaConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: Panorama connector details.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PanoramaConnector'
+                $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     put:
       tags:
       - Panorama Connectors
@@ -70,18 +66,18 @@ paths:
       description: Replaces the Panorama connector specified by ID. The request must include the complete connector configuration, including authentication credentials; existing credentials are not retained when authentication is omitted.
       operationId: updatePanoramaConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PanoramaConnector'
+              $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
             example:
               type: panorama
               name: Branch Panorama
@@ -98,17 +94,19 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PanoramaConnector'
+                $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     delete:
       tags:
       - Panorama Connectors
@@ -116,26 +114,28 @@ paths:
       description: Deletes the Panorama connector specified by ID.
       operationId: deletePanoramaConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '204':
           description: No Content.
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
   /connectors/panorama/{id}/operations:
     get:
       tags:
@@ -144,30 +144,32 @@ paths:
       description: Returns a list of operation IDs assigned to a Panorama connector.
       operationId: getPanoramaConnectorOperations
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: Operation IDs assigned to the Panorama connector.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Assignments'
+                $ref: '#/components/schemas/Integrations_API_Assignments'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     put:
       tags:
       - Panorama Connectors
@@ -175,13 +177,13 @@ paths:
       description: Assigns operations to a Panorama connector. This replaces any existing assignments. Passing an empty array removes all operation assignments from the connector.
       operationId: setPanoramaConnectorOperations
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         description: List of operation IDs to assign to the connector.
         content:
@@ -200,17 +202,19 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Assignments'
+                $ref: '#/components/schemas/Integrations_API_Assignments'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
   /connectors/panorama:
     get:
       tags:
@@ -219,24 +223,26 @@ paths:
       description: Returns a list of Panorama connectors in the specified account group. If no account group is specified, the user’s default account group is used.
       operationId: getPanoramaConnectors
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: A list of Panorama connectors.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PanoramaConnectors'
+                $ref: '#/components/schemas/Integrations_API_PanoramaConnectors'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     post:
       tags:
       - Panorama Connectors
@@ -244,13 +250,13 @@ paths:
       description: Creates a new Panorama connector.
       operationId: createPanoramaConnector
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         description: Panorama connector configuration.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PanoramaConnector'
+              $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
             example:
               type: panorama
               name: Branch Panorama
@@ -267,44 +273,124 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/PanoramaConnector'
+                $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
 components:
   schemas:
-    ValidationError:
+    Integrations_API_SelfLinks:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    PanoramaConnectorAuth:
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Integrations_API_Link'
+    Integrations_API_UnauthorizedError:
       type: object
-      description: Authentication configuration for the Panorama connector.
-      discriminator:
-        propertyName: type
-        mapping:
-          other-token: '#/components/schemas/PanoramaTokenAuthentication'
-          pan-key-gen: '#/components/schemas/PanoramaKeyGenAuthentication'
-      oneOf:
-      - $ref: '#/components/schemas/PanoramaTokenAuthentication'
-      - $ref: '#/components/schemas/PanoramaKeyGenAuthentication'
-    ValidationErrorItem:
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Integrations_API_Assignments:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+        _links:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+      description: A list of assigned items.
+    Integrations_API_PanoramaKeyGenAuthentication:
+      required:
+      - keyTtl
+      - password
+      - type
+      - username
+      type: object
+      description: Authentication using credentials to generate a Panorama API key.
+      properties:
+        username:
+          type: string
+          description: Username used to generate the Panorama API key.
+          example: panorama-user
+        password:
+          type: string
+          description: Password used to generate the Panorama API key.
+          format: password
+          writeOnly: true
+        keyTtl:
+          type: integer
+          description: Time to live for the generated Panorama API key, in minutes.
+          format: int64
+          minimum: 30
+          example: 40
+        type:
+          type: string
+          enum:
+          - pan-key-gen
+    Integrations_API_PanoramaTokenAuthentication:
+      required:
+      - token
+      - type
+      type: object
+      description: Authentication using an existing Panorama API key.
+      properties:
+        token:
+          type: string
+          description: Panorama API key used for authentication.
+          writeOnly: true
+        type:
+          type: string
+          description: Authentication type.
+          enum:
+          - other-token
+    Integrations_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Integrations_API_ValidationErrorItem:
       type: object
       properties:
         code:
@@ -316,7 +402,18 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-    PanoramaConnector:
+    Integrations_API_PanoramaConnectorAuth:
+      type: object
+      description: Authentication configuration for the Panorama connector.
+      discriminator:
+        propertyName: type
+        mapping:
+          other-token: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
+          pan-key-gen: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
+      oneOf:
+      - $ref: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
+      - $ref: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
+    Integrations_API_PanoramaConnector:
       description: Palo Alto Networks Panorama connector configuration.
       required:
       - authentication
@@ -351,76 +448,10 @@ components:
           readOnly: true
           example: 1770293655756
         authentication:
-          $ref: '#/components/schemas/PanoramaConnectorAuth'
+          $ref: '#/components/schemas/Integrations_API_PanoramaConnectorAuth'
         _links:
-          $ref: '#/components/schemas/SelfLinks'
-    PanoramaConnectors:
-      type: object
-      description: Collection of Panorama connectors.
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/PanoramaConnector'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    PanoramaTokenAuthentication:
-      required:
-      - token
-      - type
-      type: object
-      description: Authentication using an existing Panorama API key.
-      properties:
-        token:
-          type: string
-          description: Panorama API key used for authentication.
-          writeOnly: true
-        type:
-          type: string
-          description: Authentication type.
-          enum:
-          - other-token
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Error:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+    Integrations_API_Error:
       type: object
       properties:
         type:
@@ -438,54 +469,31 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    PanoramaKeyGenAuthentication:
-      required:
-      - keyTtl
-      - password
-      - type
-      - username
+    Integrations_API_ValidationError:
       type: object
-      description: Authentication using credentials to generate a Panorama API key.
-      properties:
-        username:
-          type: string
-          description: Username used to generate the Panorama API key.
-          example: panorama-user
-        password:
-          type: string
-          description: Password used to generate the Panorama API key.
-          format: password
-          writeOnly: true
-        keyTtl:
-          type: integer
-          description: Time to live for the generated Panorama API key, in minutes.
-          format: int64
-          minimum: 30
-          example: 40
-        type:
-          type: string
-          enum:
-          - pan-key-gen
-    SelfLinks:
+      allOf:
+      - $ref: '#/components/schemas/Integrations_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Integrations_API_ValidationErrorItem'
+    Integrations_API_PanoramaConnectors:
       type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-    Assignments:
-      type: object
+      description: Collection of Panorama connectors.
       properties:
         items:
           type: array
           items:
-            type: string
-            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+            $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
         _links:
-          $ref: '#/components/schemas/SelfLinks'
-      description: A list of assigned items.
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
   parameters:
-    connectorIdPath:
+    Integrations_API_connectorIdPath:
       name: id
       in: path
       description: The connector ID.
@@ -493,7 +501,7 @@ components:
       schema:
         type: string
       example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
-    AccountGroupId:
+    Integrations_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -502,36 +510,36 @@ components:
         type: string
         example: '1234'
   responses:
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+    Integrations_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Integrations_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Integrations_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Integrations_API_UnauthorizedError'
+    Integrations_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Integrations_API_Error'
+    Integrations_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Integrations_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -545,20 +553,275 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Integrations_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Integrations_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

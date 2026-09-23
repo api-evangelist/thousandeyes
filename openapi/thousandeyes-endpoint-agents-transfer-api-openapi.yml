@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: Endpoint Agents Transfer API
-  description: "**Note:** The Endpoint Agents Transfer APIs are not available for ThousandEyes for Government instance.\n\nManage ThousandEyes Endpoint Agents using this API. \n\nFor more information about Endpoint Agents, see [Endpoint Agents](https://docs.thousandeyes.com/product-documentation/global-vantage-points/endpoint-agents)."
+  title: ThousandEyes Endpoint Agents Transfer API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -20,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Endpoint Agents Transfer
+  x-displayName: Endpoint Agents Transfer
 paths:
   /endpoint/agents/{agentId}/transfer:
     post:
@@ -34,25 +32,25 @@ paths:
       description: 'Initiates the transfer of an agent from its current account, which must correspond to the provided aid, to the target account.
 
 
-        **Note:** It is essential to ensure that the `aid` parameter matches the current account of the agent for this operation to succeed.
-
-        '
+        **Note:** It is essential to ensure that the `aid` parameter matches the current account of the agent for this operation to succeed.'
       requestBody:
-        $ref: '#/components/requestBodies/AgentTransfer'
+        $ref: '#/components/requestBodies/Endpoint_Agents_API_AgentTransfer'
       parameters:
-      - $ref: '#/components/parameters/EndpointAgentIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Agents_API_EndpointAgentIdPath'
+      - $ref: '#/components/parameters/Endpoint_Agents_API_AccountGroupId'
       responses:
         '202':
           description: Transfer initiated
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Agents_API_429'
+      security:
+      - Endpoint_Agents_API_BearerAuth: []
   /endpoint/agents/transfer/bulk:
     post:
       summary: Bulk transfer agents
@@ -77,112 +75,33 @@ paths:
 
         * The API response provides the status of each transfer request.
 
-        * There are no performance concerns for this API; any number of agents can be transferred in bulk.
-
-        '
+        * There are no performance concerns for this API; any number of agents can be transferred in bulk.'
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Endpoint_Agents_API_AccountGroupId'
       requestBody:
-        $ref: '#/components/requestBodies/AgentTransfers'
+        $ref: '#/components/requestBodies/Endpoint_Agents_API_AgentTransfers'
       responses:
         '207':
           description: Transfer initiated
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/BulkAgentTransferResponse'
+                $ref: '#/components/schemas/Endpoint_Agents_API_BulkAgentTransferResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Endpoint_Agents_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Endpoint_Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Endpoint_Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Endpoint_Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Endpoint_Agents_API_429'
+      security:
+      - Endpoint_Agents_API_BearerAuth: []
 components:
   schemas:
-    AgentTransfer:
-      example:
-        agentId: 5d0764ac-7e42-4ec8-a0d4-39fc53edccba
-        fromAid: '1234'
-        toAid: '12345'
-      allOf:
-      - type: object
-        properties:
-          agentId:
-            $ref: '#/components/schemas/EndpointAgentId'
-          fromAid:
-            $ref: '#/components/schemas/AccountId'
-          toAid:
-            $ref: '#/components/schemas/AccountId'
-    ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    AccountId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    AgentTransferStatus:
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          request:
-            $ref: '#/components/schemas/AgentTransfer'
-    EndpointAgentId:
-      type: string
-      format: uuid
-      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
-      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
-      readOnly: true
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    AgentTransferRequest:
-      type: object
-      properties:
-        toAid:
-          $ref: '#/components/schemas/AccountId'
-      example:
-        toAid: '1234'
-    BulkAgentTransferRequest:
-      type: object
-      properties:
-        transfers:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgentTransfer'
-    Error:
+    Endpoint_Agents_API_Error:
       type: object
       properties:
         type:
@@ -200,13 +119,63 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    BulkAgentTransferResponse:
+    Endpoint_Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Endpoint_Agents_API_BulkAgentTransferRequest:
+      type: object
+      properties:
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentTransfer'
+    Endpoint_Agents_API_AgentTransfer:
+      example:
+        agentId: 5d0764ac-7e42-4ec8-a0d4-39fc53edccba
+        fromAid: '1234'
+        toAid: '12345'
+      allOf:
+      - type: object
+        properties:
+          agentId:
+            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
+          fromAid:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AccountId'
+          toAid:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AccountId'
+    Endpoint_Agents_API_AgentTransferStatus:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+      - type: object
+        properties:
+          request:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentTransfer'
+    Endpoint_Agents_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Endpoint_Agents_API_ValidationErrorItem'
+    Endpoint_Agents_API_BulkAgentTransferResponse:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/AgentTransferStatus'
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentTransferStatus'
           example:
           - status: 200
             detail: Initiated
@@ -226,66 +195,70 @@ components:
               agentId: 5d0764ac-7e42-4ec8-a0d5-39fc53ed7890
               fromAid: '1234'
               toAid: '12345'
-  requestBodies:
-    AgentTransfers:
-      description: A collection of `AgentTransfers`.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BulkAgentTransferRequest'
-        text/csv:
-          schema:
-            type: string
-          examples:
-            CSV File:
-              $ref: '#/components/examples/TransferCSV'
-        text/plain:
-          schema:
-            type: string
-          examples:
-            CSV File:
-              $ref: '#/components/examples/TransferCSV'
-    AgentTransfer:
-      description: The request to move an agent between accounts.
+    Endpoint_Agents_API_EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
+    Endpoint_Agents_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Endpoint_Agents_API_AccountId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Agents_API_AgentTransferRequest:
+      type: object
+      properties:
+        toAid:
+          $ref: '#/components/schemas/Endpoint_Agents_API_AccountId'
+      example:
+        toAid: '1234'
+  parameters:
+    Endpoint_Agents_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Endpoint_Agents_API_EndpointAgentIdPath:
+      name: agentId
+      in: path
       required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AgentTransferRequest'
-  examples:
-    TransferCSV:
-      value: 'agent_id,from_aid,to_aid
-
-        5d0764ac-7e42-4ec8-a0d4-39fc53edccba,111,222
-
-        1234abcd-7e42-4ec8-a0d4-39fc53abcdef,222,333
-
-        '
+      description: The identifier of the agent to operate on.
+      schema:
+        $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
   responses:
-    '429':
-      description: Exhausted rate limit for the organization
+    Endpoint_Agents_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
+            $ref: '#/components/schemas/Endpoint_Agents_API_UnauthorizedError'
+    Endpoint_Agents_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '400':
+            $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+    Endpoint_Agents_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Endpoint_Agents_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -299,36 +272,316 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Endpoint_Agents_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
+            $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+    Endpoint_Agents_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-  parameters:
-    EndpointAgentIdPath:
-      name: agentId
-      in: path
+            $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+  examples:
+    Endpoint_Agents_API_TransferCSV:
+      value: 'agent_id,from_aid,to_aid
+
+        5d0764ac-7e42-4ec8-a0d4-39fc53edccba,111,222
+
+        1234abcd-7e42-4ec8-a0d4-39fc53abcdef,222,333
+
+        '
+  requestBodies:
+    Endpoint_Agents_API_AgentTransfer:
+      description: The request to move an agent between accounts.
       required: true
-      description: The identifier of the agent to operate on.
-      schema:
-        $ref: '#/components/schemas/EndpointAgentId'
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentTransferRequest'
+    Endpoint_Agents_API_AgentTransfers:
+      description: A collection of `AgentTransfers`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agents_API_BulkAgentTransferRequest'
+        text/csv:
+          schema:
+            type: string
+          examples:
+            CSV File:
+              $ref: '#/components/examples/Endpoint_Agents_API_TransferCSV'
+        text/plain:
+          schema:
+            type: string
+          examples:
+            CSV File:
+              $ref: '#/components/examples/Endpoint_Agents_API_TransferCSV'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

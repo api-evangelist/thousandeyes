@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: DNSSEC Test Results API
-  description: Get test result metrics for Network and Application Synthetics tests.
+  title: ThousandEyes DNSSEC Test Results API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -20,56 +19,155 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: DNSSEC Test Results
+  x-displayName: DNSSEC Test Results
 paths:
   /test-results/{testId}/dnssec:
     get:
       tags:
       - DNSSEC Test Results
       summary: Get DNSSEC test results
-      description: 'Returns the keychain validity for a record on a domain secured using DNSSEC extensions.
-
-        '
+      description: Returns the keychain validity for a record on a domain secured using DNSSEC extensions.
       operationId: getTestDnsSecResults
       parameters:
-      - $ref: '#/components/parameters/TestIdPath'
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/Window'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/Test_Results_API_TestIdPath'
+      - $ref: '#/components/parameters/Test_Results_API_AccountGroupId'
+      - $ref: '#/components/parameters/Test_Results_API_Window'
+      - $ref: '#/components/parameters/Test_Results_API_StartDateParameter'
+      - $ref: '#/components/parameters/Test_Results_API_EndDateParameter'
+      - $ref: '#/components/parameters/Test_Results_API_PaginationCursor'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/DnssecTestResults'
+                $ref: '#/components/schemas/Test_Results_API_DnssecTestResults'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Test_Results_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Test_Results_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Test_Results_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Test_Results_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Test_Results_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Test_Results_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Test_Results_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Test_Results_API_GeneralError'
+      security:
+      - Test_Results_API_BearerAuth: []
 components:
   schemas:
-    ValidationError:
+    Test_Results_API_EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/Test_Results_API_StartTime'
+        endTime:
+          $ref: '#/components/schemas/Test_Results_API_EndTime'
+    Test_Results_API_TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    Test_Results_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Test_Results_API_StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
+    Test_Results_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Test_Results_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Test_Results_API_TestResults'
+      readOnly: true
+    Test_Results_API_DnssecTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_TestResult'
+      - $ref: '#/components/schemas/Test_Results_API_EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/Test_Results_API_TestResultAgent'
+          isValid:
+            type: boolean
+            description: Indicates if keychain is valid (if false see errorDetails field)
+            example: true
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/Test_Results_API_TestResultErrorDetails'
+    Test_Results_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Test_Results_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Test_Results_API_AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Test_Results_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Test_Results_API_ValidationError:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Error'
+      - $ref: '#/components/schemas/Test_Results_API_Error'
       - type: object
         properties:
           errors:
@@ -78,69 +176,122 @@ components:
             - 'null'
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    EndDate:
+              $ref: '#/components/schemas/Test_Results_API_ValidationErrorItem'
+    Test_Results_API_PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        next:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        self:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_EndDate:
       type: string
       format: date-time
       example: '2022-07-18T22:00:54Z'
       description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
       readOnly: true
-    TestCreatedDate:
+    Test_Results_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Test_Results_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Test_Results_API_EndTime:
+      type: integer
+      description: Epoch time (seconds) indicating the end time of the round
+      example: 1384309800
+      readOnly: true
+    Test_Results_API_TestResult:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Data point date UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        roundId:
+          type: integer
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_TestResultAppLinks'
+    Test_Results_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Test_Results_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Test_Results_API_TestResultAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
+    Test_Results_API_StartDate:
       type: string
       format: date-time
-      description: UTC created date (ISO date-time format).
       example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
       readOnly: true
-    AppLinks:
-      type: object
-      description: A links object containing the ThousandEyes App link
-      readOnly: true
-      properties:
-        appLink:
-          $ref: '#/components/schemas/Link'
-    TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/TestResults'
-      readOnly: true
-    SimpleTest:
+    Test_Results_API_SimpleTest:
       description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
       additionalProperties: true
       type: object
       properties:
         interval:
-          $ref: '#/components/schemas/TestInterval'
+          $ref: '#/components/schemas/Test_Results_API_TestInterval'
         alertsEnabled:
           type: boolean
           description: Indicates if alerts are enabled.
           example: true
         enabled:
-          $ref: '#/components/schemas/Enabled'
+          $ref: '#/components/schemas/Test_Results_API_Enabled'
         createdBy:
-          $ref: '#/components/schemas/TestCreatedBy'
+          $ref: '#/components/schemas/Test_Results_API_TestCreatedBy'
         createdDate:
-          $ref: '#/components/schemas/TestCreatedDate'
+          $ref: '#/components/schemas/Test_Results_API_TestCreatedDate'
         description:
           type: string
           description: A description of the test.
@@ -180,108 +331,10 @@ components:
           description: The name of the test. Test name must be unique.
           example: ThousandEyes Test
         type:
-          $ref: '#/components/schemas/TestType'
+          $ref: '#/components/schemas/Test_Results_API_TestType'
         _links:
-          $ref: '#/components/schemas/TestLinks'
-    TestResultAgent:
-      type: object
-      properties:
-        agentId:
-          type: string
-          description: Unique agent ID
-          example: '281474976710706'
-          readOnly: true
-        agentName:
-          type: string
-          description: Agent name
-          example: thousandeyes-stg-va-254
-          readOnly: true
-        countryId:
-          type: string
-          description: 2-digit ISO country code
-          example: US
-          readOnly: true
-        location:
-          type: string
-          description: Location of the agent.
-          example: San Francisco Bay Area
-          readOnly: true
-    StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
-    TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    EndTime:
-      type: integer
-      description: Epoch time (seconds) indicating the end time of the round
-      example: 1384309800
-      readOnly: true
-    PaginationLinks:
-      type: object
-      description: A links object containing pagination related link(s).
-      properties:
-        previous:
-          $ref: '#/components/schemas/Link'
-        next:
-          $ref: '#/components/schemas/Link'
-        self:
-          $ref: '#/components/schemas/Link'
-    DnssecTestResult:
-      allOf:
-      - $ref: '#/components/schemas/TestResult'
-      - $ref: '#/components/schemas/EpochTimeWindow'
-      - type: object
-        properties:
-          agent:
-            $ref: '#/components/schemas/TestResultAgent'
-          isValid:
-            type: boolean
-            description: Indicates if keychain is valid (if false see errorDetails field)
-            example: true
-            readOnly: true
-          errorDetails:
-            $ref: '#/components/schemas/TestResultErrorDetails'
-    TestResultAppLinks:
-      allOf:
-      - $ref: '#/components/schemas/AppLinks'
-      - example:
-          appLink:
-            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
+          $ref: '#/components/schemas/Test_Results_API_TestLinks'
+    Test_Results_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -312,196 +365,60 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    EpochTimeWindow:
+    Test_Results_API_ValidationErrorItem:
       type: object
       properties:
-        startTime:
-          $ref: '#/components/schemas/StartTime'
-        endTime:
-          $ref: '#/components/schemas/EndTime'
-    TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    TestResultErrorDetails:
-      type: string
-      description: Error details, if an error were encountered
-      example: Connection error
-      readOnly: true
-    Error:
-      type: object
-      properties:
-        type:
+        code:
           type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
           type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
+          description: Identifies the field that triggered this particular error.
+        message:
           type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    TestSelfLink:
+          description: A short, human-readable summary of the error.
+    Test_Results_API_TestResultAppLinks:
       allOf:
-      - $ref: '#/components/schemas/Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    TestResult:
-      type: object
-      properties:
-        date:
-          type: string
-          description: Data point date UTC (ISO date-time format).
-          format: date-time
-          example: '2022-07-17T22:00:54Z'
-          readOnly: true
-        roundId:
-          type: integer
-          description: Epoch time (seconds) indicating the start time of the round
-          example: 1384309800
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/TestResultAppLinks'
-    StartTime:
-      type: integer
-      description: Epoch time (seconds) indicating the start time of the round
-      example: 1384309800
-      readOnly: true
-    DnssecTestResults:
+      - $ref: '#/components/schemas/Test_Results_API_AppLinks'
+      - example:
+          appLink:
+            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    Test_Results_API_DnssecTestResults:
       type: object
       properties:
         results:
           x-paginated-items: true
           type: array
           items:
-            $ref: '#/components/schemas/DnssecTestResult'
+            $ref: '#/components/schemas/Test_Results_API_DnssecTestResult'
         test:
-          $ref: '#/components/schemas/SimpleTest'
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
         startDate:
-          $ref: '#/components/schemas/StartDate'
+          $ref: '#/components/schemas/Test_Results_API_StartDate'
         endDate:
-          $ref: '#/components/schemas/EndDate'
+          $ref: '#/components/schemas/Test_Results_API_EndDate'
         _links:
-          $ref: '#/components/schemas/PaginationLinks'
-  parameters:
-    TestIdPath:
-      name: testId
-      description: Test ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '202701'
-    StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
-    Window:
-      name: window
-      in: query
-      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
-
-        For a precise date range, use `startDate` and `endDate`.'
-      schema:
-        type: string
-        pattern: ^\d+(?:[smhdw]{1})?$
-        example: 12h
-    PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
+    Test_Results_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
   responses:
-    '502':
-      description: Bad Gateway
+    Test_Results_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+    Test_Results_API_GeneralError:
       description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    '400':
+    Test_Results_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Test_Results_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -515,23 +432,356 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Test_Results_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
+            $ref: '#/components/schemas/Test_Results_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Test_Results_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+    Test_Results_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Test_Results_API_UnauthorizedError'
+    Test_Results_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+    Test_Results_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+  parameters:
+    Test_Results_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    Test_Results_API_Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    Test_Results_API_TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    Test_Results_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Test_Results_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Test_Results_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about Test Results
-  url: https://docs.thousandeyes.com/product-documentation/getting-started/getting-started-with-cloud-and-enterprise-agent-tests#interpreting-test-results
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

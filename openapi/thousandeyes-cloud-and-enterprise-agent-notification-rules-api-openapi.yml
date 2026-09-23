@@ -1,12 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Agents Cloud and Enterprise Agent Notification Rules API
   version: 7.0.100
-  description: '
-
-    ## Overview
-
-    Manage Cloud and Enterprise Agents available to your account in ThousandEyes.'
+  title: ThousandEyes Cloud and Enterprise Agent Notification Rules…
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -24,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Cloud and Enterprise Agent Notification Rules
+  x-displayName: Cloud and Enterprise Agent Notification Rules
 paths:
   /agents/notification-rules:
     get:
@@ -37,208 +31,197 @@ paths:
       operationId: getAgentsNotificationRules
       description: Returns a list of all agent notification rules configured under the account.
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Agents_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ListNotificationRulesResponse'
+                $ref: '#/components/schemas/Agents_API_ListNotificationRulesResponse'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Agents_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Agents_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Agents_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Agents_API_GeneralError'
+      security:
+      - Agents_API_BearerAuth: []
   /agents/notification-rules/{notificationRuleId}:
     get:
       tags:
       - Cloud and Enterprise Agent Notification Rules
       summary: Retrieve agent notification rule
       operationId: getAgentsNotificationRule
-      description: 'Returns details of an agent notification rule, including agents it is assigned to.
-
-        '
+      description: Returns details of an agent notification rule, including agents it is assigned to.
       parameters:
-      - $ref: '#/components/parameters/NotificationRuleId'
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Agents_API_NotificationRuleId'
+      - $ref: '#/components/parameters/Agents_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/NotificationRuleDetail'
+                $ref: '#/components/schemas/Agents_API_NotificationRuleDetail'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Agents_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Agents_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Agents_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Agents_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Agents_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Agents_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Agents_API_GeneralError'
+      security:
+      - Agents_API_BearerAuth: []
 components:
-  schemas:
-    NotificationRules:
-      type: object
-      properties:
-        agentAlertRules:
-          type: array
-          items:
-            $ref: '#/components/schemas/NotificationRule'
+  responses:
+    Agents_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
           example:
-          - ruleId: '281474976710706'
-            ruleName: Default Agent Offline Notification
-            expression: ((lastContact >= 30 min))
-            notifyOnClear: true
-            isDefault: false
-          - ruleId: '281474976710709'
-            ruleName: Test Rule
-            expression: ((lastContact >= 40 min))
-            notifyOnClear: true
-            isDefault: true
-    NotificationRuleDetail:
-      allOf:
-      - $ref: '#/components/schemas/NotificationRule'
-      - type: object
-        properties:
-          notifications:
-            $ref: '#/components/schemas/AgentNotification'
-          agents:
-            type: array
-            items:
-              $ref: '#/components/schemas/AgentResponse'
-          _links:
-            $ref: '#/components/schemas/SelfLinks'
-    Coordinates:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Agents_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Agents_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_GeneralError:
+      description: An error occurred
+    Agents_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_UnauthorizedError'
+    Agents_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+  schemas:
+    Agents_API_AlertIntegrationType:
+      type: string
+      description: Type of the alert integration
+      enum:
+      - pager-duty
+      - slack
+      example: slack
+    Agents_API_NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    Agents_API_NetworkProviderInfo:
       type: object
-      description: Geographic coordinates for agent location.
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
       properties:
-        latitude:
-          type: number
-          format: double
-          description: The latitude of the agent location in decimal degrees
-          example: 37.77493
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
           readOnly: true
-        longitude:
-          type: number
-          format: double
-          description: The longitude of the agent location in decimal degrees
-          example: -122.41942
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
           readOnly: true
-    AgentNotification:
+        type:
+          $ref: '#/components/schemas/Agents_API_NetworkProviderType'
+    Agents_API_AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Agents_API_AgentNotification:
       type: object
       description: Alert notification object.
       properties:
         email:
-          $ref: '#/components/schemas/AlertEmail'
+          $ref: '#/components/schemas/Agents_API_AlertEmail'
         thirdParty:
           type: array
           items:
-            $ref: '#/components/schemas/AlertIntegrationBase'
+            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
         webhook:
           type: array
           items:
-            $ref: '#/components/schemas/AlertIntegrationBase'
-    NotificationRule:
-      type: object
-      properties:
-        ruleId:
-          type: string
-          description: Agent notification rule ID
-          example: '281474976710706'
-          readOnly: true
-        ruleName:
-          type: string
-          description: Name of the agent notification rule
-          example: Default Agent Offline Notification
-        expression:
-          type: string
-          description: Expression of agent notification rule
-          example: ((lastContact >= 30 min))
-        notifyOnClear:
-          type: boolean
-          description: Send notification when notification clears
-          example: true
-        isDefault:
-          type: boolean
-          description: Agent notification rule will be automatically included on all new Enterprise Agents.
-          example: false
-    AlertIntegrationBase:
-      type: object
-      properties:
-        integrationId:
-          type: string
-          description: Unique ID of the integration.
-          example: wb-78
-        integrationName:
-          type: string
-          description: Name of the integration.
-          example: integrationSlack1
-        integrationType:
-          $ref: '#/components/schemas/AlertIntegrationType'
-        target:
-          type: string
-          description: Target URL of the integration.
-          example: https://hooks.slack.com/services/REDACTED
-        authMethod:
-          type: string
-          description: (PagerDuty only) Authentication method.
-          example: Basic
-        authUser:
-          type: string
-          description: (PagerDuty only) Authentication user.
-          example: user123
-        authToken:
-          type: string
-          description: (PagerDuty only) Authentication token.
-          example: 0VqDYEpidpHVAK397x8PBsmZ
-        channel:
-          type: string
-          description: (Slack only) Slack `#channel` or `@user`.
-          example: '#slackChannel'
-    AgentResponse:
-      allOf:
-      - required:
-        - agentType
-        properties:
-          agentType:
-            $ref: '#/components/schemas/CloudEnterpriseAgentType'
-      - $ref: '#/components/schemas/SimpleAgent'
-    AlertEmail:
-      type: object
-      properties:
-        message:
-          type: string
-          description: Message used for email notification.
-          example: This test is failing, check as soon as possible.
-        recipients:
-          type: array
-          description: List of recipients emails that will be notified.
-          items:
-            type: string
-          example:
-          - user1@thousandeyes.com
-          - user2@cisco.com
-    SimpleAgent:
+            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
+    Agents_API_SimpleAgent:
       type: object
       allOf:
-      - $ref: '#/components/schemas/AgentBase'
+      - $ref: '#/components/schemas/Agents_API_AgentBase'
       - type: object
         properties:
           agentId:
@@ -261,10 +244,10 @@ components:
             example: US
             readOnly: true
           coordinates:
-            $ref: '#/components/schemas/Coordinates'
+            $ref: '#/components/schemas/Agents_API_Coordinates'
           networkProviderInfo:
             allOf:
-            - $ref: '#/components/schemas/NetworkProviderInfo'
+            - $ref: '#/components/schemas/Agents_API_NetworkProviderInfo'
             readOnly: true
             example:
               asn: 7018
@@ -284,16 +267,7 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
+    Agents_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -324,7 +298,64 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Error:
+    Agents_API_NotificationRule:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          description: Agent notification rule ID
+          example: '281474976710706'
+          readOnly: true
+        ruleName:
+          type: string
+          description: Name of the agent notification rule
+          example: Default Agent Offline Notification
+        expression:
+          type: string
+          description: Expression of agent notification rule
+          example: ((lastContact >= 30 min))
+        notifyOnClear:
+          type: boolean
+          description: Send notification when notification clears
+          example: true
+        isDefault:
+          type: boolean
+          description: Agent notification rule will be automatically included on all new Enterprise Agents.
+          example: false
+    Agents_API_AlertIntegrationBase:
+      type: object
+      properties:
+        integrationId:
+          type: string
+          description: Unique ID of the integration.
+          example: wb-78
+        integrationName:
+          type: string
+          description: Name of the integration.
+          example: integrationSlack1
+        integrationType:
+          $ref: '#/components/schemas/Agents_API_AlertIntegrationType'
+        target:
+          type: string
+          description: Target URL of the integration.
+          example: https://hooks.slack.com/services/REDACTED
+        authMethod:
+          type: string
+          description: (PagerDuty only) Authentication method.
+          example: Basic
+        authUser:
+          type: string
+          description: (PagerDuty only) Authentication user.
+          example: user123
+        authToken:
+          type: string
+          description: (PagerDuty only) Authentication token.
+          example: 0VqDYEpidpHVAK397x8PBsmZ
+        channel:
+          type: string
+          description: (Slack only) Slack `#channel` or `@user`.
+          example: '#slackChannel'
+    Agents_API_Error:
       type: object
       properties:
         type:
@@ -342,33 +373,14 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    AgentBase:
+    Agents_API_SelfLinks:
       type: object
+      description: A links object containing the self link.
+      readOnly: true
       properties:
-        ipAddresses:
-          type: array
-          description: Array of private IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 99.139.65.220
-          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
-        publicIpAddresses:
-          type: array
-          description: Array of public IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 192.168.1.78
-          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
-        network:
-          type: string
-          description: Network (including ASN) of agent’s public IP.
-          example: AT&T Services, Inc. (AS 7018)
-          readOnly: true
-    CloudEnterpriseAgentType:
+        self:
+          $ref: '#/components/schemas/Agents_API_Link'
+    Agents_API_CloudEnterpriseAgentType:
       type: string
       description: Type of the agent.
       enum:
@@ -377,118 +389,94 @@ components:
       - enterprise
       example: enterprise-cluster
       readOnly: true
-    NetworkProviderInfo:
+    Agents_API_Coordinates:
       type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
+      description: Geographic coordinates for agent location.
       properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
           readOnly: true
-        name:
-          type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
           readOnly: true
-        type:
-          $ref: '#/components/schemas/NetworkProviderType'
-    AlertIntegrationType:
-      type: string
-      description: Type of the alert integration
-      enum:
-      - pager-duty
-      - slack
-      example: slack
-    ListNotificationRulesResponse:
+    Agents_API_AgentResponse:
       allOf:
-      - $ref: '#/components/schemas/NotificationRules'
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/Agents_API_CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/Agents_API_SimpleAgent'
+    Agents_API_NotificationRules:
+      type: object
+      properties:
+        agentAlertRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agents_API_NotificationRule'
+          example:
+          - ruleId: '281474976710706'
+            ruleName: Default Agent Offline Notification
+            expression: ((lastContact >= 30 min))
+            notifyOnClear: true
+            isDefault: false
+          - ruleId: '281474976710709'
+            ruleName: Test Rule
+            expression: ((lastContact >= 40 min))
+            notifyOnClear: true
+            isDefault: true
+    Agents_API_AlertEmail:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message used for email notification.
+          example: This test is failing, check as soon as possible.
+        recipients:
+          type: array
+          description: List of recipients emails that will be notified.
+          items:
+            type: string
+          example:
+          - user1@thousandeyes.com
+          - user2@cisco.com
+    Agents_API_NotificationRuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/Agents_API_NotificationRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/Agents_API_AgentNotification'
+          agents:
+            type: array
+            items:
+              $ref: '#/components/schemas/Agents_API_AgentResponse'
+          _links:
+            $ref: '#/components/schemas/Agents_API_SelfLinks'
+    Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Agents_API_ListNotificationRulesResponse:
+      allOf:
+      - $ref: '#/components/schemas/Agents_API_NotificationRules'
       - type: object
         properties:
           _links:
-            $ref: '#/components/schemas/SelfLinks'
-    NetworkProviderType:
-      type: string
-      description: Classification of the agent's network provider.
-      enum:
-      - unknown
-      - isp
-      - cdn
-      - stub
-      - cloud-provider
-      - carrier
-      example: isp
-      readOnly: true
-    SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-  responses:
-    '502':
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
-      description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    '403':
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Agents_API_SelfLinks'
   parameters:
-    NotificationRuleId:
-      name: notificationRuleId
-      in: path
-      description: Unique ID for the agent notification rule.
-      example: '281474976710706'
-      required: true
-      schema:
-        type: string
-    AccountGroupId:
+    Agents_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -496,11 +484,271 @@ components:
       schema:
         type: string
         example: '1234'
+    Agents_API_NotificationRuleId:
+      name: notificationRuleId
+      in: path
+      description: Unique ID for the agent notification rule.
+      example: '281474976710706'
+      required: true
+      schema:
+        type: string
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about Agents & Monitors
-  url: https://docs.thousandeyes.com/product-documentation/global-vantage-points/working-with-agent-settings
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

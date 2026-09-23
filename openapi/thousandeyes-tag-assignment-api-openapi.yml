@@ -1,30 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: Tags Tag Assignment API
-  description: 'The ThousandEyes Tags API provides a tagging system with key/value pairs. It allows you to tag assets within the ThousandEyes platform (such as agents, tests, or dashboards) with meaningful metadata. For example: `branch:sfo`, `branch:nyc`, and `team:netops`.
-
-
-    This feature provides:
-
-
-    * Support for automation.
-
-    * Powerful and flexible reports/dashboards.
-
-    * Support for third-party integrations.
-
-
-    Things to note with the ThousandEyes Tags API:
-
-
-    * Tags are backwards-compatible with existing labels.
-
-    * Tags are separated by Tests (CEA), Agents (CEA), Endpoint Agents, Scheduled Endpoint Tests, and Reports. A single tag can only apply to one type of target object, so each tag must specify the target type of object via a `type` field.
-
-    * Tags are defined in a single table so that they can be represented using a single model - `Tag`.
-
-    '
+  title: ThousandEyes Tag Assignment API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -39,14 +16,14 @@ info:
     url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
   - type: source
     url: https://developer.cisco.com/docs/thousandeyes/
+  description: Assign tags to other objects
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Tag Assignment
   description: Assign tags to other objects
+  x-displayName: Tag Assignment
 paths:
   /tags/assign:
     post:
@@ -56,33 +33,35 @@ paths:
       description: 'Assigns the specified static tags to the specified objects. This operation has cumulative behavior: The tags are statically assigned to the specified objects, and the previous assignments persist. No unassignment takes place. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
       operationId: assignTags
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tags_API_AccountGroupId'
       requestBody:
-        $ref: '#/components/requestBodies/bulkAssignRequest'
+        $ref: '#/components/requestBodies/Tags_API_bulkAssignRequest'
       responses:
         '207':
           description: Item created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignments'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignments'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignments'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignments'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tags_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tags_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tags_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tags_API_429'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/Tags_API_ApiError'
+      security:
+      - Tags_API_BearerAuth: []
   /tags/unassign:
     post:
       tags:
@@ -91,33 +70,35 @@ paths:
       description: 'Removes the specified static tags from one or more objects. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
       operationId: unassignTags
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Tags_API_AccountGroupId'
       requestBody:
-        $ref: '#/components/requestBodies/bulkAssignRequest'
+        $ref: '#/components/requestBodies/Tags_API_bulkAssignRequest'
       responses:
         '207':
           description: Tag assignments created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignments'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignments'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignments'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignments'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tags_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tags_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tags_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tags_API_429'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/Tags_API_ApiError'
+      security:
+      - Tags_API_BearerAuth: []
   /tags/{id}/assign:
     post:
       tags:
@@ -126,34 +107,36 @@ paths:
       description: 'Assigns a static tag to one or more objects. This operation has cumulative behavior: The tag is statically assigned to the specified objects, and the previous assignments persist. No unassignment takes place. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
       operationId: assignTag
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/TagIdPath'
+      - $ref: '#/components/parameters/Tags_API_AccountGroupId'
+      - $ref: '#/components/parameters/Tags_API_TagIdPath'
       requestBody:
-        $ref: '#/components/requestBodies/assignRequest'
+        $ref: '#/components/requestBodies/Tags_API_assignRequest'
       responses:
         '207':
           description: Assignment created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignment'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignment'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/BulkTagAssignment'
+                $ref: '#/components/schemas/Tags_API_BulkTagAssignment'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tags_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tags_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tags_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tags_API_429'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/Tags_API_ApiError'
+      security:
+      - Tags_API_BearerAuth: []
   /tags/{id}/unassign:
     post:
       tags:
@@ -162,89 +145,32 @@ paths:
       operationId: unassignTag
       description: 'Removes a static tag from one or more objects. Note: This endpoint does not support dynamic tag assignment (for example, for `endpoint-agent` objects). See `Type` for more information about static vs. dynamic tags.'
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/TagIdPath'
+      - $ref: '#/components/parameters/Tags_API_AccountGroupId'
+      - $ref: '#/components/parameters/Tags_API_TagIdPath'
       requestBody:
-        $ref: '#/components/requestBodies/assignRequest'
+        $ref: '#/components/requestBodies/Tags_API_assignRequest'
       responses:
         '204':
-          $ref: '#/components/responses/204'
+          $ref: '#/components/responses/Tags_API_204'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Tags_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Tags_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Tags_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Tags_API_429'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/Tags_API_ApiError'
+      security:
+      - Tags_API_BearerAuth: []
 components:
-  requestBodies:
-    bulkAssignRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BulkTagAssignments'
-    assignRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/TagAssignment'
   schemas:
-    AssignmentType:
-      type: string
-      enum:
-      - test
-      - v-agent
-      - endpoint-test
-      - dashboard
-      - connected-devices-test
-    ApiError:
-      type: object
-      properties:
-        timestamp:
-          type: integer
-          format: int64
-          example: 1679677853573
-        status:
-          type: integer
-          example: 500
-        errors:
-          type: string
-          example: Internal Server Error
-        path:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/request/path
-    BulkTagAssignment:
-      allOf:
-      - type: object
-        properties:
-          tagId:
-            type: string
-            format: uuid
-            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-            description: The ID of the tag to assign
-          _links:
-            $ref: '#/components/schemas/SelfLinks'
-      - $ref: '#/components/schemas/TagAssignment'
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
+    Tags_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -275,7 +201,43 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Assignment:
+    Tags_API_BulkTagAssignment:
+      allOf:
+      - type: object
+        properties:
+          tagId:
+            type: string
+            format: uuid
+            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+            description: The ID of the tag to assign
+          _links:
+            $ref: '#/components/schemas/Tags_API_SelfLinks'
+      - $ref: '#/components/schemas/Tags_API_TagAssignment'
+    Tags_API_ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    Tags_API_TagAssignment:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tags_API_Assignment'
+    Tags_API_Assignment:
       type: object
       properties:
         id:
@@ -283,15 +245,25 @@ components:
           description: Object Id
           example: '123'
         type:
-          $ref: '#/components/schemas/AssignmentType'
-    TagAssignment:
+          $ref: '#/components/schemas/Tags_API_AssignmentType'
+    Tags_API_AssignmentType:
+      type: string
+      enum:
+      - test
+      - v-agent
+      - endpoint-test
+      - dashboard
+      - connected-devices-test
+    Tags_API_UnauthorizedError:
       type: object
       properties:
-        assignments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Assignment'
-    Error:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Tags_API_Error:
       type: object
       properties:
         type:
@@ -309,32 +281,70 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    SelfLinks:
+    Tags_API_SelfLinks:
       type: object
       description: A links object containing the self link.
       readOnly: true
       properties:
         self:
-          $ref: '#/components/schemas/Link'
-    BulkTagAssignments:
+          $ref: '#/components/schemas/Tags_API_Link'
+    Tags_API_BulkTagAssignments:
       type: object
       properties:
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/BulkTagAssignment'
+            $ref: '#/components/schemas/Tags_API_BulkTagAssignment'
         _links:
-          $ref: '#/components/schemas/SelfLinks'
-  parameters:
-    TagIdPath:
-      name: id
-      in: path
-      description: Tag ID
+          $ref: '#/components/schemas/Tags_API_SelfLinks'
+  requestBodies:
+    Tags_API_bulkAssignRequest:
       required: true
-      schema:
-        type: string
-      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-    AccountGroupId:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_BulkTagAssignments'
+    Tags_API_assignRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_TagAssignment'
+  responses:
+    Tags_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_UnauthorizedError'
+    Tags_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Tags_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
+    Tags_API_204:
+      description: No content
+    Tags_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
+  parameters:
+    Tags_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -342,41 +352,271 @@ components:
       schema:
         type: string
         example: '1234'
-  responses:
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '403':
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-    '204':
-      description: No content
+    Tags_API_TagIdPath:
+      name: id
+      in: path
+      description: Tag ID
+      required: true
+      schema:
+        type: string
+      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

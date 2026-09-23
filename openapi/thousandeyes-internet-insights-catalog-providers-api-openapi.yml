@@ -1,29 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Internet Insights Catalog Providers API
   version: 7.0.100
-  description: '**Note:** All Internet Insights APIs are not available for ThousandEyes for Government instance.
-
-
-    We are happy to announce the release of the Internet Insights API set. This limited release includes endpoints that:
-
-
-    * Make our catalog provider and Internet outage data accessible to API users.
-
-    * Provide access to advanced filtering, which is part of our next-generation API efforts to allow API users to fine-tune queries across all of our APIs in a consistent manner.
-
-
-    Internet Insights provide visibility into core Internet infrastructure, including ISPs, DNS providers, IaaS, CDNs , and SaaS providers.
-
-    It tracks the macro-level impact of Internet events on individual users and enterprise networks connecting at the edge of the Internet. These events include Outages, Routing hijacks and leaks, DDoS attacks, And political interference, among others.
-
-
-    Future releases of the Internet Insights API set will further unlock access to core Internet Insights functionality, unlocking potential integrations to enrich customer process flows.
-
-
-    For more information about Internet Insights, see the [Internet Insights](https://docs.thousandeyes.com/product-documentation/internet-insights).
-
-    '
+  title: ThousandEyes Internet Insights Catalog Providers API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -41,10 +19,9 @@ info:
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Internet Insights Catalog Providers
+  x-displayName: Internet Insights Catalog Providers
 paths:
   /internet-insights/catalog/providers/filter:
     post:
@@ -54,49 +31,47 @@ paths:
       description: 'Returns a list of catalog providers using the specified filters. Returns high-level information about each catalog provider. For more details about a specific provider, call the Get a catalog provider endpoint.
 
 
-        <b>Note:</b> Support for pagination will be added in the future.
-
-        '
+        Note: Support for pagination will be added in the future.'
       operationId: filterCatalogProviders
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Internet_Insights_API_AccountGroupId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApiCatalogProviderFilter'
+              $ref: '#/components/schemas/Internet_Insights_API_ApiCatalogProviderFilter'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ApiCatalogProviderResponse'
+                $ref: '#/components/schemas/Internet_Insights_API_ApiCatalogProviderResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Internet_Insights_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Internet_Insights_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Internet_Insights_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Internet_Insights_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Internet_Insights_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Internet_Insights_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Internet_Insights_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Internet_Insights_API_GeneralError'
+      security:
+      - Internet_Insights_API_BearerAuth: []
   /internet-insights/catalog/providers/{providerId}:
     get:
       tags:
       - Internet Insights Catalog Providers
       summary: Retrieve a catalog provider
-      description: 'Returns the details of a catalog provider.
-
-        '
+      description: Returns the details of a catalog provider.
       operationId: getCatalogProvider
       parameters:
       - name: providerId
@@ -106,36 +81,38 @@ paths:
           type: string
           format: uuid
           example: 85602a0a-54a7-4e97-946e-67492ef1fa26
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Internet_Insights_API_AccountGroupId'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ApiCatalogProviderDetails'
+                $ref: '#/components/schemas/Internet_Insights_API_ApiCatalogProviderDetails'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Internet_Insights_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Internet_Insights_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Internet_Insights_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Internet_Insights_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Internet_Insights_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Internet_Insights_API_500'
         '502':
-          $ref: '#/components/responses/502'
+          $ref: '#/components/responses/Internet_Insights_API_502'
         default:
-          $ref: '#/components/responses/GeneralError'
+          $ref: '#/components/responses/Internet_Insights_API_GeneralError'
+      security:
+      - Internet_Insights_API_BearerAuth: []
 components:
   schemas:
-    ValidationError:
+    Internet_Insights_API_ValidationError:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Error'
+      - $ref: '#/components/schemas/Internet_Insights_API_Error'
       - type: object
         properties:
           errors:
@@ -144,90 +121,16 @@ components:
             - 'null'
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    ProviderName:
+              $ref: '#/components/schemas/Internet_Insights_API_ValidationErrorItem'
+    Internet_Insights_API_ProviderType:
       type: string
-      description: The name of the catalog provider.
-      example: Amazon Web Services
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    ProviderLocation:
-      type: object
-      properties:
-        location:
-          type: string
-          description: The location covered by the Provider.
-          example: San Jose, US
-        interfacesCount:
-          type: integer
-          description: The number of interfaces covered by the Provider at this location.
-          example: 5
-    ApiCatalogProviderResponse:
-      type: object
-      properties:
-        providers:
-          type: array
-          description: List of catalog providers.
-          items:
-            $ref: '#/components/schemas/ApiCatalogProvider'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    CatalogId:
+      description: The type of catalog provider.
+      example: IAAS
+    Internet_Insights_API_Region:
       type: string
-      format: uuid
-      description: The catalog provider ID.
-      example: 85602a0a-54a7-4e97-946e-67492ef1fa26
-    ApiCatalogProviderDetails:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/CatalogId'
-        providerName:
-          $ref: '#/components/schemas/ProviderName'
-        providerType:
-          $ref: '#/components/schemas/ProviderType'
-        region:
-          $ref: '#/components/schemas/Region'
-        dataType:
-          $ref: '#/components/schemas/DataType'
-        asns:
-          uniqueItems: true
-          type: array
-          description: List of ASN's covered by the Provider.
-          items:
-            $ref: '#/components/schemas/ApiAsn'
-        locations:
-          uniqueItems: true
-          type: array
-          description: List of locations covered by the Provider.
-          items:
-            $ref: '#/components/schemas/ProviderLocation'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    DataType:
-      type: string
-      description: The type of data produced by the provider.
-      example: Application
-    UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Link:
+      description: The catalog provider region.
+      example: North America
+    Internet_Insights_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -258,22 +161,43 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    ApiAsn:
+    Internet_Insights_API_ApiCatalogProviderDetails:
       type: object
       properties:
         id:
-          type: integer
-          description: ASN (Autonomous Systems Number)
-          example: 1
-        name:
+          $ref: '#/components/schemas/Internet_Insights_API_CatalogId'
+        providerName:
+          $ref: '#/components/schemas/Internet_Insights_API_ProviderName'
+        providerType:
+          $ref: '#/components/schemas/Internet_Insights_API_ProviderType'
+        region:
+          $ref: '#/components/schemas/Internet_Insights_API_Region'
+        dataType:
+          $ref: '#/components/schemas/Internet_Insights_API_DataType'
+        asns:
+          uniqueItems: true
+          type: array
+          description: List of ASN's covered by the Provider.
+          items:
+            $ref: '#/components/schemas/Internet_Insights_API_ApiAsn'
+        locations:
+          uniqueItems: true
+          type: array
+          description: List of locations covered by the Provider.
+          items:
+            $ref: '#/components/schemas/Internet_Insights_API_ProviderLocation'
+        _links:
+          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
+    Internet_Insights_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
           type: string
-          description: ASN (Autonomous Systems Number) name
-          example: LVLT-1 - Level 3 Communications, Inc.
-    Region:
-      type: string
-      description: The catalog provider region.
-      example: North America
-    Error:
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Internet_Insights_API_Error:
       type: object
       properties:
         type:
@@ -291,7 +215,71 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    ApiCatalogProviderFilter:
+    Internet_Insights_API_ApiAsn:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ASN (Autonomous Systems Number)
+          example: 1
+        name:
+          type: string
+          description: ASN (Autonomous Systems Number) name
+          example: LVLT-1 - Level 3 Communications, Inc.
+    Internet_Insights_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Internet_Insights_API_Link'
+    Internet_Insights_API_CatalogId:
+      type: string
+      format: uuid
+      description: The catalog provider ID.
+      example: 85602a0a-54a7-4e97-946e-67492ef1fa26
+    Internet_Insights_API_ProviderLocation:
+      type: object
+      properties:
+        location:
+          type: string
+          description: The location covered by the Provider.
+          example: San Jose, US
+        interfacesCount:
+          type: integer
+          description: The number of interfaces covered by the Provider at this location.
+          example: 5
+    Internet_Insights_API_ApiCatalogProviderResponse:
+      type: object
+      properties:
+        providers:
+          type: array
+          description: List of catalog providers.
+          items:
+            $ref: '#/components/schemas/Internet_Insights_API_ApiCatalogProvider'
+        _links:
+          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
+    Internet_Insights_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Internet_Insights_API_ProviderName:
+      type: string
+      description: The name of the catalog provider.
+      example: Amazon Web Services
+    Internet_Insights_API_DataType:
+      type: string
+      description: The type of data produced by the provider.
+      example: Application
+    Internet_Insights_API_ApiCatalogProviderFilter:
       description: 'Advanced filter query used to filter the response. The provider name, location, asn can be partial names. Can filter on: - Provider name - Provider type - Region - Location - ASN - included'
       type: object
       properties:
@@ -326,31 +314,20 @@ components:
         location: San Jose, US
         asn: Amazon.com, Inc.
         included: true
-    SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-    ProviderType:
-      type: string
-      description: The type of catalog provider.
-      example: IAAS
-    ApiCatalogProvider:
+    Internet_Insights_API_ApiCatalogProvider:
       type: object
       description: Catalog provider
       properties:
         id:
-          $ref: '#/components/schemas/CatalogId'
+          $ref: '#/components/schemas/Internet_Insights_API_CatalogId'
         providerName:
-          $ref: '#/components/schemas/ProviderName'
+          $ref: '#/components/schemas/Internet_Insights_API_ProviderName'
         providerType:
-          $ref: '#/components/schemas/ProviderType'
+          $ref: '#/components/schemas/Internet_Insights_API_ProviderType'
         region:
-          $ref: '#/components/schemas/Region'
+          $ref: '#/components/schemas/Internet_Insights_API_Region'
         dataType:
-          $ref: '#/components/schemas/DataType'
+          $ref: '#/components/schemas/Internet_Insights_API_DataType'
         asnsCount:
           type: integer
           description: The number of ASN's covered by the provider.
@@ -372,52 +349,40 @@ components:
           description: Indicates whether the catalog provider is included in the licensed packages.
           example: true
         _links:
-          $ref: '#/components/schemas/SelfLinks'
+          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
   responses:
-    '502':
+    Internet_Insights_API_502:
       description: Bad Gateway
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    GeneralError:
-      description: An error occurred
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
+    Internet_Insights_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Internet_Insights_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
+    Internet_Insights_API_GeneralError:
+      description: An error occurred
+    Internet_Insights_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Internet_Insights_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -431,20 +396,32 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Internet_Insights_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
+    Internet_Insights_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Internet_Insights_API_UnauthorizedError'
+    Internet_Insights_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   parameters:
-    AccountGroupId:
+    Internet_Insights_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -453,7 +430,262 @@ components:
         type: string
         example: '1234'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

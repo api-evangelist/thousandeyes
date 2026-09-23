@@ -1,13 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Integrations CyberArk Conjur Connectors API
-  description: '**Note:** The Webhook Operations APIs are not available for ThousandEyes for Government instance.
-
-
-    Manage connectors and operations.
-
-    '
   version: 7.0.100
+  title: ThousandEyes CyberArk Conjur Connectors API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -22,14 +16,14 @@ info:
     url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
   - type: source
     url: https://developer.cisco.com/docs/thousandeyes/
+  description: The CyberArk Conjur instance you want the ThousandEyes platform to integrate with.
 servers:
-- url: https://api.thousandeyes.com/v7
-  description: ThousandEyes API v7
-security:
-- BearerAuth: []
+- description: ThousandEyes API production URL
+  url: https://api.thousandeyes.com/v7
 tags:
 - name: CyberArk Conjur Connectors
   description: The CyberArk Conjur instance you want the ThousandEyes platform to integrate with.
+  x-displayName: CyberArk Conjur Connectors
 paths:
   /connectors/conjur/{id}:
     get:
@@ -39,30 +33,32 @@ paths:
       description: Retrieves details of a CyberArk Conjur connector by its ID.
       operationId: getConjurConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: CyberArk Conjur Connector details.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ConjurConnector'
+                $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     put:
       tags:
       - CyberArk Conjur Connectors
@@ -70,18 +66,18 @@ paths:
       description: Updates the CyberArk Conjur connector specified by ID.
       operationId: updateConjurConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConjurConnector'
+              $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         required: true
       responses:
         '200':
@@ -89,17 +85,19 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ConjurConnector'
+                $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     delete:
       tags:
       - CyberArk Conjur Connectors
@@ -107,13 +105,13 @@ paths:
       description: 'Deleted the CyberArk Conjur connector specified by ID. Note: This operation may disable affected objects (such as tests).'
       operationId: deleteConjurConnector
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       - name: confirmDisabledObjects
         in: query
         description: Confirmation to disable affected objects (for example, tests) for Conjur connectors.
@@ -126,15 +124,17 @@ paths:
         '204':
           description: No Content.
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
   /connectors/conjur/{id}/operations:
     get:
       tags:
@@ -143,30 +143,32 @@ paths:
       description: Returns a list of operation IDs assigned to a CyberArk Conjur connector.
       operationId: getConjurConnectorOperations
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
         schema:
           type: string
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: A list of assigned operation IDs.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Assignments'
+                $ref: '#/components/schemas/Integrations_API_Assignments'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     put:
       tags:
       - CyberArk Conjur Connectors
@@ -174,7 +176,7 @@ paths:
       description: 'Assigns operations to a CyberArk Conjur connector. This replaces any existing assignments. Note: This operation may disable affected objects (such as tests) if operations are changed.'
       operationId: setConjurConnectorOperations
       parameters:
-      - $ref: '#/components/parameters/connectorIdPath'
+      - $ref: '#/components/parameters/Integrations_API_connectorIdPath'
         name: id
         in: path
         required: true
@@ -188,7 +190,7 @@ paths:
           type: boolean
           default: false
         example: true
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         description: List of operation IDs to assign to the connector.
         content:
@@ -207,17 +209,19 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Assignments'
+                $ref: '#/components/schemas/Integrations_API_Assignments'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
   /connectors/conjur:
     get:
       tags:
@@ -226,24 +230,26 @@ paths:
       description: Returns a list of CyberArk Conjur connectors in the specified account group. If no account group is specified, the user’s default account group is used.
       operationId: getConjurConnectors
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       responses:
         '200':
           description: A list of Conjur connectors.
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ConjurConnectors'
+                $ref: '#/components/schemas/Integrations_API_ConjurConnectors'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
     post:
       tags:
       - CyberArk Conjur Connectors
@@ -251,12 +257,12 @@ paths:
       description: Creates a new CyberArk Conjur connector.
       operationId: createConjurConnector
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
+      - $ref: '#/components/parameters/Integrations_API_AccountGroupId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConjurConnector'
+              $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         required: true
       responses:
         '201':
@@ -264,63 +270,38 @@ paths:
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/ConjurConnector'
+                $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Integrations_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Integrations_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Integrations_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Integrations_API_404'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Integrations_API_500'
+      security:
+      - Integrations_API_BearerAuth: []
 components:
   schemas:
-    ValidationError:
+    Integrations_API_SelfLinks:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    ConjurConnectors:
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Integrations_API_Link'
+    Integrations_API_ConjurConnectors:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/ConjurConnector'
+            $ref: '#/components/schemas/Integrations_API_ConjurConnector'
         _links:
-          $ref: '#/components/schemas/SelfLinks'
-    ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    AuthenticationType:
-      type: string
-      enum:
-      - basic
-      - bearer-token
-      - oauth-auth-code
-      - oauth-client-credentials
-      - other-token
-      - conjur-host
-    ConjurConnector:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+    Integrations_API_ConjurConnector:
       required:
       - account
       - authentication
@@ -334,7 +315,7 @@ components:
           readOnly: true
           example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
         type:
-          $ref: '#/components/schemas/ConnectorType'
+          $ref: '#/components/schemas/Integrations_API_ConnectorType'
         name:
           type: string
           example: Cisco Slack
@@ -351,10 +332,21 @@ components:
           type: string
           example: My CyberArk Account
         authentication:
-          $ref: '#/components/schemas/ConjurHostAuthentication'
+          $ref: '#/components/schemas/Integrations_API_ConjurHostAuthentication'
         _links:
-          $ref: '#/components/schemas/SelfLinks'
-    UnauthorizedError:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+    Integrations_API_Assignments:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+        _links:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+      description: A list of assigned items.
+    Integrations_API_UnauthorizedError:
       type: object
       properties:
         error:
@@ -363,7 +355,16 @@ components:
         error_description:
           type: string
           example: Invalid access token
-    Link:
+    Integrations_API_AuthenticationType:
+      type: string
+      enum:
+      - basic
+      - bearer-token
+      - oauth-auth-code
+      - oauth-client-credentials
+      - other-token
+      - conjur-host
+    Integrations_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -394,7 +395,34 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Error:
+    Integrations_API_ConjurHostAuthentication:
+      required:
+      - apiKey
+      - hostId
+      - type
+      type: object
+      properties:
+        hostId:
+          type: string
+          example: host1
+        apiKey:
+          type: string
+          example: abc123
+        type:
+          $ref: '#/components/schemas/Integrations_API_AuthenticationType'
+    Integrations_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Integrations_API_Error:
       type: object
       properties:
         type:
@@ -412,45 +440,25 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    ConnectorType:
+    Integrations_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Integrations_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Integrations_API_ValidationErrorItem'
+    Integrations_API_ConnectorType:
       type: string
       enum:
       - generic
-    ConjurHostAuthentication:
-      required:
-      - apiKey
-      - hostId
-      - type
-      type: object
-      properties:
-        hostId:
-          type: string
-          example: host1
-        apiKey:
-          type: string
-          example: abc123
-        type:
-          $ref: '#/components/schemas/AuthenticationType'
-    SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-    Assignments:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            type: string
-            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-      description: A list of assigned items.
   parameters:
-    connectorIdPath:
+    Integrations_API_connectorIdPath:
       name: id
       in: path
       description: The connector ID.
@@ -458,7 +466,7 @@ components:
       schema:
         type: string
       example: cb1b8033-ea2d-4e9b-a920-fe87850693cf
-    AccountGroupId:
+    Integrations_API_AccountGroupId:
       name: aid
       in: query
       description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
@@ -467,36 +475,36 @@ components:
         type: string
         example: '1234'
   responses:
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+    Integrations_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Integrations_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Integrations_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Integrations_API_UnauthorizedError'
+    Integrations_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Integrations_API_Error'
+    Integrations_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Integrations_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -510,20 +518,275 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
-      description: Insufficient permissions to query endpoint
+    Integrations_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Integrations_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+externalDocs:
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events

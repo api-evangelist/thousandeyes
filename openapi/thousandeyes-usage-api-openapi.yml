@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
   version: 7.0.100
-  title: Usage API
-  description: "These usage endpoints define the following operations:\n\n* **Usage**: Retrieve usage data for the specified time period (default is one month).\n    \n    * Users must have the `View organization usage` permission to access this endpoint.\n    * This operation offers visibility across all account groups within the organization.\n    * Users with `View organization usage` permission in multiple organizations should query the operation with the `aid` query string parameter (see optional parameters) for each organization.\n    * The `agentId` field in enterprise agent unit responses may be omitted when not available.\n\n* **Quotas**: Obtain organization and account usage quotas. Additionally, users with the appropriate permissions can create, update, or delete these quotas.\n    \n    * Users must have the necessary permissions to perform quota-related actions.\n\nRefer to the Usage API operations for detailed usage instructions and optional parameters.\n"
+  title: ThousandEyes Usage API
   x-provenance:
     method: harvested
     authored_by: Cisco ThousandEyes
@@ -17,14 +16,14 @@ info:
     url: https://pubhub.devnetcloud.com/media/000-v7-apis/docs/reference/
   - type: source
     url: https://developer.cisco.com/docs/thousandeyes/
+  description: Usage GET Operation
 servers:
 - description: ThousandEyes API production URL
   url: https://api.thousandeyes.com/v7
-security:
-- BearerAuth: []
 tags:
 - name: Usage
   description: Usage GET Operation
+  x-displayName: Usage
 paths:
   /usage:
     get:
@@ -36,27 +35,29 @@ paths:
 
         **Note:** Access to billing information older than one month is not supported by this endpoint.'
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/ExpandUsage'
+      - $ref: '#/components/parameters/Usage_API_AccountGroupId'
+      - $ref: '#/components/parameters/Usage_API_ExpandUsage'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Usage'
+                $ref: '#/components/schemas/Usage_API_Usage'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Usage_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Usage_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Usage_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Usage_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Usage_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Usage_API_500'
+      security:
+      - Usage_API_BearerAuth: []
   /usage/units/enterprise-agents:
     get:
       tags:
@@ -65,30 +66,32 @@ paths:
       operationId: getEnterpriseAgentsUnitsUsage
       description: 'This operation returns the organization''s enterprise agents usage for a specific time period, or the curent billing cycle if no time period is specified.
 
-        In the `/v7/usage` API, a shared enterprise agent''s usage is reported in the account group where the agent was created (i.e Primary Account Group).  However in this API, the shared agent''s usage is distributed among all the account groups where the tests are running on the particular agent. This API is also only available to customers on usage based pricing model.'
+        In the `/v7/usage` API, a shared enterprise agent''s usage is reported in the account group where the agent was created (i.e Primary Account Group). However in this API, the shared agent''s usage is distributed among all the account groups where the tests are running on the particular agent. This API is also only available to customers on usage based pricing model.'
       parameters:
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/Usage_API_StartDateParameter'
+      - $ref: '#/components/parameters/Usage_API_EndDateParameter'
+      - $ref: '#/components/parameters/Usage_API_PaginationCursor'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/EnterpriseAgentsUsage'
+                $ref: '#/components/schemas/Usage_API_EnterpriseAgentsUsage'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Usage_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Usage_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Usage_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Usage_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Usage_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Usage_API_500'
+      security:
+      - Usage_API_BearerAuth: []
   /usage/units/tests:
     get:
       tags:
@@ -97,34 +100,93 @@ paths:
       operationId: getTestsUnitsUsage
       description: 'This operation returns the cloud and enterprise agents usage for all the tests for a specific time period, or the curent billing cycle if no time period is specified.
 
-        In the `/v7/usage` API, an enterprise agent''s usage is reported in the account group where the agent was created (i.e Primary Account Group).  However in this API, the agent''s usage is distributed among all the account groups where the tests are running on the particular agent. This API is also only available to customers on usage based pricing model.'
+        In the `/v7/usage` API, an enterprise agent''s usage is reported in the account group where the agent was created (i.e Primary Account Group). However in this API, the agent''s usage is distributed among all the account groups where the tests are running on the particular agent. This API is also only available to customers on usage based pricing model.'
       parameters:
-      - $ref: '#/components/parameters/AccountGroupId'
-      - $ref: '#/components/parameters/StartDateParameter'
-      - $ref: '#/components/parameters/EndDateParameter'
-      - $ref: '#/components/parameters/PaginationCursor'
+      - $ref: '#/components/parameters/Usage_API_AccountGroupId'
+      - $ref: '#/components/parameters/Usage_API_StartDateParameter'
+      - $ref: '#/components/parameters/Usage_API_EndDateParameter'
+      - $ref: '#/components/parameters/Usage_API_PaginationCursor'
       responses:
         '200':
           description: OK
           content:
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/TestsUsage'
+                $ref: '#/components/schemas/Usage_API_TestsUsage'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/Usage_API_400'
         '401':
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/Usage_API_401'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/Usage_API_403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/Usage_API_404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: '#/components/responses/Usage_API_429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/Usage_API_500'
+      security:
+      - Usage_API_BearerAuth: []
 components:
   schemas:
-    EnterpriseAgentUnits:
+    Usage_API_PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Usage_API_Link'
+        next:
+          $ref: '#/components/schemas/Usage_API_Link'
+        self:
+          $ref: '#/components/schemas/Usage_API_Link'
+    Usage_API_EndpointAgentsEssentials:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group owning the endpoint agents essentials.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the endpoint agents essentials.
+          type: string
+          example: Account A
+        endpointAgentsEssentialsUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents essentials owned by the specific account group in the usage period.
+    Usage_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Usage_API_EnterpriseAgentsUsage:
+      type: object
+      properties:
+        breakdowns:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage_API_EnterpriseAgentUnitsByTestOwnerAccountGroup'
+          example:
+          - aid: '1234'
+            agentId: '123456'
+            accountGroupName: Support
+            agentName: TEVA-test-agent
+            enterpriseUnitsUsed: 599878
+            enterpriseUnitsProjected: 597808
+          - aid: '315'
+            agentId: '789'
+            accountGroupName: Documentation
+            agentName: lab-physical-appliance-1
+            enterpriseUnitsUsed: 597123
+            enterpriseUnitsProjected: 597808
+        _links:
+          $ref: '#/components/schemas/Usage_API_PaginationLinks'
+    Usage_API_EnterpriseAgentUnits:
       type: object
       properties:
         aid:
@@ -149,88 +211,57 @@ components:
           type: integer
           format: int64
           description: Number of enterprise units projected in the current usage period, based on units consumed to date and configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with metered billing.
-    ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/ValidationErrorItem'
-    AllocationUnitUsageBreakdown:
+    Usage_API_EnterpriseAgents:
       type: object
       properties:
-        productName:
+        aid:
           type: string
-          description: The product name of the allocation.
-        allocatedUnits:
+          description: A unique identifier that specifies the account group that owns the enterprise agents.
+          example: '1234'
+        accountGroupName:
+          type: string
+          description: Name of the account group which owns the enterprise agents.
+          example: Account A
+        enterpriseAgentsUsed:
           type: integer
           format: int64
-          example: 1599
-          description: The number of allocated units for the product.
-    Usage:
+          description: Number of enterprise agents owned by the specific account group in the usage period.
+    Usage_API_TestUsage:
       type: object
       properties:
-        usage:
-          $ref: '#/components/schemas/UsageDetails'
-        _links:
-          $ref: '#/components/schemas/SelfLinks'
-    UsageQuota:
-      type: object
-      properties:
-        monthStart:
+        aid:
           type: string
-          format: date-time
-          description: Beginning of usage period in UTC (ISO date-time format).
-          example: '2020-01-05T08:00:00Z'
-        monthEnd:
+          description: Unique identifier of the account group which owns the test.
+          example: '1234'
+        accountGroupName:
           type: string
-          format: date-time
-          description: End of usage period in UTC (ISO date-time format)..
-          example: '2020-02-05T08:00:00Z'
-        cloudUnitsIncluded:
+          description: Name of the account group which owns the test.
+          example: Account A
+        testId:
+          type: string
+          description: Unique identifier of the test generating usage.
+        testName:
+          type: string
+          description: Name of the test generating usage.
+        testType:
+          type: string
+          description: The type of test that generated the usage data. Note that this parameter provides a user-friendly description of the test type and should not be parsed to determine the endpoint for querying configuration details.
+        cloudUnitsUsed:
           type: integer
           format: int64
-          example: 4320000000
-          description: Monthly number of cloud units allocated, as part of the contract.
-        deviceAgentsIncluded:
+          description: Number of cloud units that the test has consumed in the usage period.
+        cloudUnitsProjected:
           type: integer
           format: int64
-          example: 100
-          description: Number of device agents (connected devices product) allocated monthly, as specified in the contract.
-        endpointAgentsIncluded:
-          type: integer
-          format: int64
-          example: 200
-          description: Monthly number of endpoint agents allocated, as part of the contract.
-        endpointAgentsEssentialsIncluded:
-          type: integer
-          format: int64
-          example: 10
-          description: Monthly number of endpoint agents essentials allocated, as part of the contract.
-        endpointAgentsEmbeddedIncluded:
-          type: integer
-          format: int64
-          example: 10
-          description: Number of embedded endpoint agents allocated monthly, as specified in the contract.
-        enterpriseAgentsIncluded:
-          type: integer
-          format: int64
-          example: 25
-          description: Monthly number of enterprise agents allocated, as part of the contract. Returns non-zero value only for organizations with legacy billing.
-    TestsUsage:
+          description: The estimated number of cloud units that the test is expected to consume during the usage period. This estimate is determined by considering the units consumed up to the current time and the test's configuration. It's important to note that this value is updated every hour. For new tests, the `cloudUnitsProjected` parameter is absent until the projection is calculated.
+    Usage_API_TestsUsage:
       type: object
       properties:
         breakdowns:
           x-paginated-items: true
           type: array
           items:
-            $ref: '#/components/schemas/UnitsByTests'
+            $ref: '#/components/schemas/Usage_API_UnitsByTests'
           example:
           - testId: '1158'
             testName: https://app.thousandeyes.com
@@ -251,59 +282,53 @@ components:
             aid: '1234'
             accountGroupName: Support
         _links:
-          $ref: '#/components/schemas/PaginationLinks'
-    UnitsByTests:
+          $ref: '#/components/schemas/Usage_API_PaginationLinks'
+    Usage_API_ExpandUsageOptions:
+      type: string
+      enum:
+      - test
+      - enterprise-agent
+      - enterprise-agent-unit
+      - endpoint-agent
+      - endpoint-agent-essential
+      - endpoint-agent-embedded
+    Usage_API_EnterpriseAgentUnitsByTestOwnerAccountGroup:
       type: object
       properties:
         aid:
+          description: Unique identifier of the account group where some tests are incurring the enterprise agent units.
           type: string
-          description: Unique ID of the account group owning the test that is generating units
           example: '1234'
         accountGroupName:
+          description: Name of the account group which owns the tests that are incurring enterprise agent units.
           type: string
-          description: Name of the account group which owns the test that is generating the units
           example: Account A
+        agentId:
+          type: string
+          description: Unique identifier of the enterprise agent generating usage. This field may be omitted when not available.
+        agentName:
+          type: string
+          description: Name of the enterprise agent generating usage.
         enterpriseUnitsUsed:
           type: integer
-          description: Units generated by the by the enterprise agents running the test
+          format: int64
+          description: Number of enterprise agent units owned by the specific account group in the usage period.
         enterpriseUnitsProjected:
           type: integer
-          description: Enterprise Units projected in the current usage period, based on units consumed to date and configuration of the test
-        cloudUnitsUsed:
-          type: integer
-          description: Units generated by the by the cloud agents running the test
-        cloudUnitsProjected:
-          type: integer
-          description: Cloud Units projected in the current usage period, based on units consumed to date and configuration of the test
-        testId:
-          type: string
-          description: Unique ID of the test generating usage
-        testName:
-          type: string
-          description: Name of the test generating usage
-        testType:
-          type: string
-          description: Type of test generating usage. Note that this is a friendly testType entry (so it shouldn’t be parsed to discover the correct operation to query for configuration details).
-        isInstantTest:
-          type: boolean
-          description: Indicates whether the test is scheduled or instant
-    ValidationErrorItem:
+          format: int64
+          description: Number of enterprise units projected in the current usage period, based on units consumed to date and configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with metered billing.
+    Usage_API_Usage:
       type: object
       properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    UsageDetails:
+        usage:
+          $ref: '#/components/schemas/Usage_API_UsageDetails'
+        _links:
+          $ref: '#/components/schemas/Usage_API_SelfLinks'
+    Usage_API_UsageDetails:
       type: object
       properties:
         quota:
-          $ref: '#/components/schemas/UsageQuota'
+          $ref: '#/components/schemas/Usage_API_UsageQuota'
         cloudUnitsUsed:
           type: integer
           format: int64
@@ -372,7 +397,7 @@ components:
         enterpriseAgentUnits:
           type: array
           items:
-            $ref: '#/components/schemas/EnterpriseAgentUnits'
+            $ref: '#/components/schemas/Usage_API_EnterpriseAgentUnits'
           example:
           - aid: '1234'
             agentId: '123456'
@@ -390,7 +415,7 @@ components:
         tests:
           type: array
           items:
-            $ref: '#/components/schemas/TestUsage'
+            $ref: '#/components/schemas/Usage_API_TestUsage'
           example:
           - aid: '1234'
             testId: '1158'
@@ -410,7 +435,7 @@ components:
         endpointAgents:
           type: array
           items:
-            $ref: '#/components/schemas/EndpointAgentsUsage'
+            $ref: '#/components/schemas/Usage_API_EndpointAgentsUsage'
           example:
           - aid: '1234'
             accountGroupName: Support
@@ -422,7 +447,7 @@ components:
         endpointAgentsEssentials:
           type: array
           items:
-            $ref: '#/components/schemas/EndpointAgentsEssentials'
+            $ref: '#/components/schemas/Usage_API_EndpointAgentsEssentials'
           example:
           - aid: '1234'
             accountGroupName: Support
@@ -434,7 +459,7 @@ components:
         endpointAgentsEmbedded:
           type: array
           items:
-            $ref: '#/components/schemas/EndpointAgentsEmbedded'
+            $ref: '#/components/schemas/Usage_API_EndpointAgentsEmbedded'
           example:
           - aid: '1234'
             accountGroupName: Support
@@ -446,7 +471,7 @@ components:
         enterpriseAgents:
           type: array
           items:
-            $ref: '#/components/schemas/EnterpriseAgents'
+            $ref: '#/components/schemas/Usage_API_EnterpriseAgents'
           example:
           - aid: '1234'
             accountGroupName: Support
@@ -456,65 +481,201 @@ components:
             enterpriseAgentsUsed: 1
           description: Enterprise agents used by account group.
         allocations:
-          $ref: '#/components/schemas/UnitAllocationSummary'
+          $ref: '#/components/schemas/Usage_API_UnitAllocationSummary'
           description: Summary of allocations
-    TestUsage:
+    Usage_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Usage_API_UnitsByTests:
       type: object
       properties:
         aid:
           type: string
-          description: Unique identifier of the account group which owns the test.
+          description: Unique ID of the account group owning the test that is generating units
           example: '1234'
         accountGroupName:
           type: string
-          description: Name of the account group which owns the test.
+          description: Name of the account group which owns the test that is generating the units
           example: Account A
-        testId:
-          type: string
-          description: Unique identifier of the test generating usage.
-        testName:
-          type: string
-          description: Name of the test generating usage.
-        testType:
-          type: string
-          description: The type of test that generated the usage data. Note that this parameter provides a user-friendly description of the test type and should not be parsed to determine the endpoint for querying configuration details.
+        enterpriseUnitsUsed:
+          type: integer
+          description: Units generated by the by the enterprise agents running the test
+        enterpriseUnitsProjected:
+          type: integer
+          description: Enterprise Units projected in the current usage period, based on units consumed to date and configuration of the test
         cloudUnitsUsed:
           type: integer
-          format: int64
-          description: Number of cloud units that the test has consumed in the usage period.
+          description: Units generated by the by the cloud agents running the test
         cloudUnitsProjected:
           type: integer
-          format: int64
-          description: The estimated number of cloud units that the test is expected to consume during the usage period. This estimate is determined by considering the units consumed up to the current time and the test's configuration. It's important to note that this value is updated every hour. For new tests, the `cloudUnitsProjected` parameter is absent until the projection is calculated.
-    ExpandUsageOptions:
-      type: string
-      enum:
-      - test
-      - enterprise-agent
-      - enterprise-agent-unit
-      - endpoint-agent
-      - endpoint-agent-essential
-      - endpoint-agent-embedded
-    PaginationLinks:
+          description: Cloud Units projected in the current usage period, based on units consumed to date and configuration of the test
+        testId:
+          type: string
+          description: Unique ID of the test generating usage
+        testName:
+          type: string
+          description: Name of the test generating usage
+        testType:
+          type: string
+          description: Type of test generating usage. Note that this is a friendly testType entry (so it shouldn’t be parsed to discover the correct operation to query for configuration details).
+        isInstantTest:
+          type: boolean
+          description: Indicates whether the test is scheduled or instant
+    Usage_API_SelfLinks:
       type: object
-      description: A links object containing pagination related link(s).
+      description: A links object containing the self link.
+      readOnly: true
       properties:
-        previous:
-          $ref: '#/components/schemas/Link'
-        next:
-          $ref: '#/components/schemas/Link'
         self:
-          $ref: '#/components/schemas/Link'
-    UnauthorizedError:
+          $ref: '#/components/schemas/Usage_API_Link'
+    Usage_API_AllocationUnitUsageBreakdown:
       type: object
       properties:
-        error:
+        productName:
           type: string
-          example: invalid_token
-        error_description:
+          description: The product name of the allocation.
+        allocatedUnits:
+          type: integer
+          format: int64
+          example: 1599
+          description: The number of allocated units for the product.
+    Usage_API_UsageQuota:
+      type: object
+      properties:
+        monthStart:
           type: string
-          example: Invalid access token
-    Link:
+          format: date-time
+          description: Beginning of usage period in UTC (ISO date-time format).
+          example: '2020-01-05T08:00:00Z'
+        monthEnd:
+          type: string
+          format: date-time
+          description: End of usage period in UTC (ISO date-time format)..
+          example: '2020-02-05T08:00:00Z'
+        cloudUnitsIncluded:
+          type: integer
+          format: int64
+          example: 4320000000
+          description: Monthly number of cloud units allocated, as part of the contract.
+        deviceAgentsIncluded:
+          type: integer
+          format: int64
+          example: 100
+          description: Number of device agents (connected devices product) allocated monthly, as specified in the contract.
+        endpointAgentsIncluded:
+          type: integer
+          format: int64
+          example: 200
+          description: Monthly number of endpoint agents allocated, as part of the contract.
+        endpointAgentsEssentialsIncluded:
+          type: integer
+          format: int64
+          example: 10
+          description: Monthly number of endpoint agents essentials allocated, as part of the contract.
+        endpointAgentsEmbeddedIncluded:
+          type: integer
+          format: int64
+          example: 10
+          description: Number of embedded endpoint agents allocated monthly, as specified in the contract.
+        enterpriseAgentsIncluded:
+          type: integer
+          format: int64
+          example: 25
+          description: Monthly number of enterprise agents allocated, as part of the contract. Returns non-zero value only for organizations with legacy billing.
+    Usage_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Usage_API_UnitAllocationSummary:
+      type: object
+      properties:
+        used:
+          type: integer
+          format: int64
+          example: 1234
+          description: The total number of allocation units used.
+        projected:
+          type: integer
+          format: int64
+          example: 1234
+          description: The total number of projected allocation units.
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage_API_AllocationUnitUsageBreakdown'
+      example:
+        used: 1000
+        projected: 1000
+        allocations:
+        - productName: Some Product Name
+          allocatedUnits: 600
+    Usage_API_EndpointAgentsUsage:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group owning the endpoint agents.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group which owns the endpoint agents.
+          type: string
+          example: Account A
+        endpointAgentsUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents owned by the specific account group in the usage period.
+    Usage_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Usage_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Usage_API_ValidationErrorItem'
+    Usage_API_EndpointAgentsEmbedded:
+      type: object
+      properties:
+        aid:
+          description: Unique identifier of the account group that owns the embedded endpoint agents.
+          type: string
+          example: '1234'
+        accountGroupName:
+          description: Name of the account group that owns the embedded endpoint agents.
+          type: string
+          example: Account A
+        endpointAgentsEmbeddedUsed:
+          type: integer
+          format: int64
+          description: Number of endpoint agents embedded owned by the specific account group in the usage period.
+    Usage_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
       required:
@@ -545,196 +706,8 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    EnterpriseAgentUnitsByTestOwnerAccountGroup:
-      type: object
-      properties:
-        aid:
-          description: Unique identifier of the account group where some tests are incurring the enterprise agent units.
-          type: string
-          example: '1234'
-        accountGroupName:
-          description: Name of the account group which owns the tests that are incurring enterprise agent units.
-          type: string
-          example: Account A
-        agentId:
-          type: string
-          description: Unique identifier of the enterprise agent generating usage. This field may be omitted when not available.
-        agentName:
-          type: string
-          description: Name of the enterprise agent generating usage.
-        enterpriseUnitsUsed:
-          type: integer
-          format: int64
-          description: Number of enterprise agent units owned by the specific account group in the usage period.
-        enterpriseUnitsProjected:
-          type: integer
-          format: int64
-          description: Number of enterprise units projected in the current usage period, based on units consumed to date and configuration of enabled tests. This value is updated hourly. Returns non-zero value only for organizations with metered billing.
-    EnterpriseAgents:
-      type: object
-      properties:
-        aid:
-          type: string
-          description: A unique identifier that specifies the account group that owns the enterprise agents.
-          example: '1234'
-        accountGroupName:
-          type: string
-          description: Name of the account group which owns the enterprise agents.
-          example: Account A
-        enterpriseAgentsUsed:
-          type: integer
-          format: int64
-          description: Number of enterprise agents owned by the specific account group in the usage period.
-    EndpointAgentsUsage:
-      type: object
-      properties:
-        aid:
-          description: Unique identifier of the account group owning the endpoint agents.
-          type: string
-          example: '1234'
-        accountGroupName:
-          description: Name of the account group which owns the endpoint agents.
-          type: string
-          example: Account A
-        endpointAgentsUsed:
-          type: integer
-          format: int64
-          description: Number of endpoint agents owned by the specific account group in the usage period.
-    UnitAllocationSummary:
-      type: object
-      properties:
-        used:
-          type: integer
-          format: int64
-          example: 1234
-          description: The total number of allocation units used.
-        projected:
-          type: integer
-          format: int64
-          example: 1234
-          description: The total number of projected allocation units.
-        allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationUnitUsageBreakdown'
-      example:
-        used: 1000
-        projected: 1000
-        allocations:
-        - productName: Some Product Name
-          allocatedUnits: 600
-    SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Link'
-    EndpointAgentsEmbedded:
-      type: object
-      properties:
-        aid:
-          description: Unique identifier of the account group that owns the embedded endpoint agents.
-          type: string
-          example: '1234'
-        accountGroupName:
-          description: Name of the account group that owns the embedded endpoint agents.
-          type: string
-          example: Account A
-        endpointAgentsEmbeddedUsed:
-          type: integer
-          format: int64
-          description: Number of endpoint agents embedded owned by the specific account group in the usage period.
-    EndpointAgentsEssentials:
-      type: object
-      properties:
-        aid:
-          description: Unique identifier of the account group owning the endpoint agents essentials.
-          type: string
-          example: '1234'
-        accountGroupName:
-          description: Name of the account group which owns the endpoint agents essentials.
-          type: string
-          example: Account A
-        endpointAgentsEssentialsUsed:
-          type: integer
-          format: int64
-          description: Number of endpoint agents essentials owned by the specific account group in the usage period.
-    EnterpriseAgentsUsage:
-      type: object
-      properties:
-        breakdowns:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/EnterpriseAgentUnitsByTestOwnerAccountGroup'
-          example:
-          - aid: '1234'
-            agentId: '123456'
-            accountGroupName: Support
-            agentName: TEVA-test-agent
-            enterpriseUnitsUsed: 599878
-            enterpriseUnitsProjected: 597808
-          - aid: '315'
-            agentId: '789'
-            accountGroupName: Documentation
-            agentName: lab-physical-appliance-1
-            enterpriseUnitsUsed: 597123
-            enterpriseUnitsProjected: 597808
-        _links:
-          $ref: '#/components/schemas/PaginationLinks'
   parameters:
-    StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
-    PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    ExpandUsage:
+    Usage_API_ExpandUsage:
       name: expand
       in: query
       style: form
@@ -743,46 +716,66 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/schemas/ExpandUsageOptions'
+          $ref: '#/components/schemas/Usage_API_ExpandUsageOptions'
         example:
         - test
+    Usage_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Usage_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Usage_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Usage_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
   responses:
-    '429':
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    '404':
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    '500':
+    Usage_API_500:
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/Usage_API_Error'
           example:
             type: about:blank
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    '400':
+    Usage_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
+    Usage_API_400:
       description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/Usage_API_ValidationError'
           example:
             type: about:blank
             title: Request validation failed. There are invalid or missing fields
@@ -796,23 +789,287 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    '403':
+    Usage_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    '401':
+            $ref: '#/components/schemas/Usage_API_Error'
+    Usage_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Usage_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/Usage_API_UnauthorizedError'
   securitySchemes:
-    BearerAuth:
+    Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Instant_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    ThousandEyes_for_OpenTelemetry_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Test_Snapshots_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Usage_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Templates_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    BGP_Monitors_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Internet_Insights_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Tags_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Event_Detection_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Test_Results_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agent_Labels_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Instant_Scheduled_Tests_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Endpoint_Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Emulation_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Dashboards_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Credentials_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Cloud_Insights_Integrations_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Autonomous_Systems_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    API_Token_Management_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Alerts_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Agents_API_BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication token
+    Administrative_API_BearerAuth:
       type: http
       scheme: bearer
       description: Bearer authentication token
 externalDocs:
-  description: Find out more about the usage model
-  url: https://docs.thousandeyes.com/product-documentation/user-management/usage-and-billing/how-unit-consumption-works#what-is-the-projected-usage
+  description: Find out more about ThousandEyes
+  url: https://developer.thousandeyes.com/
+x-tagGroups:
+- name: Tests API
+  tags:
+  - Tests
+  - Agent to Server Tests
+  - Agent to Agent Tests
+  - BGP Tests
+  - DNS Server Tests
+  - DNS Trace Tests
+  - DNSSEC Tests
+  - HTTP Server Tests
+  - Page Load Tests
+  - Web Transaction Tests
+  - API Tests
+  - FTP Server Tests
+  - SIP Server Tests
+  - Voice Tests
+  - Path Visualization Interface Groups
+- name: Test Results API
+  tags:
+  - Network Test Results
+  - Web HTTP Server Test Results
+  - Web Page Load Test Results
+  - Web Transactions Test Results
+  - API Test Results
+  - Web FTP Server Test Results
+  - DNS Trace Test Results
+  - DNS Server Test Results
+  - DNSSEC Test Results
+  - Voice SIP Server Test Results
+  - Voice RTP Server Test Results
+  - Network BGP Test Results
+- name: Instant Tests API
+  tags:
+  - Instant Tests
+  - Agent to Agent Instant Tests
+  - Agent to Server Instant Tests
+  - DNS Server Instant Tests
+  - DNS Trace Instant Tests
+  - DNSSEC Instant Tests
+  - HTTP Server Instant Tests
+  - HTTP Page Load Instant Tests
+  - Web Transaction Instant Tests
+  - API Instant Tests
+  - FTP Server Instant Tests
+  - SIP Server Instant Tests
+  - Voice Instant Tests
+- name: ThousandEyes for OpenTelemetry API
+  tags:
+  - Streaming
+- name: Test Snapshots API
+  tags:
+  - Test Snapshots
+- name: Usage API
+  tags:
+  - Usage
+  - Quotas
+- name: Templates API
+  tags:
+  - Templates
+- name: BGP Monitors API
+  tags:
+  - BGP monitors
+- name: Internet Insights API
+  tags:
+  - Internet Insights Catalog Providers
+  - Internet Insights Outages
+- name: Tags API
+  tags:
+  - Tags
+  - Tag Assignment
+- name: Integrations API
+  tags:
+  - Credential Vault Operations
+  - Operation Connectors
+  - CyberArk Conjur Connectors
+  - Webhook Operations
+  - Generic Connectors
+  - Panorama Connectors
+- name: Event Detection API
+  tags:
+  - Events
+- name: Endpoint Tests API
+  tags:
+  - Endpoint Scheduled Tests
+  - Agent to Server Endpoint Scheduled Tests
+  - HTTP Server Endpoint Scheduled Tests
+  - Agent To Server Endpoint Dynamic Tests
+  - Endpoint Real User Tests
+- name: Endpoint Test Results API
+  tags:
+  - Network Endpoint Scheduled Test Results
+  - HTTP Server Endpoint Scheduled Test Results
+  - Network Dynamic Endpoint Test Results
+  - Real User Endpoint Test Results
+  - Local Network Endpoint Test Results
+- name: Endpoint Agent Labels API
+  tags:
+  - Endpoint Agent Labels
+- name: Endpoint Instant Scheduled Tests API
+  tags:
+  - Agent to Server Endpoint Instant Scheduled Tests
+  - HTTP Server Endpoint Instant Scheduled Tests
+  - Run Endpoint Instant Scheduled Tests
+- name: Endpoint Agents API
+  tags:
+  - Endpoint Agents
+  - Endpoint Agent Log Items
+  - Endpoint Proxies
+  - Endpoint Agents Transfer
+- name: Emulation API
+  tags:
+  - Emulation
+- name: Dashboards API
+  tags:
+  - Dashboards
+  - Dashboard Snapshots
+  - Dashboards Filters
+- name: Credentials API
+  tags:
+  - Credentials
+- name: Cloud Insights Integrations API
+  tags:
+  - Cloud Insights Integrations
+  - Cloud Insights Integration Policy Settings
+- name: Autonomous Systems API
+  tags:
+  - Autonomous Systems
+  - Autonomous System Prefixes
+- name: API Token Management API
+  tags:
+  - API Token
+- name: Alerts API
+  tags:
+  - Alerts
+  - Alert Rules
+  - Alert Suppression Windows
+- name: Agents API
+  tags:
+  - Cloud and Enterprise Agents
+  - Local Problems
+  - Enterprise Agent Cluster
+  - Cloud and Enterprise Agent Notification Rules
+  - Agent Proxies
+  - Tests Assignment on Agents
+- name: Administrative API
+  tags:
+  - Account Groups
+  - Users
+  - Roles
+  - Permissions
+  - User Events
