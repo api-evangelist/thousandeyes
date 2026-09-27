@@ -66,6 +66,42 @@ paths:
       - Endpoint_Instant_Scheduled_Tests_API_BearerAuth: []
 components:
   responses:
+    Endpoint_Instant_Scheduled_Tests_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Endpoint_Instant_Scheduled_Tests_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+    Endpoint_Instant_Scheduled_Tests_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+    Endpoint_Instant_Scheduled_Tests_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError'
+    Endpoint_Instant_Scheduled_Tests_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
     Endpoint_Instant_Scheduled_Tests_API_400:
       description: Bad Request
       content:
@@ -85,51 +121,40 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Endpoint_Instant_Scheduled_Tests_API_500:
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
     Endpoint_Instant_Scheduled_Tests_API_GeneralError:
       description: An error occurred
-    Endpoint_Instant_Scheduled_Tests_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError'
-    Endpoint_Instant_Scheduled_Tests_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-    Endpoint_Instant_Scheduled_Tests_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-    Endpoint_Instant_Scheduled_Tests_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
   schemas:
-    Endpoint_Instant_Scheduled_Tests_API_TestRequestHasPing:
-      type: boolean
-      description: Optional flag indicating if the test should run ping.
-      default: true
-      deprecated: true
-      example: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionIn:
+      description: For configuring network tests, the IP version of the test.
+      type: string
+      enum:
+      - V4_ONLY
+      - V6_ONLY
+      - V6_PREFER
+      - OS_DEFAULT
+      example: V4_ONLY
+    Endpoint_Instant_Scheduled_Tests_API_TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestLabel'
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
+    Endpoint_Instant_Scheduled_Tests_API_TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
     Endpoint_Instant_Scheduled_Tests_API_TestSslVersionId:
       type: string
       description: 'SSL version options:
@@ -157,20 +182,31 @@ components:
       - '7'
       default: '0'
       example: '0'
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorType:
+    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerType:
       type: string
-      example: agent-tags
-      pattern: ^agent-tags$
-    Endpoint_Instant_Scheduled_Tests_API_TestIsSavedEvent:
-      type: boolean
-      description: 'Indicates if the test is a saved event.
-
-
-        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-        '
-      example: false
+      description: Type of test being queried.
+      example: http-server
+      pattern: ^http-server$
       readOnly: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
+      type: string
+      example: V4_ONLY
+    Endpoint_Instant_Scheduled_Tests_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Instant_Scheduled_Tests_API_TestRequestHasPing:
+      type: boolean
+      description: Optional flag indicating if the test should run ping.
+      default: true
+      deprecated: true
+      example: true
+    Endpoint_Instant_Scheduled_Tests_API_TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
     Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorConfig:
       type: object
       description: Agent labels selection object.
@@ -187,42 +223,11 @@ components:
           $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TagIds'
       required:
       - agentSelectorType
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig:
-      type: object
-      description: Any agent selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
-      required:
-      - agentSelectorType
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorType:
+    Endpoint_Instant_Scheduled_Tests_API_TestPassword:
       type: string
-      example: agent-labels
-      pattern: ^agent-labels$
-    Endpoint_Instant_Scheduled_Tests_API_TestFollowRedirects:
-      type: boolean
-      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
-      default: true
-      example: true
-    Endpoint_Instant_Scheduled_Tests_API_TestHttpVersion:
-      type: integer
-      minimum: 1
-      maximum: 2
-      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
-      default: 2
-      example: 2
-    Endpoint_Instant_Scheduled_Tests_API_TagIds:
-      type: array
-      description: List of tag IDs (obtained from `/tags` endpoint).
-      items:
-        type: string
-        format: uuid
-      example:
-      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+      description: Password for Basic/NTLM authentication.
+      example: password
+      writeOnly: true
     Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabels:
       type: array
       deprecated: true
@@ -259,127 +264,61 @@ components:
             $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestSslVersion'
           useNtlm:
             $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestUseNtlm'
-    Endpoint_Instant_Scheduled_Tests_API_TestProbeModeResponse:
-      type: string
+    Endpoint_Instant_Scheduled_Tests_API_TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
+      example: true
+    Endpoint_Instant_Scheduled_Tests_API_TestInterval:
+      type: integer
       enum:
-      - auto
-      - sack
-      - syn
-      - syn-pcap
-      - syn-socket
-      - unknown
-      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
-      default: auto
-      example: auto
-    Endpoint_Instant_Scheduled_Tests_API_Error:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Endpoint_Instant_Scheduled_Tests_API_TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    Endpoint_Instant_Scheduled_Tests_API_TestLabel:
       type: object
       properties:
-        type:
+        labelId:
           type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
+          description: Label ID.
+        name:
           type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information.
-      properties:
-        self:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_ScheduledTestResults'
-      readOnly: true
-    Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerTestUrl:
-      type: string
-      description: "The test target URL. You can optionally specify the protocol (`http` or `https`). \n\n- **Default Protocol:** If no protocol is specified, `https` is used by default.\n\n- **Port Number:** To specify a port, append it to the URL with a colon after the hostname or IP address (e.g., `https://example.com:443`).\n\n    - If no port is specified in the URL, the `port` is determined by the default for protocol (HTTP: 80, HTTPS: 443).\n"
-      example: https://example.com:443
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
     Endpoint_Instant_Scheduled_Tests_API_EndpointTestPort:
       type: integer
       description: Port number.
       default: 443
       example: 443
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorType:
-      type: string
-      example: all-agents
-      pattern: ^all-agents$
-    Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionIn:
-      description: For configuring network tests, the IP version of the test.
-      type: string
-      enum:
-      - V4_ONLY
-      - V6_ONLY
-      - V6_PREFER
-      - OS_DEFAULT
-      example: V4_ONLY
-    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerInstantTest:
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointInstantTest'
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerBaseTest'
-      - type: object
-        required:
-        - url
-        properties:
-          hasPing:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestRequestHasPing'
-          hasTraceroute:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestRequestHasTraceRoute'
-          networkMeasurements:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestNetworkMeasurements'
-          targetResponseTime:
-            type: integer
-            description: Response time target in milliseconds. Affects the colors of agents and legends on the view page. The value is compared with actual response time in order to determine the color scale (from green to red).
-            default: 1000
-            example: 1000
-          password:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestPassword'
-          tcpProbeMode:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestProbeMode'
-          url:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerTestUrl'
-    Endpoint_Instant_Scheduled_Tests_API_EndpointInstantTest:
+    Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig:
       type: object
-      required:
-      - testName
+      description: Specific agents selection object.
+      readOnly: true
       properties:
         agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgentSelectorType'
-        agents:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents'
-        endpointAgentLabels:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabels'
-        tagIds:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TagIds'
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorType'
         maxMachines:
           $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
-        testName:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestName'
-        ipVersion:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionIn'
-    Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorType:
-      type: string
-      example: specific-agents
-      pattern: ^specific-agents$
+        agents:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents'
+      required:
+      - agentSelectorType
     Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgentSelectorType:
       type: string
       enum:
@@ -399,178 +338,10 @@ components:
       description: Probe mode used by network test, only valid when the protocol is set to TCP.
       default: auto
       example: auto
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig:
-      type: object
-      description: Agent tags selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
-        endpointAgentLabels:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabels'
-        tagIds:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TagIds'
-      required:
-      - agentSelectorType
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines:
-      type: integer
-      description: Maximum number of agents which can execute the test.
-      default: 25
-      example: 25
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestSelfLink:
-      allOf:
-      - description: A reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Link'
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestProtocol:
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorType:
       type: string
-      enum:
-      - icmp
-      - icmp-with-tcp-connect
-      - tcp
-      - prefer-tcp
-      - ast-autodetect
-      - autodetect
-      description: Protocol requested for the test.
-      default: icmp
-      example: icmp
-    Endpoint_Instant_Scheduled_Tests_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
-    Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionOut:
-      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
-      type: string
-      example: V4_ONLY
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestResultUrl:
-      type: string
-      description: The test target URL.
-      example: https://example.com:443
-    Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig:
-      type: object
-      description: Specific agents selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
-        agents:
-          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents'
-      required:
-      - agentSelectorType
-    Endpoint_Instant_Scheduled_Tests_API_TestSslVersion:
-      type: string
-      description: Reflects the verbose SSL protocol version used by a test.
-      readOnly: true
-      example: Auto
-    Endpoint_Instant_Scheduled_Tests_API_TestHasPathTraceInSession:
-      type: boolean
-      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
-      example: true
-    Endpoint_Instant_Scheduled_Tests_API_ScheduledTestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
-    Endpoint_Instant_Scheduled_Tests_API_TestNetworkMeasurements:
-      type: boolean
-      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
-      default: true
-      example: true
-    Endpoint_Instant_Scheduled_Tests_API_TestPassword:
-      type: string
-      description: Password for Basic/NTLM authentication.
-      example: password
-      writeOnly: true
-    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerType:
-      type: string
-      description: Type of test being queried.
-      example: http-server
-      pattern: ^http-server$
-      readOnly: true
-    Endpoint_Instant_Scheduled_Tests_API_TestName:
-      type: string
-      description: Name of the test.
-      example: Test name
-    Endpoint_Instant_Scheduled_Tests_API_TestHttpTargetTime:
-      type: integer
-      minimum: 100
-      maximum: 5000
-      description: Target time for HTTP server completion, specified in milliseconds.
-      example: 100
-    Endpoint_Instant_Scheduled_Tests_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentSelectorConfig:
-      type: object
-      description: Agents selection object based on agentSelectorType.
-      readOnly: true
-      oneOf:
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig'
-      discriminator:
-        propertyName: agentSelectorType
-        mapping:
-          all-agents: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig'
-          specific-agents: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig'
-          agent-labels: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorConfig'
-          agent-tags: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig'
-      required:
-      - agentSelectorType
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents:
-      type: array
-      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
-      items:
-        type: string
-        format: uuid
-      example:
-      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
-      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
-    Endpoint_Instant_Scheduled_Tests_API_TestLabels:
-      type: array
-      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestLabel'
+      example: agent-tags
+      pattern: ^agent-tags$
     Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerBaseTest:
       type: object
       properties:
@@ -598,22 +369,185 @@ components:
           example: true
         url:
           $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestResultUrl'
-    Endpoint_Instant_Scheduled_Tests_API_TestLabel:
+    Endpoint_Instant_Scheduled_Tests_API_TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestResultUrl:
+      type: string
+      description: The test target URL.
+      example: https://example.com:443
+    Endpoint_Instant_Scheduled_Tests_API_ScheduledTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/scheduled-tests/281474976710706/pathvis
+    Endpoint_Instant_Scheduled_Tests_API_TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem:
       type: object
       properties:
-        labelId:
+        code:
           type: string
-          description: Label ID.
-        name:
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
           type: string
-          description: Name of the label.
-        isBuiltin:
-          type: boolean
-          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
-      example:
-        labelId: '961'
-        name: Artem label
-        isBuiltin: false
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Endpoint_Instant_Scheduled_Tests_API_TestProbeModeResponse:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    Endpoint_Instant_Scheduled_Tests_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerTestUrl:
+      type: string
+      description: "The test target URL. You can optionally specify the protocol (`http` or `https`). \n\n- **Default Protocol:** If no protocol is specified, `https` is used by default.\n\n- **Port Number:** To specify a port, append it to the URL with a colon after the hostname or IP address (e.g., `https://example.com:443`).\n\n    - If no port is specified in the URL, the `port` is determined by the default for protocol (HTTP: 80, HTTPS: 443).\n"
+      example: https://example.com:443
+    Endpoint_Instant_Scheduled_Tests_API_TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    Endpoint_Instant_Scheduled_Tests_API_TestRequestHasTraceRoute:
+      type: boolean
+      description: Optional flag indicating if the test should run traceroute.
+      default: true
+      deprecated: true
+      example: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig:
+      type: object
+      description: Agent tags selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TagIds'
+      required:
+      - agentSelectorType
+    Endpoint_Instant_Scheduled_Tests_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentSelectorConfig:
+      type: object
+      description: Agents selection object based on agentSelectorType.
+      readOnly: true
+      oneOf:
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    Endpoint_Instant_Scheduled_Tests_API_TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    Endpoint_Instant_Scheduled_Tests_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem'
+    Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabelsSelectorType:
+      type: string
+      example: agent-labels
+      pattern: ^agent-labels$
+    Endpoint_Instant_Scheduled_Tests_API_TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
+      default: false
+      example: false
+    Endpoint_Instant_Scheduled_Tests_API_TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestProtocol:
+      type: string
+      enum:
+      - icmp
+      - icmp-with-tcp-connect
+      - tcp
+      - prefer-tcp
+      - ast-autodetect
+      - autodetect
+      description: Protocol requested for the test.
+      default: icmp
+      example: icmp
     Endpoint_Instant_Scheduled_Tests_API_EndpointTest:
       type: object
       required:
@@ -668,41 +602,143 @@ components:
           $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestProbeModeResponse'
         port:
           $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestPort'
-    Endpoint_Instant_Scheduled_Tests_API_TestIsPrioritized:
-      type: boolean
-      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
-      default: false
-      example: false
-    Endpoint_Instant_Scheduled_Tests_API_TestInterval:
+    Endpoint_Instant_Scheduled_Tests_API_TestHttpVersion:
       type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Endpoint_Instant_Scheduled_Tests_API_EndpointTestAuthType:
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointInstantTest'
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerBaseTest'
+      - type: object
+        required:
+        - url
+        properties:
+          hasPing:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestRequestHasPing'
+          hasTraceroute:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestRequestHasTraceRoute'
+          networkMeasurements:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestNetworkMeasurements'
+          targetResponseTime:
+            type: integer
+            description: Response time target in milliseconds. Affects the colors of agents and legends on the view page. The value is compared with actual response time in order to determine the color scale (from green to red).
+            default: 1000
+            example: 1000
+          password:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestPassword'
+          tcpProbeMode:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestProbeMode'
+          url:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointHttpServerTestUrl'
+    Endpoint_Instant_Scheduled_Tests_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Endpoint_Instant_Scheduled_Tests_API_EndpointInstantTest:
+      type: object
+      required:
+      - testName
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgentSelectorType'
+        agents:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TagIds'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestMaxMachines'
+        testName:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_TestName'
+        ipVersion:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointIpVersionIn'
+    Endpoint_Instant_Scheduled_Tests_API_TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestAgents:
+      type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
+      items:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    Endpoint_Instant_Scheduled_Tests_API_EndpointScheduledTestType:
       type: string
-      description: HTTP authentication type.
       enum:
-      - none
-      - basic
-      - ntlm
-      default: none
-      example: none
-    Endpoint_Instant_Scheduled_Tests_API_TestUsername:
-      type: string
-      description: Username for Basic/NTLM authentication.
-      example: username
-    Endpoint_Instant_Scheduled_Tests_API_TestUseNtlm:
+      - agent-to-server
+      - http-server
+      description: Type of test being queried.
+      example: agent-to-server
+      readOnly: true
+    Endpoint_Instant_Scheduled_Tests_API_TestIsSavedEvent:
       type: boolean
-      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      description: 'Indicates if the test is a saved event.
+
+
+        **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+        '
       example: false
+      readOnly: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_EndpointTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_ScheduledTestResults'
+      readOnly: true
+    Endpoint_Instant_Scheduled_Tests_API_EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    Endpoint_Instant_Scheduled_Tests_API_EndpointTestSelfLink:
+      allOf:
+      - description: A reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/endpoint/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Link'
     Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError:
       type: object
       properties:
@@ -712,49 +748,6 @@ components:
         error_description:
           type: string
           example: Invalid access token
-    Endpoint_Instant_Scheduled_Tests_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Endpoint_Instant_Scheduled_Tests_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem'
-    Endpoint_Instant_Scheduled_Tests_API_TestRequestHasTraceRoute:
-      type: boolean
-      description: Optional flag indicating if the test should run traceroute.
-      default: true
-      deprecated: true
-      example: true
-    Endpoint_Instant_Scheduled_Tests_API_EndpointScheduledTestType:
-      type: string
-      enum:
-      - agent-to-server
-      - http-server
-      description: Type of test being queried.
-      example: agent-to-server
-      readOnly: true
-    Endpoint_Instant_Scheduled_Tests_API_TestIsEnabled:
-      type: boolean
-      description: Indicates if test is enabled.
-      example: true
-      default: true
-  headers:
-    Endpoint_Instant_Scheduled_Tests_API_Location:
-      schema:
-        type: string
-        format: uri
-        example: https://api.thousandeyes.com/v7/link/to/resource/id
-      description: The absolute path to created resource.
   parameters:
     Endpoint_Instant_Scheduled_Tests_API_AccountGroupId:
       name: aid
@@ -764,6 +757,13 @@ components:
       schema:
         type: string
         example: '1234'
+  headers:
+    Endpoint_Instant_Scheduled_Tests_API_Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

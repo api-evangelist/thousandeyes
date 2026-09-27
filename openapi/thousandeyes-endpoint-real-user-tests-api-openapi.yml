@@ -53,14 +53,14 @@ paths:
       - Endpoint_Tests_API_BearerAuth: []
 components:
   responses:
-    Endpoint_Tests_API_GeneralError:
-      description: An error occurred
     Endpoint_Tests_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Endpoint_Tests_API_UnauthorizedError'
+    Endpoint_Tests_API_GeneralError:
+      description: An error occurred
     Endpoint_Tests_API_403:
       description: Insufficient permissions to query endpoint
       content:
@@ -86,16 +86,73 @@ components:
           schema:
             $ref: '#/components/schemas/Endpoint_Tests_API_Error'
   schemas:
-    Endpoint_Tests_API_AccountGroupId:
+    Endpoint_Tests_API_EndpointRealUserTest:
+      type: object
+      required:
+      - profileId
+      - aid
+      - name
+      - includedDomains
+      - excludedDomains
+      - monitoringSettings
+      properties:
+        profileId:
+          type: string
+          description: Unique ID of the monitoring profile.
+          example: '73421'
+          readOnly: true
+        aid:
+          $ref: '#/components/schemas/Endpoint_Tests_API_AccountGroupId'
+        name:
+          type: string
+          description: Monitoring profile name.
+          example: Corporate domains
+          readOnly: true
+        includedDomains:
+          type: array
+          description: Domains included in real user monitoring.
+          items:
+            type: string
+            example: example.com
+            readOnly: true
+        excludedDomains:
+          type: array
+          description: Domains excluded from real user monitoring.
+          items:
+            type: string
+            example: static.example.com
+            readOnly: true
+        monitoringSettings:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointMonitoringSettings'
+    Endpoint_Tests_API_EndpointRealUserTestsResponse:
+      type: object
+      required:
+      - realUserTests
+      properties:
+        realUserTests:
+          type: array
+          description: Real user test domain monitoring profiles.
+          items:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointRealUserTest'
+    Endpoint_Tests_API_EndpointMonitoringSettingsType:
       type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Endpoint_Tests_API_EndpointAgentId:
-      type: string
-      format: uuid
-      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
-      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      description: Endpoint Agent selector type used by the monitoring settings.
+      enum:
+      - all-agents
+      - specific-agents
+      - agent-labels
+      - agent-tags
+      example: agent-tags
       readOnly: true
+    Endpoint_Tests_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Endpoint_Tests_API_EndpointMonitoringSettings:
       type: object
       required:
@@ -145,73 +202,6 @@ components:
             type: string
             example: '567'
             readOnly: true
-    Endpoint_Tests_API_EndpointMonitoringSettingsType:
-      type: string
-      description: Endpoint Agent selector type used by the monitoring settings.
-      enum:
-      - all-agents
-      - specific-agents
-      - agent-labels
-      - agent-tags
-      example: agent-tags
-      readOnly: true
-    Endpoint_Tests_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Endpoint_Tests_API_EndpointRealUserTestsResponse:
-      type: object
-      required:
-      - realUserTests
-      properties:
-        realUserTests:
-          type: array
-          description: Real user test domain monitoring profiles.
-          items:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointRealUserTest'
-    Endpoint_Tests_API_EndpointRealUserTest:
-      type: object
-      required:
-      - profileId
-      - aid
-      - name
-      - includedDomains
-      - excludedDomains
-      - monitoringSettings
-      properties:
-        profileId:
-          type: string
-          description: Unique ID of the monitoring profile.
-          example: '73421'
-          readOnly: true
-        aid:
-          $ref: '#/components/schemas/Endpoint_Tests_API_AccountGroupId'
-        name:
-          type: string
-          description: Monitoring profile name.
-          example: Corporate domains
-          readOnly: true
-        includedDomains:
-          type: array
-          description: Domains included in real user monitoring.
-          items:
-            type: string
-            example: example.com
-            readOnly: true
-        excludedDomains:
-          type: array
-          description: Domains excluded from real user monitoring.
-          items:
-            type: string
-            example: static.example.com
-            readOnly: true
-        monitoringSettings:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointMonitoringSettings'
     Endpoint_Tests_API_Error:
       type: object
       properties:
@@ -230,6 +220,16 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
+    Endpoint_Tests_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Tests_API_EndpointAgentId:
+      type: string
+      format: uuid
+      description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
+      example: 861b7557-cd57-4bbb-b648-00bddf88ef49
+      readOnly: true
   parameters:
     Endpoint_Tests_API_AccountGroupId:
       name: aid

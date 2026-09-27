@@ -73,6 +73,15 @@ paths:
       - Autonomous_Systems_API_BearerAuth: []
 components:
   schemas:
+    Autonomous_Systems_API_AsPrefixAssociations:
+      type: object
+      properties:
+        prefixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociations'
+        _links:
+          $ref: '#/components/schemas/Autonomous_Systems_API_PaginationLinks'
     Autonomous_Systems_API_Error:
       type: object
       properties:
@@ -91,83 +100,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Autonomous_Systems_API_AsPrefixAssociations:
-      type: object
-      properties:
-        prefixes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociations'
-        _links:
-          $ref: '#/components/schemas/Autonomous_Systems_API_PaginationLinks'
-    Autonomous_Systems_API_AutonomousSystemPrefixesExpand:
-      type: array
-      items:
-        type: string
-        enum:
-        - associations
-        example: associations
-      example:
-      - associations
-    Autonomous_Systems_API_PrefixAssociationType:
-      type: string
-      description: The method by which the prefix is associated with the Autonomous System.
-      enum:
-      - announced
-      - rpki
-      - allocated
-      - unknown
-      example: announced
-    Autonomous_Systems_API_PaginationLinks:
-      type: object
-      description: A links object containing pagination related link(s).
-      properties:
-        previous:
-          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
-        next:
-          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
-        self:
-          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
-    Autonomous_Systems_API_PrefixAssociation:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociationType'
-        lastSeen:
-          type: string
-          format: date-time
-          description: The UTC date when this association was last seen.
-          example: '2025-04-30T14:55:54Z'
-          readOnly: true
-        source:
-          type: string
-          description: The data source (usually an Internet Routing Registry) where the association was found.
-          example: ARIN
-      required:
-      - type
-      - lastSeen
-    Autonomous_Systems_API_PrefixAssociations:
-      type: object
-      properties:
-        prefix:
-          description: The IP prefix in CIDR notation.
-          type: string
-          example: 198.135.0.0/21
-        associations:
-          description: If expanded, this array shows the method by which the prefix is associated with the Autonomous System.
-          type: array
-          items:
-            $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociation'
-        otherAssociatedAsns:
-          description: Other Autonomous System numbers associated with this IP prefix.
-          type: array
-          items:
-            type: integer
-          example:
-          - 198949
-      required:
-      - prefix
-      - otherAssociatedAsns
     Autonomous_Systems_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -208,6 +140,74 @@ components:
         error_description:
           type: string
           example: Invalid access token
+    Autonomous_Systems_API_AutonomousSystemPrefixesExpand:
+      type: array
+      items:
+        type: string
+        enum:
+        - associations
+        example: associations
+      example:
+      - associations
+    Autonomous_Systems_API_PrefixAssociationType:
+      type: string
+      description: The method by which the prefix is associated with the Autonomous System.
+      enum:
+      - announced
+      - rpki
+      - allocated
+      - unknown
+      example: announced
+    Autonomous_Systems_API_PrefixAssociation:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociationType'
+        lastSeen:
+          type: string
+          format: date-time
+          description: The UTC date when this association was last seen.
+          example: '2025-04-30T14:55:54Z'
+          readOnly: true
+        source:
+          type: string
+          description: The data source (usually an Internet Routing Registry) where the association was found.
+          example: ARIN
+      required:
+      - type
+      - lastSeen
+    Autonomous_Systems_API_PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
+        next:
+          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
+        self:
+          $ref: '#/components/schemas/Autonomous_Systems_API_Link'
+    Autonomous_Systems_API_PrefixAssociations:
+      type: object
+      properties:
+        prefix:
+          description: The IP prefix in CIDR notation.
+          type: string
+          example: 198.135.0.0/21
+        associations:
+          description: If expanded, this array shows the method by which the prefix is associated with the Autonomous System.
+          type: array
+          items:
+            $ref: '#/components/schemas/Autonomous_Systems_API_PrefixAssociation'
+        otherAssociatedAsns:
+          description: Other Autonomous System numbers associated with this IP prefix.
+          type: array
+          items:
+            type: integer
+          example:
+          - 198949
+      required:
+      - prefix
+      - otherAssociatedAsns
   responses:
     Autonomous_Systems_API_429:
       description: Exhausted rate limit for the organization
@@ -215,30 +215,6 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Autonomous_Systems_API_Error'
-    Autonomous_Systems_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Autonomous_Systems_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Autonomous_Systems_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Autonomous_Systems_API_Error'
-    Autonomous_Systems_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Autonomous_Systems_API_UnauthorizedError'
     Autonomous_Systems_API_500:
       description: Internal server error
       content:
@@ -251,6 +227,30 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    Autonomous_Systems_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Autonomous_Systems_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Autonomous_Systems_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Autonomous_Systems_API_UnauthorizedError'
+    Autonomous_Systems_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Autonomous_Systems_API_Error'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

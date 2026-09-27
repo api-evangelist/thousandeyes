@@ -170,6 +170,35 @@ paths:
       - Tags_API_BearerAuth: []
 components:
   schemas:
+    Tags_API_BulkTagAssignment:
+      allOf:
+      - type: object
+        properties:
+          tagId:
+            type: string
+            format: uuid
+            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+            description: The ID of the tag to assign
+          _links:
+            $ref: '#/components/schemas/Tags_API_SelfLinks'
+      - $ref: '#/components/schemas/Tags_API_TagAssignment'
+    Tags_API_ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
     Tags_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -201,68 +230,6 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Tags_API_BulkTagAssignment:
-      allOf:
-      - type: object
-        properties:
-          tagId:
-            type: string
-            format: uuid
-            example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-            description: The ID of the tag to assign
-          _links:
-            $ref: '#/components/schemas/Tags_API_SelfLinks'
-      - $ref: '#/components/schemas/Tags_API_TagAssignment'
-    Tags_API_ApiError:
-      type: object
-      properties:
-        timestamp:
-          type: integer
-          format: int64
-          example: 1679677853573
-        status:
-          type: integer
-          example: 500
-        errors:
-          type: string
-          example: Internal Server Error
-        path:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/request/path
-    Tags_API_TagAssignment:
-      type: object
-      properties:
-        assignments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tags_API_Assignment'
-    Tags_API_Assignment:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Object Id
-          example: '123'
-        type:
-          $ref: '#/components/schemas/Tags_API_AssignmentType'
-    Tags_API_AssignmentType:
-      type: string
-      enum:
-      - test
-      - v-agent
-      - endpoint-test
-      - dashboard
-      - connected-devices-test
-    Tags_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
     Tags_API_Error:
       type: object
       properties:
@@ -281,13 +248,24 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Tags_API_SelfLinks:
+    Tags_API_UnauthorizedError:
       type: object
-      description: A links object containing the self link.
-      readOnly: true
       properties:
-        self:
-          $ref: '#/components/schemas/Tags_API_Link'
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Tags_API_Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Object Id
+          example: '123'
+        type:
+          $ref: '#/components/schemas/Tags_API_AssignmentType'
     Tags_API_BulkTagAssignments:
       type: object
       properties:
@@ -297,6 +275,28 @@ components:
             $ref: '#/components/schemas/Tags_API_BulkTagAssignment'
         _links:
           $ref: '#/components/schemas/Tags_API_SelfLinks'
+    Tags_API_AssignmentType:
+      type: string
+      enum:
+      - test
+      - v-agent
+      - endpoint-test
+      - dashboard
+      - connected-devices-test
+    Tags_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Tags_API_Link'
+    Tags_API_TagAssignment:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tags_API_Assignment'
   requestBodies:
     Tags_API_bulkAssignRequest:
       required: true
@@ -310,13 +310,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Tags_API_TagAssignment'
+  parameters:
+    Tags_API_TagIdPath:
+      name: id
+      in: path
+      description: Tag ID
+      required: true
+      schema:
+        type: string
+      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+    Tags_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   responses:
-    Tags_API_401:
-      description: Unauthorized
+    Tags_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Tags_API_UnauthorizedError'
+            $ref: '#/components/schemas/Tags_API_Error'
     Tags_API_404:
       description: Not found
       content:
@@ -329,37 +346,20 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
+    Tags_API_204:
+      description: No content
     Tags_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tags_API_Error'
-    Tags_API_204:
-      description: No content
-    Tags_API_403:
-      description: Insufficient permissions to query endpoint
+    Tags_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Tags_API_Error'
-  parameters:
-    Tags_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Tags_API_TagIdPath:
-      name: id
-      in: path
-      description: Tag ID
-      required: true
-      schema:
-        type: string
-      example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+            $ref: '#/components/schemas/Tags_API_UnauthorizedError'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

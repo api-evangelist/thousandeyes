@@ -60,6 +60,14 @@ paths:
       - Instant_Tests_API_BearerAuth: []
 components:
   responses:
+    Instant_Tests_API_GeneralError:
+      description: An error occurred
+    Instant_Tests_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Instant_Tests_API_Error'
     Instant_Tests_API_500:
       description: Internal server error
       content:
@@ -72,10 +80,14 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    Instant_Tests_API_GeneralError:
-      description: An error occurred
     Instant_Tests_API_403:
       description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Instant_Tests_API_Error'
+    Instant_Tests_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
@@ -86,12 +98,6 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Instant_Tests_API_UnauthorizedError'
-    Instant_Tests_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Instant_Tests_API_Error'
     Instant_Tests_API_404:
       description: Not found
       content:
@@ -104,12 +110,15 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Instant_Tests_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Instant_Tests_API_Error'
+  parameters:
+    Instant_Tests_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   schemas:
     Instant_Tests_API_UnauthorizedError:
       type: object
@@ -138,15 +147,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-  parameters:
-    Instant_Tests_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

@@ -256,155 +256,130 @@ paths:
       - Endpoint_Agents_API_BearerAuth: []
 components:
   schemas:
-    Endpoint_Agents_API_VpnType:
-      type: string
-      description: Name of the VPN provider.
-      enum:
-      - cisco-anyconnect
-      - palo-alto-globalprotect
-      - ivanti-connect-secure
-      - zscaler-internet-access
-      - f5-big-ip
-      example: cisco-anyconnect
-    Endpoint_Agents_API_InterfaceHardwareType:
-      type: string
-      example: wireless
-      enum:
-      - unknown
-      - wireless
-      - ethernet
-      - modem
-      - virtual
-      - loopback
-      - other
-    Endpoint_Agents_API_AgentSearchSort:
-      type: object
-      properties:
-        sort:
-          $ref: '#/components/schemas/Endpoint_Agents_API_AgentSearchSortKey'
-        order:
-          $ref: '#/components/schemas/Endpoint_Agents_API_SortOrder'
-    Endpoint_Agents_API_EndpointAgents:
-      description: A list of `EndpointAgents`.
-      type: object
-      properties:
-        totalAgents:
-          type: integer
-          example: 1
-          description: The total number of agents.
-        agents:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgent'
-    Endpoint_Agents_API_EndpointClient:
-      description: Information about the user who has the agent installed.
-      type: object
-      properties:
-        userProfile:
-          $ref: '#/components/schemas/Endpoint_Agents_API_EndpointUserProfile'
-        browserExtensions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointBrowserExtension'
-    Endpoint_Agents_API_AgentThresholdFilters:
-      type: object
-      description: All filters are applied based on the conditional operator (and/or).
-      properties:
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_AgentThresholdFilter'
-        conditionalOperator:
-          $ref: '#/components/schemas/Endpoint_Agents_API_ConditionalOperator'
-    Endpoint_Agents_API_ConnectionString:
-      type: object
-      properties:
-        connectionString:
-          type: string
-          description: 'The connection string is used for some integrations and other client types.
-
-            '
-          example: D2xZSLlqo64Xe2EnYisklA==
-        _links:
-          $ref: '#/components/schemas/Endpoint_Agents_API_SelfLinks'
-    Endpoint_Agents_API_AgentSearchSortKey:
-      type: string
-      enum:
-      - platform
-      - osVersion
-      - name
-      - userName
-      - city
-      - serialNumber
     Endpoint_Agents_API_ExternalMetadata:
       type: array
       items:
         $ref: '#/components/schemas/Endpoint_Agents_API_ExternalMetadataItem'
       description: "List of external metadata assigned to the endpoint agent. \nVisible only if the `expandAgent=externalMetadata` query parameter is included.\n"
-    Endpoint_Agents_API_ThresholdFilterOperator:
-      type: string
-      enum:
-      - gte
-      - lte
-      example: gte
-    Endpoint_Agents_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Endpoint_Agents_API_Status:
-      description: Status of the endpoint agent in ThousandEyes. Disabled agents don't report data.
-      type: string
-      example: enabled
-      enum:
-      - enabled
-      - disabled
-      readOnly: true
-    Endpoint_Agents_API_Error:
+    Endpoint_Agents_API_AgentSearchFilters:
       type: object
       properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
+        id:
+          description: Returns only agents that are an exact match of the provided identifiers.
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
+        agentName:
+          description: "Returns only agents with the given name. \nThis is an exact match only.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentName'
+        computerName:
+          description: 'Returns only agents with the given computer name.
+
+            This is an exact match only.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_ComputerName'
+        username:
+          description: 'Returns only agents that have at least one user with a name.
+
+            starting with the provided string. This is a case-insensitive prefix match.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - picard
+        userPrincipalName:
+          description: 'Returns only agents that have at least one user principal name, starting with one of the provided strings. This is a case-insensitive prefix match. User principle name is the user login name in an Internet-style format, typically used in Active Directory environments.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - picard@c.com
+        platform:
+          description: 'Filter on the platform on which the agent is running.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_Platform'
+        osVersion:
+          description: Case-insensitive prefix filter on the OS version.
+          type: array
+          items:
+            type: string
+            example: Version 10.15.2
+        nicModel:
+          description: Returns only agents whose NIC model is an exact, case-sensitive match for one of the provided values.
+          type: array
+          items:
+            type: string
+            example: Intel(R) Wi-Fi 6 AX200 160MHz
+        nicDriverVersion:
+          description: Returns only agents whose NIC driver version is an exact, case-sensitive match for one of the provided values.
+          type: array
+          items:
+            type: string
+            example: 22.250.0.9
+        serialNumber:
+          description: Case-insensitive prefix filter on the serial number.
+          type: array
+          maxItems: 50
+          items:
+            type: string
+            example: xaab2ba4-d40f-4e80-9363-7e4826556055
+        locationCountryISO:
+          description: 'Filter using the ISO country code of the location.
+
+            '
+          type: array
+          items:
+            type: string
+            example: FR
+        locationSubdivision1Code:
+          description: "Filter using the code for the first level administrative division within \nthe country. In US/Canada this is the State, in UK it's the country e.g. `ENG`\n"
+          type: array
+          items:
+            type: string
+            example: ENG
+        locationCity:
+          description: "This is a prefix match on the city name field. The endpoint expects this to contain the \nname of the city in English. e.g. 'Paris' or ''\n"
+          type: array
+          items:
+            type: string
+            example: Paris
+        licenseType:
+          description: 'Filter on the agent''s license type
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentLicenseType'
+        anyConnectDeviceId:
+          description: 'IDs of devices that has the Cisco Secure Client deployed with the Internet Security module.
+
+            Returns only agents that have at least one matching `anyConnectDeviceId`.
+
+            '
+          type: array
+          items:
+            type: string
+          example:
+          - JDLKSLFEIJER004334F
+    Endpoint_Agents_API_SortOrder:
+      type: string
+      example: desc
+      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
+      enum:
+      - asc
+      - desc
     Endpoint_Agents_API_AgentLicenseType:
       type: string
       example: essentials
@@ -424,55 +399,122 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Endpoint_Agents_API_AgentSearchSort'
-    Endpoint_Agents_API_BrowserType:
+    Endpoint_Agents_API_AgentThresholdFilters:
+      type: object
+      description: All filters are applied based on the conditional operator (and/or).
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentThresholdFilter'
+        conditionalOperator:
+          $ref: '#/components/schemas/Endpoint_Agents_API_ConditionalOperator'
+    Endpoint_Agents_API_ExpandEndpointAgentOptions:
       type: string
-      example: edge
       enum:
-      - chrome
-      - chrome-canary
-      - chromium
-      - ie
-      - edge
-      - unknown
-    Endpoint_Agents_API_UnauthorizedError:
+      - clients
+      - vpnProfiles
+      - networkInterfaceProfiles
+    Endpoint_Agents_API_FilterEndpointAgentsResponse:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgents'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Endpoint_Agents_API_PaginationNextLink'
+    Endpoint_Agents_API_AgentSearchSort:
       type: object
       properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Endpoint_Agents_API_Platform:
-      description: OS platform types. Platform "linux" was recently renamed to "roomos".
-      type: string
-      enum:
-      - windows
-      - roomos
-      - phoneos
-      - elux
-      - cisco-wireless
-      - cisco-wireless-cloud
-      - linux
-      - mac
-      - android
-      - unknown
-      example: mac
+        sort:
+          $ref: '#/components/schemas/Endpoint_Agents_API_AgentSearchSortKey'
+        order:
+          $ref: '#/components/schemas/Endpoint_Agents_API_SortOrder'
     Endpoint_Agents_API_ConditionalOperator:
       type: string
       enum:
       - and
       - or
       example: and
-    Endpoint_Agents_API_AddressType:
+    Endpoint_Agents_API_ComputerName:
+      description: 'Returns only agents with the specified computer name.
+
+        This is an exact match only.
+
+        '
       type: string
-      example: unique-local
-      enum:
-      - loopback
-      - unspecified
-      - unique-local
-      - link-local
-      - unique-global
+      example: DESKTOP-45AE8
+    Endpoint_Agents_API_WirelessProfile:
+      type: object
+      properties:
+        bssid:
+          type: string
+          format: macaddress
+          example: 00:11:22:aa:bb:cc
+        ssid:
+          type: string
+          example: GuestWiFi
+        rssi:
+          type: integer
+          format: int32
+          example: -36
+        channel:
+          type: integer
+          format: int32
+          example: 48
+        phyMode:
+          type: string
+          example: 802.11ac
+    Endpoint_Agents_API_AgentThresholdFilter:
+      type: object
+      description: The metric is filtered based on the threshold value and operator provided.
+      properties:
+        name:
+          type: string
+          enum:
+          - last-seen-ms
+        value:
+          type: number
+          description: The threshold value.
+          format: double
+        operator:
+          $ref: '#/components/schemas/Endpoint_Agents_API_ThresholdFilterOperator'
+    Endpoint_Agents_API_EndpointAgents:
+      description: A list of `EndpointAgents`.
+      type: object
+      properties:
+        totalAgents:
+          type: integer
+          example: 1
+          description: The total number of agents.
+        agents:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgent'
+    Endpoint_Agents_API_BatteryMetrics:
+      description: Battery metrics for the endpoint agent.
+      type: object
+      readOnly: true
+      properties:
+        batteryHealthNormalizedPercent:
+          type: number
+          format: double
+          description: Battery health as a normalized percentage (0-1).
+          example: 0.92
+          minimum: 0
+          maximum: 1
+        batteryLevel:
+          $ref: '#/components/schemas/Endpoint_Agents_API_BatteryLevel'
+        batteryLevelNormalizedPercent:
+          type: number
+          format: double
+          description: Battery level as a normalized percentage (0-1).
+          example: 0.3
+          minimum: 0
+          maximum: 1
+      required:
+      - batteryLevel
+      - batteryLevelNormalizedPercent
     Endpoint_Agents_API_EndpointAgent:
       description: The `EndpointAgent` object, which may include multiple clients.
       type: object
@@ -634,68 +676,71 @@ components:
           $ref: '#/components/schemas/Endpoint_Agents_API_CellularProfile'
         _links:
           $ref: '#/components/schemas/Endpoint_Agents_API_SelfLinks'
-    Endpoint_Agents_API_ExternalMetadataItem:
-      properties:
-        key:
-          type: string
-          example: anyConnectDeviceId
-          description: ID of the device that has the Cisco Secure Client deployed with the Internet Security module.
-        value:
-          type: string
-          example: DF434343D
-          description: Value of the external metadata property.
-      example:
-        key: anyConnectDeviceId
-        value: DF434343D
-    Endpoint_Agents_API_AgentName:
-      description: "Returns only agents with the specified name. \nThis is an exact match only.\n"
+    Endpoint_Agents_API_InterfaceHardwareType:
       type: string
-      example: myagent-1234
-    Endpoint_Agents_API_InterfaceProfile:
+      example: wireless
+      enum:
+      - unknown
+      - wireless
+      - ethernet
+      - modem
+      - virtual
+      - loopback
+      - other
+    Endpoint_Agents_API_AccountId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Agents_API_PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
+        self:
+          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
+    Endpoint_Agents_API_EndpointAsnDetails:
+      required:
+      - asNumber
+      type: object
+      readOnly: true
+      properties:
+        asNumber:
+          type: integer
+          format: int64
+          example: 5089
+          description: Autonomous system number.
+        asName:
+          type: string
+          example: Virgin Media Limited
+          description: Name of autonomous system.
+    Endpoint_Agents_API_Error:
       type: object
       properties:
-        interfaceName:
+        type:
           type: string
-          example: en0
-        addressProfiles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_AddressProfile'
-        hardwareType:
-          $ref: '#/components/schemas/Endpoint_Agents_API_InterfaceHardwareType'
-        ethernetProfile:
-          $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentEthernetProfile'
-        wirelessProfile:
-          $ref: '#/components/schemas/Endpoint_Agents_API_WirelessProfile'
-    Endpoint_Agents_API_ComputerName:
-      description: 'Returns only agents with the specified computer name.
-
-        This is an exact match only.
-
-        '
-      type: string
-      example: DESKTOP-45AE8
-    Endpoint_Agents_API_WirelessProfile:
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Endpoint_Agents_API_UnauthorizedError:
       type: object
       properties:
-        bssid:
+        error:
           type: string
-          format: macaddress
-          example: 00:11:22:aa:bb:cc
-        ssid:
+          example: invalid_token
+        error_description:
           type: string
-          example: GuestWiFi
-        rssi:
-          type: integer
-          format: int32
-          example: -36
-        channel:
-          type: integer
-          format: int32
-          example: 48
-        phyMode:
-          type: string
-          example: 802.11ac
+          example: Invalid access token
     Endpoint_Agents_API_CellularProfile:
       description: Cellular network profile information for a mobile endpoint agent.
       type: object
@@ -742,37 +787,37 @@ components:
           format: double
           description: Signal to Interference and Noise Ratio in dBm. It can be negative or positive.
           example: 20
-    Endpoint_Agents_API_BatteryMetrics:
-      description: Battery metrics for the endpoint agent.
-      type: object
-      readOnly: true
-      properties:
-        batteryHealthNormalizedPercent:
-          type: number
-          format: double
-          description: Battery health as a normalized percentage (0-1).
-          example: 0.92
-          minimum: 0
-          maximum: 1
-        batteryLevel:
-          $ref: '#/components/schemas/Endpoint_Agents_API_BatteryLevel'
-        batteryLevelNormalizedPercent:
-          type: number
-          format: double
-          description: Battery level as a normalized percentage (0-1).
-          example: 0.3
-          minimum: 0
-          maximum: 1
+    Endpoint_Agents_API_BrowserType:
+      type: string
+      example: edge
+      enum:
+      - chrome
+      - chrome-canary
+      - chromium
+      - ie
+      - edge
+      - unknown
+    Endpoint_Agents_API_EndpointUserProfile:
       required:
-      - batteryLevel
-      - batteryLevelNormalizedPercent
-    Endpoint_Agents_API_SelfLinks:
+      - userName
       type: object
-      description: A links object containing the self link.
-      readOnly: true
       properties:
-        self:
-          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
+        userName:
+          type: string
+          example: joeblogs32
+        userPrincipalName:
+          type: string
+          example: joeblogs32@c.com
+    Endpoint_Agents_API_EndpointAgentUpdate:
+      description: The `EndpointAgentUpdate` object contains supported fields for updates.
+      type: object
+      properties:
+        name:
+          description: New agent name.
+          type: string
+          example: Office Printer
+        licenseType:
+          $ref: '#/components/schemas/Endpoint_Agents_API_AgentLicenseType'
     Endpoint_Agents_API_ValidationError:
       type: object
       allOf:
@@ -786,24 +831,43 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Endpoint_Agents_API_ValidationErrorItem'
-    Endpoint_Agents_API_EndpointAgentLocation:
-      description: Approximate location of the agent.
+    Endpoint_Agents_API_Platform:
+      description: OS platform types. Platform "linux" was recently renamed to "roomos".
+      type: string
+      enum:
+      - windows
+      - roomos
+      - phoneos
+      - elux
+      - cisco-wireless
+      - cisco-wireless-cloud
+      - linux
+      - mac
+      - android
+      - unknown
+      example: mac
+    Endpoint_Agents_API_EndpointAgentEthernetProfile:
       type: object
+      description: 'Information about the ethernet connectivity of this device.
+
+        Only present if the hardware type is `ethernet`.
+
+        '
       properties:
-        latitude:
-          type: number
-          format: double
-          example: 51.51279
-          readOnly: true
-        longitude:
-          type: number
-          format: double
-          example: -0.09184
-          readOnly: true
-        locationName:
-          type: string
-          example: London
-          readOnly: true
+        linkSpeed:
+          type: integer
+          description: Link speed in Mbps.
+          format: int32
+    Endpoint_Agents_API_CellularNetworkGen:
+      description: Cellular network generation.
+      type: string
+      example: 2g, 3g, 4g, 5g
+    Endpoint_Agents_API_ThresholdFilterOperator:
+      type: string
+      enum:
+      - gte
+      - lte
+      example: gte
     Endpoint_Agents_API_EndpointVpnProfile:
       required:
       - vpnClientAddresses
@@ -833,79 +897,40 @@ components:
           - 10.100.0.0/22
           items:
             type: string
-    Endpoint_Agents_API_EndpointAgentEthernetProfile:
-      type: object
-      description: 'Information about the ethernet connectivity of this device.
-
-        Only present if the hardware type is `ethernet`.
-
-        '
-      properties:
-        linkSpeed:
-          type: integer
-          description: Link speed in Mbps.
-          format: int32
-    Endpoint_Agents_API_EndpointUserProfile:
-      required:
-      - userName
-      type: object
-      properties:
-        userName:
-          type: string
-          example: joeblogs32
-        userPrincipalName:
-          type: string
-          example: joeblogs32@c.com
-    Endpoint_Agents_API_BatteryLevel:
-      description: Battery level indicator.
+    Endpoint_Agents_API_ListEndpointAgentsResponse:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgents'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Endpoint_Agents_API_PaginationNextAndSelfLink'
+    Endpoint_Agents_API_AddressType:
       type: string
-      example: medium
+      example: unique-local
       enum:
-      - high
-      - medium
-      - low
-    Endpoint_Agents_API_AgentThresholdFilter:
+      - loopback
+      - unspecified
+      - unique-local
+      - link-local
+      - unique-global
+    Endpoint_Agents_API_EndpointAgentLocation:
+      description: Approximate location of the agent.
       type: object
-      description: The metric is filtered based on the threshold value and operator provided.
       properties:
-        name:
-          type: string
-          enum:
-          - last-seen-ms
-        value:
+        latitude:
           type: number
-          description: The threshold value.
           format: double
-        operator:
-          $ref: '#/components/schemas/Endpoint_Agents_API_ThresholdFilterOperator'
-    Endpoint_Agents_API_PaginationNextAndSelfLink:
-      type: object
-      description: A links object containing a related link for forward pagination.
-      properties:
-        next:
-          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
-        self:
-          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
-    Endpoint_Agents_API_CellularNetworkGen:
-      description: Cellular network generation.
-      type: string
-      example: 2g, 3g, 4g, 5g
-    Endpoint_Agents_API_EndpointAgentUpdate:
-      description: The `EndpointAgentUpdate` object contains supported fields for updates.
-      type: object
-      properties:
-        name:
-          description: New agent name.
+          example: 51.51279
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          example: -0.09184
+          readOnly: true
+        locationName:
           type: string
-          example: Office Printer
-        licenseType:
-          $ref: '#/components/schemas/Endpoint_Agents_API_AgentLicenseType'
-    Endpoint_Agents_API_PaginationNextLink:
-      type: object
-      description: A links object containing a related link for forward pagination.
-      properties:
-        next:
-          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
+          example: London
+          readOnly: true
     Endpoint_Agents_API_ValidationErrorItem:
       type: object
       properties:
@@ -918,160 +943,6 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-    Endpoint_Agents_API_AgentSearchFilters:
-      type: object
-      properties:
-        id:
-          description: Returns only agents that are an exact match of the provided identifiers.
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
-        agentName:
-          description: "Returns only agents with the given name. \nThis is an exact match only.\n"
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_AgentName'
-        computerName:
-          description: 'Returns only agents with the given computer name.
-
-            This is an exact match only.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_ComputerName'
-        username:
-          description: 'Returns only agents that have at least one user with a name.
-
-            starting with the provided string. This is a case-insensitive prefix match.
-
-            '
-          type: array
-          items:
-            type: string
-          example:
-          - picard
-        userPrincipalName:
-          description: 'Returns only agents that have at least one user principal name, starting with one of the provided strings. This is a case-insensitive prefix match. User principle name is the user login name in an Internet-style format, typically used in Active Directory environments.
-
-            '
-          type: array
-          items:
-            type: string
-          example:
-          - picard@c.com
-        platform:
-          description: 'Filter on the platform on which the agent is running.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_Platform'
-        osVersion:
-          description: Case-insensitive prefix filter on the OS version.
-          type: array
-          items:
-            type: string
-            example: Version 10.15.2
-        nicModel:
-          description: Returns only agents whose NIC model is an exact, case-sensitive match for one of the provided values.
-          type: array
-          items:
-            type: string
-            example: Intel(R) Wi-Fi 6 AX200 160MHz
-        nicDriverVersion:
-          description: Returns only agents whose NIC driver version is an exact, case-sensitive match for one of the provided values.
-          type: array
-          items:
-            type: string
-            example: 22.250.0.9
-        serialNumber:
-          description: Case-insensitive prefix filter on the serial number.
-          type: array
-          maxItems: 50
-          items:
-            type: string
-            example: xaab2ba4-d40f-4e80-9363-7e4826556055
-        locationCountryISO:
-          description: 'Filter using the ISO country code of the location.
-
-            '
-          type: array
-          items:
-            type: string
-            example: FR
-        locationSubdivision1Code:
-          description: "Filter using the code for the first level administrative division within \nthe country. In US/Canada this is the State, in UK it's the country e.g. `ENG`\n"
-          type: array
-          items:
-            type: string
-            example: ENG
-        locationCity:
-          description: "This is a prefix match on the city name field. The endpoint expects this to contain the \nname of the city in English. e.g. 'Paris' or ''\n"
-          type: array
-          items:
-            type: string
-            example: Paris
-        licenseType:
-          description: 'Filter on the agent''s license type
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Agents_API_AgentLicenseType'
-        anyConnectDeviceId:
-          description: 'IDs of devices that has the Cisco Secure Client deployed with the Internet Security module.
-
-            Returns only agents that have at least one matching `anyConnectDeviceId`.
-
-            '
-          type: array
-          items:
-            type: string
-          example:
-          - JDLKSLFEIJER004334F
-    Endpoint_Agents_API_ListEndpointAgentsResponse:
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgents'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Endpoint_Agents_API_PaginationNextAndSelfLink'
-    Endpoint_Agents_API_FilterEndpointAgentsResponse:
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgents'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Endpoint_Agents_API_PaginationNextLink'
-    Endpoint_Agents_API_ExpandEndpointAgentOptions:
-      type: string
-      enum:
-      - clients
-      - vpnProfiles
-      - networkInterfaceProfiles
-    Endpoint_Agents_API_SortOrder:
-      type: string
-      example: desc
-      description: Parameter indicates the ascending/descending  order of the sorting, using either the asc or desc values.
-      enum:
-      - asc
-      - desc
-    Endpoint_Agents_API_EndpointAsnDetails:
-      required:
-      - asNumber
-      type: object
-      readOnly: true
-      properties:
-        asNumber:
-          type: integer
-          format: int64
-          example: 5089
-          description: Autonomous system number.
-        asName:
-          type: string
-          example: Virgin Media Limited
-          description: Name of autonomous system.
     Endpoint_Agents_API_EndpointBrowserExtension:
       type: object
       properties:
@@ -1097,6 +968,31 @@ components:
           type: string
           description: Contains any errors encountered while getting extension status.
           example: ''
+    Endpoint_Agents_API_VpnType:
+      type: string
+      description: Name of the VPN provider.
+      enum:
+      - cisco-anyconnect
+      - palo-alto-globalprotect
+      - ivanti-connect-secure
+      - zscaler-internet-access
+      - f5-big-ip
+      example: cisco-anyconnect
+    Endpoint_Agents_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
+    Endpoint_Agents_API_Status:
+      description: Status of the endpoint agent in ThousandEyes. Disabled agents don't report data.
+      type: string
+      example: enabled
+      enum:
+      - enabled
+      - disabled
+      readOnly: true
     Endpoint_Agents_API_AddressProfile:
       type: object
       description: A description of the IPs assigned to this machine.
@@ -1123,33 +1019,198 @@ components:
           format: macaddress
           example: 5c:b1:3e:46:1c:84
           description: The router's MAC address resolved from an ARP request.
-    Endpoint_Agents_API_AccountId:
+    Endpoint_Agents_API_ConnectionString:
+      type: object
+      properties:
+        connectionString:
+          type: string
+          description: 'The connection string is used for some integrations and other client types.
+
+            '
+          example: D2xZSLlqo64Xe2EnYisklA==
+        _links:
+          $ref: '#/components/schemas/Endpoint_Agents_API_SelfLinks'
+    Endpoint_Agents_API_ExternalMetadataItem:
+      properties:
+        key:
+          type: string
+          example: anyConnectDeviceId
+          description: ID of the device that has the Cisco Secure Client deployed with the Internet Security module.
+        value:
+          type: string
+          example: DF434343D
+          description: Value of the external metadata property.
+      example:
+        key: anyConnectDeviceId
+        value: DF434343D
+    Endpoint_Agents_API_BatteryLevel:
+      description: Battery level indicator.
       type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
+      example: medium
+      enum:
+      - high
+      - medium
+      - low
+    Endpoint_Agents_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Endpoint_Agents_API_AgentSearchSortKey:
+      type: string
+      enum:
+      - platform
+      - osVersion
+      - name
+      - userName
+      - city
+      - serialNumber
+    Endpoint_Agents_API_PaginationNextLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Endpoint_Agents_API_Link'
     Endpoint_Agents_API_EndpointAgentId:
       type: string
       format: uuid
       description: Unique ID of endpoint agent, from `/endpoint/agents` endpoint.
       example: 861b7557-cd57-4bbb-b648-00bddf88ef49
       readOnly: true
-  requestBodies:
-    Endpoint_Agents_API_AgentSearch:
-      description: The filter options for advanced search filtering for agents.
+    Endpoint_Agents_API_EndpointClient:
+      description: Information about the user who has the agent installed.
+      type: object
+      properties:
+        userProfile:
+          $ref: '#/components/schemas/Endpoint_Agents_API_EndpointUserProfile'
+        browserExtensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointBrowserExtension'
+    Endpoint_Agents_API_InterfaceProfile:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+          example: en0
+        addressProfiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AddressProfile'
+        hardwareType:
+          $ref: '#/components/schemas/Endpoint_Agents_API_InterfaceHardwareType'
+        ethernetProfile:
+          $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentEthernetProfile'
+        wirelessProfile:
+          $ref: '#/components/schemas/Endpoint_Agents_API_WirelessProfile'
+    Endpoint_Agents_API_AgentName:
+      description: "Returns only agents with the specified name. \nThis is an exact match only.\n"
+      type: string
+      example: myagent-1234
+  parameters:
+    Endpoint_Agents_API_PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+    Endpoint_Agents_API_IncludeDeleted:
+      name: includeDeleted
+      in: query
+      description: When requesting entities, set to `true` if you want to see deleted entities.
+      example: false
+      required: false
+      schema:
+        type: boolean
+    Endpoint_Agents_API_UseAllPermittedAids:
+      name: useAllPermittedAids
+      in: query
+      required: false
+      description: Set to `true` to load data from all accounts the user has access to.
+      schema:
+        type: boolean
+        example: false
+        default: false
+    Endpoint_Agents_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Endpoint_Agents_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Endpoint_Agents_API_EndpointAgentIdPath:
+      name: agentId
+      in: path
       required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agents_API_AgentSearchRequest'
+      description: The identifier of the agent to operate on.
+      schema:
+        $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
+    Endpoint_Agents_API_ExpandEndpointAgent:
+      name: expand
+      in: query
+      description: "This optional parameter allows you to control the expansion of test resources associated with the agent. By default, no expansion occurs when this query parameter is omitted.\nTo expand the \"clients\" resource, include the query parameter `?expand=clients`.\n\nFor multiple expansions, you have two options:\n  \n* Separate the values with commas. For example, `?expandAgent=clients,tasks`.\n* Specify the parameter multiple times. For example, `?expandAgent=clients&expandAgent=tasks`.\n\nThis parameter offers flexibility for users to customize the expansion of specific resources related to the agent.\n"
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Endpoint_Agents_API_ExpandEndpointAgentOptions'
+      example:
+      - clients
+      - targetVersion
+      - vpnProfiles
+      - networkInterfaceProfiles
+      - externalMetadata
   responses:
-    Endpoint_Agents_API_204:
-      description: No content
-    Endpoint_Agents_API_401:
-      description: Unauthorized
+    Endpoint_Agents_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Endpoint_Agents_API_UnauthorizedError'
+            $ref: '#/components/schemas/Endpoint_Agents_API_Error'
+    Endpoint_Agents_API_SingleAgent:
+      description: The agent's current state.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgent'
     Endpoint_Agents_API_403:
       description: Insufficient permissions to query endpoint
       content:
@@ -1187,83 +1248,22 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Endpoint_Agents_API_429:
-      description: Exhausted rate limit for the organization
+    Endpoint_Agents_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Endpoint_Agents_API_Error'
-    Endpoint_Agents_API_SingleAgent:
-      description: The agent's current state.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgent'
-  parameters:
-    Endpoint_Agents_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Endpoint_Agents_API_EndpointAgentIdPath:
-      name: agentId
-      in: path
+            $ref: '#/components/schemas/Endpoint_Agents_API_UnauthorizedError'
+    Endpoint_Agents_API_204:
+      description: No content
+  requestBodies:
+    Endpoint_Agents_API_AgentSearch:
+      description: The filter options for advanced search filtering for agents.
       required: true
-      description: The identifier of the agent to operate on.
-      schema:
-        $ref: '#/components/schemas/Endpoint_Agents_API_EndpointAgentId'
-    Endpoint_Agents_API_UseAllPermittedAids:
-      name: useAllPermittedAids
-      in: query
-      required: false
-      description: Set to `true` to load data from all accounts the user has access to.
-      schema:
-        type: boolean
-        example: false
-        default: false
-    Endpoint_Agents_API_ExpandEndpointAgent:
-      name: expand
-      in: query
-      description: "This optional parameter allows you to control the expansion of test resources associated with the agent. By default, no expansion occurs when this query parameter is omitted.\nTo expand the \"clients\" resource, include the query parameter `?expand=clients`.\n\nFor multiple expansions, you have two options:\n  \n* Separate the values with commas. For example, `?expandAgent=clients,tasks`.\n* Specify the parameter multiple times. For example, `?expandAgent=clients&expandAgent=tasks`.\n\nThis parameter offers flexibility for users to customize the expansion of specific resources related to the agent.\n"
-      required: false
-      style: form
-      explode: false
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/Endpoint_Agents_API_ExpandEndpointAgentOptions'
-      example:
-      - clients
-      - targetVersion
-      - vpnProfiles
-      - networkInterfaceProfiles
-      - externalMetadata
-    Endpoint_Agents_API_PaginationMax:
-      name: max
-      in: query
-      description: (Optional) Maximum number of objects to return.
-      schema:
-        type: integer
-        example: 5
-    Endpoint_Agents_API_PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    Endpoint_Agents_API_IncludeDeleted:
-      name: includeDeleted
-      in: query
-      description: When requesting entities, set to `true` if you want to see deleted entities.
-      example: false
-      required: false
-      schema:
-        type: boolean
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agents_API_AgentSearchRequest'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

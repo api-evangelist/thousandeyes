@@ -244,71 +244,67 @@ paths:
       security:
       - Administrative_API_BearerAuth: []
 components:
-  responses:
-    Administrative_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_400:
-      description: Bad Request
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_ValidationError'
-          example:
-            type: about:blank
-            title: Request validation failed. There are invalid or missing fields
-            status: 400
-            detail: Your request object contains invalid fields.
-            instance: /v7
-            errors:
-            - code: AM-5432
-              field: firstName
-              message: firstName cannot have fancy characters
-            - code: DASH-5622
-              field: password
-              message: Password cannot be blank
-    Administrative_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Administrative_API_500:
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Administrative_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
-    Administrative_API_204:
-      description: No content
   schemas:
+    Administrative_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
+    Administrative_API_BaseRole:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the role.
+          example: Organization Admin
+        roleId:
+          type: string
+          description: Unique ID representing the role.
+          example: '35'
+        isBuiltin:
+          type: boolean
+          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
+    Administrative_API_ExtendedUser:
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_User'
+      - type: object
+        properties:
+          lastLogin:
+            type: string
+            description: UTC last login of the user (ISO date-time format).
+            format: date-time
+            example: '2022-07-17T22:00:54Z'
+    Administrative_API_User:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User's display name.
+          example: User X
+        email:
+          type: string
+          description: User's email address.
+          format: email
+          example: userx@thousandeyes.com
+        uid:
+          type: string
+          description: Unique ID of the user.
+          example: '245'
+        dateRegistered:
+          type: string
+          description: UTC date the user registered their account (ISO date-time format).
+          format: date-time
+          example: '2020-07-17T22:00:54Z'
+        loginAccountGroup:
+          $ref: '#/components/schemas/Administrative_API_AccountGroup'
     Administrative_API_Role:
       type: object
       allOf:
@@ -334,78 +330,24 @@ components:
           example:
           - '57'
           - '1140'
-    Administrative_API_ValidationErrorItem:
+    Administrative_API_Users:
       type: object
       properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Administrative_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Administrative_API_Link'
-    Administrative_API_UserRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User's display name.
-          example: User X
-        email:
-          type: string
-          description: User's email address.
-          format: email
-          example: userx@thousandeyes.com
-        loginAccountGroupId:
-          type: string
-          description: Unique ID of the login account group.
-          example: '691'
-        accountGroupRoles:
+        users:
           type: array
           items:
-            $ref: '#/components/schemas/Administrative_API_UserAccountGroupRole'
-        allAccountGroupRoleIds:
-          type: array
-          description: Unique IDs representing the roles.
-          items:
-            type: string
-            description: Unique role ID.
-            example: '57'
-          example:
-          - '57'
-          - '1140'
-    Administrative_API_ExtendedUser:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_User'
-      - type: object
-        properties:
-          lastLogin:
-            type: string
-            description: UTC last login of the user (ISO date-time format).
-            format: date-time
-            example: '2022-07-17T22:00:54Z'
-    Administrative_API_ValidationError:
+            $ref: '#/components/schemas/Administrative_API_ExtendedUser'
+        _links:
+          $ref: '#/components/schemas/Administrative_API_SelfLinks'
+    Administrative_API_AccountGroupRole:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
+      properties:
+        accountGroup:
+          $ref: '#/components/schemas/Administrative_API_AccountGroup'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Administrative_API_Role'
     Administrative_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -437,52 +379,6 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Administrative_API_AccountGroup:
-      type: object
-      properties:
-        aid:
-          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
-        accountGroupName:
-          type: string
-          description: Account group name
-          example: Account A
-    Administrative_API_BaseRole:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the role.
-          example: Organization Admin
-        roleId:
-          type: string
-          description: Unique ID representing the role.
-          example: '35'
-        isBuiltin:
-          type: boolean
-          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
-    Administrative_API_User:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User's display name.
-          example: User X
-        email:
-          type: string
-          description: User's email address.
-          format: email
-          example: userx@thousandeyes.com
-        uid:
-          type: string
-          description: Unique ID of the user.
-          example: '245'
-        dateRegistered:
-          type: string
-          description: UTC date the user registered their account (ISO date-time format).
-          format: date-time
-          example: '2020-07-17T22:00:54Z'
-        loginAccountGroup:
-          $ref: '#/components/schemas/Administrative_API_AccountGroup'
     Administrative_API_CreatedUser:
       allOf:
       - $ref: '#/components/schemas/Administrative_API_User'
@@ -500,15 +396,65 @@ components:
               $ref: '#/components/schemas/Administrative_API_Role'
           _links:
             $ref: '#/components/schemas/Administrative_API_SelfLinks'
-    Administrative_API_AccountGroupRole:
+    Administrative_API_UnauthorizedError:
       type: object
       properties:
-        accountGroup:
-          $ref: '#/components/schemas/Administrative_API_AccountGroup'
-        roles:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Administrative_API_UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User's display name.
+          example: User X
+        email:
+          type: string
+          description: User's email address.
+          format: email
+          example: userx@thousandeyes.com
+        loginAccountGroupId:
+          type: string
+          description: Unique ID of the login account group.
+          example: '691'
+        accountGroupRoles:
           type: array
           items:
-            $ref: '#/components/schemas/Administrative_API_Role'
+            $ref: '#/components/schemas/Administrative_API_UserAccountGroupRole'
+        allAccountGroupRoleIds:
+          type: array
+          description: Unique IDs representing the roles.
+          items:
+            type: string
+            description: Unique role ID.
+            example: '57'
+          example:
+          - '57'
+          - '1140'
+    Administrative_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Administrative_API_Link'
+    Administrative_API_AccountGroup:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
+        accountGroupName:
+          type: string
+          description: Account group name
+          example: Account A
+    Administrative_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
     Administrative_API_UserDetail:
       allOf:
       - $ref: '#/components/schemas/Administrative_API_ExtendedUser'
@@ -526,19 +472,6 @@ components:
               $ref: '#/components/schemas/Administrative_API_Role'
           _links:
             $ref: '#/components/schemas/Administrative_API_SelfLinks'
-    Administrative_API_Users:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_ExtendedUser'
-        _links:
-          $ref: '#/components/schemas/Administrative_API_SelfLinks'
-    Administrative_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
     Administrative_API_Error:
       type: object
       properties:
@@ -557,24 +490,19 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Administrative_API_UnauthorizedError:
+    Administrative_API_ValidationErrorItem:
       type: object
       properties:
-        error:
+        code:
           type: string
-          example: invalid_token
-        error_description:
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
           type: string
-          example: Invalid access token
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
   parameters:
-    Administrative_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
     Administrative_API_UserIdPath:
       name: id
       description: Identifier for the user.
@@ -583,6 +511,78 @@ components:
       schema:
         type: string
         example: '1234'
+    Administrative_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  responses:
+    Administrative_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Administrative_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+    Administrative_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Administrative_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
+    Administrative_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+    Administrative_API_204:
+      description: No content
+    Administrative_API_400:
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
   headers:
     Administrative_API_Location:
       schema:

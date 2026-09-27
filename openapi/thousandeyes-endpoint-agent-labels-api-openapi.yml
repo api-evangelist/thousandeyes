@@ -168,153 +168,7 @@ paths:
       security:
       - Endpoint_Agent_Labels_API_BearerAuth: []
 components:
-  responses:
-    Endpoint_Agent_Labels_API_400:
-      description: Bad Request
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ValidationError'
-          example:
-            type: about:blank
-            title: Request validation failed. There are invalid or missing fields
-            status: 400
-            detail: Your request object contains invalid fields.
-            instance: /v7
-            errors:
-            - code: AM-5432
-              field: firstName
-              message: firstName cannot have fancy characters
-            - code: DASH-5622
-              field: password
-              message: Password cannot be blank
-    Endpoint_Agent_Labels_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_UnauthorizedError'
-    Endpoint_Agent_Labels_API_204:
-      description: No content
-    Endpoint_Agent_Labels_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
-    Endpoint_Agent_Labels_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Endpoint_Agent_Labels_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
-  parameters:
-    Endpoint_Agent_Labels_API_LabelIdPath:
-      name: id
-      in: path
-      required: true
-      description: The unique identifier of the label to operate on.
-      schema:
-        $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelId'
-    Endpoint_Agent_Labels_API_PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    Endpoint_Agent_Labels_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Endpoint_Agent_Labels_API_PaginationMax:
-      name: max
-      in: query
-      description: (Optional) Maximum number of objects to return.
-      schema:
-        type: integer
-        example: 5
-    Endpoint_Agent_Labels_API_ExpandLabel:
-      name: expand
-      in: query
-      description: This parameter is optional and determines whether to include additional details in the response. To specify multiple expansions, you can either separate the values with commas or specify the parameter multiple times.
-      required: false
-      style: form
-      explode: false
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ExpandLabelOptions'
-      example:
-      - filters
   schemas:
-    Endpoint_Agent_Labels_API_PaginationNextAndSelfLink:
-      type: object
-      description: A links object containing a related link for forward pagination.
-      properties:
-        next:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Link'
-        self:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Link'
-    Endpoint_Agent_Labels_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ValidationErrorItem'
-    Endpoint_Agent_Labels_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Endpoint_Agent_Labels_API_LabelFilterMode:
-      type: string
-      description: 'Type of matching to be applied for the values:
-
-
-        * `in`: The value on the agent must match one of the list of values provided.
-
-        * `not-in`: The value on the agent must not match any of the list of values provided.
-
-        '
-      enum:
-      - in
-      - not-in
-    Endpoint_Agent_Labels_API_ExpandLabelOptions:
-      type: string
-      enum:
-      - filters
     Endpoint_Agent_Labels_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -346,6 +200,62 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
+    Endpoint_Agent_Labels_API_LabelFilterMode:
+      type: string
+      description: 'Type of matching to be applied for the values:
+
+
+        * `in`: The value on the agent must match one of the list of values provided.
+
+        * `not-in`: The value on the agent must not match any of the list of values provided.
+
+        '
+      enum:
+      - in
+      - not-in
+    Endpoint_Agent_Labels_API_Filter:
+      type: object
+      properties:
+        key:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_FilterType'
+        values:
+          type: array
+          example:
+          - 10.1.1.0/24
+          - 192.168.1.0/24
+          items:
+            type: string
+            description: "Value depends on the key, and may change in the future.\n\n* `agent-id`: The agent identifiers.\n* `gateway`: The gateway IP to match.\n* `ssid`: A wildcard match on the SSID. Supports `*` for any characters and `?` for any single character.\n* `user-name`: A wildcard match on the users that use the agent. Supports `*` for any characters and `?` for any single character.\n* `hostname`: A wildcard match on the host name - supports `*` for any characters\nand `?` for any single character\n* `bssid`: BSSID for the wifi, lower case, with colons.\n* `platform`: Currently supports `Mac`, `Windows`, and `Linux`.\n* `asn`: Integer AS Number.\n* `public-network`: Network for agent's public IP in CIDR format, or IP for single IP. e.g. `192.45.32.0/22`.\n* `local-network`: Network for agent's local IP in CIDR format, or IP for single IP. e.g. `10.100.64.0/20`.\n* `connection`: Type of connection `Ethernet` or `Wireless`.\n* `agent-type`: Type of agent `endpoint`, `endpoint-pulse` or `endpoint-csc`.\n* `ip-address-family`: `ipv4` or `ipv6`.\n* `vpn-vendor`: Vendor of the VPN software. \n    Examples include: \n    \n    * `cisco-anyconnect`\n    * `palo-alto-globalprotect`\n    * `ivanti-connect-secure`\n    * `zscaler-internet-access`\n    * `f5-big-ip`\n* `vpn-gateway-address`: Server-side VPN connection IP address.\n* `vpn-client-network`: Network for the VPN client IP in CIDR format. For example, `10.100.32.128/25`.\n* `vpn-client-address`: The VPN client IP. For example, `10.100.32.165`.\n"
+            example: 10.1.1.0/24
+        mode:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelFilterMode'
+    Endpoint_Agent_Labels_API_MatchType:
+      description: 'Specifies how the filters are combined for matching this label.
+
+
+        * `and`: All filters must be matched.
+
+        * `or`: Any of the filters should match.
+
+        '
+      type: string
+      readOnly: false
+      enum:
+      - and
+      - or
+      example: and
+    Endpoint_Agent_Labels_API_LabelId:
+      type: string
+      readOnly: true
+      description: Label identifier.
+      example: abc-123-def
+    Endpoint_Agent_Labels_API_LabelRequest:
+      allOf:
+      - required:
+        - name
+        - matchType
+        - filters
+      - $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Label'
     Endpoint_Agent_Labels_API_LabelResponse:
       allOf:
       - $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Label'
@@ -353,20 +263,10 @@ components:
         properties:
           _links:
             $ref: '#/components/schemas/Endpoint_Agent_Labels_API_SelfLinks'
-    Endpoint_Agent_Labels_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Endpoint_Agent_Labels_API_LabelId:
+    Endpoint_Agent_Labels_API_ExpandLabelOptions:
       type: string
-      readOnly: true
-      description: Label identifier.
-      example: abc-123-def
+      enum:
+      - filters
     Endpoint_Agent_Labels_API_FilterType:
       type: string
       description: Type of filter - the data that will be used to filter.
@@ -389,30 +289,6 @@ components:
       - hostname
       - username
       - asn
-    Endpoint_Agent_Labels_API_Label:
-      description: A label definition.
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelId'
-        name:
-          description: The label name.
-          type: string
-          readOnly: false
-          example: Head office meeting rooms
-        color:
-          description: UI color
-          type: string
-          readOnly: false
-          example: '#ff3333'
-        matchType:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_MatchType'
-        filters:
-          description: The filters combined using the matchType to determine the label's match.
-          type: array
-          readOnly: false
-          items:
-            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Filter'
     Endpoint_Agent_Labels_API_Labels:
       description: A list of Labels.
       type: object
@@ -442,22 +318,15 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Endpoint_Agent_Labels_API_Filter:
+    Endpoint_Agent_Labels_API_UnauthorizedError:
       type: object
       properties:
-        key:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_FilterType'
-        values:
-          type: array
-          example:
-          - 10.1.1.0/24
-          - 192.168.1.0/24
-          items:
-            type: string
-            description: "Value depends on the key, and may change in the future.\n\n* `agent-id`: The agent identifiers.\n* `gateway`: The gateway IP to match.\n* `ssid`: A wildcard match on the SSID. Supports `*` for any characters and `?` for any single character.\n* `user-name`: A wildcard match on the users that use the agent. Supports `*` for any characters and `?` for any single character.\n* `hostname`: A wildcard match on the host name - supports `*` for any characters\nand `?` for any single character\n* `bssid`: BSSID for the wifi, lower case, with colons.\n* `platform`: Currently supports `Mac`, `Windows`, and `Linux`.\n* `asn`: Integer AS Number.\n* `public-network`: Network for agent's public IP in CIDR format, or IP for single IP. e.g. `192.45.32.0/22`.\n* `local-network`: Network for agent's local IP in CIDR format, or IP for single IP. e.g. `10.100.64.0/20`.\n* `connection`: Type of connection `Ethernet` or `Wireless`.\n* `agent-type`: Type of agent `endpoint`, `endpoint-pulse` or `endpoint-csc`.\n* `ip-address-family`: `ipv4` or `ipv6`.\n* `vpn-vendor`: Vendor of the VPN software. \n    Examples include: \n    \n    * `cisco-anyconnect`\n    * `palo-alto-globalprotect`\n    * `ivanti-connect-secure`\n    * `zscaler-internet-access`\n    * `f5-big-ip`\n* `vpn-gateway-address`: Server-side VPN connection IP address.\n* `vpn-client-network`: Network for the VPN client IP in CIDR format. For example, `10.100.32.128/25`.\n* `vpn-client-address`: The VPN client IP. For example, `10.100.32.165`.\n"
-            example: 10.1.1.0/24
-        mode:
-          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelFilterMode'
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Endpoint_Agent_Labels_API_SelfLinks:
       type: object
       description: A links object containing the self link.
@@ -465,28 +334,115 @@ components:
       properties:
         self:
           $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Link'
-    Endpoint_Agent_Labels_API_MatchType:
-      description: 'Specifies how the filters are combined for matching this label.
-
-
-        * `and`: All filters must be matched.
-
-        * `or`: Any of the filters should match.
-
-        '
-      type: string
-      readOnly: false
-      enum:
-      - and
-      - or
-      example: and
-    Endpoint_Agent_Labels_API_LabelRequest:
+    Endpoint_Agent_Labels_API_PaginationNextAndSelfLink:
+      type: object
+      description: A links object containing a related link for forward pagination.
+      properties:
+        next:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Link'
+        self:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Link'
+    Endpoint_Agent_Labels_API_Label:
+      description: A label definition.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelId'
+        name:
+          description: The label name.
+          type: string
+          readOnly: false
+          example: Head office meeting rooms
+        color:
+          description: UI color
+          type: string
+          readOnly: false
+          example: '#ff3333'
+        matchType:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_MatchType'
+        filters:
+          description: The filters combined using the matchType to determine the label's match.
+          type: array
+          readOnly: false
+          items:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Filter'
+    Endpoint_Agent_Labels_API_ValidationError:
+      type: object
       allOf:
-      - required:
-        - name
-        - matchType
-        - filters
-      - $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Label'
+      - $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ValidationErrorItem'
+    Endpoint_Agent_Labels_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+  responses:
+    Endpoint_Agent_Labels_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Endpoint_Agent_Labels_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
+    Endpoint_Agent_Labels_API_204:
+      description: No content
+    Endpoint_Agent_Labels_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_UnauthorizedError'
+    Endpoint_Agent_Labels_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_Error'
+    Endpoint_Agent_Labels_API_400:
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
   headers:
     Endpoint_Agent_Labels_API_Location:
       schema:
@@ -494,6 +450,50 @@ components:
         format: uri
         example: https://api.thousandeyes.com/v7/link/to/resource/id
       description: The absolute path to created resource.
+  parameters:
+    Endpoint_Agent_Labels_API_ExpandLabel:
+      name: expand
+      in: query
+      description: This parameter is optional and determines whether to include additional details in the response. To specify multiple expansions, you can either separate the values with commas or specify the parameter multiple times.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Endpoint_Agent_Labels_API_ExpandLabelOptions'
+      example:
+      - filters
+    Endpoint_Agent_Labels_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Endpoint_Agent_Labels_API_PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
+    Endpoint_Agent_Labels_API_LabelIdPath:
+      name: id
+      in: path
+      required: true
+      description: The unique identifier of the label to operate on.
+      schema:
+        $ref: '#/components/schemas/Endpoint_Agent_Labels_API_LabelId'
+    Endpoint_Agent_Labels_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

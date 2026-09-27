@@ -98,151 +98,39 @@ paths:
       - Event_Detection_API_BearerAuth: []
 components:
   schemas:
-    Event_Detection_API_DnsNameEventType:
-      type: string
-      description: DNS name event type.
-      example: dns-name
-      pattern: ^dns-name$
-    Event_Detection_API_DnsNameEventGrouping:
+    Event_Detection_API_EventApiAffectedTest:
       type: object
       properties:
-        domainNameSuffix:
+        testId:
           type: string
-          description: Domain name suffix (for dns-name events).
-          example: webex.com
+          description: The ID of the affected test.
+          example: '226770'
           readOnly: true
-    Event_Detection_API_ProxyEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_ProxyEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_ProxyEventGrouping'
-    Event_Detection_API_NetworkEventType:
-      type: string
-      description: Network event type.
-      example: network
-      pattern: ^network$
-    Event_Detection_API_ProxyEventGrouping:
-      type: object
-      properties:
-        proxy:
-          type: string
-          description: Proxy name or IP (for proxy events).
-          example: my.proxy.com
-          readOnly: true
-    Event_Detection_API_ApplicationEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_ApplicationEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_ApplicationEventGrouping'
-    Event_Detection_API_EventEndDate:
-      type:
-      - string
-      - 'null'
-      format: date-time
-      description: The end date and time (in UTC, ISO 8601 format) when the event was resolved (due to timeout). This value is null for "ongoing" (active) events and is populated once the event is resolved.
-      example: '2020-04-23T13:43:16Z'
-      readOnly: true
-    Event_Detection_API_EventState:
-      type: string
-      description: Indicates the state of the event, whether it is ongoing (active) or has been resolved.
-      enum:
-      - active
-      - resolved
-      example: resolved
-      readOnly: true
-    Event_Detection_API_EndDate:
-      type: string
-      format: date-time
-      example: '2022-07-18T22:00:54Z'
-      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    Event_Detection_API_VpnEventGrouping:
-      type: object
-      properties:
-        vpnType:
-          type: string
-          description: VPN type (for vpn events).
-          example: CiscoAnyConnect
-          readOnly: true
-        vpnServerIpAddress:
-          type: string
-          description: VPN server IP address (for vpn events).
-          example: 10.0.0.1
-          readOnly: true
-    Event_Detection_API_TargetNetworkEventType:
-      type: string
-      description: Target network event type.
-      example: target-network
-      pattern: ^target-network$
-    Event_Detection_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        testType:
+          $ref: '#/components/schemas/Event_Detection_API_TestType'
         name:
           type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Event_Detection_API_EventDetailBase:
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_SimpleEventDetail'
-      - type: object
-        properties:
-          aid:
-            $ref: '#/components/schemas/Event_Detection_API_AccountGroupId'
-          summary:
+          description: The test name as configured in the test settings.
+          example: Google test
+          readOnly: true
+        affectedTargetIds:
+          type: array
+          description: An array of unique target IDs contributed data points which generated the signal for the event.
+          items:
             type: string
-            description: A brief summary describing the cause of the event.
-            example: Significant number of issues detected with 66.29.146.15
-            readOnly: true
-          agentType:
-            $ref: '#/components/schemas/Event_Detection_API_EventAgentType'
-          affectedTests:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedTests'
-          affectedTargets:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedTargets'
-          affectedAgents:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedAgents'
-          cause:
-            $ref: '#/components/schemas/Event_Detection_API_Cause'
-          _links:
-            $ref: '#/components/schemas/Event_Detection_API_SelfLinks'
+          example:
+          - '123'
+          - '1234'
+        affectedAgentIds:
+          type: array
+          description: An array of unique agent IDs that contributed data points which generated the signal for the event.
+          items:
+            type: string
+          example:
+          - '2954'
+          - '2953'
+        _links:
+          $ref: '#/components/schemas/Event_Detection_API_EventTestLinks'
     Event_Detection_API_AgentEventDetail:
       type: object
       allOf:
@@ -255,6 +143,69 @@ components:
             $ref: '#/components/schemas/Event_Detection_API_AgentEventType'
           grouping:
             $ref: '#/components/schemas/Event_Detection_API_AgentEventGrouping'
+    Event_Detection_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Event_Detection_API_EventEndDate:
+      type:
+      - string
+      - 'null'
+      format: date-time
+      description: The end date and time (in UTC, ISO 8601 format) when the event was resolved (due to timeout). This value is null for "ongoing" (active) events and is populated once the event is resolved.
+      example: '2020-04-23T13:43:16Z'
+      readOnly: true
+    Event_Detection_API_VpnEventType:
+      type: string
+      description: VPN event type.
+      example: vpn
+      pattern: ^vpn$
+    Event_Detection_API_TargetNetworkEventGrouping:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: Prefix value for target-network events.
+          example: 0.0.0.0/0
+          readOnly: true
+    Event_Detection_API_AffectedTests:
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+      - type: object
+        properties:
+          tests:
+            uniqueItems: true
+            type: array
+            description: List of affected tests.
+            items:
+              $ref: '#/components/schemas/Event_Detection_API_EventApiAffectedTest'
+    Event_Detection_API_EventTestLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        test:
+          $ref: '#/components/schemas/Event_Detection_API_Link'
+    Event_Detection_API_VpnEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_VpnEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_VpnEventGrouping'
     Event_Detection_API_EventDetail:
       oneOf:
       - $ref: '#/components/schemas/Event_Detection_API_TargetEventDetail'
@@ -294,23 +245,81 @@ components:
           agent-branch: '#/components/schemas/Event_Detection_API_AgentBranchEventDetail'
           domain: '#/components/schemas/Event_Detection_API_DomainEventDetail'
           name-server: '#/components/schemas/Event_Detection_API_NameServerEventDetail'
-    Event_Detection_API_NameServerEventType:
+    Event_Detection_API_TargetEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_TargetEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_TargetEventGrouping'
+    Event_Detection_API_EventAlertSeverity:
       type: string
-      description: Name server event type.
-      example: name-server
-      pattern: ^name-server$
-    Event_Detection_API_EventAffectedAgentType:
-      type: string
-      description: Type of the affected agent.
+      description: The severity of the alert.
       enum:
-      - cloud
-      - enterprise-cluster
-      - enterprise
-      - enterprise-lite
-      - enterprise-pulse
-      - enterprise-csc
-      example: enterprise
-      readOnly: true
+      - high
+      - medium
+      - low
+      - unknown
+      example: medium
+    Event_Detection_API_TargetEventGrouping:
+      type: object
+      properties:
+        target:
+          type: string
+          description: Target name (for target events).
+          example: google.com
+          readOnly: true
+    Event_Detection_API_AgentBranchEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_AgentBranchEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_AgentBranchEventGrouping'
+    Event_Detection_API_TargetNetworkEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_TargetNetworkEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_TargetNetworkEventGrouping'
+    Event_Detection_API_TargetEventType:
+      type: string
+      description: Target event type.
+      example: target
+      pattern: ^target$
+    Event_Detection_API_DnsEventType:
+      type: string
+      description: DNS event type.
+      example: dns
+      pattern: ^dns$
+    Event_Detection_API_DnsNameEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_DnsNameEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_DnsNameEventGrouping'
     Event_Detection_API_ValidationError:
       type: object
       allOf:
@@ -324,220 +333,43 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Event_Detection_API_ValidationErrorItem'
-    Event_Detection_API_AffectedCount:
+    Event_Detection_API_Error:
       type: object
       properties:
-        total:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
           type: integer
-          description: The total number affected.
-          example: 5
-          readOnly: true
-        inAccountGroup:
-          type: integer
-          description: Indicates if in the affected account group.
-          example: 2
-          readOnly: true
-    Event_Detection_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Event_Detection_API_DnsServerEventGrouping:
-      type: object
-      properties:
-        ipAddress:
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
           type: string
-          description: DNS server IP address (for dns-server events).
-          example: 8.8.8.8
-          readOnly: true
-    Event_Detection_API_GatewayEventType:
-      type: string
-      description: Gateway event type.
-      example: gateway
-      pattern: ^gateway$
-    Event_Detection_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
           type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Event_Detection_API_NetworkPopEventType:
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Event_Detection_API_TestType:
       type: string
-      description: Network pop event type.
-      example: network-pop
-      pattern: ^network-pop$
-    Event_Detection_API_AgentBranchEventType:
-      type: string
-      description: Agent branch event type.
-      example: agent-branch
-      pattern: ^agent-branch$
-    Event_Detection_API_WirelessEventType:
-      type: string
-      description: Wireless event type.
-      example: wireless
-      pattern: ^wireless$
-    Event_Detection_API_EventAgentType:
-      type: string
-      description: Specifies the agent type associated with the event. Allowed values are `cloud-enterprise-agent` and `endpoint-agent`.
       enum:
-      - cloud-enterprise-agent
-      - endpoint-agent
-      example: cloud-enterprise-agent
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
-    Event_Detection_API_AgentEventType:
-      type: string
-      description: Agent event type.
-      example: agent
-      pattern: ^agent$
-    Event_Detection_API_DnsServerEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_DnsServerEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_DnsServerEventGrouping'
-    Event_Detection_API_ProxyEventType:
-      type: string
-      description: Proxy event type.
-      example: proxy
-      pattern: ^proxy$
-    Event_Detection_API_Cause:
-      uniqueItems: true
-      type: array
-      description: The cause of the error.
-      items:
-        type: string
-      example:
-      - Network Loss and/or High RTT
-    Event_Detection_API_EventStartDate:
-      type: string
-      format: date-time
-      description: The start date and time (in UTC, ISO 8601 format) when the event was first detected.
-      example: '2020-04-23T13:43:16Z'
-      readOnly: true
-    Event_Detection_API_DnsEventGrouping:
-      type: object
-      properties:
-        rootDomain:
-          type: string
-          description: Root domain name (for dns events).
-          example: thousandeyes.com
-          readOnly: true
-    Event_Detection_API_EventApiAffectedTest:
-      type: object
-      properties:
-        testId:
-          type: string
-          description: The ID of the affected test.
-          example: '226770'
-          readOnly: true
-        testType:
-          $ref: '#/components/schemas/Event_Detection_API_TestType'
-        name:
-          type: string
-          description: The test name as configured in the test settings.
-          example: Google test
-          readOnly: true
-        affectedTargetIds:
-          type: array
-          description: An array of unique target IDs contributed data points which generated the signal for the event.
-          items:
-            type: string
-          example:
-          - '123'
-          - '1234'
-        affectedAgentIds:
-          type: array
-          description: An array of unique agent IDs that contributed data points which generated the signal for the event.
-          items:
-            type: string
-          example:
-          - '2954'
-          - '2953'
-        _links:
-          $ref: '#/components/schemas/Event_Detection_API_EventTestLinks'
-    Event_Detection_API_AgentEventGrouping:
-      type: object
-      properties:
-        agentId:
-          type: string
-          description: Agent identifier (for agent events). Represents the machine ID for Endpoint Agents or the virtual agent ID for Cloud and Enterprise Agents'.
-          example: '3379'
-          readOnly: true
-    Event_Detection_API_GatewayEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_GatewayEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_GatewayEventGrouping'
-    Event_Detection_API_AgentLocalEventGrouping:
-      type: object
-      properties:
-        agentId:
-          type: string
-          description: Numeric Agent ID (for agent-local events).
-          example: '123456'
-          readOnly: true
-    Event_Detection_API_VpnEventType:
-      type: string
-      description: VPN event type.
-      example: vpn
-      pattern: ^vpn$
-    Event_Detection_API_SimpleEventDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: A unique ID for each event.
-          example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
-          readOnly: true
-        typeName:
-          type: string
-          description: Event type name. Examples include, Local Agent Issue, Network Path Issue, Network Outage, DNS Issue, Server Issue, and Proxy Issue.
-          example: Network Issue
-          readOnly: true
-        state:
-          $ref: '#/components/schemas/Event_Detection_API_EventState'
-        startDate:
-          $ref: '#/components/schemas/Event_Detection_API_EventStartDate'
-        endDate:
-          $ref: '#/components/schemas/Event_Detection_API_EventEndDate'
-        severity:
-          $ref: '#/components/schemas/Event_Detection_API_EventAlertSeverity'
-    Event_Detection_API_TargetEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_TargetEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_TargetEventGrouping'
-    Event_Detection_API_DnsEventType:
-      type: string
-      description: DNS event type.
-      example: dns
-      pattern: ^dns$
+      example: agent-to-server
     Event_Detection_API_EventApiAffectedAgent:
       type: object
       properties:
@@ -581,7 +413,43 @@ components:
           - '2953'
         _links:
           $ref: '#/components/schemas/Event_Detection_API_AgentLinks'
-    Event_Detection_API_NameServerEventDetail:
+    Event_Detection_API_PaginationNextAndSelfLinks:
+      type: object
+      description: A links object containing pagination-related links, including only next and self.
+      properties:
+        next:
+          $ref: '#/components/schemas/Event_Detection_API_Link'
+        self:
+          $ref: '#/components/schemas/Event_Detection_API_Link'
+    Event_Detection_API_NetworkEventGrouping:
+      type: object
+      properties:
+        sourceAsn:
+          type: integer
+          description: AS number of the source network (for network-pop and network events).
+          example: 1234
+          readOnly: true
+        destAsn:
+          type: integer
+          description: AS number of the destination network (for network events).
+          example: 4321
+          readOnly: true
+        sourceCountryCode:
+          type: string
+          description: The source network's country code (for network-pop and network events).
+          example: US
+          readOnly: true
+    Event_Detection_API_ApplicationEventType:
+      type: string
+      description: Application event type.
+      example: application
+      pattern: ^application$
+    Event_Detection_API_NetworkEventType:
+      type: string
+      description: Network event type.
+      example: network
+      pattern: ^network$
+    Event_Detection_API_NetworkPopEventDetail:
       type: object
       allOf:
       - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
@@ -590,121 +458,33 @@ components:
         - type
         properties:
           type:
-            $ref: '#/components/schemas/Event_Detection_API_NameServerEventType'
+            $ref: '#/components/schemas/Event_Detection_API_NetworkPopEventType'
           grouping:
-            $ref: '#/components/schemas/Event_Detection_API_NameServerEventGrouping'
-    Event_Detection_API_EventTestLinks:
+            $ref: '#/components/schemas/Event_Detection_API_NetworkEventGrouping'
+    Event_Detection_API_DomainEventDetail:
       type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        test:
-          $ref: '#/components/schemas/Event_Detection_API_Link'
-    Event_Detection_API_Events:
-      type: object
-      properties:
-        aid:
-          $ref: '#/components/schemas/Event_Detection_API_AccountGroupId'
-        startDate:
-          $ref: '#/components/schemas/Event_Detection_API_StartDate'
-        endDate:
-          $ref: '#/components/schemas/Event_Detection_API_EndDate'
-        events:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Event_Detection_API_Event'
-        _links:
-          $ref: '#/components/schemas/Event_Detection_API_PaginationNextAndSelfLinks'
-    Event_Detection_API_WirelessEventGrouping:
-      type: object
-      properties:
-        ssid:
-          type: string
-          description: Wireless network SSID (for wireless events).
-          example: CorpWiFi
-          readOnly: true
-        bssid:
-          type: string
-          description: Wireless network BSSID (for wireless events).
-          example: 08:c7:f5:ac:34:88
-          readOnly: true
-    Event_Detection_API_AffectedAgents:
       allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
       - type: object
+        required:
+        - type
         properties:
-          agents:
-            uniqueItems: true
-            type: array
-            description: List of affected agents.
-            items:
-              $ref: '#/components/schemas/Event_Detection_API_EventApiAffectedAgent'
-    Event_Detection_API_TargetEventGrouping:
-      type: object
-      properties:
-        target:
-          type: string
-          description: Target name (for target events).
-          example: google.com
-          readOnly: true
-    Event_Detection_API_TargetEventType:
-      type: string
-      description: Target event type.
-      example: target
-      pattern: ^target$
-    Event_Detection_API_StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    Event_Detection_API_Event:
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_SimpleEventDetail'
-      - type: object
-        properties:
-          title:
-            type: string
-            description: Event title
-            example: Affecting destinations in google.com
-            readOnly: true
           type:
-            $ref: '#/components/schemas/Event_Detection_API_EventType'
-          agentType:
-            $ref: '#/components/schemas/Event_Detection_API_EventAgentType'
-          affectedTests:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
-          affectedTargets:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
-          affectedAgents:
-            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
-          _links:
-            $ref: '#/components/schemas/Event_Detection_API_SelfLinks'
-    Event_Detection_API_AffectedTargets:
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
-      - type: object
-        properties:
-          targets:
-            uniqueItems: true
-            type: array
-            description: List of affected targets.
-            items:
-              $ref: '#/components/schemas/Event_Detection_API_ApiAffectedTarget'
-    Event_Detection_API_GatewayEventGrouping:
+            $ref: '#/components/schemas/Event_Detection_API_DomainEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_DomainEventGrouping'
+    Event_Detection_API_DnsServerEventDetail:
       type: object
-      properties:
-        ipAddress:
-          type: string
-          description: Gateway IP address (for gateway events).
-          example: 192.168.1.1
-          readOnly: true
-        macAddress:
-          type: string
-          description: Gateway MAC address (for gateway events).
-          example: 08:c7:f5:ac:34:88
-          readOnly: true
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_DnsServerEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_DnsServerEventGrouping'
     Event_Detection_API_AgentBranchEventGrouping:
       type: object
       properties:
@@ -718,56 +498,6 @@ components:
           description: City associated with the agent's AS (for agent-branch events).
           example: San Francisco
           readOnly: true
-    Event_Detection_API_NetworkEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_NetworkEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_NetworkEventGrouping'
-    Event_Detection_API_TargetNetworkEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_TargetNetworkEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_TargetNetworkEventGrouping'
-    Event_Detection_API_TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    Event_Detection_API_AgentLinks:
-      type: object
-      description: A links object containing the agent link.
-      readOnly: true
-      properties:
-        agent:
-          $ref: '#/components/schemas/Event_Detection_API_Link'
     Event_Detection_API_EventType:
       type: string
       description: Specifies the event type in a machine-readable and backwards-compatible format, such as `agent` or `target`.
@@ -791,153 +521,54 @@ components:
       - name-server
       example: target
       readOnly: true
-    Event_Detection_API_PaginationNextAndSelfLinks:
-      type: object
-      description: A links object containing pagination-related links, including only next and self.
-      properties:
-        next:
-          $ref: '#/components/schemas/Event_Detection_API_Link'
-        self:
-          $ref: '#/components/schemas/Event_Detection_API_Link'
-    Event_Detection_API_NetworkPopEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_NetworkPopEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_NetworkEventGrouping'
-    Event_Detection_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Event_Detection_API_Link'
-    Event_Detection_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Event_Detection_API_WirelessEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_WirelessEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_WirelessEventGrouping'
-    Event_Detection_API_EventAlertSeverity:
+    Event_Detection_API_WirelessEventType:
       type: string
-      description: The severity of the alert.
+      description: Wireless event type.
+      example: wireless
+      pattern: ^wireless$
+    Event_Detection_API_EventState:
+      type: string
+      description: Indicates the state of the event, whether it is ongoing (active) or has been resolved.
       enum:
-      - high
-      - medium
-      - low
-      - unknown
-      example: medium
-    Event_Detection_API_AgentBranchEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_AgentBranchEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_AgentBranchEventGrouping'
-    Event_Detection_API_ApplicationEventGrouping:
-      type: object
-      properties:
-        fqdn:
-          type: string
-          description: Fully qualified domain name of the application (for application events).
-          example: teams.microsoft.com
-          readOnly: true
-    Event_Detection_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Event_Detection_API_AgentLocalEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_AgentLocalEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_AgentLocalEventGrouping'
-    Event_Detection_API_DomainEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_DomainEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_DomainEventGrouping'
-    Event_Detection_API_DnsEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_DnsEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_DnsEventGrouping'
-    Event_Detection_API_AffectedTests:
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
-      - type: object
-        properties:
-          tests:
-            uniqueItems: true
-            type: array
-            description: List of affected tests.
-            items:
-              $ref: '#/components/schemas/Event_Detection_API_EventApiAffectedTest'
-    Event_Detection_API_ApplicationEventType:
+      - active
+      - resolved
+      example: resolved
+      readOnly: true
+    Event_Detection_API_DnsNameEventType:
       type: string
-      description: Application event type.
-      example: application
-      pattern: ^application$
+      description: DNS name event type.
+      example: dns-name
+      pattern: ^dns-name$
+    Event_Detection_API_WirelessEventGrouping:
+      type: object
+      properties:
+        ssid:
+          type: string
+          description: Wireless network SSID (for wireless events).
+          example: CorpWiFi
+          readOnly: true
+        bssid:
+          type: string
+          description: Wireless network BSSID (for wireless events).
+          example: 08:c7:f5:ac:34:88
+          readOnly: true
+    Event_Detection_API_NameServerEventType:
+      type: string
+      description: Name server event type.
+      example: name-server
+      pattern: ^name-server$
+    Event_Detection_API_GatewayEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_GatewayEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_GatewayEventGrouping'
     Event_Detection_API_ApiAffectedTarget:
       type: object
       properties:
@@ -972,49 +603,6 @@ components:
           example:
           - '2954'
           - '2953'
-    Event_Detection_API_VpnEventDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            $ref: '#/components/schemas/Event_Detection_API_VpnEventType'
-          grouping:
-            $ref: '#/components/schemas/Event_Detection_API_VpnEventGrouping'
-    Event_Detection_API_TargetNetworkEventGrouping:
-      type: object
-      properties:
-        prefix:
-          type: string
-          description: Prefix value for target-network events.
-          example: 0.0.0.0/0
-          readOnly: true
-    Event_Detection_API_DomainEventType:
-      type: string
-      description: Domain event type.
-      example: domain
-      pattern: ^domain$
-    Event_Detection_API_DnsServerEventType:
-      type: string
-      description: DNS server event type.
-      example: dns-server
-      pattern: ^dns-server$
-    Event_Detection_API_AgentLocalEventType:
-      type: string
-      description: Agent local event type.
-      example: agent-local
-      pattern: ^agent-local$
-    Event_Detection_API_NameServerEventGrouping:
-      type: object
-      properties:
-        serverName:
-          type: string
-          description: Name server hostname (for name-server events).
-          example: ns1.example.com
-          readOnly: true
     Event_Detection_API_DomainEventGrouping:
       type: object
       properties:
@@ -1023,25 +611,7 @@ components:
           description: Fully qualified domain name (for domain events).
           example: teams.microsoft.com
           readOnly: true
-    Event_Detection_API_NetworkEventGrouping:
-      type: object
-      properties:
-        sourceAsn:
-          type: integer
-          description: AS number of the source network (for network-pop and network events).
-          example: 1234
-          readOnly: true
-        destAsn:
-          type: integer
-          description: AS number of the destination network (for network events).
-          example: 4321
-          readOnly: true
-        sourceCountryCode:
-          type: string
-          description: The source network's country code (for network-pop and network events).
-          example: US
-          readOnly: true
-    Event_Detection_API_DnsNameEventDetail:
+    Event_Detection_API_ApplicationEventDetail:
       type: object
       allOf:
       - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
@@ -1050,10 +620,495 @@ components:
         - type
         properties:
           type:
-            $ref: '#/components/schemas/Event_Detection_API_DnsNameEventType'
+            $ref: '#/components/schemas/Event_Detection_API_ApplicationEventType'
           grouping:
-            $ref: '#/components/schemas/Event_Detection_API_DnsNameEventGrouping'
+            $ref: '#/components/schemas/Event_Detection_API_ApplicationEventGrouping'
+    Event_Detection_API_AgentLocalEventType:
+      type: string
+      description: Agent local event type.
+      example: agent-local
+      pattern: ^agent-local$
+    Event_Detection_API_SimpleEventDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: A unique ID for each event.
+          example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+          readOnly: true
+        typeName:
+          type: string
+          description: Event type name. Examples include, Local Agent Issue, Network Path Issue, Network Outage, DNS Issue, Server Issue, and Proxy Issue.
+          example: Network Issue
+          readOnly: true
+        state:
+          $ref: '#/components/schemas/Event_Detection_API_EventState'
+        startDate:
+          $ref: '#/components/schemas/Event_Detection_API_EventStartDate'
+        endDate:
+          $ref: '#/components/schemas/Event_Detection_API_EventEndDate'
+        severity:
+          $ref: '#/components/schemas/Event_Detection_API_EventAlertSeverity'
+    Event_Detection_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Event_Detection_API_EventStartDate:
+      type: string
+      format: date-time
+      description: The start date and time (in UTC, ISO 8601 format) when the event was first detected.
+      example: '2020-04-23T13:43:16Z'
+      readOnly: true
+    Event_Detection_API_TargetNetworkEventType:
+      type: string
+      description: Target network event type.
+      example: target-network
+      pattern: ^target-network$
+    Event_Detection_API_AffectedCount:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: The total number affected.
+          example: 5
+          readOnly: true
+        inAccountGroup:
+          type: integer
+          description: Indicates if in the affected account group.
+          example: 2
+          readOnly: true
+    Event_Detection_API_EventAgentType:
+      type: string
+      description: Specifies the agent type associated with the event. Allowed values are `cloud-enterprise-agent` and `endpoint-agent`.
+      enum:
+      - cloud-enterprise-agent
+      - endpoint-agent
+      example: cloud-enterprise-agent
+      readOnly: true
+    Event_Detection_API_AgentBranchEventType:
+      type: string
+      description: Agent branch event type.
+      example: agent-branch
+      pattern: ^agent-branch$
+    Event_Detection_API_Cause:
+      uniqueItems: true
+      type: array
+      description: The cause of the error.
+      items:
+        type: string
+      example:
+      - Network Loss and/or High RTT
+    Event_Detection_API_DnsServerEventType:
+      type: string
+      description: DNS server event type.
+      example: dns-server
+      pattern: ^dns-server$
+    Event_Detection_API_EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Event_Detection_API_AgentEventType:
+      type: string
+      description: Agent event type.
+      example: agent
+      pattern: ^agent$
+    Event_Detection_API_EventDetailBase:
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_SimpleEventDetail'
+      - type: object
+        properties:
+          aid:
+            $ref: '#/components/schemas/Event_Detection_API_AccountGroupId'
+          summary:
+            type: string
+            description: A brief summary describing the cause of the event.
+            example: Significant number of issues detected with 66.29.146.15
+            readOnly: true
+          agentType:
+            $ref: '#/components/schemas/Event_Detection_API_EventAgentType'
+          affectedTests:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedTests'
+          affectedTargets:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedTargets'
+          affectedAgents:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedAgents'
+          cause:
+            $ref: '#/components/schemas/Event_Detection_API_Cause'
+          _links:
+            $ref: '#/components/schemas/Event_Detection_API_SelfLinks'
+    Event_Detection_API_AffectedAgents:
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+      - type: object
+        properties:
+          agents:
+            uniqueItems: true
+            type: array
+            description: List of affected agents.
+            items:
+              $ref: '#/components/schemas/Event_Detection_API_EventApiAffectedAgent'
+    Event_Detection_API_Event:
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_SimpleEventDetail'
+      - type: object
+        properties:
+          title:
+            type: string
+            description: Event title
+            example: Affecting destinations in google.com
+            readOnly: true
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_EventType'
+          agentType:
+            $ref: '#/components/schemas/Event_Detection_API_EventAgentType'
+          affectedTests:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+          affectedTargets:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+          affectedAgents:
+            $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+          _links:
+            $ref: '#/components/schemas/Event_Detection_API_SelfLinks'
+    Event_Detection_API_AgentLinks:
+      type: object
+      description: A links object containing the agent link.
+      readOnly: true
+      properties:
+        agent:
+          $ref: '#/components/schemas/Event_Detection_API_Link'
+    Event_Detection_API_NetworkPopEventType:
+      type: string
+      description: Network pop event type.
+      example: network-pop
+      pattern: ^network-pop$
+    Event_Detection_API_AgentLocalEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_AgentLocalEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_AgentLocalEventGrouping'
+    Event_Detection_API_DnsNameEventGrouping:
+      type: object
+      properties:
+        domainNameSuffix:
+          type: string
+          description: Domain name suffix (for dns-name events).
+          example: webex.com
+          readOnly: true
+    Event_Detection_API_ProxyEventType:
+      type: string
+      description: Proxy event type.
+      example: proxy
+      pattern: ^proxy$
+    Event_Detection_API_DnsServerEventGrouping:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: DNS server IP address (for dns-server events).
+          example: 8.8.8.8
+          readOnly: true
+    Event_Detection_API_Events:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/Event_Detection_API_AccountGroupId'
+        startDate:
+          $ref: '#/components/schemas/Event_Detection_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Event_Detection_API_EndDate'
+        events:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Event_Detection_API_Event'
+        _links:
+          $ref: '#/components/schemas/Event_Detection_API_PaginationNextAndSelfLinks'
+    Event_Detection_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Event_Detection_API_Link'
+    Event_Detection_API_WirelessEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_WirelessEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_WirelessEventGrouping'
+    Event_Detection_API_NameServerEventGrouping:
+      type: object
+      properties:
+        serverName:
+          type: string
+          description: Name server hostname (for name-server events).
+          example: ns1.example.com
+          readOnly: true
+    Event_Detection_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Event_Detection_API_DomainEventType:
+      type: string
+      description: Domain event type.
+      example: domain
+      pattern: ^domain$
+    Event_Detection_API_StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Event_Detection_API_NameServerEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_NameServerEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_NameServerEventGrouping'
+    Event_Detection_API_DnsEventGrouping:
+      type: object
+      properties:
+        rootDomain:
+          type: string
+          description: Root domain name (for dns events).
+          example: thousandeyes.com
+          readOnly: true
+    Event_Detection_API_DnsEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_DnsEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_DnsEventGrouping'
+    Event_Detection_API_AgentEventGrouping:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Agent identifier (for agent events). Represents the machine ID for Endpoint Agents or the virtual agent ID for Cloud and Enterprise Agents'.
+          example: '3379'
+          readOnly: true
+    Event_Detection_API_AffectedTargets:
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_AffectedCount'
+      - type: object
+        properties:
+          targets:
+            uniqueItems: true
+            type: array
+            description: List of affected targets.
+            items:
+              $ref: '#/components/schemas/Event_Detection_API_ApiAffectedTarget'
+    Event_Detection_API_GatewayEventGrouping:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: Gateway IP address (for gateway events).
+          example: 192.168.1.1
+          readOnly: true
+        macAddress:
+          type: string
+          description: Gateway MAC address (for gateway events).
+          example: 08:c7:f5:ac:34:88
+          readOnly: true
+    Event_Detection_API_NetworkEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_NetworkEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_NetworkEventGrouping'
+    Event_Detection_API_ProxyEventDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Event_Detection_API_EventDetailBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            $ref: '#/components/schemas/Event_Detection_API_ProxyEventType'
+          grouping:
+            $ref: '#/components/schemas/Event_Detection_API_ProxyEventGrouping'
+    Event_Detection_API_ProxyEventGrouping:
+      type: object
+      properties:
+        proxy:
+          type: string
+          description: Proxy name or IP (for proxy events).
+          example: my.proxy.com
+          readOnly: true
+    Event_Detection_API_VpnEventGrouping:
+      type: object
+      properties:
+        vpnType:
+          type: string
+          description: VPN type (for vpn events).
+          example: CiscoAnyConnect
+          readOnly: true
+        vpnServerIpAddress:
+          type: string
+          description: VPN server IP address (for vpn events).
+          example: 10.0.0.1
+          readOnly: true
+    Event_Detection_API_ApplicationEventGrouping:
+      type: object
+      properties:
+        fqdn:
+          type: string
+          description: Fully qualified domain name of the application (for application events).
+          example: teams.microsoft.com
+          readOnly: true
+    Event_Detection_API_EventAffectedAgentType:
+      type: string
+      description: Type of the affected agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      - enterprise-lite
+      - enterprise-pulse
+      - enterprise-csc
+      example: enterprise
+      readOnly: true
+    Event_Detection_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Event_Detection_API_GatewayEventType:
+      type: string
+      description: Gateway event type.
+      example: gateway
+      pattern: ^gateway$
+    Event_Detection_API_AgentLocalEventGrouping:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Numeric Agent ID (for agent-local events).
+          example: '123456'
+          readOnly: true
   parameters:
+    Event_Detection_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    Event_Detection_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
+    Event_Detection_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Event_Detection_API_OngoingEventsParameter:
+      name: ongoing
+      in: query
+      description: When set to `true`, only ongoing (active) events whose start date is within the specified time window are included in the response. When set to `false`, ongoing events are excluded from the response. If not set, both ongoing and concluded events appear in the response.
+      schema:
+        type: boolean
+        example: true
+    Event_Detection_API_EventId:
+      name: id
+      in: path
+      description: Unique event ID.
+      example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Event_Detection_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Event_Detection_API_PaginationMax:
+      name: max
+      in: query
+      description: (Optional) Maximum number of objects to return.
+      schema:
+        type: integer
+        example: 5
     Event_Detection_API_Window:
       name: window
       in: query
@@ -1064,79 +1119,20 @@ components:
         type: string
         pattern: ^\d+(?:[smhdw]{1})?$
         example: 12h
-    Event_Detection_API_EventId:
-      name: id
-      in: path
-      description: Unique event ID.
-      example: e9c3bf02-a48c-4aa8-9e5f-898800d6f569
-      required: true
-      schema:
-        type: string
-        format: uuid
-    Event_Detection_API_StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    Event_Detection_API_OngoingEventsParameter:
-      name: ongoing
-      in: query
-      description: When set to `true`, only ongoing (active) events whose start date is within the specified time window are included in the response. When set to `false`, ongoing events are excluded from the response. If not set, both ongoing and concluded events appear in the response.
-      schema:
-        type: boolean
-        example: true
-    Event_Detection_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Event_Detection_API_PaginationMax:
-      name: max
-      in: query
-      description: (Optional) Maximum number of objects to return.
-      schema:
-        type: integer
-        example: 5
-    Event_Detection_API_PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    Event_Detection_API_EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
   responses:
-    Event_Detection_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Event_Detection_API_Error'
-    Event_Detection_API_500:
-      description: Internal server error
+    Event_Detection_API_GeneralError:
+      description: An error occurred
+    Event_Detection_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Event_Detection_API_Error'
           example:
             type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
     Event_Detection_API_400:
       description: Bad Request
@@ -1157,38 +1153,42 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Event_Detection_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Event_Detection_API_Error'
     Event_Detection_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Event_Detection_API_Error'
-    Event_Detection_API_401:
-      description: Unauthorized
+    Event_Detection_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Event_Detection_API_UnauthorizedError'
-    Event_Detection_API_GeneralError:
-      description: An error occurred
-    Event_Detection_API_404:
-      description: Not found
+            $ref: '#/components/schemas/Event_Detection_API_Error'
+    Event_Detection_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Event_Detection_API_Error'
           example:
             type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
             instance: /v7
+    Event_Detection_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Event_Detection_API_UnauthorizedError'
+    Event_Detection_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Event_Detection_API_Error'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

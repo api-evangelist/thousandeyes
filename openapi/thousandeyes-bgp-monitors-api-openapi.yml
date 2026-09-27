@@ -53,22 +53,6 @@ paths:
       - BGP_Monitors_API_BearerAuth: []
 components:
   schemas:
-    BGP_Monitors_API_MonitorType:
-      type: string
-      description: Type of monitor
-      enum:
-      - public
-      - private
-      example: public
-    BGP_Monitors_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
     BGP_Monitors_API_Monitor:
       type: object
       properties:
@@ -96,6 +80,15 @@ components:
           type: string
           description: Display name of the BGP monitor
           example: Seattle, WA
+    BGP_Monitors_API_Monitors:
+      type: object
+      properties:
+        monitors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BGP_Monitors_API_Monitor'
+        _links:
+          $ref: '#/components/schemas/BGP_Monitors_API_SelfLinks'
     BGP_Monitors_API_Error:
       type: object
       properties:
@@ -114,6 +107,29 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
+    BGP_Monitors_API_MonitorType:
+      type: string
+      description: Type of monitor
+      enum:
+      - public
+      - private
+      example: public
+    BGP_Monitors_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    BGP_Monitors_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/BGP_Monitors_API_Link'
     BGP_Monitors_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -145,41 +161,13 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    BGP_Monitors_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/BGP_Monitors_API_Link'
-    BGP_Monitors_API_Monitors:
-      type: object
-      properties:
-        monitors:
-          type: array
-          items:
-            $ref: '#/components/schemas/BGP_Monitors_API_Monitor'
-        _links:
-          $ref: '#/components/schemas/BGP_Monitors_API_SelfLinks'
   responses:
-    BGP_Monitors_API_403:
-      description: Insufficient permissions to query endpoint
+    BGP_Monitors_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/BGP_Monitors_API_Error'
-    BGP_Monitors_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/BGP_Monitors_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
     BGP_Monitors_API_500:
       description: Internal server error
       content:
@@ -198,12 +186,24 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/BGP_Monitors_API_UnauthorizedError'
-    BGP_Monitors_API_429:
-      description: Exhausted rate limit for the organization
+    BGP_Monitors_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/BGP_Monitors_API_Error'
+    BGP_Monitors_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/BGP_Monitors_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   parameters:
     BGP_Monitors_API_AccountGroupId:
       name: aid

@@ -69,144 +69,6 @@ paths:
       - Instant_Tests_API_BearerAuth: []
 components:
   schemas:
-    Instant_Tests_API_TestLabel:
-      type: object
-      properties:
-        labelId:
-          type: string
-          description: Label ID.
-        name:
-          type: string
-          description: Name of the label.
-        isBuiltin:
-          type: boolean
-          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
-      example:
-        labelId: '961'
-        name: Artem label
-        isBuiltin: false
-    Instant_Tests_API_TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    Instant_Tests_API_TestAgent:
-      type: object
-      properties:
-        agentId:
-          type: string
-          description: Identifier for the agent (get `agentId` from `/agents` endpoint).
-        sourceIpAddress:
-          type: string
-          description: IP address from the agent's `ipAddresses` field (get `ipAddresses` from `/agents` endpoint). Used for interface selection.
-      example:
-        agentId: '125'
-        sourceIpAddress: 1.1.1.1
-    Instant_Tests_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Instant_Tests_API_UnexpandedInstantTest:
-      type: object
-      properties:
-        createdBy:
-          $ref: '#/components/schemas/Instant_Tests_API_TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/Instant_Tests_API_TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
-          readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/Instant_Tests_API_TestType'
-        _links:
-          $ref: '#/components/schemas/Instant_Tests_API_TestLinks'
-    Instant_Tests_API_TestTag:
-      type: object
-      readOnly: true
-      properties:
-        id:
-          type: string
-          description: Unique tag ID.
-          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
-          format: uuid
-        key:
-          type: string
-          description: Tag key. For example, "Location" or "Department".
-          example: Location
-        value:
-          type: string
-          description: Tag value. For example, "San Francisco" or "Engineering".
-          example: San Francisco
-    Instant_Tests_API_Coordinates:
-      type: object
-      description: Geographic coordinates for agent location.
-      properties:
-        latitude:
-          type: number
-          format: double
-          description: The latitude of the agent location in decimal degrees
-          example: 37.77493
-          readOnly: true
-        longitude:
-          type: number
-          format: double
-          description: The longitude of the agent location in decimal degrees
-          example: -122.41942
-          readOnly: true
     Instant_Tests_API_AgentToAgentProperties:
       type: object
       required:
@@ -262,6 +124,325 @@ components:
           type: string
           example: agent-to-agent
           readOnly: true
+    Instant_Tests_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Instant_Tests_API_SharedWithAccount:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account group ID.
+          example: '1234'
+        name:
+          type: string
+          description: Account group name.
+          example: Account name
+    Instant_Tests_API_Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    Instant_Tests_API_TestPathTraceMode:
+      type: string
+      enum:
+      - classic
+      - in-session
+      description: Select `inSession` to perform the path trace within a TCP session.
+      default: classic
+      example: classic
+    Instant_Tests_API_TestDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction of the test, which affects how results are shown.
+      default: to-target
+      example: to-target
+    Instant_Tests_API_UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/Instant_Tests_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Instant_Tests_API_TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Instant_Tests_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Instant_Tests_API_TestLinks'
+    Instant_Tests_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Instant_Tests_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Instant_Tests_API_TestFixedPacketRate:
+      type: integer
+      minimum: 0
+      maximum: 100
+      description: Sets packets rate sent to measure the network in packets per second.
+      example: 50
+    Instant_Tests_API_TestNumPathTraces:
+      type: integer
+      minimum: 1
+      maximum: 10
+      description: Number of path traces executed by the agent.
+      default: 3
+      example: 3
+    Instant_Tests_API_TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    Instant_Tests_API_AgentToAgentInstantTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentInstantTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/Instant_Tests_API_TestAgentsResponse'
+    Instant_Tests_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Instant_Tests_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Instant_Tests_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Instant_Tests_API_TestTags:
+      type: array
+      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Instant_Tests_API_TestTag'
+    Instant_Tests_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Instant_Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Instant_Tests_API_TestRandomizedStartTime:
+      type: boolean
+      description: Indicates whether agents should randomize the start time in each test round.
+      default: false
+      example: false
+    Instant_Tests_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Instant_Tests_API_TestDscpId:
+      type: string
+      enum:
+      - '0'
+      - '8'
+      - '16'
+      - '24'
+      - '32'
+      - '40'
+      - '48'
+      - '56'
+      - '10'
+      - '12'
+      - '14'
+      - '18'
+      - '20'
+      - '22'
+      - '26'
+      - '28'
+      - '30'
+      - '34'
+      - '36'
+      - '38'
+      - '46'
+      - '44'
+      description: DSCP ID [to see list for acceptable values](https://docs.thousandeyes.com/product-documentation/tests/dscp-options-in-network-tests)
+      default: '0'
+      example: '0'
+    Instant_Tests_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Instant_Tests_API_NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
+      enum:
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    Instant_Tests_API_AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Instant_Tests_API_TestDscp:
+      type: string
+      description: DSCP label.
+      readOnly: true
+      example: Best Effort (DSCP 0)
     Instant_Tests_API_InstantTest:
       allOf:
       - $ref: '#/components/schemas/Instant_Tests_API_UnexpandedInstantTest'
@@ -273,21 +454,73 @@ components:
             $ref: '#/components/schemas/Instant_Tests_API_TestTags'
           sharedWithAccounts:
             $ref: '#/components/schemas/Instant_Tests_API_TestSharedAccounts'
-    Instant_Tests_API_TestRandomizedStartTime:
-      type: boolean
-      description: Indicates whether agents should randomize the start time in each test round.
-      default: false
-      example: false
-    Instant_Tests_API_TestLabels:
+    Instant_Tests_API_TestTag:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          description: Unique tag ID.
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          format: uuid
+        key:
+          type: string
+          description: Tag key. For example, "Location" or "Department".
+          example: Location
+        value:
+          type: string
+          description: Tag value. For example, "San Francisco" or "Engineering".
+          example: San Francisco
+    Instant_Tests_API_TestSharedAccounts:
       type: array
-      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
       items:
-        $ref: '#/components/schemas/Instant_Tests_API_TestLabel'
-    Instant_Tests_API_AgentToAgentInstantTest:
+        $ref: '#/components/schemas/Instant_Tests_API_SharedWithAccount'
+    Instant_Tests_API_ValidationError:
+      type: object
       allOf:
-      - $ref: '#/components/schemas/Instant_Tests_API_InstantTest'
-      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentProperties'
+      - $ref: '#/components/schemas/Instant_Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Instant_Tests_API_ValidationErrorItem'
+    Instant_Tests_API_TestAgentsResponse:
+      type: array
+      description: Contains list of agents.
+      items:
+        $ref: '#/components/schemas/Instant_Tests_API_AgentResponse'
+    Instant_Tests_API_TestAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Identifier for the agent (get `agentId` from `/agents` endpoint).
+        sourceIpAddress:
+          type: string
+          description: IP address from the agent's `ipAddresses` field (get `ipAddresses` from `/agents` endpoint). Used for interface selection.
+      example:
+        agentId: '125'
+        sourceIpAddress: 1.1.1.1
+    Instant_Tests_API_AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/Instant_Tests_API_CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/Instant_Tests_API_SimpleAgent'
+    Instant_Tests_API_TestPort:
+      type: integer
+      minimum: 1
+      maximum: 65535
+      description: Target port.
+      default: 49153
+      example: 49153
     Instant_Tests_API_SimpleAgent:
       type: object
       allOf:
@@ -337,6 +570,10 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
+    Instant_Tests_API_AgentToAgentInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/Instant_Tests_API_InstantTest'
+      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentProperties'
     Instant_Tests_API_ExpandInstantTestOptions:
       type: string
       enum:
@@ -345,55 +582,14 @@ components:
       - tag
       - shared-with-account
       example: agent
-    Instant_Tests_API_AgentToAgentInstantTestRequest:
-      allOf:
-      - $ref: '#/components/schemas/Instant_Tests_API_UnexpandedInstantTest'
-      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentProperties'
-      - $ref: '#/components/schemas/Instant_Tests_API_InstantTestRequest'
-    Instant_Tests_API_AgentToAgentInstantTestResponse:
-      allOf:
-      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentInstantTest'
-      - type: object
-        properties:
-          agents:
-            $ref: '#/components/schemas/Instant_Tests_API_TestAgentsResponse'
-    Instant_Tests_API_TestAgentsResponse:
-      type: array
-      description: Contains list of agents.
-      items:
-        $ref: '#/components/schemas/Instant_Tests_API_AgentResponse'
-    Instant_Tests_API_TestDscp:
+    Instant_Tests_API_CloudEnterpriseAgentType:
       type: string
-      description: DSCP label.
-      readOnly: true
-      example: Best Effort (DSCP 0)
-    Instant_Tests_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Instant_Tests_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Instant_Tests_API_TestPathTraceMode:
-      type: string
+      description: Type of the agent.
       enum:
-      - classic
-      - in-session
-      description: Select `inSession` to perform the path trace within a TCP session.
-      default: classic
-      example: classic
-    Instant_Tests_API_TestTags:
-      type: array
-      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Instant_Tests_API_TestTag'
-    Instant_Tests_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
       readOnly: true
     Instant_Tests_API_TestLinks:
       type: object
@@ -404,118 +600,35 @@ components:
         testResults:
           $ref: '#/components/schemas/Instant_Tests_API_TestResults'
       readOnly: true
-    Instant_Tests_API_TestPort:
-      type: integer
-      minimum: 1
-      maximum: 65535
-      description: Target port.
-      default: 49153
-      example: 49153
-    Instant_Tests_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Instant_Tests_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Instant_Tests_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Instant_Tests_API_CloudEnterpriseAgentType:
+    Instant_Tests_API_TestCreatedDate:
       type: string
-      description: Type of the agent.
-      enum:
-      - cloud
-      - enterprise-cluster
-      - enterprise
-      example: enterprise-cluster
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
       readOnly: true
-    Instant_Tests_API_NetworkProviderType:
-      type: string
-      description: Classification of the agent's network provider.
-      enum:
-      - unknown
-      - isp
-      - cdn
-      - stub
-      - cloud-provider
-      - carrier
-      example: isp
+    Instant_Tests_API_NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
       readOnly: true
-    Instant_Tests_API_TestFixedPacketRate:
-      type: integer
-      minimum: 0
-      maximum: 100
-      description: Sets packets rate sent to measure the network in packets per second.
-      example: 50
-    Instant_Tests_API_ValidationErrorItem:
-      type: object
       properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Instant_Tests_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
+        asn:
           type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Instant_Tests_API_SharedWithAccount:
-      type: object
-      properties:
-        aid:
-          type: string
-          description: Account group ID.
-          example: '1234'
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
         name:
           type: string
-          description: Account group name.
-          example: Account name
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/Instant_Tests_API_NetworkProviderType'
+    Instant_Tests_API_AgentToAgentInstantTestRequest:
+      allOf:
+      - $ref: '#/components/schemas/Instant_Tests_API_UnexpandedInstantTest'
+      - $ref: '#/components/schemas/Instant_Tests_API_AgentToAgentProperties'
+      - $ref: '#/components/schemas/Instant_Tests_API_InstantTestRequest'
     Instant_Tests_API_InstantTestRequest:
       type: object
       properties:
@@ -554,83 +667,12 @@ components:
             $ref: '#/components/schemas/Instant_Tests_API_TestAgent'
       required:
       - agents
-    Instant_Tests_API_TestDscpId:
-      type: string
-      enum:
-      - '0'
-      - '8'
-      - '16'
-      - '24'
-      - '32'
-      - '40'
-      - '48'
-      - '56'
-      - '10'
-      - '12'
-      - '14'
-      - '18'
-      - '20'
-      - '22'
-      - '26'
-      - '28'
-      - '30'
-      - '34'
-      - '36'
-      - '38'
-      - '46'
-      - '44'
-      description: DSCP ID [to see list for acceptable values](https://docs.thousandeyes.com/product-documentation/tests/dscp-options-in-network-tests)
-      default: '0'
-      example: '0'
-    Instant_Tests_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Instant_Tests_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Instant_Tests_API_ValidationErrorItem'
-    Instant_Tests_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    Instant_Tests_API_AgentResponse:
-      allOf:
-      - required:
-        - agentType
-        properties:
-          agentType:
-            $ref: '#/components/schemas/Instant_Tests_API_CloudEnterpriseAgentType'
-      - $ref: '#/components/schemas/Instant_Tests_API_SimpleAgent'
-    Instant_Tests_API_NetworkProviderInfo:
-      type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
-      properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
-          readOnly: true
-        name:
-          type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
-          readOnly: true
-        type:
-          $ref: '#/components/schemas/Instant_Tests_API_NetworkProviderType'
-    Instant_Tests_API_TestSharedAccounts:
+    Instant_Tests_API_TestLabels:
       type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
       items:
-        $ref: '#/components/schemas/Instant_Tests_API_SharedWithAccount'
+        $ref: '#/components/schemas/Instant_Tests_API_TestLabel'
     Instant_Tests_API_AgentToAgentTestProtocol:
       type: string
       enum:
@@ -638,63 +680,27 @@ components:
       - udp
       default: tcp
       example: tcp
-    Instant_Tests_API_TestNumPathTraces:
-      type: integer
-      minimum: 1
-      maximum: 10
-      description: Number of path traces executed by the agent.
-      default: 3
-      example: 3
-    Instant_Tests_API_AgentBase:
-      type: object
-      properties:
-        ipAddresses:
-          type: array
-          description: Array of private IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 99.139.65.220
-          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
-        publicIpAddresses:
-          type: array
-          description: Array of public IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 192.168.1.78
-          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
-        network:
-          type: string
-          description: Network (including ASN) of agent’s public IP.
-          example: AT&T Services, Inc. (AS 7018)
-          readOnly: true
-    Instant_Tests_API_TestDirection:
-      type: string
-      enum:
-      - to-target
-      - from-target
-      - bidirectional
-      description: Direction of the test, which affects how results are shown.
-      default: to-target
-      example: to-target
   responses:
-    Instant_Tests_API_401:
-      description: Unauthorized
+    Instant_Tests_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Instant_Tests_API_UnauthorizedError'
+            $ref: '#/components/schemas/Instant_Tests_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
     Instant_Tests_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Instant_Tests_API_Error'
-    Instant_Tests_API_502:
-      description: Bad Gateway
+    Instant_Tests_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
@@ -711,12 +717,12 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Instant_Tests_API_429:
-      description: Exhausted rate limit for the organization
+    Instant_Tests_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Instant_Tests_API_Error'
+            $ref: '#/components/schemas/Instant_Tests_API_UnauthorizedError'
     Instant_Tests_API_400:
       description: Bad Request
       content:
@@ -736,36 +742,15 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Instant_Tests_API_500:
-      description: Internal server error
+    Instant_Tests_API_GeneralError:
+      description: An error occurred
+    Instant_Tests_API_502:
+      description: Bad Gateway
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Instant_Tests_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Instant_Tests_API_GeneralError:
-      description: An error occurred
-  headers:
-    Instant_Tests_API_Location:
-      schema:
-        type: string
-        format: uri
-        example: https://api.thousandeyes.com/v7/link/to/resource/id
-      description: The absolute path to created resource.
   parameters:
-    Instant_Tests_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
     Instant_Tests_API_ExpandInstantTest:
       name: expand
       in: query
@@ -779,6 +764,21 @@ components:
           $ref: '#/components/schemas/Instant_Tests_API_ExpandInstantTestOptions'
         example:
         - agent
+    Instant_Tests_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  headers:
+    Instant_Tests_API_Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
   securitySchemes:
     Tests_API_BearerAuth:
       type: http
