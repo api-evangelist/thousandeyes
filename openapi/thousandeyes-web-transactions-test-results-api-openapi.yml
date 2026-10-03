@@ -176,12 +176,36 @@ paths:
       - Test_Results_API_BearerAuth: []
 components:
   responses:
-    Test_Results_API_403:
-      description: Insufficient permissions to query endpoint
+    Test_Results_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_UnauthorizedError'
+    Test_Results_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Test_Results_API_Error'
+    Test_Results_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+    Test_Results_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
     Test_Results_API_400:
       description: Bad Request
       content:
@@ -201,14 +225,6 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Test_Results_API_GeneralError:
-      description: An error occurred
-    Test_Results_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Test_Results_API_Error'
     Test_Results_API_500:
       description: Internal server error
       content:
@@ -221,122 +237,90 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    Test_Results_API_404:
-      description: Not found
+    Test_Results_API_GeneralError:
+      description: An error occurred
+    Test_Results_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Test_Results_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Test_Results_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Test_Results_API_UnauthorizedError'
-    Test_Results_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Test_Results_API_Error'
-  parameters:
-    Test_Results_API_Window:
-      name: window
-      in: query
-      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
-
-        For a precise date range, use `startDate` and `endDate`.'
-      schema:
-        type: string
-        pattern: ^\d+(?:[smhdw]{1})?$
-        example: 12h
-    Test_Results_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Test_Results_API_StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    Test_Results_API_PageIdPath:
-      name: pageId
-      description: Web page ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '281474976710706'
-    Test_Results_API_PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    Test_Results_API_AgentIdPath:
-      name: agentId
-      description: Agent ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '11'
-    Test_Results_API_TestIdPath:
-      name: testId
-      description: Test ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '202701'
-    Test_Results_API_EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
-    Test_Results_API_RoundIdPath:
-      name: roundId
-      description: Round ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '1384309800'
   schemas:
-    Test_Results_API_EpochTimeWindow:
+    Test_Results_API_TestResult:
       type: object
       properties:
-        startTime:
-          $ref: '#/components/schemas/Test_Results_API_StartTime'
-        endTime:
-          $ref: '#/components/schemas/Test_Results_API_EndTime'
-    Test_Results_API_UnauthorizedError:
+        date:
+          type: string
+          description: Data point date UTC (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+          readOnly: true
+        roundId:
+          type: integer
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_TestResultAppLinks'
+    Test_Results_API_WebTransactionPageDetailTestResults:
       type: object
       properties:
-        error:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Test_Results_API_WebTransactionPageDetailTestResult'
+        test:
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
+    Test_Results_API_EndTime:
+      type: integer
+      description: Epoch time (seconds) indicating the end time of the round
+      example: 1384309800
+      readOnly: true
+    Test_Results_API_Marker:
+      type: object
+      properties:
+        name:
           type: string
-          example: invalid_token
-        error_description:
+          description: Name assigned to marker in transaction script
+          example: SearchForWebdriver
+          readOnly: true
+        duration:
+          type: integer
+          description: Total time recorded by marker in milliseconds
+          example: 1360
+          readOnly: true
+    Test_Results_API_WebTransactionPageDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_WebTransactionDetailTestResult'
+      - type: object
+        properties:
+          har:
+            $ref: '#/components/schemas/Test_Results_API_PageHar'
+    Test_Results_API_TestResultAgent:
+      type: object
+      properties:
+        agentId:
           type: string
-          example: Invalid access token
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
     Test_Results_API_SimpleTest:
       description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
       additionalProperties: true
@@ -396,125 +380,6 @@ components:
           $ref: '#/components/schemas/Test_Results_API_TestType'
         _links:
           $ref: '#/components/schemas/Test_Results_API_TestLinks'
-    Test_Results_API_ConsoleLogsTestResults:
-      type: object
-      readOnly: true
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Test_Results_API_ConsoleLogsResult'
-        test:
-          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
-    Test_Results_API_WebTransactionDetailTestResults:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Test_Results_API_WebTransactionDetailTestResult'
-        test:
-          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
-    Test_Results_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/Test_Results_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Test_Results_API_TestResults'
-      readOnly: true
-    Test_Results_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    Test_Results_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Test_Results_API_StartTime:
-      type: integer
-      description: Epoch time (seconds) indicating the start time of the round
-      example: 1384309800
-      readOnly: true
-    Test_Results_API_TestResultErrorDetails:
-      type: string
-      description: Error details, if an error were encountered
-      example: Connection error
-      readOnly: true
-    Test_Results_API_Marker:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name assigned to marker in transaction script
-          example: SearchForWebdriver
-          readOnly: true
-        duration:
-          type: integer
-          description: Total time recorded by marker in milliseconds
-          example: 1360
-          readOnly: true
-    Test_Results_API_PaginationLinks:
-      type: object
-      description: A links object containing pagination related link(s).
-      properties:
-        previous:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-        next:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-        self:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-    Test_Results_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
-    Test_Results_API_EndTime:
-      type: integer
-      description: Epoch time (seconds) indicating the end time of the round
-      example: 1384309800
-      readOnly: true
-    Test_Results_API_StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    Test_Results_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Test_Results_API_AppLinks:
-      type: object
-      description: A links object containing the ThousandEyes App link
-      readOnly: true
-      properties:
-        appLink:
-          $ref: '#/components/schemas/Test_Results_API_Link'
     Test_Results_API_TestType:
       type: string
       enum:
@@ -534,6 +399,57 @@ components:
       description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
       example: agent-to-server
+    Test_Results_API_WebTransactionDetailTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_WebTransactionTestResult'
+      - type: object
+        properties:
+          markers:
+            type: array
+            items:
+              $ref: '#/components/schemas/Test_Results_API_Marker'
+          pages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Test_Results_API_Page'
+    Test_Results_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Test_Results_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Test_Results_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Test_Results_API_TestResults'
+      readOnly: true
+    Test_Results_API_ConsoleLogs:
+      type: object
+      description: Console logs captured during script execution to help troubleshoot transaction issues.
+      properties:
+        level:
+          type: string
+          description: Severity level of the log, or UNKNOWN if the log is system-generated.
+          example: INFO
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix epoch time, in milliseconds, when the log entry was captured.
+          example: 1715880042123
+        value:
+          type: string
+          description: Log message.
+          example: 'Uncaught TypeError: Cannot read property attr of undefined'
     Test_Results_API_ValidationError:
       type: object
       allOf:
@@ -547,6 +463,126 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Test_Results_API_ValidationErrorItem'
+    Test_Results_API_WebTransactionTestResult:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_TestResult'
+      - $ref: '#/components/schemas/Test_Results_API_EpochTimeWindow'
+      - type: object
+        properties:
+          agent:
+            $ref: '#/components/schemas/Test_Results_API_TestResultAgent'
+          componentErrors:
+            type: integer
+            description: Number of components which did not successfully load
+            example: 5
+            readOnly: true
+          transactionTime:
+            type: integer
+            description: Elapsed execution time of the web transaction script in milliseconds
+            example: 2379
+            readOnly: true
+          errorType:
+            type: string
+            description: Type of error encountered; corresponds to phase of connection
+            example: None
+            readOnly: true
+          errorDetails:
+            $ref: '#/components/schemas/Test_Results_API_TestResultErrorDetails'
+    Test_Results_API_Page:
+      type: object
+      properties:
+        pageNum:
+          type: integer
+          description: Page index
+          example: 0
+          readOnly: true
+        pageName:
+          type: string
+          description: Meta title value for page visited
+          example: Google
+          readOnly: true
+        componentCount:
+          type: integer
+          description: Number of components on target page
+          example: 136
+          readOnly: true
+        errorCount:
+          type: integer
+          description: Number of errors encountered during page load
+          example: 0
+          readOnly: true
+        duration:
+          type: number
+          format: float
+          description: Time spent on page in milliseconds
+          example: 1117.5660001039505
+          readOnly: true
+    Test_Results_API_EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/Test_Results_API_StartTime'
+        endTime:
+          $ref: '#/components/schemas/Test_Results_API_EndTime'
+    Test_Results_API_StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
+    Test_Results_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Test_Results_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Test_Results_API_AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Test_Results_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Test_Results_API_PaginationLinks:
+      type: object
+      description: A links object containing pagination related link(s).
+      properties:
+        previous:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        next:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        self:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
     Test_Results_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -578,35 +614,73 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Test_Results_API_Page:
+    Test_Results_API_WebTransactionTestResults:
       type: object
       properties:
-        pageNum:
-          type: integer
-          description: Page index
-          example: 0
-          readOnly: true
-        pageName:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Test_Results_API_WebTransactionTestResult'
+        test:
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/Test_Results_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Test_Results_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
+    Test_Results_API_StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Test_Results_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Test_Results_API_ConsoleLogsTestResults:
+      type: object
+      readOnly: true
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Test_Results_API_ConsoleLogsResult'
+        test:
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
+    Test_Results_API_TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    Test_Results_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
           type: string
-          description: Meta title value for page visited
-          example: Google
-          readOnly: true
-        componentCount:
-          type: integer
-          description: Number of components on target page
-          example: 136
-          readOnly: true
-        errorCount:
-          type: integer
-          description: Number of errors encountered during page load
-          example: 0
-          readOnly: true
-        duration:
-          type: number
-          format: float
-          description: Time spent on page in milliseconds
-          example: 1117.5660001039505
-          readOnly: true
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Test_Results_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
     Test_Results_API_PageHar:
       type: object
       description: See [HAR specification](http://www.softwareishard.com/blog/har-12-spec/) for details
@@ -767,96 +841,34 @@ components:
             startedDateTime: '2019-11-15T16:41:54.796Z'
             title: Google
           version: '1.2'
-    Test_Results_API_WebTransactionPageDetailTestResults:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Test_Results_API_WebTransactionPageDetailTestResult'
-        test:
-          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
-    Test_Results_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Test_Results_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Test_Results_API_ConsoleLogs:
-      type: object
-      description: Console logs captured during script execution to help troubleshoot transaction issues.
-      properties:
-        level:
-          type: string
-          description: Severity level of the log, or UNKNOWN if the log is system-generated.
-          example: INFO
-        timestamp:
-          type: integer
-          format: int64
-          description: Unix epoch time, in milliseconds, when the log entry was captured.
-          example: 1715880042123
-        value:
-          type: string
-          description: Log message.
-          example: 'Uncaught TypeError: Cannot read property attr of undefined'
-    Test_Results_API_WebTransactionDetailTestResult:
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_WebTransactionTestResult'
-      - type: object
-        properties:
-          markers:
-            type: array
-            items:
-              $ref: '#/components/schemas/Test_Results_API_Marker'
-          pages:
-            type: array
-            items:
-              $ref: '#/components/schemas/Test_Results_API_Page'
-    Test_Results_API_EndDate:
-      type: string
-      format: date-time
-      example: '2022-07-18T22:00:54Z'
-      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
     Test_Results_API_TestResultAppLinks:
       allOf:
       - $ref: '#/components/schemas/Test_Results_API_AppLinks'
       - example:
           appLink:
             href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    Test_Results_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
     Test_Results_API_Enabled:
       type: boolean
       description: Test is enabled.
       example: true
       default: true
-    Test_Results_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Test_Results_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Test_Results_API_WebTransactionDetailTestResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Test_Results_API_WebTransactionDetailTestResult'
+        test:
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
     Test_Results_API_ConsoleLogsResult:
       allOf:
       - $ref: '#/components/schemas/Test_Results_API_TestResult'
@@ -868,93 +880,81 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Test_Results_API_ConsoleLogs'
-    Test_Results_API_TestResultAgent:
-      type: object
-      properties:
-        agentId:
-          type: string
-          description: Unique agent ID
-          example: '281474976710706'
-          readOnly: true
-        agentName:
-          type: string
-          description: Agent name
-          example: thousandeyes-stg-va-254
-          readOnly: true
-        countryId:
-          type: string
-          description: 2-digit ISO country code
-          example: US
-          readOnly: true
-        location:
-          type: string
-          description: Location of the agent.
-          example: San Francisco Bay Area
-          readOnly: true
-    Test_Results_API_WebTransactionPageDetailTestResult:
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_WebTransactionDetailTestResult'
-      - type: object
-        properties:
-          har:
-            $ref: '#/components/schemas/Test_Results_API_PageHar'
-    Test_Results_API_WebTransactionTestResult:
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_TestResult'
-      - $ref: '#/components/schemas/Test_Results_API_EpochTimeWindow'
-      - type: object
-        properties:
-          agent:
-            $ref: '#/components/schemas/Test_Results_API_TestResultAgent'
-          componentErrors:
-            type: integer
-            description: Number of components which did not successfully load
-            example: 5
-            readOnly: true
-          transactionTime:
-            type: integer
-            description: Elapsed execution time of the web transaction script in milliseconds
-            example: 2379
-            readOnly: true
-          errorType:
-            type: string
-            description: Type of error encountered; corresponds to phase of connection
-            example: None
-            readOnly: true
-          errorDetails:
-            $ref: '#/components/schemas/Test_Results_API_TestResultErrorDetails'
-    Test_Results_API_WebTransactionTestResults:
-      type: object
-      properties:
-        results:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Test_Results_API_WebTransactionTestResult'
-        test:
-          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
-        startDate:
-          $ref: '#/components/schemas/Test_Results_API_StartDate'
-        endDate:
-          $ref: '#/components/schemas/Test_Results_API_EndDate'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
-    Test_Results_API_TestResult:
-      type: object
-      properties:
-        date:
-          type: string
-          description: Data point date UTC (ISO date-time format).
-          format: date-time
-          example: '2022-07-17T22:00:54Z'
-          readOnly: true
-        roundId:
-          type: integer
-          description: Epoch time (seconds) indicating the start time of the round
-          example: 1384309800
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_TestResultAppLinks'
+  parameters:
+    Test_Results_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    Test_Results_API_RoundIdPath:
+      name: roundId
+      description: Round ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '1384309800'
+    Test_Results_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Test_Results_API_Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    Test_Results_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Test_Results_API_AgentIdPath:
+      name: agentId
+      description: Agent ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '11'
+    Test_Results_API_TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    Test_Results_API_PageIdPath:
+      name: pageId
+      description: Web page ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '281474976710706'
+    Test_Results_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

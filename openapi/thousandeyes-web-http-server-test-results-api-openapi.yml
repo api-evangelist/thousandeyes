@@ -72,33 +72,18 @@ paths:
       - Test_Results_API_BearerAuth: []
 components:
   responses:
-    Test_Results_API_403:
-      description: Insufficient permissions to query endpoint
+    Test_Results_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Test_Results_API_UnauthorizedError'
+    Test_Results_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Test_Results_API_Error'
-    Test_Results_API_400:
-      description: Bad Request
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Test_Results_API_ValidationError'
-          example:
-            type: about:blank
-            title: Request validation failed. There are invalid or missing fields
-            status: 400
-            detail: Your request object contains invalid fields.
-            instance: /v7
-            errors:
-            - code: AM-5432
-              field: firstName
-              message: firstName cannot have fancy characters
-            - code: DASH-5622
-              field: password
-              message: Password cannot be blank
-    Test_Results_API_GeneralError:
-      description: An error occurred
     Test_Results_API_502:
       description: Bad Gateway
       content:
@@ -129,520 +114,54 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Test_Results_API_401:
-      description: Unauthorized
+    Test_Results_API_400:
+      description: Bad Request
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Test_Results_API_UnauthorizedError'
-    Test_Results_API_429:
-      description: Exhausted rate limit for the organization
+            $ref: '#/components/schemas/Test_Results_API_ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    Test_Results_API_GeneralError:
+      description: An error occurred
+    Test_Results_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Test_Results_API_Error'
-  parameters:
-    Test_Results_API_Window:
-      name: window
-      in: query
-      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
-
-        For a precise date range, use `startDate` and `endDate`.'
-      schema:
-        type: string
-        pattern: ^\d+(?:[smhdw]{1})?$
-        example: 12h
-    Test_Results_API_HttpServerExpand:
-      name: expand
-      in: query
-      style: form
-      explode: false
-      description: This parameter lets you decide if you want to see more details about test results. By default, no extra information is shown unless you use the query parameter. For instance, if you want more info about the "header," add ?expand=header to the query.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/Test_Results_API_Expand'
-        example:
-        - certificate
-    Test_Results_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Test_Results_API_StartDateParameter:
-      name: startDate
-      in: query
-      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-17T22:00:54Z'
-    Test_Results_API_PaginationCursor:
-      name: cursor
-      in: query
-      example: null
-      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
-      schema:
-        type: string
-        example: null
-    Test_Results_API_TestIdPath:
-      name: testId
-      description: Test ID
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '202701'
-    Test_Results_API_EndDateParameter:
-      name: endDate
-      in: query
-      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
-      schema:
-        type: string
-        format: date-time
-        example: '2022-07-18T22:00:54Z'
   schemas:
-    Test_Results_API_EpochTimeWindow:
+    Test_Results_API_TestResult:
       type: object
       properties:
-        startTime:
-          $ref: '#/components/schemas/Test_Results_API_StartTime'
-        endTime:
-          $ref: '#/components/schemas/Test_Results_API_EndTime'
-    Test_Results_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
+        date:
           type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Test_Results_API_SimpleTest:
-      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
-      additionalProperties: true
-      type: object
-      properties:
-        interval:
-          $ref: '#/components/schemas/Test_Results_API_TestInterval'
-        alertsEnabled:
-          type: boolean
-          description: Indicates if alerts are enabled.
-          example: true
-        enabled:
-          $ref: '#/components/schemas/Test_Results_API_Enabled'
-        createdBy:
-          $ref: '#/components/schemas/Test_Results_API_TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/Test_Results_API_TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
+          description: Data point date UTC (ISO date-time format).
           format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
           example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
           readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/Test_Results_API_TestType'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_TestLinks'
-    Test_Results_API_DnsTiming:
-      type: object
-      description: Timing metrics for a DNS lookup.
-      readOnly: true
-      properties:
-        startTimeUs:
-          type: string
-          description: Unix epoch timestamp in microseconds when the DNS query started.
-          example: '1769706600000000'
-          readOnly: true
-        totalTimeUs:
+        roundId:
           type: integer
-          description: Total DNS lookup time in microseconds.
-          example: 19304
+          description: Epoch time (seconds) indicating the start time of the round
+          example: 1384309800
           readOnly: true
-    Test_Results_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/Test_Results_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Test_Results_API_TestResults'
-      readOnly: true
-    Test_Results_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    Test_Results_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Test_Results_API_DnsResourceRecordClass:
-      type: string
-      description: DNS resource record class (IANA).
-      enum:
-      - unknown
-      - in
-      example: in
-      readOnly: true
-    Test_Results_API_StartTime:
-      type: integer
-      description: Epoch time (seconds) indicating the start time of the round
-      example: 1384309800
-      readOnly: true
-    Test_Results_API_TestResultErrorDetails:
-      type: string
-      description: Error details, if an error were encountered
-      example: Connection error
-      readOnly: true
-    Test_Results_API_DnsResponseCode:
-      type: string
-      description: DNS response code (RCODE), including extended RCODE values (RFC 1035 and RFC 6891).
-      enum:
-      - noerror
-      - formerr
-      - servfail
-      - nxdomain
-      - notimp
-      - refused
-      - yxdomain
-      - yxrrset
-      - nxrrset
-      - notauth
-      - notzone
-      - unknown-11
-      - unknown-12
-      - unknown-13
-      - unknown-14
-      - unknown-15
-      - badvers
-      - badkey
-      - badtime
-      - badmode
-      - badname
-      - badalg
-      - badtrunc
-      - badcookie
-      example: noerror
-      readOnly: true
-    Test_Results_API_PaginationLinks:
-      type: object
-      description: A links object containing pagination related link(s).
-      properties:
-        previous:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-        next:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-        self:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-    Test_Results_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_TestResultAppLinks'
     Test_Results_API_EndTime:
       type: integer
       description: Epoch time (seconds) indicating the end time of the round
       example: 1384309800
-      readOnly: true
-    Test_Results_API_Expand:
-      type: string
-      enum:
-      - header
-      - certificate
-      example: header
-    Test_Results_API_StartDate:
-      type: string
-      format: date-time
-      example: '2022-07-17T22:00:54Z'
-      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
-      readOnly: true
-    Test_Results_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Test_Results_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Test_Results_API_ValidationErrorItem'
-    Test_Results_API_AppLinks:
-      type: object
-      description: A links object containing the ThousandEyes App link
-      readOnly: true
-      properties:
-        appLink:
-          $ref: '#/components/schemas/Test_Results_API_Link'
-    Test_Results_API_DnsServerResponse:
-      type: object
-      description: A DNS response received while resolving the HTTP test target.
-      readOnly: true
-      properties:
-        id:
-          type: integer
-          description: DNS message ID.
-          example: 41837
-          readOnly: true
-        qr:
-          $ref: '#/components/schemas/Test_Results_API_DnsQr'
-        opcode:
-          $ref: '#/components/schemas/Test_Results_API_DnsOpcode'
-        authoritativeAnswer:
-          type: boolean
-          description: DNS header AA flag.
-          example: false
-          readOnly: true
-        truncation:
-          type: boolean
-          description: DNS header TC flag.
-          example: false
-          readOnly: true
-        recursionDesired:
-          type: boolean
-          description: DNS header RD flag.
-          example: true
-          readOnly: true
-        recursionAvailable:
-          type: boolean
-          description: DNS header RA flag.
-          example: true
-          readOnly: true
-        zero:
-          type: boolean
-          description: DNS header Z flag. Reserved and expected to be false.
-          example: false
-          readOnly: true
-        authenticData:
-          type: boolean
-          description: DNS header AD flag.
-          example: false
-          readOnly: true
-        checkingDisabled:
-          type: boolean
-          description: DNS header CD flag.
-          example: false
-          readOnly: true
-        responseCode:
-          $ref: '#/components/schemas/Test_Results_API_DnsResponseCode'
-        question:
-          type: array
-          description: Records in the DNS question section.
-          items:
-            $ref: '#/components/schemas/Test_Results_API_DnsResourceRecord'
-        answer:
-          type: array
-          description: Records in the DNS answer section.
-          items:
-            $ref: '#/components/schemas/Test_Results_API_DnsResourceRecord'
-        dnsResolver:
-          type: string
-          description: DNS resolver that returned this response.
-          example: 8.8.8.8
-          readOnly: true
-        timing:
-          $ref: '#/components/schemas/Test_Results_API_DnsTiming'
-        protocol:
-          $ref: '#/components/schemas/Test_Results_API_DnsMeasurementProtocol'
-    Test_Results_API_TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    Test_Results_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Test_Results_API_HttpTestResults:
-      type: object
-      properties:
-        results:
-          x-paginated-items: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Test_Results_API_HttpTestResult'
-        test:
-          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
-        startDate:
-          $ref: '#/components/schemas/Test_Results_API_StartDate'
-        endDate:
-          $ref: '#/components/schemas/Test_Results_API_EndDate'
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
-    Test_Results_API_DnsResourceRecordType:
-      type: string
-      description: DNS resource record type (IANA). Values match `DnsRecordType` on DNS Server test configuration where applicable.
-      enum:
-      - unknown
-      - a
-      - cname
-      - aaaa
-      example: a
-      readOnly: true
-    Test_Results_API_SslCert:
-      type: object
-      properties:
-        daysUntilExpiry:
-          type: integer
-          description: Days until certificate expires, rounded down. 0 is shown if there are less than 24 hours remaining. Calculated when the test was executed.
-          example: 0
-        isFetchDateInValidCertDateRange:
-          type: boolean
-          description: True when certificate fetch date is within the valid certificate date range, false otherwise
-          example: true
-        hasValidSigningCert:
-          type: boolean
-          description: This field is implicitly true; it is output only when false. false indicates this certificate was missing a valid signing certificate in the chain.
-          example: false
-        issuerName:
-          type: string
-          description: Certificate issuer
-          example: DigiCert SHA2 Extended Validation Server CA
-        validBefore:
-          type: string
-          format: date-time
-          description: Certificate is not valid after this date
-          example: '2020-05-12T12:00:00Z'
-        validAfter:
-          type: string
-          format: date-time
-          description: Certificate is not valid before this date
-          example: '2018-03-27T00:00:00Z'
-        subjectAlternativeNames:
-          type: array
-          description: Alternative name(s) of the certificate subject, extracted from the Subject Alternative Name (SAN) X.509 certificate extension, for example example.com, www2.example.com
-          items:
-            type: string
-          example:
-          - www.thousandeyes.com
-          - thousandeyes.com
-        subjectName:
-          type: string
-          description: certificate’s subject name - a value of the common name (CN) RDN from the certificate’s Subject attribute, for example www.example.com
-          example: www.thousandeyes.com
-    Test_Results_API_DnsOpcode:
-      type: string
-      description: DNS header OPCODE field (RFC 1035).
-      enum:
-      - query
-      - iquery
-      - status
-      - unknown-3
-      - unknown-4
-      - unknown-5
-      - unknown-6
-      - unknown-7
-      - unknown-8
-      - unknown-9
-      - unknown-10
-      - unknown-11
-      - unknown-12
-      - unknown-13
-      - unknown-14
-      - unknown-15
-      example: query
       readOnly: true
     Test_Results_API_HttpTestResult:
       allOf:
@@ -788,6 +307,29 @@ components:
             type: number
             description: A normalized value (0.0-1.0) representing the web application connection health of the test target. Returns negative values as error codes. -1.0 indicates there was insufficient data to calculate the health score.
             example: 0.98
+    Test_Results_API_TestResultAgent:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique agent ID
+          example: '281474976710706'
+          readOnly: true
+        agentName:
+          type: string
+          description: Agent name
+          example: thousandeyes-stg-va-254
+          readOnly: true
+        countryId:
+          type: string
+          description: 2-digit ISO country code
+          example: US
+          readOnly: true
+        location:
+          type: string
+          description: Location of the agent.
+          example: San Francisco Bay Area
+          readOnly: true
     Test_Results_API_DnsServerMeasurement:
       type: object
       description: DNS resolution details collected while locating the HTTP test target. Present when the agent captured DNS server measurement data for the round. The order of `unusedDnsResponses` matches the order returned by the DNS resolver.
@@ -820,12 +362,210 @@ components:
           description: IP address resolved for the target, from DNS or the hosts file.
           example: 142.250.191.132
           readOnly: true
-    Test_Results_API_TestSelfLink:
+    Test_Results_API_DnsServerResponse:
+      type: object
+      description: A DNS response received while resolving the HTTP test target.
+      readOnly: true
+      properties:
+        id:
+          type: integer
+          description: DNS message ID.
+          example: 41837
+          readOnly: true
+        qr:
+          $ref: '#/components/schemas/Test_Results_API_DnsQr'
+        opcode:
+          $ref: '#/components/schemas/Test_Results_API_DnsOpcode'
+        authoritativeAnswer:
+          type: boolean
+          description: DNS header AA flag.
+          example: false
+          readOnly: true
+        truncation:
+          type: boolean
+          description: DNS header TC flag.
+          example: false
+          readOnly: true
+        recursionDesired:
+          type: boolean
+          description: DNS header RD flag.
+          example: true
+          readOnly: true
+        recursionAvailable:
+          type: boolean
+          description: DNS header RA flag.
+          example: true
+          readOnly: true
+        zero:
+          type: boolean
+          description: DNS header Z flag. Reserved and expected to be false.
+          example: false
+          readOnly: true
+        authenticData:
+          type: boolean
+          description: DNS header AD flag.
+          example: false
+          readOnly: true
+        checkingDisabled:
+          type: boolean
+          description: DNS header CD flag.
+          example: false
+          readOnly: true
+        responseCode:
+          $ref: '#/components/schemas/Test_Results_API_DnsResponseCode'
+        question:
+          type: array
+          description: Records in the DNS question section.
+          items:
+            $ref: '#/components/schemas/Test_Results_API_DnsResourceRecord'
+        answer:
+          type: array
+          description: Records in the DNS answer section.
+          items:
+            $ref: '#/components/schemas/Test_Results_API_DnsResourceRecord'
+        dnsResolver:
+          type: string
+          description: DNS resolver that returned this response.
+          example: 8.8.8.8
+          readOnly: true
+        timing:
+          $ref: '#/components/schemas/Test_Results_API_DnsTiming'
+        protocol:
+          $ref: '#/components/schemas/Test_Results_API_DnsMeasurementProtocol'
+    Test_Results_API_SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Test_Results_API_TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Test_Results_API_Enabled'
+        createdBy:
+          $ref: '#/components/schemas/Test_Results_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Test_Results_API_TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Test_Results_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_TestLinks'
+    Test_Results_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Test_Results_API_DnsTiming:
+      type: object
+      description: Timing metrics for a DNS lookup.
+      readOnly: true
+      properties:
+        startTimeUs:
+          type: string
+          description: Unix epoch timestamp in microseconds when the DNS query started.
+          example: '1769706600000000'
+          readOnly: true
+        totalTimeUs:
+          type: integer
+          description: Total DNS lookup time in microseconds.
+          example: 19304
+          readOnly: true
+    Test_Results_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Test_Results_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Test_Results_API_TestResults'
+      readOnly: true
+    Test_Results_API_ValidationError:
+      type: object
       allOf:
-      - $ref: '#/components/schemas/Test_Results_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+      - $ref: '#/components/schemas/Test_Results_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Test_Results_API_ValidationErrorItem'
+    Test_Results_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Test_Results_API_EpochTimeWindow:
+      type: object
+      properties:
+        startTime:
+          $ref: '#/components/schemas/Test_Results_API_StartTime'
+        endTime:
+          $ref: '#/components/schemas/Test_Results_API_EndTime'
     Test_Results_API_Error:
       type: object
       properties:
@@ -844,6 +584,11 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
+    Test_Results_API_StartTime:
+      type: integer
+      description: Epoch time (seconds) indicating the start time of the round
+      example: 1384309800
+      readOnly: true
     Test_Results_API_DnsQr:
       type: string
       description: DNS header QR flag.
@@ -852,23 +597,34 @@ components:
       - response
       example: response
       readOnly: true
-    Test_Results_API_EndDate:
+    Test_Results_API_TestCreatedBy:
       type: string
-      format: date-time
-      example: '2022-07-18T22:00:54Z'
-      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
+      description: User that created the test.
+      example: user@user.com
       readOnly: true
-    Test_Results_API_TestResultAppLinks:
-      allOf:
-      - $ref: '#/components/schemas/Test_Results_API_AppLinks'
-      - example:
-          appLink:
-            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
-    Test_Results_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
+    Test_Results_API_DnsResourceRecordClass:
+      type: string
+      description: DNS resource record class (IANA).
+      enum:
+      - unknown
+      - in
+      example: in
+      readOnly: true
+    Test_Results_API_AppLinks:
+      type: object
+      description: A links object containing the ThousandEyes App link
+      readOnly: true
+      properties:
+        appLink:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Test_Results_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
     Test_Results_API_DnsResourceRecord:
       type: object
       description: A DNS resource record from the question or answer section.
@@ -893,64 +649,100 @@ components:
           description: Record data (RDATA).
           example: 142.250.191.132
           readOnly: true
-    Test_Results_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Test_Results_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Test_Results_API_TestResultAgent:
+    Test_Results_API_PaginationLinks:
       type: object
+      description: A links object containing pagination related link(s).
       properties:
-        agentId:
-          type: string
-          description: Unique agent ID
-          example: '281474976710706'
-          readOnly: true
-        agentName:
-          type: string
-          description: Agent name
-          example: thousandeyes-stg-va-254
-          readOnly: true
-        countryId:
-          type: string
-          description: 2-digit ISO country code
-          example: US
-          readOnly: true
-        location:
-          type: string
-          description: Location of the agent.
-          example: San Francisco Bay Area
-          readOnly: true
-    Test_Results_API_DnsMeasurementProtocol:
+        previous:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        next:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+        self:
+          $ref: '#/components/schemas/Test_Results_API_Link'
+    Test_Results_API_Expand:
       type: string
-      description: Actual wire transport used to perform the DNS lookup. `tcp` indicates a TCP retry (for example, after a truncated UDP response).
       enum:
-      - unspecified
-      - udp
-      - tcp
-      - dot
-      - doh
-      example: udp
+      - header
+      - certificate
+      example: header
+    Test_Results_API_EndDate:
+      type: string
+      format: date-time
+      example: '2022-07-18T22:00:54Z'
+      description: (Optional) When passing `window` or `endDate` parameter,  the client will also receive the `endDate` field indicating the UTC end date of the data's time range being retrieved  (ISO date-time format).
       readOnly: true
-    Test_Results_API_TestResult:
+    Test_Results_API_SslCert:
       type: object
       properties:
-        date:
-          type: string
-          description: Data point date UTC (ISO date-time format).
-          format: date-time
-          example: '2022-07-17T22:00:54Z'
-          readOnly: true
-        roundId:
+        daysUntilExpiry:
           type: integer
-          description: Epoch time (seconds) indicating the start time of the round
-          example: 1384309800
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/Test_Results_API_TestResultAppLinks'
+          description: Days until certificate expires, rounded down. 0 is shown if there are less than 24 hours remaining. Calculated when the test was executed.
+          example: 0
+        isFetchDateInValidCertDateRange:
+          type: boolean
+          description: True when certificate fetch date is within the valid certificate date range, false otherwise
+          example: true
+        hasValidSigningCert:
+          type: boolean
+          description: This field is implicitly true; it is output only when false. false indicates this certificate was missing a valid signing certificate in the chain.
+          example: false
+        issuerName:
+          type: string
+          description: Certificate issuer
+          example: DigiCert SHA2 Extended Validation Server CA
+        validBefore:
+          type: string
+          format: date-time
+          description: Certificate is not valid after this date
+          example: '2020-05-12T12:00:00Z'
+        validAfter:
+          type: string
+          format: date-time
+          description: Certificate is not valid before this date
+          example: '2018-03-27T00:00:00Z'
+        subjectAlternativeNames:
+          type: array
+          description: Alternative name(s) of the certificate subject, extracted from the Subject Alternative Name (SAN) X.509 certificate extension, for example example.com, www2.example.com
+          items:
+            type: string
+          example:
+          - www.thousandeyes.com
+          - thousandeyes.com
+        subjectName:
+          type: string
+          description: certificate’s subject name - a value of the common name (CN) RDN from the certificate’s Subject attribute, for example www.example.com
+          example: www.thousandeyes.com
+    Test_Results_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
     Test_Results_API_HttpTestResultHeaders:
       type: object
       description: Expandable object containing both request and response headers
@@ -1013,6 +805,214 @@ components:
             Age: 132
 
             '
+    Test_Results_API_DnsResponseCode:
+      type: string
+      description: DNS response code (RCODE), including extended RCODE values (RFC 1035 and RFC 6891).
+      enum:
+      - noerror
+      - formerr
+      - servfail
+      - nxdomain
+      - notimp
+      - refused
+      - yxdomain
+      - yxrrset
+      - nxrrset
+      - notauth
+      - notzone
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      - badvers
+      - badkey
+      - badtime
+      - badmode
+      - badname
+      - badalg
+      - badtrunc
+      - badcookie
+      example: noerror
+      readOnly: true
+    Test_Results_API_StartDate:
+      type: string
+      format: date-time
+      example: '2022-07-17T22:00:54Z'
+      description: (Optional) When passing `window` or `startDate` parameter,  the client will also receive the `startDate` field indicating the UTC start date of the data's time range being retrieved  (ISO date-time format).
+      readOnly: true
+    Test_Results_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Test_Results_API_HttpTestResults:
+      type: object
+      properties:
+        results:
+          x-paginated-items: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Test_Results_API_HttpTestResult'
+        test:
+          $ref: '#/components/schemas/Test_Results_API_SimpleTest'
+        startDate:
+          $ref: '#/components/schemas/Test_Results_API_StartDate'
+        endDate:
+          $ref: '#/components/schemas/Test_Results_API_EndDate'
+        _links:
+          $ref: '#/components/schemas/Test_Results_API_PaginationLinks'
+    Test_Results_API_TestResultErrorDetails:
+      type: string
+      description: Error details, if an error were encountered
+      example: Connection error
+      readOnly: true
+    Test_Results_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Test_Results_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Test_Results_API_DnsResourceRecordType:
+      type: string
+      description: DNS resource record type (IANA). Values match `DnsRecordType` on DNS Server test configuration where applicable.
+      enum:
+      - unknown
+      - a
+      - cname
+      - aaaa
+      example: a
+      readOnly: true
+    Test_Results_API_DnsMeasurementProtocol:
+      type: string
+      description: Actual wire transport used to perform the DNS lookup. `tcp` indicates a TCP retry (for example, after a truncated UDP response).
+      enum:
+      - unspecified
+      - udp
+      - tcp
+      - dot
+      - doh
+      example: udp
+      readOnly: true
+    Test_Results_API_TestResultAppLinks:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_AppLinks'
+      - example:
+          appLink:
+            href: https://app.thousandeyes.com/view/tests?__a=105&testId=195&roundId=1692916680&agentId=125
+    Test_Results_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Test_Results_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Test_Results_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Test_Results_API_DnsOpcode:
+      type: string
+      description: DNS header OPCODE field (RFC 1035).
+      enum:
+      - query
+      - iquery
+      - status
+      - unknown-3
+      - unknown-4
+      - unknown-5
+      - unknown-6
+      - unknown-7
+      - unknown-8
+      - unknown-9
+      - unknown-10
+      - unknown-11
+      - unknown-12
+      - unknown-13
+      - unknown-14
+      - unknown-15
+      example: query
+      readOnly: true
+  parameters:
+    Test_Results_API_Window:
+      name: window
+      in: query
+      description: 'A dynamic time interval up to the current time of the request. Specify the interval as a number followed by an optional type: `s` for seconds (default if no type is specified), `m` for minutes, `h` for hours, `d` for days, and `w` for weeks.
+
+        For a precise date range, use `startDate` and `endDate`.'
+      schema:
+        type: string
+        pattern: ^\d+(?:[smhdw]{1})?$
+        example: 12h
+    Test_Results_API_HttpServerExpand:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: This parameter lets you decide if you want to see more details about test results. By default, no extra information is shown unless you use the query parameter. For instance, if you want more info about the "header," add ?expand=header to the query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Test_Results_API_Expand'
+        example:
+        - certificate
+    Test_Results_API_StartDateParameter:
+      name: startDate
+      in: query
+      description: Use with the `endDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-17T22:00:54Z'
+    Test_Results_API_EndDateParameter:
+      name: endDate
+      in: query
+      description: Defaults to current time the request is made. Use with the `startDate` parameter. Include the complete time (hours, minutes, and seconds) in UTC time zone, following the ISO 8601 date-time format. See the example for reference. Please note that this parameter can't be used with `window`.
+      schema:
+        type: string
+        format: date-time
+        example: '2022-07-18T22:00:54Z'
+    Test_Results_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Test_Results_API_TestIdPath:
+      name: testId
+      description: Test ID
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '202701'
+    Test_Results_API_PaginationCursor:
+      name: cursor
+      in: query
+      example: null
+      description: (Optional) Opaque cursor used for pagination. Clients should use `next` value from `_links` instead of this parameter.
+      schema:
+        type: string
+        example: null
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

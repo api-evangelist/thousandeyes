@@ -211,42 +211,12 @@ paths:
       - Tests_API_BearerAuth: []
 components:
   schemas:
-    Tests_API_UnexpandedTest:
-      type: object
-      properties:
-        interval:
-          $ref: '#/components/schemas/Tests_API_TestInterval'
-        alertsEnabled:
-          type: boolean
-          description: Indicates if alerts are enabled.
-          example: true
-        enabled:
-          $ref: '#/components/schemas/Tests_API_Enabled'
-    Tests_API_AlertDirection:
-      type: string
-      enum:
-      - to-target
-      - from-target
-      - bidirectional
-      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
-      example: to-target
     Tests_API_TestLabels:
       type: array
       description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
       items:
         $ref: '#/components/schemas/Tests_API_TestLabel'
-    Tests_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Tests_API_TestSharedAccounts:
-      type: array
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_SharedWithAccount'
     Tests_API_AlertType:
       type: string
       description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
@@ -279,268 +249,10 @@ components:
       - api
       - web-transaction
       - unknown
-    Tests_API_AgentResponse:
-      allOf:
-      - required:
-        - agentType
-        properties:
-          agentType:
-            $ref: '#/components/schemas/Tests_API_CloudEnterpriseAgentType'
-      - $ref: '#/components/schemas/Tests_API_SimpleAgent'
-    Tests_API_TestLabel:
-      type: object
-      properties:
-        labelId:
-          type: string
-          description: Label ID.
-        name:
-          type: string
-          description: Name of the label.
-        isBuiltin:
-          type: boolean
-          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
-      example:
-        labelId: '961'
-        name: Artem label
-        isBuiltin: false
-    Tests_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Tests_API_DnsSecProperties:
-      type: object
-      required:
-      - domain
-      properties:
-        domain:
-          $ref: '#/components/schemas/Tests_API_TestDomain'
-        dnsQueryClass:
-          $ref: '#/components/schemas/Tests_API_DnsQueryClass'
-        randomizedStartTime:
-          $ref: '#/components/schemas/Tests_API_TestRandomizedStartTime'
-        type:
-          type: string
-          example: dnssec
-          readOnly: true
-    Tests_API_RuleId:
-      type: string
-      description: Unique ID of the rule.
-      example: '127094'
-      readOnly: true
-    Tests_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    Tests_API_TestTag:
-      type: object
-      readOnly: true
-      properties:
-        id:
-          type: string
-          description: Unique tag ID.
-          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
-          format: uuid
-        key:
-          type: string
-          description: Tag key. For example, "Location" or "Department".
-          example: Location
-        value:
-          type: string
-          description: Tag value. For example, "San Francisco" or "Engineering".
-          example: San Francisco
-    Tests_API_AlertRoundsViolationMode:
-      type: string
-      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
-      enum:
-      - exact
-      - any
-      - auto
-      example: exact
-      readOnly: true
-    Tests_API_BaseRequest:
-      type: object
-      properties:
-        labels:
-          type: array
-          description: Contains list of test label IDs (get `labelId` from `/labels` endpoint)
-          writeOnly: true
-          readOnly: false
-          items:
-            type: string
-          example:
-          - '9842'
-          - '1283'
-        tags:
-          type: array
-          description: Contains list of test tag IDs (get `id` from `/tags` endpoint).
-          writeOnly: true
-          readOnly: false
-          items:
-            type: string
-          example:
-          - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-          - ec8e64fb-6f11-485c-a5d5-488098ad626a
-        sharedWithAccounts:
-          type: array
-          description: Contains list of account group IDs. Test is shared with the listed account groups (get `aid` from `/account-groups` endpoint)
-          writeOnly: true
-          readOnly: false
-          items:
-            type: string
-          example:
-          - '1234'
-          - '12345'
-        alertRules:
-          type: array
-          items:
-            type: string
-          description: List of alert rules IDs to apply to the test (get `ruleId` from `/alerts/rules` endpoint. If `alertsEnabled` is set to `true` and `alertRules` is not included on test creation or update, applicable user default alert rules will be used)
-          writeOnly: true
-          readOnly: false
-          example:
-          - '344753'
-          - '212697'
-    Tests_API_UnexpandedInstantTest:
-      type: object
-      properties:
-        createdBy:
-          $ref: '#/components/schemas/Tests_API_TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/Tests_API_TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
-          readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/Tests_API_TestType'
-        _links:
-          $ref: '#/components/schemas/Tests_API_TestLinks'
-    Tests_API_AgentBase:
-      type: object
-      properties:
-        ipAddresses:
-          type: array
-          description: Array of private IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 99.139.65.220
-          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
-        publicIpAddresses:
-          type: array
-          description: Array of public IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 192.168.1.78
-          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
-        network:
-          type: string
-          description: Network (including ASN) of agent’s public IP.
-          example: AT&T Services, Inc. (AS 7018)
-          readOnly: true
     Tests_API_DnsSecTestRequest:
       allOf:
       - $ref: '#/components/schemas/Tests_API_UnexpandedDnsSecTest'
       - $ref: '#/components/schemas/Tests_API_TestRequest'
-    Tests_API_TestAgentRequest:
-      type: object
-      required:
-      - agentId
-      properties:
-        agentId:
-          type: string
-          description: The agent ID. Get `agentId` from `/agents` endpoint.
-        sourceIpAddress:
-          type: string
-          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses` from the `/agents` endpoint.
-      example:
-        agentId: '125'
-        sourceIpAddress: 1.1.1.1
-    Tests_API_TestTags:
-      type: array
-      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_TestTag'
-    Tests_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Tests_API_UnexpandedDnsSecTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
-      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
-      - $ref: '#/components/schemas/Tests_API_DnsSecProperties'
-      - type: object
-        required:
-        - interval
-    Tests_API_Severity:
-      type: string
-      description: The severity of the alert.
-      enum:
-      - info
-      - major
-      - minor
-      - critical
-      - unknown
-      example: major
-    Tests_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
     Tests_API_SensitivityLevel:
       type: string
       description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
@@ -550,49 +262,17 @@ components:
       - low
       example: medium
       readOnly: true
-    Tests_API_DnsSecTests:
-      type: object
-      properties:
-        tests:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tests_API_UnexpandedDnsSecTest'
-        _links:
-          $ref: '#/components/schemas/Tests_API_SelfLinks'
-    Tests_API_SharedWithAccount:
-      type: object
-      properties:
-        aid:
-          type: string
-          description: Account group ID.
-          example: '1234'
-        name:
-          type: string
-          description: Account group name.
-          example: Account name
-    Tests_API_DnsQueryClass:
-      type: string
-      enum:
-      - in
-      - ch
-      description: Domain class used by this test. 'in' stands for Internet, while 'ch' stands for Chaos.
-      example: in
-    Tests_API_DnsSecTestResponse:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_DnsSecTest'
-      - type: object
-        properties:
-          agents:
-            $ref: '#/components/schemas/Tests_API_TestAgentsResponse'
-    Tests_API_TestRequest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_BaseRequest'
-      - type: object
-        properties:
-          agents:
-            $ref: '#/components/schemas/Tests_API_TestAgentsRequest'
-      required:
-      - agents
+    Tests_API_TestTags:
+      type: array
+      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Tests_API_TestTag'
+    Tests_API_TestSharedAccounts:
+      type: array
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Tests_API_SharedWithAccount'
     Tests_API_SimpleAgent:
       type: object
       allOf:
@@ -642,64 +322,54 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
-    Tests_API_DnsSecInstantTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_InstantTest'
-      - $ref: '#/components/schemas/Tests_API_DnsSecProperties'
-    Tests_API_ExpandTestOptions:
-      type: string
-      enum:
-      - agent
-      - alert-rule
-      - monitor
-      - label
-      - tag
-      - shared-with-account
-      example: agent
-    Tests_API_ValidationError:
+    Tests_API_UnauthorizedError:
       type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Tests_API_DnsSecTests:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tests_API_UnexpandedDnsSecTest'
+        _links:
+          $ref: '#/components/schemas/Tests_API_SelfLinks'
+    Tests_API_UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Tests_API_TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Tests_API_Enabled'
+    Tests_API_InstantTest:
       allOf:
-      - $ref: '#/components/schemas/Tests_API_Error'
+      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
       - type: object
         properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
-    Tests_API_NetworkProviderType:
-      type: string
-      description: Classification of the agent's network provider.
-      enum:
-      - unknown
-      - isp
-      - cdn
-      - stub
-      - cloud-provider
-      - carrier
-      example: isp
-      readOnly: true
-    Tests_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Tests_API_Link'
-    Tests_API_DnsSecTest:
+          labels:
+            $ref: '#/components/schemas/Tests_API_TestLabels'
+          tags:
+            $ref: '#/components/schemas/Tests_API_TestTags'
+          sharedWithAccounts:
+            $ref: '#/components/schemas/Tests_API_TestSharedAccounts'
+    Tests_API_AgentResponse:
       allOf:
-      - $ref: '#/components/schemas/Tests_API_BaseTest'
-      - $ref: '#/components/schemas/Tests_API_DnsSecInstantTest'
-      - type: object
-        required:
-        - interval
-    Tests_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/Tests_API_CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/Tests_API_SimpleAgent'
     Tests_API_AlertRule:
       type: object
       properties:
@@ -750,33 +420,20 @@ components:
           $ref: '#/components/schemas/Tests_API_SensitivityLevel'
         severity:
           $ref: '#/components/schemas/Tests_API_Severity'
-    Tests_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Tests_API_TestRandomizedStartTime:
-      type: boolean
-      description: Indicates whether agents should randomize the start time in each test round.
-      default: false
-      example: false
-    Tests_API_TestDomain:
+    Tests_API_TestCreatedBy:
       type: string
-      description: The target record for the test, with the record type suffixed. If no record type is specified, the test defaults to an ANY record.
-      example: www.thousandeyes.com
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Tests_API_TestRequest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_BaseRequest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/Tests_API_TestAgentsRequest'
+      required:
+      - agents
     Tests_API_TestLinks:
       type: object
       description: A list of links that can be accessed to get more information
@@ -786,49 +443,92 @@ components:
         testResults:
           $ref: '#/components/schemas/Tests_API_TestResults'
       readOnly: true
-    Tests_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Tests_API_CloudEnterpriseAgentType:
+    Tests_API_DnsSecTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_DnsSecTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/Tests_API_TestAgentsResponse'
+    Tests_API_TestDomain:
       type: string
-      description: Type of the agent.
+      description: The target record for the test, with the record type suffixed. If no record type is specified, the test defaults to an ANY record.
+      example: www.thousandeyes.com
+    Tests_API_DnsSecProperties:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          $ref: '#/components/schemas/Tests_API_TestDomain'
+        dnsQueryClass:
+          $ref: '#/components/schemas/Tests_API_DnsQueryClass'
+        randomizedStartTime:
+          $ref: '#/components/schemas/Tests_API_TestRandomizedStartTime'
+        type:
+          type: string
+          example: dnssec
+          readOnly: true
+    Tests_API_NetworkProviderType:
+      type: string
+      description: Classification of the agent's network provider.
       enum:
-      - cloud
-      - enterprise-cluster
-      - enterprise
-      example: enterprise-cluster
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
       readOnly: true
-    Tests_API_InstantTest:
+    Tests_API_DnsSecInstantTest:
       allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
-      - type: object
-        properties:
-          labels:
-            $ref: '#/components/schemas/Tests_API_TestLabels'
-          tags:
-            $ref: '#/components/schemas/Tests_API_TestTags'
-          sharedWithAccounts:
-            $ref: '#/components/schemas/Tests_API_TestSharedAccounts'
-    Tests_API_BaseTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
-      - type: object
-        properties:
-          alertRules:
-            type: array
-            description: Contains list of enabled alert rule objects.
-            items:
-              $ref: '#/components/schemas/Tests_API_AlertRule'
+      - $ref: '#/components/schemas/Tests_API_InstantTest'
+      - $ref: '#/components/schemas/Tests_API_DnsSecProperties'
+    Tests_API_AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Tests_API_TestAgentsRequest:
+      type: array
+      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
+      items:
+        $ref: '#/components/schemas/Tests_API_TestAgentRequest'
+    Tests_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Tests_API_AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
     Tests_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -860,24 +560,270 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
-    Tests_API_NetworkProviderInfo:
+    Tests_API_SharedWithAccount:
       type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
       properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
-          readOnly: true
+        aid:
+          type: string
+          description: Account group ID.
+          example: '1234'
         name:
           type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
-          readOnly: true
+          description: Account group name.
+          example: Account name
+    Tests_API_DnsQueryClass:
+      type: string
+      enum:
+      - in
+      - ch
+      description: Domain class used by this test. 'in' stands for Internet, while 'ch' stands for Chaos.
+      example: in
+    Tests_API_BaseTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
+      - type: object
+        properties:
+          alertRules:
+            type: array
+            description: Contains list of enabled alert rule objects.
+            items:
+              $ref: '#/components/schemas/Tests_API_AlertRule'
+    Tests_API_Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    Tests_API_TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    Tests_API_TestRandomizedStartTime:
+      type: boolean
+      description: Indicates whether agents should randomize the start time in each test round.
+      default: false
+      example: false
+    Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Tests_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Tests_API_Link'
+    Tests_API_AlertRoundsViolationMode:
+      type: string
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
+      enum:
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    Tests_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Tests_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Tests_API_UnexpandedDnsSecTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
+      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
+      - $ref: '#/components/schemas/Tests_API_DnsSecProperties'
+      - type: object
+        required:
+        - interval
+    Tests_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Tests_API_ExpandTestOptions:
+      type: string
+      enum:
+      - agent
+      - alert-rule
+      - monitor
+      - label
+      - tag
+      - shared-with-account
+      example: agent
+    Tests_API_TestTag:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          description: Unique tag ID.
+          example: 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+          format: uuid
+        key:
+          type: string
+          description: Tag key. For example, "Location" or "Department".
+          example: Location
+        value:
+          type: string
+          description: Tag value. For example, "San Francisco" or "Engineering".
+          example: San Francisco
+    Tests_API_RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    Tests_API_TestAgentRequest:
+      type: object
+      required:
+      - agentId
+      properties:
+        agentId:
+          type: string
+          description: The agent ID. Get `agentId` from `/agents` endpoint.
+        sourceIpAddress:
+          type: string
+          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses` from the `/agents` endpoint.
+      example:
+        agentId: '125'
+        sourceIpAddress: 1.1.1.1
+    Tests_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
+    Tests_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Tests_API_DnsSecTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_BaseTest'
+      - $ref: '#/components/schemas/Tests_API_DnsSecInstantTest'
+      - type: object
+        required:
+        - interval
+    Tests_API_CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
+    Tests_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Tests_API_BaseRequest:
+      type: object
+      properties:
+        labels:
+          type: array
+          description: Contains list of test label IDs (get `labelId` from `/labels` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '9842'
+          - '1283'
+        tags:
+          type: array
+          description: Contains list of test tag IDs (get `id` from `/tags` endpoint).
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+          - ec8e64fb-6f11-485c-a5d5-488098ad626a
+        sharedWithAccounts:
+          type: array
+          description: Contains list of account group IDs. Test is shared with the listed account groups (get `aid` from `/account-groups` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '1234'
+          - '12345'
+        alertRules:
+          type: array
+          items:
+            type: string
+          description: List of alert rules IDs to apply to the test (get `ruleId` from `/alerts/rules` endpoint. If `alertsEnabled` is set to `true` and `alertRules` is not included on test creation or update, applicable user default alert rules will be used)
+          writeOnly: true
+          readOnly: false
+          example:
+          - '344753'
+          - '212697'
+    Tests_API_Error:
+      type: object
+      properties:
         type:
-          $ref: '#/components/schemas/Tests_API_NetworkProviderType'
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
     Tests_API_TestType:
       type: string
       enum:
@@ -897,11 +843,73 @@ components:
       description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
       example: agent-to-server
-    Tests_API_TestAgentsRequest:
-      type: array
-      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
-      items:
-        $ref: '#/components/schemas/Tests_API_TestAgentRequest'
+    Tests_API_UnexpandedInstantTest:
+      type: object
+      properties:
+        createdBy:
+          $ref: '#/components/schemas/Tests_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Tests_API_TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Tests_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Tests_API_TestLinks'
+    Tests_API_NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/Tests_API_NetworkProviderType'
     Tests_API_Coordinates:
       type: object
       description: Geographic coordinates for agent location.
@@ -923,21 +931,15 @@ components:
       description: Contains list of agents.
       items:
         $ref: '#/components/schemas/Tests_API_AgentResponse'
-    Tests_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Tests_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
   responses:
-    Tests_API_429:
-      description: Exhausted rate limit for the organization
+    Tests_API_204:
+      description: No content
+    Tests_API_401:
+      description: Unauthorized
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Tests_API_Error'
+            $ref: '#/components/schemas/Tests_API_UnauthorizedError'
     Tests_API_400:
       description: Bad Request
       content:
@@ -957,34 +959,24 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Tests_API_204:
-      description: No content
-    Tests_API_403:
-      description: Insufficient permissions to query endpoint
+    Tests_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_GeneralError:
-      description: An error occurred
     Tests_API_502:
       description: Bad Gateway
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_500:
-      description: Internal server error
+    Tests_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
     Tests_API_404:
       description: Not found
       content:
@@ -997,19 +989,20 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Tests_API_401:
-      description: Unauthorized
+    Tests_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Tests_API_UnauthorizedError'
-  headers:
-    Tests_API_Location:
-      schema:
-        type: string
-        format: uri
-        example: https://api.thousandeyes.com/v7/link/to/resource/id
-      description: The absolute path to created resource.
+            $ref: '#/components/schemas/Tests_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Tests_API_GeneralError:
+      description: An error occurred
   parameters:
     Tests_API_ExpandTest:
       name: expand
@@ -1025,14 +1018,6 @@ components:
         example:
         - agent
         - monitor
-    Tests_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
     Tests_API_VersionId:
       name: versionId
       in: query
@@ -1049,6 +1034,21 @@ components:
       schema:
         type: string
         example: '202701'
+    Tests_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+  headers:
+    Tests_API_Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

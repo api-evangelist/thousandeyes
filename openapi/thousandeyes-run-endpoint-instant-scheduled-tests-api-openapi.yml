@@ -66,6 +66,8 @@ paths:
       - Endpoint_Instant_Scheduled_Tests_API_BearerAuth: []
 components:
   responses:
+    Endpoint_Instant_Scheduled_Tests_API_GeneralError:
+      description: An error occurred
     Endpoint_Instant_Scheduled_Tests_API_500:
       description: Internal server error
       content:
@@ -78,12 +80,42 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    Endpoint_Instant_Scheduled_Tests_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+    Endpoint_Instant_Scheduled_Tests_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
     Endpoint_Instant_Scheduled_Tests_API_502:
       description: Bad Gateway
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+    Endpoint_Instant_Scheduled_Tests_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
+    Endpoint_Instant_Scheduled_Tests_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError'
     Endpoint_Instant_Scheduled_Tests_API_400:
       description: Bad Request
       content:
@@ -103,57 +135,16 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Endpoint_Instant_Scheduled_Tests_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-    Endpoint_Instant_Scheduled_Tests_API_GeneralError:
-      description: An error occurred
-    Endpoint_Instant_Scheduled_Tests_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-    Endpoint_Instant_Scheduled_Tests_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError'
-    Endpoint_Instant_Scheduled_Tests_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
   schemas:
-    Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem:
+    Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError:
       type: object
       properties:
-        code:
+        error:
           type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
+          example: invalid_token
+        error_description:
           type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Endpoint_Instant_Scheduled_Tests_API_EndpointRunScheduledInstantTestResult:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Successfully reran the instant scheduled test with testId=765231567
+          example: Invalid access token
     Endpoint_Instant_Scheduled_Tests_API_Error:
       type: object
       properties:
@@ -172,15 +163,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Endpoint_Instant_Scheduled_Tests_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
     Endpoint_Instant_Scheduled_Tests_API_ValidationError:
       type: object
       allOf:
@@ -194,6 +176,24 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem'
+    Endpoint_Instant_Scheduled_Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Endpoint_Instant_Scheduled_Tests_API_EndpointRunScheduledInstantTestResult:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully reran the instant scheduled test with testId=765231567
   parameters:
     Endpoint_Instant_Scheduled_Tests_API_AccountGroupId:
       name: aid

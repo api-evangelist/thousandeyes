@@ -187,69 +187,11 @@ paths:
       - Alerts_API_BearerAuth: []
 components:
   schemas:
-    Alerts_API_RuleDetail:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_BaseRule'
-      - type: object
-        properties:
-          notifications:
-            $ref: '#/components/schemas/Alerts_API_AlertNotification'
-          tests:
-            type: array
-            items:
-              $ref: '#/components/schemas/Alerts_API_AlertSimpleTest'
-            readOnly: true
-          testIds:
-            type: array
-            description: Array of test IDs to link to alert rule (get `testId` from `/tests` endpoint).
-            readOnly: true
-            items:
-              type: string
-            example:
-            - '281474976710706'
-            - '271659'
-          _links:
-            $ref: '#/components/schemas/Alerts_API_SelfLinks'
-    Alerts_API_TestCreatedDate:
+    Alerts_API_TestCreatedBy:
       type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
+      description: User that created the test.
+      example: user@user.com
       readOnly: true
-    Alerts_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Alerts_API_Link'
-    Alerts_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Alerts_API_ValidationErrorItem'
-    Alerts_API_AlertGroupType:
-      type: string
-      description: Category of alert type based on the application or network layer and source of the test.
-      enum:
-      - bgp
-      - browser-session
-      - cloud-enterprise
-      - endpoint
-      example: endpoint
-    Alerts_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
     Alerts_API_ValidationErrorItem:
       type: object
       properties:
@@ -262,12 +204,67 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-    Alerts_API_CustomWebhookIntegrationType:
+    Alerts_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Alerts_API_AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
+    Alerts_API_ThirdPartyIntegrationType:
       type: string
       description: Integration type.
-      example: custom-webhook
+      example: slack
       enum:
-      - custom-webhook
+      - pager-duty
+      - slack
+      - app-dynamics
+      - service-now
+    Alerts_API_NotificationEmail:
+      type: object
+      description: Email notifications.
+      properties:
+        recipients:
+          type: array
+          description: An array containing the email addresses to receive notifications.
+          items:
+            type: string
+          example:
+          - noreply@thousandeyes.com
+        message:
+          type: string
+          description: Custom text included in alert email notifications sent to recipients.
+          example: Notification message
+    Alerts_API_Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    Alerts_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
     Alerts_API_RuleDetailUpdate:
       allOf:
       - $ref: '#/components/schemas/Alerts_API_BaseRule'
@@ -277,17 +274,53 @@ components:
             $ref: '#/components/schemas/Alerts_API_AlertNotification'
           testIds:
             $ref: '#/components/schemas/Alerts_API_RuleTestIds'
-    Alerts_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
+    Alerts_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Alerts_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Alerts_API_TestResults'
       readOnly: true
-    Alerts_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Alerts_API_NotificationWebhook:
+      type: object
+      description: Webhook notification.
+      properties:
+        integrationId:
+          type: string
+          description: Integration ID.
+          example: wb-201
+        integrationType:
+          $ref: '#/components/schemas/Alerts_API_WebhookIntegrationType'
+        integrationName:
+          description: Name of the integration, configured by the user.
+          example: My webhook
+          type: string
+        target:
+          description: Webhook target URL.
+          example: https://example.com/test/webhooks/notifications
+          type: string
+    Alerts_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Alerts_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Alerts_API_WebhookIntegrationType:
+      type: string
+      description: Integration type.
+      example: webhook
+      enum:
+      - webhook
+    Alerts_API_CustomWebhookIntegrationType:
+      type: string
+      description: Integration type.
+      example: custom-webhook
+      enum:
+      - custom-webhook
     Alerts_API_RuleTestIds:
       type: array
       description: Array of test IDs to link to alert rule (get `testId` from `/tests` endpoint).
@@ -296,24 +329,33 @@ components:
       example:
       - '281474976710706'
       - '271659'
-    Alerts_API_Rules:
+    Alerts_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Alerts_API_AlertNotification:
       type: object
+      description: Alert notification object. See Alert notification integrations.
       properties:
-        alertRules:
+        email:
+          $ref: '#/components/schemas/Alerts_API_NotificationEmail'
+        thirdParty:
           type: array
+          description: Third party notifications.
           items:
-            $ref: '#/components/schemas/Alerts_API_BaseRule'
-        _links:
-          $ref: '#/components/schemas/Alerts_API_SelfLinks'
-    Alerts_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
+            $ref: '#/components/schemas/Alerts_API_NotificationThirdParty'
+        webhook:
+          type: array
+          description: Webhook notifications.
+          items:
+            $ref: '#/components/schemas/Alerts_API_NotificationWebhook'
+        customWebhook:
+          type: array
+          description: Custom webhook notifications.
+          items:
+            $ref: '#/components/schemas/Alerts_API_NotificationCustomWebhook'
     Alerts_API_Error:
       type: object
       properties:
@@ -332,30 +374,139 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Alerts_API_NotificationEmail:
-      type: object
-      description: Email notifications.
-      properties:
-        recipients:
-          type: array
-          description: An array containing the email addresses to receive notifications.
-          items:
-            type: string
-          example:
-          - noreply@thousandeyes.com
-        message:
-          type: string
-          description: Custom text included in alert email notifications sent to recipients.
-          example: Notification message
-    Alerts_API_ThirdPartyIntegrationType:
+    Alerts_API_SensitivityLevel:
       type: string
-      description: Integration type.
-      example: slack
+      description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
       enum:
-      - pager-duty
-      - slack
-      - app-dynamics
-      - service-now
+      - high
+      - medium
+      - low
+      example: medium
+      readOnly: true
+    Alerts_API_NotificationCustomWebhook:
+      type: object
+      description: Custom webhook notification.
+      properties:
+        integrationId:
+          type: string
+          format: uuid
+          description: Integration ID.
+          example: 6e069ae9-8537-4120-b988-61bf8e0d8b87
+        integrationType:
+          $ref: '#/components/schemas/Alerts_API_CustomWebhookIntegrationType'
+        integrationName:
+          type: string
+          description: User-configured name of the integration.
+          example: My webhook
+        target:
+          type: string
+          description: Webhook target URL.
+          example: https://example.com/test/webhooks/notifications
+    Alerts_API_Rule:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_RuleDetailUpdate'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Alerts_API_SelfLinks'
+    Alerts_API_AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    Alerts_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Alerts_API_AlertGroupType:
+      type: string
+      description: Category of alert type based on the application or network layer and source of the test.
+      enum:
+      - bgp
+      - browser-session
+      - cloud-enterprise
+      - endpoint
+      example: endpoint
+    Alerts_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Alerts_API_Link'
+    Alerts_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Alerts_API_NotificationThirdParty:
+      type: object
+      description: Webhook notification.
+      properties:
+        integrationId:
+          type: string
+          description: Integration ID.
+          example: sl-101
+        integrationType:
+          $ref: '#/components/schemas/Alerts_API_ThirdPartyIntegrationType'
     Alerts_API_BaseRule:
       type: object
       required:
@@ -439,16 +590,70 @@ components:
             type: string
           example:
           - app.thousandeyes.com
-    Alerts_API_Severity:
+    Alerts_API_AlertRoundsViolationMode:
       type: string
-      description: The severity of the alert.
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
       enum:
-      - info
-      - major
-      - minor
-      - critical
-      - unknown
-      example: major
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    Alerts_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Alerts_API_ValidationErrorItem'
+    Alerts_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Alerts_API_RuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_BaseRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/Alerts_API_AlertNotification'
+          tests:
+            type: array
+            items:
+              $ref: '#/components/schemas/Alerts_API_AlertSimpleTest'
+            readOnly: true
+          testIds:
+            type: array
+            description: Array of test IDs to link to alert rule (get `testId` from `/tests` endpoint).
+            readOnly: true
+            items:
+              type: string
+            example:
+            - '281474976710706'
+            - '271659'
+          _links:
+            $ref: '#/components/schemas/Alerts_API_SelfLinks'
+    Alerts_API_RuleId:
+      type: string
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
+    Alerts_API_Rules:
+      type: object
+      properties:
+        alertRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alerts_API_BaseRule'
+        _links:
+          $ref: '#/components/schemas/Alerts_API_SelfLinks'
     Alerts_API_AlertTestType:
       type: string
       enum:
@@ -471,142 +676,6 @@ components:
       description: Valid Alert Types for which to return test links.
       readOnly: true
       example: agent-to-server
-    Alerts_API_NotificationWebhook:
-      type: object
-      description: Webhook notification.
-      properties:
-        integrationId:
-          type: string
-          description: Integration ID.
-          example: wb-201
-        integrationType:
-          $ref: '#/components/schemas/Alerts_API_WebhookIntegrationType'
-        integrationName:
-          description: Name of the integration, configured by the user.
-          example: My webhook
-          type: string
-        target:
-          description: Webhook target URL.
-          example: https://example.com/test/webhooks/notifications
-          type: string
-    Alerts_API_NotificationThirdParty:
-      type: object
-      description: Webhook notification.
-      properties:
-        integrationId:
-          type: string
-          description: Integration ID.
-          example: sl-101
-        integrationType:
-          $ref: '#/components/schemas/Alerts_API_ThirdPartyIntegrationType'
-    Alerts_API_NotificationCustomWebhook:
-      type: object
-      description: Custom webhook notification.
-      properties:
-        integrationId:
-          type: string
-          format: uuid
-          description: Integration ID.
-          example: 6e069ae9-8537-4120-b988-61bf8e0d8b87
-        integrationType:
-          $ref: '#/components/schemas/Alerts_API_CustomWebhookIntegrationType'
-        integrationName:
-          type: string
-          description: User-configured name of the integration.
-          example: My webhook
-        target:
-          type: string
-          description: Webhook target URL.
-          example: https://example.com/test/webhooks/notifications
-    Alerts_API_RuleId:
-      type: string
-      description: Unique ID of the rule.
-      example: '127094'
-      readOnly: true
-    Alerts_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/Alerts_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Alerts_API_TestResults'
-      readOnly: true
-    Alerts_API_WebhookIntegrationType:
-      type: string
-      description: Integration type.
-      example: webhook
-      enum:
-      - webhook
-    Alerts_API_Rule:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_RuleDetailUpdate'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Alerts_API_SelfLinks'
-    Alerts_API_AlertType:
-      type: string
-      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
-      example: http-server
-      enum:
-      - page-load
-      - http-server
-      - end-to-end-server
-      - end-to-end-agent
-      - voice
-      - dns-server
-      - dns-trace
-      - dnssec
-      - bgp
-      - path-trace
-      - ftp
-      - sip-server
-      - transactions
-      - web-transactions
-      - agent
-      - network-outage
-      - application-outage
-      - device-device
-      - device-interface
-      - endpoint-network-server
-      - endpoint-http-server
-      - endpoint-path-trace
-      - endpoint-browser-sessions-agent
-      - endpoint-browser-sessions-application
-      - api
-      - web-transaction
-      - unknown
-    Alerts_API_AlertNotification:
-      type: object
-      description: Alert notification object. See Alert notification integrations.
-      properties:
-        email:
-          $ref: '#/components/schemas/Alerts_API_NotificationEmail'
-        thirdParty:
-          type: array
-          description: Third party notifications.
-          items:
-            $ref: '#/components/schemas/Alerts_API_NotificationThirdParty'
-        webhook:
-          type: array
-          description: Webhook notifications.
-          items:
-            $ref: '#/components/schemas/Alerts_API_NotificationWebhook'
-        customWebhook:
-          type: array
-          description: Custom webhook notifications.
-          items:
-            $ref: '#/components/schemas/Alerts_API_NotificationCustomWebhook'
-    Alerts_API_AlertRoundsViolationMode:
-      type: string
-      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
-      enum:
-      - exact
-      - any
-      - auto
-      example: exact
-      readOnly: true
     Alerts_API_AlertSimpleTest:
       description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
       additionalProperties: true
@@ -663,108 +732,9 @@ components:
           $ref: '#/components/schemas/Alerts_API_AlertTestType'
         _links:
           $ref: '#/components/schemas/Alerts_API_TestLinks'
-    Alerts_API_AlertDirection:
-      type: string
-      enum:
-      - to-target
-      - from-target
-      - bidirectional
-      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
-      example: to-target
-    Alerts_API_SensitivityLevel:
-      type: string
-      description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
-      enum:
-      - high
-      - medium
-      - low
-      example: medium
-      readOnly: true
-    Alerts_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Alerts_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Alerts_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Alerts_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
   responses:
-    Alerts_API_500:
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Alerts_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_Error'
     Alerts_API_204:
       description: No content
-    Alerts_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_UnauthorizedError'
-    Alerts_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_Error'
     Alerts_API_404:
       description: Not found
       content:
@@ -776,6 +746,30 @@ components:
             title: URI Resource Not Found
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Alerts_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_Error'
+    Alerts_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_UnauthorizedError'
+    Alerts_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
             instance: /v7
     Alerts_API_400:
       description: Bad Request
@@ -796,6 +790,12 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
+    Alerts_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_Error'
   parameters:
     Alerts_API_AccountGroupId:
       name: aid

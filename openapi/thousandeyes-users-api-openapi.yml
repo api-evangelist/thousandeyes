@@ -245,43 +245,13 @@ paths:
       - Administrative_API_BearerAuth: []
 components:
   schemas:
-    Administrative_API_ValidationError:
+    Administrative_API_SelfLinks:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
-    Administrative_API_BaseRole:
-      type: object
+      description: A links object containing the self link.
+      readOnly: true
       properties:
-        name:
-          type: string
-          description: Name of the role.
-          example: Organization Admin
-        roleId:
-          type: string
-          description: Unique ID representing the role.
-          example: '35'
-        isBuiltin:
-          type: boolean
-          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
-    Administrative_API_ExtendedUser:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_User'
-      - type: object
-        properties:
-          lastLogin:
-            type: string
-            description: UTC last login of the user (ISO date-time format).
-            format: date-time
-            example: '2022-07-17T22:00:54Z'
+        self:
+          $ref: '#/components/schemas/Administrative_API_Link'
     Administrative_API_User:
       type: object
       properties:
@@ -305,14 +275,15 @@ components:
           example: '2020-07-17T22:00:54Z'
         loginAccountGroup:
           $ref: '#/components/schemas/Administrative_API_AccountGroup'
-    Administrative_API_Role:
+    Administrative_API_AccountGroupRole:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_BaseRole'
-      - properties:
-          hasManagementPermissions:
-            type: boolean
-            description: Flag indicating whether the user has management permissions.
+      properties:
+        accountGroup:
+          $ref: '#/components/schemas/Administrative_API_AccountGroup'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Administrative_API_Role'
     Administrative_API_UserAccountGroupRole:
       type: object
       properties:
@@ -330,72 +301,6 @@ components:
           example:
           - '57'
           - '1140'
-    Administrative_API_Users:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_ExtendedUser'
-        _links:
-          $ref: '#/components/schemas/Administrative_API_SelfLinks'
-    Administrative_API_AccountGroupRole:
-      type: object
-      properties:
-        accountGroup:
-          $ref: '#/components/schemas/Administrative_API_AccountGroup'
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_Role'
-    Administrative_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Administrative_API_CreatedUser:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_User'
-      - type: object
-        properties:
-          loginAccountGroup:
-            $ref: '#/components/schemas/Administrative_API_AccountGroup'
-          accountGroupRoles:
-            type: array
-            items:
-              $ref: '#/components/schemas/Administrative_API_AccountGroupRole'
-          allAccountGroupRoles:
-            type: array
-            items:
-              $ref: '#/components/schemas/Administrative_API_Role'
-          _links:
-            $ref: '#/components/schemas/Administrative_API_SelfLinks'
     Administrative_API_UnauthorizedError:
       type: object
       properties:
@@ -405,56 +310,6 @@ components:
         error_description:
           type: string
           example: Invalid access token
-    Administrative_API_UserRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User's display name.
-          example: User X
-        email:
-          type: string
-          description: User's email address.
-          format: email
-          example: userx@thousandeyes.com
-        loginAccountGroupId:
-          type: string
-          description: Unique ID of the login account group.
-          example: '691'
-        accountGroupRoles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_UserAccountGroupRole'
-        allAccountGroupRoleIds:
-          type: array
-          description: Unique IDs representing the roles.
-          items:
-            type: string
-            description: Unique role ID.
-            example: '57'
-          example:
-          - '57'
-          - '1140'
-    Administrative_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Administrative_API_Link'
-    Administrative_API_AccountGroup:
-      type: object
-      properties:
-        aid:
-          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
-        accountGroupName:
-          type: string
-          description: Account group name
-          example: Account A
-    Administrative_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
     Administrative_API_UserDetail:
       allOf:
       - $ref: '#/components/schemas/Administrative_API_ExtendedUser'
@@ -490,6 +345,84 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
+    Administrative_API_Role:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_BaseRole'
+      - properties:
+          hasManagementPermissions:
+            type: boolean
+            description: Flag indicating whether the user has management permissions.
+    Administrative_API_CreatedUser:
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_User'
+      - type: object
+        properties:
+          loginAccountGroup:
+            $ref: '#/components/schemas/Administrative_API_AccountGroup'
+          accountGroupRoles:
+            type: array
+            items:
+              $ref: '#/components/schemas/Administrative_API_AccountGroupRole'
+          allAccountGroupRoles:
+            type: array
+            items:
+              $ref: '#/components/schemas/Administrative_API_Role'
+          _links:
+            $ref: '#/components/schemas/Administrative_API_SelfLinks'
+    Administrative_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
+    Administrative_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Administrative_API_AccountGroup:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
+        accountGroupName:
+          type: string
+          description: Account group name
+          example: Account A
     Administrative_API_ValidationErrorItem:
       type: object
       properties:
@@ -502,24 +435,80 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-  parameters:
-    Administrative_API_UserIdPath:
-      name: id
-      description: Identifier for the user.
-      required: true
-      in: path
-      schema:
-        type: string
-        example: '1234'
+    Administrative_API_UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User's display name.
+          example: User X
+        email:
+          type: string
+          description: User's email address.
+          format: email
+          example: userx@thousandeyes.com
+        loginAccountGroupId:
+          type: string
+          description: Unique ID of the login account group.
+          example: '691'
+        accountGroupRoles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Administrative_API_UserAccountGroupRole'
+        allAccountGroupRoleIds:
+          type: array
+          description: Unique IDs representing the roles.
+          items:
+            type: string
+            description: Unique role ID.
+            example: '57'
+          example:
+          - '57'
+          - '1140'
+    Administrative_API_Users:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/Administrative_API_ExtendedUser'
+        _links:
+          $ref: '#/components/schemas/Administrative_API_SelfLinks'
+    Administrative_API_BaseRole:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the role.
+          example: Organization Admin
+        roleId:
+          type: string
+          description: Unique ID representing the role.
+          example: '35'
+        isBuiltin:
+          type: boolean
+          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
     Administrative_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Administrative_API_ExtendedUser:
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_User'
+      - type: object
+        properties:
+          lastLogin:
+            type: string
+            description: UTC last login of the user (ISO date-time format).
+            format: date-time
+            example: '2022-07-17T22:00:54Z'
   responses:
+    Administrative_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
     Administrative_API_500:
       description: Internal server error
       content:
@@ -538,32 +527,14 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Administrative_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
+    Administrative_API_204:
+      description: No content
     Administrative_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_204:
-      description: No content
     Administrative_API_400:
       description: Bad Request
       content:
@@ -583,6 +554,35 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
+    Administrative_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+  parameters:
+    Administrative_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Administrative_API_UserIdPath:
+      name: id
+      description: Identifier for the user.
+      required: true
+      in: path
+      schema:
+        type: string
+        example: '1234'
   headers:
     Administrative_API_Location:
       schema:

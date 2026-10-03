@@ -211,333 +211,6 @@ paths:
       - Tests_API_BearerAuth: []
 components:
   schemas:
-    Tests_API_AlertDirection:
-      type: string
-      enum:
-      - to-target
-      - from-target
-      - bidirectional
-      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
-      example: to-target
-    Tests_API_PageLoadTestResponse:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_PageLoadTest'
-      - type: object
-        properties:
-          agents:
-            $ref: '#/components/schemas/Tests_API_TestAgentsResponse'
-    Tests_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Tests_API_TestMonitorsProperties:
-      type: object
-      properties:
-        bgpMeasurements:
-          $ref: '#/components/schemas/Tests_API_TestBgpMeasurements'
-        usePublicBgp:
-          $ref: '#/components/schemas/Tests_API_TestUsePublicBgp'
-        monitors:
-          $ref: '#/components/schemas/Tests_API_TestBgpMonitors'
-    Tests_API_TestChromePolicies:
-      type: string
-      description: JSON string of Chrome policy settings to apply.
-      default: '{}'
-      example: '{"ProxyMode":"direct"}'
-    Tests_API_RequestMethod:
-      type: string
-      enum:
-      - get
-      - post
-      description: HTTP request method.
-      example: get
-    Tests_API_TestUrl:
-      type: string
-      description: Target for the test.
-      example: www.thousandeyes.com
-    Tests_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Tests_API_RuleId:
-      type: string
-      description: Unique ID of the rule.
-      example: '127094'
-      readOnly: true
-    Tests_API_TestAllowGeolocation:
-      type: boolean
-      description: Set true to use the agent’s geolocation by the web page.
-      default: false
-      example: false
-    Tests_API_AlertRoundsViolationMode:
-      type: string
-      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
-      enum:
-      - exact
-      - any
-      - auto
-      example: exact
-      readOnly: true
-    Tests_API_UnexpandedInstantTest:
-      type: object
-      properties:
-        createdBy:
-          $ref: '#/components/schemas/Tests_API_TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/Tests_API_TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
-          readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/Tests_API_TestType'
-        _links:
-          $ref: '#/components/schemas/Tests_API_TestLinks'
-    Tests_API_TestCollectProxyNetworkData:
-      type: boolean
-      description: Indicates whether network data to the proxy should be collected.
-      default: false
-      example: false
-    Tests_API_Severity:
-      type: string
-      description: The severity of the alert.
-      enum:
-      - info
-      - major
-      - minor
-      - critical
-      - unknown
-      example: major
-    Tests_API_TestPassword:
-      type: string
-      description: Password for Basic/NTLM authentication.
-      example: password
-      writeOnly: true
-    Tests_API_TestVaultCredentialTarget:
-      type: string
-      enum:
-      - username
-      - password
-      - script
-      description: The target setting that the credential should be used for.
-      example: username
-    Tests_API_UnexpandedPageLoadTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
-      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
-      - $ref: '#/components/schemas/Tests_API_PageLoadProperties'
-      - type: object
-        required:
-        - interval
-        properties:
-          httpInterval:
-            $ref: '#/components/schemas/Tests_API_TestHttpInterval'
-          subinterval:
-            $ref: '#/components/schemas/Tests_API_TestSubInterval'
-          bgpMeasurements:
-            $ref: '#/components/schemas/Tests_API_TestBgpMeasurements'
-          usePublicBgp:
-            $ref: '#/components/schemas/Tests_API_TestUsePublicBgp'
-    Tests_API_ExpandTestOptions:
-      type: string
-      enum:
-      - agent
-      - alert-rule
-      - monitor
-      - label
-      - tag
-      - shared-with-account
-      example: agent
-    Tests_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
-    Tests_API_TestIncludeHeaders:
-      type: boolean
-      description: Set to `true` to capture response headers for objects loaded by the test.
-      default: true
-      example: true
-    Tests_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Tests_API_Link'
-    Tests_API_TestMtuMeasurements:
-      type: boolean
-      description: Set `true` to measure MTU sizes on network from agents to the target.
-      example: false
-    Tests_API_TestPathTraceMode:
-      type: string
-      enum:
-      - classic
-      - in-session
-      description: Select `inSession` to perform the path trace within a TCP session.
-      default: classic
-      example: classic
-    Tests_API_TestVerifyCertificate:
-      type: boolean
-      description: Ignore or acknowledge certificate errors. Set to false to ignore certificate errors.
-      default: false
-      example: false
-    Tests_API_TestHttpVersion:
-      type: integer
-      minimum: 1
-      maximum: 2
-      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
-      default: 2
-      example: 2
-    Tests_API_TestRandomizedStartTime:
-      type: boolean
-      description: Indicates whether agents should randomize the start time in each test round.
-      default: false
-      example: false
-    Tests_API_TestPageLoadTimeLimit:
-      type: integer
-      description: Page load time limit. Must be larger than the `httpTimeLimit`.
-      minimum: 5
-      maximum: 60
-      default: 10
-      example: 10
-    Tests_API_PageLoadTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_BaseTest'
-      - $ref: '#/components/schemas/Tests_API_PageLoadInstantTest'
-      - $ref: '#/components/schemas/Tests_API_TestMonitorsProperties'
-      - type: object
-        required:
-        - interval
-        properties:
-          httpInterval:
-            $ref: '#/components/schemas/Tests_API_TestHttpInterval'
-          subinterval:
-            $ref: '#/components/schemas/Tests_API_TestSubInterval'
-    Tests_API_TestUseNtlm:
-      type: boolean
-      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
-      example: false
-    Tests_API_TestBrowserLanguage:
-      type: string
-      description: Set one of the available browser language that you want to use to configure the browser.
-      example: en-US
-    Tests_API_BaseTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
-      - type: object
-        properties:
-          alertRules:
-            type: array
-            description: Contains list of enabled alert rule objects.
-            items:
-              $ref: '#/components/schemas/Tests_API_AlertRule'
-    Tests_API_TestVaultCredential:
-      type: object
-      properties:
-        secretId:
-          type: string
-          description: UUID of the configured secret.
-          example: f27e85b2-318b-4145-b5aa-c9dc8d8b0819
-        target:
-          $ref: '#/components/schemas/Tests_API_TestVaultCredentialTarget'
-    Tests_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Tests_API_MonitorsRequest:
-      type: object
-      properties:
-        monitors:
-          type: array
-          description: Contains list of BGP monitor IDs (get `monitorId` from `/monitors` endpoint)
-          writeOnly: true
-          readOnly: false
-          items:
-            type: string
-          example:
-          - '17410'
-          - '5'
-    Tests_API_TestUsername:
-      type: string
-      description: Username for Basic/NTLM authentication.
-      example: username
     Tests_API_HttpServerBaseProperties:
       type: object
       properties:
@@ -623,41 +296,157 @@ components:
           description: List of credential IDs that are stored in an external vault.
           items:
             $ref: '#/components/schemas/Tests_API_TestVaultCredential'
-    Tests_API_TestAgentsRequest:
-      type: array
-      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
-      items:
-        $ref: '#/components/schemas/Tests_API_TestAgentRequest'
-    Tests_API_UnexpandedTest:
+    Tests_API_TestAgentRequest:
       type: object
+      required:
+      - agentId
       properties:
-        interval:
-          $ref: '#/components/schemas/Tests_API_TestInterval'
-        alertsEnabled:
-          type: boolean
-          description: Indicates if alerts are enabled.
-          example: true
-        enabled:
-          $ref: '#/components/schemas/Tests_API_Enabled'
-    Tests_API_TestDesiredStatusCode:
+        agentId:
+          type: string
+          description: The agent ID. Get `agentId` from `/agents` endpoint.
+        sourceIpAddress:
+          type: string
+          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses` from the `/agents` endpoint.
+      example:
+        agentId: '125'
+        sourceIpAddress: 1.1.1.1
+    Tests_API_TestPageLoadingStrategy:
       type: string
-      description: Specify the HTTP status code value that indicates a successful response. The default value accepts any 2xx or 3xx status code.
-      default: default
-      example: '200'
+      enum:
+      - normal
+      - eager
+      - none
+      description: "* `normal`: The test waits until the entire page is fully loaded, including the downloading and parsing of HTML content as well as all associated resources, before advancing to the next action in the transaction test script. \n* `eager`: The test waits for the DOMContentLoaded event, indicating that HTML content is downloaded and parsed, and the document reaches the \"interactive\" readiness state, before proceeding to the next action in the test script.\n* `none`: The test only waits for the download of HTML content. Once the HTML is downloaded, the test continues to the next action in the transaction test script without waiting for additional resources.\n"
+      default: normal
+      example: normal
+    Tests_API_MonitorType:
+      type: string
+      description: Type of monitor
+      enum:
+      - public
+      - private
+      example: public
+    Tests_API_TestCollectProxyNetworkData:
+      type: boolean
+      description: Indicates whether network data to the proxy should be collected.
+      default: false
+      example: false
+    Tests_API_TestUseNtlm:
+      type: boolean
+      description: Set to true to use NTLM, false to use Basic Authentication. Requires username and password to be set.
+      example: false
+    Tests_API_TestIncludeHeaders:
+      type: boolean
+      description: Set to `true` to capture response headers for objects loaded by the test.
+      default: true
+      example: true
+    Tests_API_AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/Tests_API_CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/Tests_API_SimpleAgent'
+    Tests_API_TestAllowMicAndCamera:
+      type: boolean
+      description: Set true allow the use of a fake mic and camera in the browser.
+      default: false
+      example: false
+    Tests_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Tests_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Tests_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Tests_API_TestResults'
+      readOnly: true
     Tests_API_PageLoadTestRequest:
       allOf:
       - $ref: '#/components/schemas/Tests_API_UnexpandedPageLoadTest'
       - $ref: '#/components/schemas/Tests_API_TestRequest'
       - $ref: '#/components/schemas/Tests_API_MonitorsRequest'
-    Tests_API_OAuthAuthType:
+    Tests_API_NetworkProviderType:
       type: string
-      description: HTTP authentication type used for the OAuth request.
+      description: Classification of the agent's network provider.
       enum:
-      - none
-      - basic
-      - ntlm
-      default: none
-      example: none
+      - unknown
+      - isp
+      - cdn
+      - stub
+      - cloud-provider
+      - carrier
+      example: isp
+      readOnly: true
+    Tests_API_TestAgentsRequest:
+      type: array
+      description: Contains list of Agent IDs (get `agentId` from `/agents` endpoint).
+      items:
+        $ref: '#/components/schemas/Tests_API_TestAgentRequest'
+    Tests_API_PageLoadInstantTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_InstantTest'
+      - $ref: '#/components/schemas/Tests_API_PageLoadProperties'
+    Tests_API_TestFixedPacketRate:
+      type: integer
+      minimum: 0
+      maximum: 100
+      description: Sets packets rate sent to measure the network in packets per second.
+      example: 50
+    Tests_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Tests_API_TestHttpVersion:
+      type: integer
+      minimum: 1
+      maximum: 2
+      description: HTTP protocol version. Set to '2' to prefer HTTP/2, or '1' to use only HTTP/1.1.
+      default: 2
+      example: 2
+    Tests_API_TestBgpMeasurements:
+      type: boolean
+      description: Set to `true` to enable bgp measurements.
+      default: true
+      example: true
+    Tests_API_TestPassword:
+      type: string
+      description: Password for Basic/NTLM authentication.
+      example: password
+      writeOnly: true
     Tests_API_TestTag:
       type: object
       readOnly: true
@@ -675,68 +464,11 @@ components:
           type: string
           description: Tag value. For example, "San Francisco" or "Engineering".
           example: San Francisco
-    Tests_API_PageLoadInstantTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_InstantTest'
-      - $ref: '#/components/schemas/Tests_API_PageLoadProperties'
-    Tests_API_TestNumPathTraces:
-      type: integer
-      minimum: 1
-      maximum: 10
-      description: Number of path traces executed by the agent.
-      default: 3
-      example: 3
-    Tests_API_TestAgentRequest:
-      type: object
-      required:
-      - agentId
-      properties:
-        agentId:
-          type: string
-          description: The agent ID. Get `agentId` from `/agents` endpoint.
-        sourceIpAddress:
-          type: string
-          description: The IP address from the `ipAddresses` field in agent details, used for interface selection. Get `ipAddresses` from the `/agents` endpoint.
-      example:
-        agentId: '125'
-        sourceIpAddress: 1.1.1.1
-    Tests_API_TestProtocol:
+    Tests_API_RuleId:
       type: string
-      enum:
-      - tcp
-      - icmp
-      - udp
-      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
-      default: tcp
-      example: tcp
-    Tests_API_TestCustomHeaders:
-      type: object
-      properties:
-        root:
-          type: object
-          description: Use these HTTP headers for root server request.
-          additionalProperties:
-            type: string
-        domains:
-          type: object
-          description: Use these HTTP headers for the specified domains.
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: string
-        all:
-          type: object
-          description: Use these HTTP headers for all domains.
-          additionalProperties:
-            type: string
-      example:
-        root:
-          header1: value1
-        domains:
-          domain1.com:
-            header2: value2
-        all:
-          header3: value3
+      description: Unique ID of the rule.
+      example: '127094'
+      readOnly: true
     Tests_API_TestSubInterval:
       type: integer
       enum:
@@ -750,444 +482,6 @@ components:
       - 3600
       description: Subinterval for round-robin testing (in seconds). Must be less than or equal to interval and must evenly divide interval.
       example: 60
-    Tests_API_CloudEnterpriseAgentType:
-      type: string
-      description: Type of the agent.
-      enum:
-      - cloud
-      - enterprise-cluster
-      - enterprise
-      example: enterprise-cluster
-      readOnly: true
-    Tests_API_OAuth:
-      type: object
-      properties:
-        testUrl:
-          $ref: '#/components/schemas/Tests_API_TestUrl'
-        requestMethod:
-          $ref: '#/components/schemas/Tests_API_RequestMethod'
-        postBody:
-          type: string
-          description: Enter the OAuth body for the HTTP POST request in this field when using OAuth as the authentication mechanism. No special escaping is required. The value is saved only when `requestMethod` is set to `post`.
-        headers:
-          type: string
-          description: Request headers used for OAuth.
-        authType:
-          $ref: '#/components/schemas/Tests_API_OAuthAuthType'
-        username:
-          type: string
-          description: OAuth username
-        password:
-          type: string
-          description: OAuth password
-          writeOnly: true
-      description: Use this only if you want to use OAuth as the authentication mechanism.
-      example:
-        testUrl: https://api.thousandeyes.com/v7/status
-        requestMethod: post
-        postBody: 'client_id: ************'
-        headers: 'Authorization: Basic ************'
-        authType: none
-        username: user123
-        password: '*******'
-    Tests_API_TestHttpTimeLimit:
-      type: integer
-      minimum: 5
-      maximum: 60
-      description: HTTP time limit in seconds.
-      default: 5
-      example: 5
-    Tests_API_TestAllowMicAndCamera:
-      type: boolean
-      description: Set true allow the use of a fake mic and camera in the browser.
-      default: false
-      example: false
-    Tests_API_NetworkProviderInfo:
-      type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
-      properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
-          readOnly: true
-        name:
-          type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
-          readOnly: true
-        type:
-          $ref: '#/components/schemas/Tests_API_NetworkProviderType'
-    Tests_API_TestHttpInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: HTTP test run interval. The interval between HTTP test runs in seconds cannot exceed the specified interval value and defaults to the same value as the interval if not set.
-      example: 120
-    Tests_API_TestOverrideAgentProxy:
-      type: boolean
-      description: Flag indicating if a proxy other than the default should be used. To override the default proxy for agents, set to `true` and specify a value for `overrideProxyId`.
-      default: false
-      example: false
-    Tests_API_TestLabels:
-      type: array
-      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_TestLabel'
-    Tests_API_TestSharedAccounts:
-      type: array
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_SharedWithAccount'
-    Tests_API_AlertType:
-      type: string
-      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
-      example: http-server
-      enum:
-      - page-load
-      - http-server
-      - end-to-end-server
-      - end-to-end-agent
-      - voice
-      - dns-server
-      - dns-trace
-      - dnssec
-      - bgp
-      - path-trace
-      - ftp
-      - sip-server
-      - transactions
-      - web-transactions
-      - agent
-      - network-outage
-      - application-outage
-      - device-device
-      - device-interface
-      - endpoint-network-server
-      - endpoint-http-server
-      - endpoint-path-trace
-      - endpoint-browser-sessions-agent
-      - endpoint-browser-sessions-application
-      - api
-      - web-transaction
-      - unknown
-    Tests_API_TestUsePublicBgp:
-      type: boolean
-      description: Indicate if all available public BGP monitors should be used, when ommited defaults to `bgpMeasurements` value.
-      default: true
-      example: true
-    Tests_API_AgentResponse:
-      allOf:
-      - required:
-        - agentType
-        properties:
-          agentType:
-            $ref: '#/components/schemas/Tests_API_CloudEnterpriseAgentType'
-      - $ref: '#/components/schemas/Tests_API_SimpleAgent'
-    Tests_API_TestBgpMeasurements:
-      type: boolean
-      description: Set to `true` to enable bgp measurements.
-      default: true
-      example: true
-    Tests_API_TestLabel:
-      type: object
-      properties:
-        labelId:
-          type: string
-          description: Label ID.
-        name:
-          type: string
-          description: Name of the label.
-        isBuiltin:
-          type: boolean
-          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
-      example:
-        labelId: '961'
-        name: Artem label
-        isBuiltin: false
-    Tests_API_TestAuthType:
-      type: string
-      description: HTTP authentication type.
-      enum:
-      - none
-      - basic
-      - ntlm
-      - kerberos
-      - oauth
-      default: none
-      example: none
-    Tests_API_TestNetworkMeasurements:
-      type: boolean
-      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
-      default: true
-      example: true
-    Tests_API_TestBgpMonitors:
-      type: array
-      description: Contains list of enabled BGP monitors.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_Monitor'
-    Tests_API_TestBandwidthMeasurements:
-      type: boolean
-      description: Set to `true` to enable bandwidth measurements, only applies to Enterprise agents assigned to the test.
-      example: true
-    Tests_API_MonitorType:
-      type: string
-      description: Type of monitor
-      enum:
-      - public
-      - private
-      example: public
-    Tests_API_PageLoadProperties:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_HttpServerBaseProperties'
-      - type: object
-        required:
-        - url
-        properties:
-          emulatedDeviceId:
-            type: string
-            description: ID of the emulated device, if one was given when the test was created.
-            example: '2'
-          pageLoadTargetTime:
-            type: integer
-            description: Target time for page load completion, specified in seconds and cannot exceed the `pageLoadTimeLimit`.
-            minimum: 1
-            maximum: 60
-            example: 10
-          pageLoadTimeLimit:
-            $ref: '#/components/schemas/Tests_API_TestPageLoadTimeLimit'
-          blockDomains:
-            $ref: '#/components/schemas/Tests_API_TestBlockDomains'
-          disableScreenshot:
-            $ref: '#/components/schemas/Tests_API_TestDisableScreenshot'
-          allowMicAndCamera:
-            $ref: '#/components/schemas/Tests_API_TestAllowMicAndCamera'
-          allowGeolocation:
-            $ref: '#/components/schemas/Tests_API_TestAllowGeolocation'
-          browserLanguage:
-            $ref: '#/components/schemas/Tests_API_TestBrowserLanguage'
-          chromeOptions:
-            $ref: '#/components/schemas/Tests_API_TestChromeOptions'
-          chromePolicies:
-            $ref: '#/components/schemas/Tests_API_TestChromePolicies'
-          chromiumTrack:
-            $ref: '#/components/schemas/Tests_API_TestChromiumTrack'
-          pageLoadingStrategy:
-            $ref: '#/components/schemas/Tests_API_TestPageLoadingStrategy'
-          distributedTracing:
-            $ref: '#/components/schemas/Tests_API_TestDistributedTracing'
-          randomizedStartTime:
-            $ref: '#/components/schemas/Tests_API_TestRandomizedStartTime'
-          type:
-            $ref: '#/components/schemas/Tests_API_TestPageLoadType'
-          identifyAgentTrafficWithUserAgent:
-            $ref: '#/components/schemas/Tests_API_TestIdentifyAgentTrafficWithUserAgent'
-    Tests_API_TestClientCertificate:
-      type: string
-      description: String representation (containing newline characters) of client certificate, the private key must be placed first, then the certificate.
-      example: 'REDACTED_PRIVATE_KEY_EXAMPLE
-
-        -----BEGIN CERTIFICATE-----
-
-        MIICUTCCAfugAwIBAgIBADANBgkqhkiG9w0BAQQFADBXMQswCQYDVQQGEwJDTjEL
-
-        -----END CERTIFICATE-----
-
-        '
-    Tests_API_NetworkProviderType:
-      type: string
-      description: Classification of the agent's network provider.
-      enum:
-      - unknown
-      - isp
-      - cdn
-      - stub
-      - cloud-provider
-      - carrier
-      example: isp
-      readOnly: true
-    Tests_API_TestPageLoadType:
-      type: string
-      example: page-load
-      readOnly: true
-    Tests_API_TestChromeOptions:
-      type: string
-      description: Command-line options passed to Chrome when running the test.
-      default: ''
-      example: --disable-gpu
-    Tests_API_TestProbeMode:
-      type: string
-      enum:
-      - auto
-      - sack
-      - syn
-      description: Probe mode used by network test, only valid when the protocol is set to TCP.
-      default: auto
-      example: auto
-    Tests_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
-    Tests_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Tests_API_TestPageLoadingStrategy:
-      type: string
-      enum:
-      - normal
-      - eager
-      - none
-      description: "* `normal`: The test waits until the entire page is fully loaded, including the downloading and parsing of HTML content as well as all associated resources, before advancing to the next action in the transaction test script. \n* `eager`: The test waits for the DOMContentLoaded event, indicating that HTML content is downloaded and parsed, and the document reaches the \"interactive\" readiness state, before proceeding to the next action in the test script.\n* `none`: The test only waits for the download of HTML content. Once the HTML is downloaded, the test continues to the next action in the transaction test script without waiting for additional resources.\n"
-      default: normal
-      example: normal
-    Tests_API_InstantTest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
-      - type: object
-        properties:
-          labels:
-            $ref: '#/components/schemas/Tests_API_TestLabels'
-          tags:
-            $ref: '#/components/schemas/Tests_API_TestTags'
-          sharedWithAccounts:
-            $ref: '#/components/schemas/Tests_API_TestSharedAccounts'
-    Tests_API_TestIdentifyAgentTrafficWithUserAgent:
-      type: boolean
-      description: 'Determines how agent traffic is identified:
-
-
-        * `false`: Adds the `x-thousandeyes-agent: yes` header.
-
-        * `true`: Appends `(ThousandEyes Agent)` to the `user-agent` header.
-
-
-        For more information, see [Notes on Agent ID Strategy](https://docs.thousandeyes.com/product-documentation/browser-synthetics/test-settings-page-load-transaction#notes-on-agent-id-strategy).
-
-        '
-      example: false
-      default: false
-    Tests_API_Monitor:
-      type: object
-      properties:
-        countryId:
-          type: string
-          description: Country ID
-          example: GB
-          readOnly: true
-        monitorId:
-          type: string
-          description: BGP monitor ID
-          example: '1234'
-          readOnly: true
-        ipAddress:
-          type: string
-          description: IP address of the BGP monitor
-          example: 4.69.184.193
-        network:
-          type: string
-          description: Name of the autonomous system in which the monitor is found
-          example: Level 3 Communications, Inc. (AS 3356)
-        monitorType:
-          $ref: '#/components/schemas/Tests_API_MonitorType'
-        monitorName:
-          type: string
-          description: Display name of the BGP monitor
-          example: Seattle, WA
-    Tests_API_TestBlockDomains:
-      type: string
-      description: Domains or full object URLs to be excluded from metrics and waterfall data for transaction tests.
-      example: domain.com/
-    Tests_API_Coordinates:
-      type: object
-      description: Geographic coordinates for agent location.
-      properties:
-        latitude:
-          type: number
-          format: double
-          description: The latitude of the agent location in decimal degrees
-          example: 37.77493
-          readOnly: true
-        longitude:
-          type: number
-          format: double
-          description: The longitude of the agent location in decimal degrees
-          example: -122.41942
-          readOnly: true
-    Tests_API_TestAgentsResponse:
-      type: array
-      description: Contains list of agents.
-      items:
-        $ref: '#/components/schemas/Tests_API_AgentResponse'
-    Tests_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Tests_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Tests_API_SharedWithAccount:
-      type: object
-      properties:
-        aid:
-          type: string
-          description: Account group ID.
-          example: '1234'
-        name:
-          type: string
-          description: Account group name.
-          example: Account name
-    Tests_API_TestChromiumTrack:
-      type: string
-      enum:
-      - stable
-      - latest
-      description: '* `stable`: Uses the default Chromium version.
-
-        * `latest`: Uses the newest Chromium version available from ThousandEyes as soon as it is available. Performance may differ from tests using the default Chromium version.
-
-        '
-      default: stable
-      example: stable
-    Tests_API_TestUserAgent:
-      type: string
-      description: User-agent string to be provided during the test.
-      example: curl
-    Tests_API_TestOverrideProxyId:
-      type: string
-      description: ID of the proxy to be used if the default proxy is overridden.
-      example: '281474976710706'
-    Tests_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
     Tests_API_BaseRequest:
       type: object
       properties:
@@ -1231,99 +525,80 @@ components:
           example:
           - '344753'
           - '212697'
-    Tests_API_AgentBase:
+    Tests_API_UnexpandedInstantTest:
       type: object
       properties:
-        ipAddresses:
-          type: array
-          description: Array of private IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 99.139.65.220
-          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
-        publicIpAddresses:
-          type: array
-          description: Array of public IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 192.168.1.78
-          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
-        network:
+        createdBy:
+          $ref: '#/components/schemas/Tests_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Tests_API_TestCreatedDate'
+        description:
           type: string
-          description: Network (including ASN) of agent’s public IP.
-          example: AT&T Services, Inc. (AS 7018)
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
           readOnly: true
-    Tests_API_TestTags:
-      type: array
-      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
-      readOnly: true
-      items:
-        $ref: '#/components/schemas/Tests_API_TestTag'
-    Tests_API_TestFollowRedirects:
-      type: boolean
-      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
-      default: true
-      example: true
-    Tests_API_AgentInterfaces:
-      type: object
-      properties:
-        ipAddress:
+        modifiedBy:
           type: string
-          example: 192.1.1.0
-          description: IP address of the agent interface.
-        agentId:
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
           type: string
-          description: The agent ID of the enterprise agent for the test.
-          example: '2954'
-    Tests_API_TestSslVersionId:
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Tests_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Tests_API_TestLinks'
+    Tests_API_TestVaultCredentialTarget:
       type: string
-      description: 'SSL version options:
-
-
-        * Use ''0'' for automatic selection.
-
-        * Use ''3'' for SSLv3.
-
-        * Use ''4'' for TLS v1.0.
-
-        * Use ''5'' for TLS v1.1.
-
-        * Use ''6'' for TLS v1.2.
-
-        * Use ''7'' for TLS v1.3.
-
-        '
       enum:
-      - '0'
-      - '3'
-      - '4'
-      - '5'
-      - '6'
-      - '7'
-      default: '0'
-      example: '0'
-    Tests_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Tests_API_TestCreatedDate:
+      - username
+      - password
+      - script
+      description: The target setting that the credential should be used for.
+      example: username
+    Tests_API_TestChromePolicies:
       type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
+      description: JSON string of Chrome policy settings to apply.
+      default: '{}'
+      example: '{"ProxyMode":"direct"}'
+    Tests_API_TestPageLoadType:
+      type: string
+      example: page-load
       readOnly: true
+    Tests_API_TestPathTraceMode:
+      type: string
+      enum:
+      - classic
+      - in-session
+      description: Select `inSession` to perform the path trace within a TCP session.
+      default: classic
+      example: classic
     Tests_API_SensitivityLevel:
       type: string
       description: Used when `roundsViolatingMode` is set to `auto`. The default is `medium`. Higher sensitivity increases the likelihood of triggering alerts.
@@ -1333,19 +608,21 @@ components:
       - low
       example: medium
       readOnly: true
-    Tests_API_TestDistributedTracing:
-      type: boolean
-      description: Adds distributed tracing headers to API requests using B3 and W3C standards.
-      example: false
-    Tests_API_TestRequest:
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_BaseRequest'
-      - type: object
-        properties:
-          agents:
-            $ref: '#/components/schemas/Tests_API_TestAgentsRequest'
-      required:
-      - agents
+    Tests_API_TestTags:
+      type: array
+      description: Tags assigned to the test. Returned only when `expand=tag` is specified. This field is not returned for Instant Tests. For more information, see `/tags`.
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Tests_API_TestTag'
+    Tests_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Tests_API_SimpleAgent:
       type: object
       allOf:
@@ -1395,11 +672,65 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
-    Tests_API_TestDisableScreenshot:
-      type: boolean
-      description: Enables or disables screenshots on error. Set true to not capture
-      default: false
-      example: false
+    Tests_API_TestProtocol:
+      type: string
+      enum:
+      - tcp
+      - icmp
+      - udp
+      description: Protocol used by dependent network tests (end-to-end, path trace, PMTUD).
+      default: tcp
+      example: tcp
+    Tests_API_UnexpandedTest:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Tests_API_TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Tests_API_Enabled'
+    Tests_API_Monitor:
+      type: object
+      properties:
+        countryId:
+          type: string
+          description: Country ID
+          example: GB
+          readOnly: true
+        monitorId:
+          type: string
+          description: BGP monitor ID
+          example: '1234'
+          readOnly: true
+        ipAddress:
+          type: string
+          description: IP address of the BGP monitor
+          example: 4.69.184.193
+        network:
+          type: string
+          description: Name of the autonomous system in which the monitor is found
+          example: Level 3 Communications, Inc. (AS 3356)
+        monitorType:
+          $ref: '#/components/schemas/Tests_API_MonitorType'
+        monitorName:
+          type: string
+          description: Display name of the BGP monitor
+          example: Seattle, WA
+    Tests_API_TestClientCertificate:
+      type: string
+      description: String representation (containing newline characters) of client certificate, the private key must be placed first, then the certificate.
+      example: 'REDACTED_PRIVATE_KEY_EXAMPLE
+
+        -----BEGIN CERTIFICATE-----
+
+        MIICUTCCAfugAwIBAgIBADANBgkqhkiG9w0BAQQFADBXMQswCQYDVQQGEwJDTjEL
+
+        -----END CERTIFICATE-----
+
+        '
     Tests_API_AlertRule:
       type: object
       properties:
@@ -1450,6 +781,140 @@ components:
           $ref: '#/components/schemas/Tests_API_SensitivityLevel'
         severity:
           $ref: '#/components/schemas/Tests_API_Severity'
+    Tests_API_TestCustomHeaders:
+      type: object
+      properties:
+        root:
+          type: object
+          description: Use these HTTP headers for root server request.
+          additionalProperties:
+            type: string
+        domains:
+          type: object
+          description: Use these HTTP headers for the specified domains.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+        all:
+          type: object
+          description: Use these HTTP headers for all domains.
+          additionalProperties:
+            type: string
+      example:
+        root:
+          header1: value1
+        domains:
+          domain1.com:
+            header2: value2
+        all:
+          header3: value3
+    Tests_API_TestSslVersionId:
+      type: string
+      description: 'SSL version options:
+
+
+        * Use ''0'' for automatic selection.
+
+        * Use ''3'' for SSLv3.
+
+        * Use ''4'' for TLS v1.0.
+
+        * Use ''5'' for TLS v1.1.
+
+        * Use ''6'' for TLS v1.2.
+
+        * Use ''7'' for TLS v1.3.
+
+        '
+      enum:
+      - '0'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      default: '0'
+      example: '0'
+    Tests_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Tests_API_TestNumPathTraces:
+      type: integer
+      minimum: 1
+      maximum: 10
+      description: Number of path traces executed by the agent.
+      default: 3
+      example: 3
+    Tests_API_AlertDirection:
+      type: string
+      enum:
+      - to-target
+      - from-target
+      - bidirectional
+      description: Direction for applicable alert types (eg. path trace, End-to-End (Agent) etc.)
+      example: to-target
+    Tests_API_TestVerifyCertificate:
+      type: boolean
+      description: Ignore or acknowledge certificate errors. Set to false to ignore certificate errors.
+      default: false
+      example: false
+    Tests_API_TestHttpTargetTime:
+      type: integer
+      minimum: 100
+      maximum: 5000
+      description: Target time for HTTP server completion, specified in milliseconds.
+      example: 100
+    Tests_API_TestAllowUnsafeLegacyRenegotiation:
+      type: boolean
+      description: Allows TLS renegotiation with servers not supporting RFC 5746. Default Set to true to allow unsafe legacy renegotiation.
+      default: true
+      example: true
+    Tests_API_TestSslVersion:
+      type: string
+      description: Reflects the verbose SSL protocol version used by a test.
+      readOnly: true
+      example: Auto
+    Tests_API_Severity:
+      type: string
+      description: The severity of the alert.
+      enum:
+      - info
+      - major
+      - minor
+      - critical
+      - unknown
+      example: major
+    Tests_API_TestIdentifyAgentTrafficWithUserAgent:
+      type: boolean
+      description: 'Determines how agent traffic is identified:
+
+
+        * `false`: Adds the `x-thousandeyes-agent: yes` header.
+
+        * `true`: Appends `(ThousandEyes Agent)` to the `user-agent` header.
+
+
+        For more information, see [Notes on Agent ID Strategy](https://docs.thousandeyes.com/product-documentation/browser-synthetics/test-settings-page-load-transaction#notes-on-agent-id-strategy).
+
+        '
+      example: false
+      default: false
+    Tests_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
     Tests_API_PageLoadTests:
       type: object
       properties:
@@ -1459,15 +924,12 @@ components:
             $ref: '#/components/schemas/Tests_API_UnexpandedPageLoadTest'
         _links:
           $ref: '#/components/schemas/Tests_API_SelfLinks'
-    Tests_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/Tests_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Tests_API_TestResults'
+    Tests_API_TestBgpMonitors:
+      type: array
+      description: Contains list of enabled BGP monitors.
       readOnly: true
+      items:
+        $ref: '#/components/schemas/Tests_API_Monitor'
     Tests_API_TestInterval:
       type: integer
       enum:
@@ -1481,12 +943,262 @@ components:
       description: Interval between test runs in seconds.
       default: 60
       example: 60
-    Tests_API_TestFixedPacketRate:
+    Tests_API_TestHttpInterval:
       type: integer
-      minimum: 0
-      maximum: 100
-      description: Sets packets rate sent to measure the network in packets per second.
-      example: 50
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: HTTP test run interval. The interval between HTTP test runs in seconds cannot exceed the specified interval value and defaults to the same value as the interval if not set.
+      example: 120
+    Tests_API_TestAgentsResponse:
+      type: array
+      description: Contains list of agents.
+      items:
+        $ref: '#/components/schemas/Tests_API_AgentResponse'
+    Tests_API_TestBandwidthMeasurements:
+      type: boolean
+      description: Set to `true` to enable bandwidth measurements, only applies to Enterprise agents assigned to the test.
+      example: true
+    Tests_API_AlertType:
+      type: string
+      description: Type of alert being triggered. In multi-layered tests, this value represents the layer the alert relates to. See [Alert Details](https://developer.cisco.com/docs/thousandeyes/retrieve-alert-details/) documentation for a list of possible values
+      example: http-server
+      enum:
+      - page-load
+      - http-server
+      - end-to-end-server
+      - end-to-end-agent
+      - voice
+      - dns-server
+      - dns-trace
+      - dnssec
+      - bgp
+      - path-trace
+      - ftp
+      - sip-server
+      - transactions
+      - web-transactions
+      - agent
+      - network-outage
+      - application-outage
+      - device-device
+      - device-interface
+      - endpoint-network-server
+      - endpoint-http-server
+      - endpoint-path-trace
+      - endpoint-browser-sessions-agent
+      - endpoint-browser-sessions-application
+      - api
+      - web-transaction
+      - unknown
+    Tests_API_TestMtuMeasurements:
+      type: boolean
+      description: Set `true` to measure MTU sizes on network from agents to the target.
+      example: false
+    Tests_API_PageLoadTestResponse:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_PageLoadTest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/Tests_API_TestAgentsResponse'
+    Tests_API_OAuth:
+      type: object
+      properties:
+        testUrl:
+          $ref: '#/components/schemas/Tests_API_TestUrl'
+        requestMethod:
+          $ref: '#/components/schemas/Tests_API_RequestMethod'
+        postBody:
+          type: string
+          description: Enter the OAuth body for the HTTP POST request in this field when using OAuth as the authentication mechanism. No special escaping is required. The value is saved only when `requestMethod` is set to `post`.
+        headers:
+          type: string
+          description: Request headers used for OAuth.
+        authType:
+          $ref: '#/components/schemas/Tests_API_OAuthAuthType'
+        username:
+          type: string
+          description: OAuth username
+        password:
+          type: string
+          description: OAuth password
+          writeOnly: true
+      description: Use this only if you want to use OAuth as the authentication mechanism.
+      example:
+        testUrl: https://api.thousandeyes.com/v7/status
+        requestMethod: post
+        postBody: 'client_id: ************'
+        headers: 'Authorization: Basic ************'
+        authType: none
+        username: user123
+        password: '*******'
+    Tests_API_TestSharedAccounts:
+      type: array
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/Tests_API_SharedWithAccount'
+    Tests_API_TestChromiumTrack:
+      type: string
+      enum:
+      - stable
+      - latest
+      description: '* `stable`: Uses the default Chromium version.
+
+        * `latest`: Uses the newest Chromium version available from ThousandEyes as soon as it is available. Performance may differ from tests using the default Chromium version.
+
+        '
+      default: stable
+      example: stable
+    Tests_API_InstantTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
+      - type: object
+        properties:
+          labels:
+            $ref: '#/components/schemas/Tests_API_TestLabels'
+          tags:
+            $ref: '#/components/schemas/Tests_API_TestTags'
+          sharedWithAccounts:
+            $ref: '#/components/schemas/Tests_API_TestSharedAccounts'
+    Tests_API_TestBlockDomains:
+      type: string
+      description: Domains or full object URLs to be excluded from metrics and waterfall data for transaction tests.
+      example: domain.com/
+    Tests_API_TestProbeMode:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      description: Probe mode used by network test, only valid when the protocol is set to TCP.
+      default: auto
+      example: auto
+    Tests_API_TestDesiredStatusCode:
+      type: string
+      description: Specify the HTTP status code value that indicates a successful response. The default value accepts any 2xx or 3xx status code.
+      default: default
+      example: '200'
+    Tests_API_TestRequest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_BaseRequest'
+      - type: object
+        properties:
+          agents:
+            $ref: '#/components/schemas/Tests_API_TestAgentsRequest'
+      required:
+      - agents
+    Tests_API_UnexpandedPageLoadTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
+      - $ref: '#/components/schemas/Tests_API_UnexpandedInstantTest'
+      - $ref: '#/components/schemas/Tests_API_PageLoadProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          httpInterval:
+            $ref: '#/components/schemas/Tests_API_TestHttpInterval'
+          subinterval:
+            $ref: '#/components/schemas/Tests_API_TestSubInterval'
+          bgpMeasurements:
+            $ref: '#/components/schemas/Tests_API_TestBgpMeasurements'
+          usePublicBgp:
+            $ref: '#/components/schemas/Tests_API_TestUsePublicBgp'
+    Tests_API_OAuthAuthType:
+      type: string
+      description: HTTP authentication type used for the OAuth request.
+      enum:
+      - none
+      - basic
+      - ntlm
+      default: none
+      example: none
+    Tests_API_BaseTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_UnexpandedTest'
+      - type: object
+        properties:
+          alertRules:
+            type: array
+            description: Contains list of enabled alert rule objects.
+            items:
+              $ref: '#/components/schemas/Tests_API_AlertRule'
+    Tests_API_MonitorsRequest:
+      type: object
+      properties:
+        monitors:
+          type: array
+          description: Contains list of BGP monitor IDs (get `monitorId` from `/monitors` endpoint)
+          writeOnly: true
+          readOnly: false
+          items:
+            type: string
+          example:
+          - '17410'
+          - '5'
+    Tests_API_TestRandomizedStartTime:
+      type: boolean
+      description: Indicates whether agents should randomize the start time in each test round.
+      default: false
+      example: false
+    Tests_API_TestUsername:
+      type: string
+      description: Username for Basic/NTLM authentication.
+      example: username
+    Tests_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Tests_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Tests_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Tests_API_ExpandTestOptions:
+      type: string
+      enum:
+      - agent
+      - alert-rule
+      - monitor
+      - label
+      - tag
+      - shared-with-account
+      example: agent
+    Tests_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Tests_API_TestMonitorsProperties:
+      type: object
+      properties:
+        bgpMeasurements:
+          $ref: '#/components/schemas/Tests_API_TestBgpMeasurements'
+        usePublicBgp:
+          $ref: '#/components/schemas/Tests_API_TestUsePublicBgp'
+        monitors:
+          $ref: '#/components/schemas/Tests_API_TestBgpMonitors'
+    Tests_API_CloudEnterpriseAgentType:
+      type: string
+      description: Type of the agent.
+      enum:
+      - cloud
+      - enterprise-cluster
+      - enterprise
+      example: enterprise-cluster
+      readOnly: true
     Tests_API_TestType:
       type: string
       enum:
@@ -1506,23 +1218,325 @@ components:
       description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
       example: agent-to-server
-    Tests_API_TestSslVersion:
-      type: string
-      description: Reflects the verbose SSL protocol version used by a test.
+    Tests_API_PageLoadTest:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_BaseTest'
+      - $ref: '#/components/schemas/Tests_API_PageLoadInstantTest'
+      - $ref: '#/components/schemas/Tests_API_TestMonitorsProperties'
+      - type: object
+        required:
+        - interval
+        properties:
+          httpInterval:
+            $ref: '#/components/schemas/Tests_API_TestHttpInterval'
+          subinterval:
+            $ref: '#/components/schemas/Tests_API_TestSubInterval'
+    Tests_API_TestLabels:
+      type: array
+      description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
-      example: Auto
-    Tests_API_TestAllowUnsafeLegacyRenegotiation:
+      items:
+        $ref: '#/components/schemas/Tests_API_TestLabel'
+    Tests_API_TestHttpTimeLimit:
+      type: integer
+      minimum: 5
+      maximum: 60
+      description: HTTP time limit in seconds.
+      default: 5
+      example: 5
+    Tests_API_TestOverrideAgentProxy:
       type: boolean
-      description: Allows TLS renegotiation with servers not supporting RFC 5746. Default Set to true to allow unsafe legacy renegotiation.
+      description: Flag indicating if a proxy other than the default should be used. To override the default proxy for agents, set to `true` and specify a value for `overrideProxyId`.
+      default: false
+      example: false
+    Tests_API_TestUsePublicBgp:
+      type: boolean
+      description: Indicate if all available public BGP monitors should be used, when ommited defaults to `bgpMeasurements` value.
       default: true
       example: true
-    Tests_API_TestHttpTargetTime:
+    Tests_API_TestAuthType:
+      type: string
+      description: HTTP authentication type.
+      enum:
+      - none
+      - basic
+      - ntlm
+      - kerberos
+      - oauth
+      default: none
+      example: none
+    Tests_API_TestPageLoadTimeLimit:
       type: integer
-      minimum: 100
-      maximum: 5000
-      description: Target time for HTTP server completion, specified in milliseconds.
-      example: 100
+      description: Page load time limit. Must be larger than the `httpTimeLimit`.
+      minimum: 5
+      maximum: 60
+      default: 10
+      example: 10
+    Tests_API_TestUrl:
+      type: string
+      description: Target for the test.
+      example: www.thousandeyes.com
+    Tests_API_TestChromeOptions:
+      type: string
+      description: Command-line options passed to Chrome when running the test.
+      default: ''
+      example: --disable-gpu
+    Tests_API_AgentBase:
+      type: object
+      properties:
+        ipAddresses:
+          type: array
+          description: Array of private IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
+          type: array
+          description: Array of public IP addresses.
+          readOnly: true
+          items:
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
+    Tests_API_TestAllowGeolocation:
+      type: boolean
+      description: Set true to use the agent’s geolocation by the web page.
+      default: false
+      example: false
+    Tests_API_TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    Tests_API_SharedWithAccount:
+      type: object
+      properties:
+        aid:
+          type: string
+          description: Account group ID.
+          example: '1234'
+        name:
+          type: string
+          description: Account group name.
+          example: Account name
+    Tests_API_TestLabel:
+      type: object
+      properties:
+        labelId:
+          type: string
+          description: Label ID.
+        name:
+          type: string
+          description: Name of the label.
+        isBuiltin:
+          type: boolean
+          description: Value indicating if the label in question is BuiltIn (Account Admin, Organization Admin, Regular User).
+      example:
+        labelId: '961'
+        name: Artem label
+        isBuiltin: false
+    Tests_API_AgentInterfaces:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          example: 192.1.1.0
+          description: IP address of the agent interface.
+        agentId:
+          type: string
+          description: The agent ID of the enterprise agent for the test.
+          example: '2954'
+    Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Tests_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Tests_API_Link'
+    Tests_API_NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/Tests_API_NetworkProviderType'
+    Tests_API_TestUserAgent:
+      type: string
+      description: User-agent string to be provided during the test.
+      example: curl
+    Tests_API_TestDisableScreenshot:
+      type: boolean
+      description: Enables or disables screenshots on error. Set true to not capture
+      default: false
+      example: false
+    Tests_API_AlertRoundsViolationMode:
+      type: string
+      description: '`exact` requires the same agents to meet the threshold in consecutive rounds. `auto` is only enabled for CEA and Endpoint Scheduled test rules. The default is `any`.'
+      enum:
+      - exact
+      - any
+      - auto
+      example: exact
+      readOnly: true
+    Tests_API_TestDistributedTracing:
+      type: boolean
+      description: Adds distributed tracing headers to API requests using B3 and W3C standards.
+      example: false
+    Tests_API_TestVaultCredential:
+      type: object
+      properties:
+        secretId:
+          type: string
+          description: UUID of the configured secret.
+          example: f27e85b2-318b-4145-b5aa-c9dc8d8b0819
+        target:
+          $ref: '#/components/schemas/Tests_API_TestVaultCredentialTarget'
+    Tests_API_TestBrowserLanguage:
+      type: string
+      description: Set one of the available browser language that you want to use to configure the browser.
+      example: en-US
+    Tests_API_RequestMethod:
+      type: string
+      enum:
+      - get
+      - post
+      description: HTTP request method.
+      example: get
+    Tests_API_TestOverrideProxyId:
+      type: string
+      description: ID of the proxy to be used if the default proxy is overridden.
+      example: '281474976710706'
+    Tests_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+    Tests_API_PageLoadProperties:
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_HttpServerBaseProperties'
+      - type: object
+        required:
+        - url
+        properties:
+          emulatedDeviceId:
+            type: string
+            description: ID of the emulated device, if one was given when the test was created.
+            example: '2'
+          pageLoadTargetTime:
+            type: integer
+            description: Target time for page load completion, specified in seconds and cannot exceed the `pageLoadTimeLimit`.
+            minimum: 1
+            maximum: 60
+            example: 10
+          pageLoadTimeLimit:
+            $ref: '#/components/schemas/Tests_API_TestPageLoadTimeLimit'
+          blockDomains:
+            $ref: '#/components/schemas/Tests_API_TestBlockDomains'
+          disableScreenshot:
+            $ref: '#/components/schemas/Tests_API_TestDisableScreenshot'
+          allowMicAndCamera:
+            $ref: '#/components/schemas/Tests_API_TestAllowMicAndCamera'
+          allowGeolocation:
+            $ref: '#/components/schemas/Tests_API_TestAllowGeolocation'
+          browserLanguage:
+            $ref: '#/components/schemas/Tests_API_TestBrowserLanguage'
+          chromeOptions:
+            $ref: '#/components/schemas/Tests_API_TestChromeOptions'
+          chromePolicies:
+            $ref: '#/components/schemas/Tests_API_TestChromePolicies'
+          chromiumTrack:
+            $ref: '#/components/schemas/Tests_API_TestChromiumTrack'
+          pageLoadingStrategy:
+            $ref: '#/components/schemas/Tests_API_TestPageLoadingStrategy'
+          distributedTracing:
+            $ref: '#/components/schemas/Tests_API_TestDistributedTracing'
+          randomizedStartTime:
+            $ref: '#/components/schemas/Tests_API_TestRandomizedStartTime'
+          type:
+            $ref: '#/components/schemas/Tests_API_TestPageLoadType'
+          identifyAgentTrafficWithUserAgent:
+            $ref: '#/components/schemas/Tests_API_TestIdentifyAgentTrafficWithUserAgent'
+    Tests_API_TestFollowRedirects:
+      type: boolean
+      description: To disable following HTTP/301 or HTTP/302 redirect directives, set this parameter to `false`.
+      default: true
+      example: true
+    Tests_API_Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
   responses:
+    Tests_API_204:
+      description: No content
+    Tests_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_Error'
+    Tests_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_Error'
     Tests_API_400:
       description: Bad Request
       content:
@@ -1542,16 +1556,18 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Tests_API_204:
-      description: No content
-    Tests_API_403:
-      description: Insufficient permissions to query endpoint
+    Tests_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_GeneralError:
-      description: An error occurred
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
     Tests_API_500:
       description: Internal server error
       content:
@@ -1570,39 +1586,15 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_UnauthorizedError'
-    Tests_API_429:
-      description: Exhausted rate limit for the organization
+    Tests_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tests_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
+    Tests_API_GeneralError:
+      description: An error occurred
   parameters:
-    Tests_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
     Tests_API_ExpandTest:
       name: expand
       in: query
@@ -1617,6 +1609,14 @@ components:
         example:
         - agent
         - monitor
+    Tests_API_VersionId:
+      name: versionId
+      in: query
+      description: The unique identifier for a specific version of the test settings. If provided, returns the test configuration as it existed at that version. To retrieve available version IDs, use the `/tests/{testId}/history` endpoint. If not specified, the current version of the test settings is returned.
+      required: false
+      schema:
+        type: string
+        example: '1234'
     Tests_API_TestIdPath:
       name: testId
       description: Test ID
@@ -1625,10 +1625,10 @@ components:
       schema:
         type: string
         example: '202701'
-    Tests_API_VersionId:
-      name: versionId
+    Tests_API_AccountGroupId:
+      name: aid
       in: query
-      description: The unique identifier for a specific version of the test settings. If provided, returns the test configuration as it existed at that version. To retrieve available version IDs, use the `/tests/{testId}/history` endpoint. If not specified, the current version of the test settings is returned.
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
       required: false
       schema:
         type: string

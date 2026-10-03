@@ -209,58 +209,13 @@ paths:
       - Dashboards_API_BearerAuth: []
 components:
   schemas:
-    Dashboards_API_UnauthorizedError:
+    Dashboards_API_SelfLinks:
       type: object
+      description: A links object containing the self link.
+      readOnly: true
       properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Dashboards_API_ApiDataSourceFilter:
-      type: object
-      description: List of different filter properties for a single datasource.
-      properties:
-        filterId:
-          type: string
-          description: Data source property to filter by.
-          example: TEST_LABEL
-        values:
-          type: array
-          uniqueItems: true
-          description: Values to filter by based on the specified `filterId`.
-          example:
-          - '45862'
-          - '59749'
-          items:
-            type: string
-        metricIds:
-          type: array
-          uniqueItems: true
-          description: Dashboard metric associated with the filter property.
-          example:
-          - WEB_PAGE_LOAD_COMPLETION_RATE
-          - WEB_TTFB
-          - WEB_AVAILABILITY
-          items:
-            type: string
-      required:
-      - filterId
-      - values
-      - metricIds
-    Dashboards_API_ApiDashboardFilterName:
-      type: string
-      description: The name of the dashboard filter, this must be unique.
-      example: cea-filter
-    Dashboards_API_ApiContextFiltersResponse:
-      type: object
-      description: All global dashboard filters saved.
-      properties:
-        dashboardFilters:
-          type: array
-          items:
-            $ref: '#/components/schemas/Dashboards_API_ApiContextFilterResponse'
+        self:
+          $ref: '#/components/schemas/Dashboards_API_Link'
     Dashboards_API_ApiContextFilterRequest:
       type: object
       description: Request containing dashboard filter name, description and context details.
@@ -304,44 +259,6 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-    Dashboards_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Dashboards_API_Link'
-    Dashboards_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
     Dashboards_API_ApiDashboardFilterUserDetails:
       type: object
       description: Details of user who created or modified the filter.
@@ -354,27 +271,37 @@ components:
           type: string
           description: Name of the user.
           example: Test User
-    Dashboards_API_ApiDashboardFilterDescription:
-      type: string
-      description: An optional description of the filter.
-      example: Global filter for CEA widgets
-    Dashboards_API_ApiDataSourceFilters:
+    Dashboards_API_ApiDataSourceFilter:
       type: object
-      description: List of different datasource filters.
+      description: List of different filter properties for a single datasource.
       properties:
-        dataSourceId:
+        filterId:
           type: string
-          description: Types of data source.
-          example: VIRTUAL_AGENT
-        filters:
+          description: Data source property to filter by.
+          example: TEST_LABEL
+        values:
           type: array
-          description: List of different filter properties.
           uniqueItems: true
+          description: Values to filter by based on the specified `filterId`.
+          example:
+          - '45862'
+          - '59749'
           items:
-            $ref: '#/components/schemas/Dashboards_API_ApiDataSourceFilter'
+            type: string
+        metricIds:
+          type: array
+          uniqueItems: true
+          description: Dashboard metric associated with the filter property.
+          example:
+          - WEB_PAGE_LOAD_COMPLETION_RATE
+          - WEB_TTFB
+          - WEB_AVAILABILITY
+          items:
+            type: string
       required:
-      - dataSourceId
-      - filters
+      - filterId
+      - values
+      - metricIds
     Dashboards_API_ApiContextFilterResponse:
       description: Response containing dashboard filter settings and context details.
       type: object
@@ -414,6 +341,56 @@ components:
       - aid
       - name
       - context
+    Dashboards_API_ApiDashboardFilterDescription:
+      type: string
+      description: An optional description of the filter.
+      example: Global filter for CEA widgets
+    Dashboards_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Dashboards_API_ApiContextFilters:
+      type: array
+      description: List of filters to be applied to a dashboard.
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/Dashboards_API_ApiDataSourceFilters'
+    Dashboards_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
     Dashboards_API_ValidationError:
       type: object
       allOf:
@@ -427,39 +404,85 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Dashboards_API_ValidationErrorItem'
-    Dashboards_API_ApiContextFilters:
-      type: array
-      description: List of filters to be applied to a dashboard.
-      uniqueItems: true
-      items:
-        $ref: '#/components/schemas/Dashboards_API_ApiDataSourceFilters'
+    Dashboards_API_ApiContextFiltersResponse:
+      type: object
+      description: All global dashboard filters saved.
+      properties:
+        dashboardFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dashboards_API_ApiContextFilterResponse'
+    Dashboards_API_ApiDataSourceFilters:
+      type: object
+      description: List of different datasource filters.
+      properties:
+        dataSourceId:
+          type: string
+          description: Types of data source.
+          example: VIRTUAL_AGENT
+        filters:
+          type: array
+          description: List of different filter properties.
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Dashboards_API_ApiDataSourceFilter'
+      required:
+      - dataSourceId
+      - filters
+    Dashboards_API_ApiDashboardFilterName:
+      type: string
+      description: The name of the dashboard filter, this must be unique.
+      example: cea-filter
+  parameters:
+    Dashboards_API_DashboardFilterSearchPattern:
+      in: query
+      name: searchPattern
+      description: Optional search pattern parameter to filter list of dashboard filters by either name or description values.
+      required: false
+      schema:
+        type: string
+        example: cea-filter
+    Dashboards_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
+    Dashboards_API_DashboardFilterIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique dashboard filter ID.
+      example: 65bc18e8f2073a4a469cd958
   responses:
-    Dashboards_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Dashboards_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
     Dashboards_API_403:
       description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Dashboards_API_Error'
-    Dashboards_API_204:
-      description: No content
-    Dashboards_API_429:
-      description: Exhausted rate limit for the organization
+    Dashboards_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Dashboards_API_UnauthorizedError'
+    Dashboards_API_500:
+      description: Internal server error
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Dashboards_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
     Dashboards_API_400:
       description: Bad Request
       content:
@@ -479,49 +502,26 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Dashboards_API_401:
-      description: Unauthorized
+    Dashboards_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/Dashboards_API_UnauthorizedError'
-    Dashboards_API_500:
-      description: Internal server error
+            $ref: '#/components/schemas/Dashboards_API_Error'
+    Dashboards_API_404:
+      description: Not found
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Dashboards_API_Error'
           example:
             type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-  parameters:
-    Dashboards_API_DashboardFilterSearchPattern:
-      in: query
-      name: searchPattern
-      description: Optional search pattern parameter to filter list of dashboard filters by either name or description values.
-      required: false
-      schema:
-        type: string
-        example: cea-filter
-    Dashboards_API_DashboardFilterIdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: Unique dashboard filter ID.
-      example: 65bc18e8f2073a4a469cd958
-    Dashboards_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
+    Dashboards_API_204:
+      description: No content
   headers:
     Dashboards_API_Location:
       schema:

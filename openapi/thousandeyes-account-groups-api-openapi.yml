@@ -207,161 +207,33 @@ paths:
       - Administrative_API_BearerAuth: []
 components:
   schemas:
-    Administrative_API_ErrorDetail:
-      type: object
-      properties:
-        code:
-          $ref: '#/components/schemas/Administrative_API_ErrorDetailCode'
-        description:
-          type: string
-          description: Description for the agent error.
-          example: 'Agent Version 0.1.1 (latest: 1.0.0)'
-          readOnly: true
-    Administrative_API_ValidationError:
-      type: object
+    Administrative_API_TestSelfLink:
       allOf:
-      - $ref: '#/components/schemas/Administrative_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
-    Administrative_API_BaseRole:
+      - $ref: '#/components/schemas/Administrative_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Administrative_API_SelfLinks:
       type: object
-      properties:
-        name:
-          type: string
-          description: Name of the role.
-          example: Organization Admin
-        roleId:
-          type: string
-          description: Unique ID representing the role.
-          example: '35'
-        isBuiltin:
-          type: boolean
-          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
-    Administrative_API_AccountGroupDetail:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_CreatedAccountGroup'
-      - type: object
-        properties:
-          agents:
-            type: array
-            items:
-              $ref: '#/components/schemas/Administrative_API_EnterpriseAgent'
-          accountToken:
-            $ref: '#/components/schemas/Administrative_API_AccountGroupToken'
-            type: string
-    Administrative_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Administrative_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Administrative_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
+      description: A links object containing the self link.
       readOnly: true
-    Administrative_API_Role:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_BaseRole'
-      - properties:
-          hasManagementPermissions:
-            type: boolean
-            description: Flag indicating whether the user has management permissions.
-    Administrative_API_ClusterMember:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_AgentBase'
-      - type: object
-        properties:
-          memberId:
-            type: string
-            description: Unique ID of the cluster member
-            example: '10'
-            readOnly: true
-          name:
-            type: string
-            description: Name of the cluster member
-            example: Cluster member name
-            readOnly: true
-          errorDetails:
-            type: array
-            description: If an enterprise agent or a cluster member presents at least one error, the errors will be shown as an array of entries in the errorDetails field (Enterprise Agents and Enterprise Cluster members only)
-            items:
-              $ref: '#/components/schemas/Administrative_API_ErrorDetail'
-            readOnly: true
-          lastSeen:
-            type: string
-            description: UTC last seen date (ISO date-time format).
-            format: date-time
-            example: '2022-07-17T22:00:54Z'
-            readOnly: true
-          agentState:
-            $ref: '#/components/schemas/Administrative_API_EnterpriseAgentState'
-          targetForTests:
-            type: string
-            format: ipv4
-            description: Test target IP address.
-            example: 1.1.1.1
-          serialNumber:
-            $ref: '#/components/schemas/Administrative_API_EnterpriseAgentSerialNumber'
-          utilization:
-            type: integer
-            description: Shows overall utilization percentage (online Enterprise Agents and Enterprise Clusters only).
-            example: 25
-            readOnly: true
-    Administrative_API_Coordinates:
-      type: object
-      description: Geographic coordinates for agent location.
-      properties:
-        latitude:
-          type: number
-          format: double
-          description: The latitude of the agent location in decimal degrees
-          example: 37.77493
-          readOnly: true
-        longitude:
-          type: number
-          format: double
-          description: The longitude of the agent location in decimal degrees
-          example: -122.41942
-          readOnly: true
-    Administrative_API_TestCreatedBy:
-      type: string
-      description: User that created the test.
-      example: user@user.com
-      readOnly: true
-    Administrative_API_AgentResponse:
-      allOf:
-      - required:
-        - agentType
-        properties:
-          agentType:
-            $ref: '#/components/schemas/Administrative_API_CloudEnterpriseAgentType'
-      - $ref: '#/components/schemas/Administrative_API_SimpleAgent'
-    Administrative_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
       properties:
         self:
-          $ref: '#/components/schemas/Administrative_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Administrative_API_TestResults'
-      readOnly: true
-    Administrative_API_ExpandAccountGroupOptions:
+          $ref: '#/components/schemas/Administrative_API_Link'
+    Administrative_API_EnterpriseAgentState:
       type: string
+      description: State of the agent.
       enum:
-      - user
-      - agent
+      - online
+      - offline
+      - disabled
+      example: online
+      readOnly: true
+    Administrative_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
     Administrative_API_AccountGroupRequest:
       type: object
       properties:
@@ -379,148 +251,15 @@ components:
           - '719'
       required:
       - accountGroupName
-    Administrative_API_SimpleTest:
-      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
-      additionalProperties: true
+    Administrative_API_AccountGroups:
       type: object
       properties:
-        interval:
-          $ref: '#/components/schemas/Administrative_API_TestInterval'
-        alertsEnabled:
-          type: boolean
-          description: Indicates if alerts are enabled.
-          example: true
-        enabled:
-          $ref: '#/components/schemas/Administrative_API_Enabled'
-        createdBy:
-          $ref: '#/components/schemas/Administrative_API_TestCreatedBy'
-        createdDate:
-          $ref: '#/components/schemas/Administrative_API_TestCreatedDate'
-        description:
-          type: string
-          description: A description of the test.
-          example: ThousandEyes Test
-        liveShare:
-          type: boolean
-          description: Indicates if the test is shared with the account group.
-          example: false
-          readOnly: true
-        modifiedBy:
-          type: string
-          description: User that modified the test.
-          example: user@user.com
-          readOnly: true
-        modifiedDate:
-          type: string
-          format: date-time
-          description: UTC last modification date (ISO date-time format).
-          readOnly: true
-          example: '2022-07-17T22:00:54Z'
-        savedEvent:
-          type: boolean
-          description: 'Indicates if the test is a saved event.
-
-
-            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
-
-            '
-          readOnly: true
-        testId:
-          type: string
-          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
-          readOnly: true
-          example: '281474976710706'
-        testName:
-          type: string
-          description: The name of the test. Test name must be unique.
-          example: ThousandEyes Test
-        type:
-          $ref: '#/components/schemas/Administrative_API_TestType'
+        accountGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Administrative_API_AccountGroupInfo'
         _links:
-          $ref: '#/components/schemas/Administrative_API_TestLinks'
-    Administrative_API_EnterpriseAgentSerialNumber:
-      type: string
-      description: Serial number of an enterprise agent or cluster member device. This field is not available for Cloud Agents.
-      example: FOC2218ABCD
-      readOnly: true
-    Administrative_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Administrative_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Administrative_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Administrative_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Administrative_API_TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
-      readOnly: true
-      example: agent-to-server
-    Administrative_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
+          $ref: '#/components/schemas/Administrative_API_SelfLinks'
     Administrative_API_CreatedAccountGroup:
       allOf:
       - $ref: '#/components/schemas/Administrative_API_AccountGroupInfo'
@@ -532,20 +271,6 @@ components:
               $ref: '#/components/schemas/Administrative_API_UserAccountGroup'
           _links:
             $ref: '#/components/schemas/Administrative_API_SelfLinks'
-    Administrative_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
-    Administrative_API_AccountGroups:
-      type: object
-      properties:
-        accountGroups:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_AccountGroupInfo'
-        _links:
-          $ref: '#/components/schemas/Administrative_API_SelfLinks'
     Administrative_API_NetworkProviderType:
       type: string
       description: Classification of the agent's network provider.
@@ -558,84 +283,10 @@ components:
       - carrier
       example: isp
       readOnly: true
-    Administrative_API_UserAccountGroup:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User's display name.
-          example: User X
-        email:
-          type: string
-          description: User's email address.
-          format: email
-          example: userx@thousandeyes.com
-        uid:
-          type: string
-          description: Unique ID representing the user.
-          example: '235'
-        lastLogin:
-          type: string
-          description: User's UTC last login date (ISO date-time format).
-          format: date-time
-          example: '2022-07-17T22:00:54Z'
-        dateRegistered:
-          type: string
-          description: User's UTC registration date (ISO date-time format).
-          format: date-time
-          example: '2022-07-17T22:00:54Z'
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Administrative_API_Role'
-    Administrative_API_NetworkProviderInfo:
-      type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
-      properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
-          readOnly: true
-        name:
-          type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
-          readOnly: true
-        type:
-          $ref: '#/components/schemas/Administrative_API_NetworkProviderType'
-    Administrative_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Administrative_API_Link'
-    Administrative_API_EnterpriseAgentState:
+    Administrative_API_EnterpriseAgentSerialNumber:
       type: string
-      description: State of the agent.
-      enum:
-      - online
-      - offline
-      - disabled
-      example: online
-      readOnly: true
-    Administrative_API_TestIds:
-      type: array
-      description: List of test IDs assigned to the agent.
-      items:
-        type: integer
-        format: int64
-      readOnly: true
-      example:
-      - 281474976710706
-    Administrative_API_ClusterMembers:
-      type: array
-      description: If an enterprise agent is clustered, detailed information about each cluster member will be shown as array entries in the clusterMembers field. This field is not shown for Enterprise Agents in standalone mode, or for Cloud Agents.
-      items:
-        $ref: '#/components/schemas/Administrative_API_ClusterMember'
+      description: Serial number of an enterprise agent or cluster member device. This field is not available for Cloud Agents.
+      example: FOC2218ABCD
       readOnly: true
     Administrative_API_AccountGroupInfo:
       allOf:
@@ -657,6 +308,47 @@ components:
             type: string
             description: (Optional) The ID for the organization associated with the account group.
             example: '12345'
+    Administrative_API_ClusterMembers:
+      type: array
+      description: If an enterprise agent is clustered, detailed information about each cluster member will be shown as array entries in the clusterMembers field. This field is not shown for Enterprise Agents in standalone mode, or for Cloud Agents.
+      items:
+        $ref: '#/components/schemas/Administrative_API_ClusterMember'
+      readOnly: true
+    Administrative_API_AgentResponse:
+      allOf:
+      - required:
+        - agentType
+        properties:
+          agentType:
+            $ref: '#/components/schemas/Administrative_API_CloudEnterpriseAgentType'
+      - $ref: '#/components/schemas/Administrative_API_SimpleAgent'
+    Administrative_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Administrative_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
     Administrative_API_EnterpriseAgentData:
       type: object
       properties:
@@ -728,44 +420,77 @@ components:
           items:
             $ref: '#/components/schemas/Administrative_API_InterfaceIpMapping'
           readOnly: true
-    Administrative_API_AccountGroup:
+    Administrative_API_Role:
       type: object
-      properties:
-        aid:
-          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
-        accountGroupName:
-          type: string
-          description: Account group name
-          example: Account A
-    Administrative_API_AccountGroupToken:
-      type: string
-      description: The account group token is an alphanumeric string used to bind an Enterprise Agent to a specific account group. This token is not a password that must be kept secret. You can retrieve your `AccountGroupToken` from the `/account-groups/{id}` endpoint.
-      example: 6j052y4vfgyuhefghue
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_BaseRole'
+      - properties:
+          hasManagementPermissions:
+            type: boolean
+            description: Flag indicating whether the user has management permissions.
     Administrative_API_EnterpriseAgent:
       allOf:
       - $ref: '#/components/schemas/Administrative_API_AgentResponse'
       - $ref: '#/components/schemas/Administrative_API_EnterpriseAgentData'
-    Administrative_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Administrative_API_InterfaceIpMapping:
+    Administrative_API_ErrorDetail:
       type: object
       properties:
-        interfaceName:
+        code:
+          $ref: '#/components/schemas/Administrative_API_ErrorDetailCode'
+        description:
           type: string
-          description: Name of the mapping
-          example: wlp4s0
+          description: Description for the agent error.
+          example: 'Agent Version 0.1.1 (latest: 1.0.0)'
           readOnly: true
-        ipAddresses:
+    Administrative_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
+      readOnly: true
+      example: agent-to-server
+    Administrative_API_UserAccountGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User's display name.
+          example: User X
+        email:
+          type: string
+          description: User's email address.
+          format: email
+          example: userx@thousandeyes.com
+        uid:
+          type: string
+          description: Unique ID representing the user.
+          example: '235'
+        lastLogin:
+          type: string
+          description: User's UTC last login date (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+        dateRegistered:
+          type: string
+          description: User's UTC registration date (ISO date-time format).
+          format: date-time
+          example: '2022-07-17T22:00:54Z'
+        roles:
           type: array
-          description: Array of ipAddress entries
           items:
-            type: string
-          example:
-          - 73.252.207.219
-          - 2601:646:300:3ae0::b977
-          readOnly: true
+            $ref: '#/components/schemas/Administrative_API_Role'
     Administrative_API_AgentBase:
       type: object
       properties:
@@ -792,6 +517,155 @@ components:
           description: Network (including ASN) of agent’s public IP.
           example: AT&T Services, Inc. (AS 7018)
           readOnly: true
+    Administrative_API_TestCreatedBy:
+      type: string
+      description: User that created the test.
+      example: user@user.com
+      readOnly: true
+    Administrative_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Administrative_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
+    Administrative_API_TestIds:
+      type: array
+      description: List of test IDs assigned to the agent.
+      items:
+        type: integer
+        format: int64
+      readOnly: true
+      example:
+      - 281474976710706
+    Administrative_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Administrative_API_ValidationErrorItem'
+    Administrative_API_Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    Administrative_API_ExpandAccountGroupOptions:
+      type: string
+      enum:
+      - user
+      - agent
+    Administrative_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Administrative_API_ClusterMember:
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_AgentBase'
+      - type: object
+        properties:
+          memberId:
+            type: string
+            description: Unique ID of the cluster member
+            example: '10'
+            readOnly: true
+          name:
+            type: string
+            description: Name of the cluster member
+            example: Cluster member name
+            readOnly: true
+          errorDetails:
+            type: array
+            description: If an enterprise agent or a cluster member presents at least one error, the errors will be shown as an array of entries in the errorDetails field (Enterprise Agents and Enterprise Cluster members only)
+            items:
+              $ref: '#/components/schemas/Administrative_API_ErrorDetail'
+            readOnly: true
+          lastSeen:
+            type: string
+            description: UTC last seen date (ISO date-time format).
+            format: date-time
+            example: '2022-07-17T22:00:54Z'
+            readOnly: true
+          agentState:
+            $ref: '#/components/schemas/Administrative_API_EnterpriseAgentState'
+          targetForTests:
+            type: string
+            format: ipv4
+            description: Test target IP address.
+            example: 1.1.1.1
+          serialNumber:
+            $ref: '#/components/schemas/Administrative_API_EnterpriseAgentSerialNumber'
+          utilization:
+            type: integer
+            description: Shows overall utilization percentage (online Enterprise Agents and Enterprise Clusters only).
+            example: 25
+            readOnly: true
+    Administrative_API_AccountGroup:
+      type: object
+      properties:
+        aid:
+          $ref: '#/components/schemas/Administrative_API_AccountGroupId'
+        accountGroupName:
+          type: string
+          description: Account group name
+          example: Account A
+    Administrative_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
     Administrative_API_CloudEnterpriseAgentType:
       type: string
       description: Type of the agent.
@@ -801,6 +675,184 @@ components:
       - enterprise
       example: enterprise-cluster
       readOnly: true
+    Administrative_API_InterfaceIpMapping:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+          description: Name of the mapping
+          example: wlp4s0
+          readOnly: true
+        ipAddresses:
+          type: array
+          description: Array of ipAddress entries
+          items:
+            type: string
+          example:
+          - 73.252.207.219
+          - 2601:646:300:3ae0::b977
+          readOnly: true
+    Administrative_API_SimpleTest:
+      description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
+      additionalProperties: true
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Administrative_API_TestInterval'
+        alertsEnabled:
+          type: boolean
+          description: Indicates if alerts are enabled.
+          example: true
+        enabled:
+          $ref: '#/components/schemas/Administrative_API_Enabled'
+        createdBy:
+          $ref: '#/components/schemas/Administrative_API_TestCreatedBy'
+        createdDate:
+          $ref: '#/components/schemas/Administrative_API_TestCreatedDate'
+        description:
+          type: string
+          description: A description of the test.
+          example: ThousandEyes Test
+        liveShare:
+          type: boolean
+          description: Indicates if the test is shared with the account group.
+          example: false
+          readOnly: true
+        modifiedBy:
+          type: string
+          description: User that modified the test.
+          example: user@user.com
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: UTC last modification date (ISO date-time format).
+          readOnly: true
+          example: '2022-07-17T22:00:54Z'
+        savedEvent:
+          type: boolean
+          description: 'Indicates if the test is a saved event.
+
+
+            **Note**: **Saved Events** are now called **Private Snapshots** in the user interface. This change does not affect API.
+
+            '
+          readOnly: true
+        testId:
+          type: string
+          description: Each test is assigned an unique ID; this is used to access test information and results from other endpoints.
+          readOnly: true
+          example: '281474976710706'
+        testName:
+          type: string
+          description: The name of the test. Test name must be unique.
+          example: ThousandEyes Test
+        type:
+          $ref: '#/components/schemas/Administrative_API_TestType'
+        _links:
+          $ref: '#/components/schemas/Administrative_API_TestLinks'
+    Administrative_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Administrative_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Administrative_API_ErrorDetailCode:
+      type: string
+      description: Code for the agent error.
+      enum:
+      - agent-version-outdated
+      - browserbot-version-outdated
+      - appliance-version-outdated
+      - clock-offset
+      - os-end-of-installation-support
+      - os-end-of-support
+      - os-end-of-life
+      - nat-traversal-error
+      example: agent-version-outdated
+      readOnly: true
+    Administrative_API_EnterpriseAgentIpv6Policy:
+      type: string
+      description: IP version policy, (Enterprise Agents and Enterprise Clusters only)
+      enum:
+      - force-ipv4
+      - prefer-ipv6
+      - force-ipv6
+      example: force-ipv4
+    Administrative_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Administrative_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Administrative_API_TestResults'
+      readOnly: true
+    Administrative_API_BaseRole:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the role.
+          example: Organization Admin
+        roleId:
+          type: string
+          description: Unique ID representing the role.
+          example: '35'
+        isBuiltin:
+          type: boolean
+          description: Flag indicating if the role is built-in (Account Admin, Organization Admin, Regular User).
+    Administrative_API_AccountGroupDetail:
+      allOf:
+      - $ref: '#/components/schemas/Administrative_API_CreatedAccountGroup'
+      - type: object
+        properties:
+          agents:
+            type: array
+            items:
+              $ref: '#/components/schemas/Administrative_API_EnterpriseAgent'
+          accountToken:
+            $ref: '#/components/schemas/Administrative_API_AccountGroupToken'
+            type: string
+    Administrative_API_NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/Administrative_API_NetworkProviderType'
+    Administrative_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Administrative_API_AccountGroupToken:
+      type: string
+      description: The account group token is an alphanumeric string used to bind an Enterprise Agent to a specific account group. This token is not a password that must be kept secret. You can retrieve your `AccountGroupToken` from the `/account-groups/{id}` endpoint.
+      example: 6j052y4vfgyuhefghue
     Administrative_API_SimpleAgent:
       type: object
       allOf:
@@ -850,59 +902,13 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
-    Administrative_API_ErrorDetailCode:
-      type: string
-      description: Code for the agent error.
-      enum:
-      - agent-version-outdated
-      - browserbot-version-outdated
-      - appliance-version-outdated
-      - clock-offset
-      - os-end-of-installation-support
-      - os-end-of-support
-      - os-end-of-life
-      - nat-traversal-error
-      example: agent-version-outdated
-      readOnly: true
-    Administrative_API_EnterpriseAgentIpv6Policy:
-      type: string
-      description: IP version policy, (Enterprise Agents and Enterprise Clusters only)
-      enum:
-      - force-ipv4
-      - prefer-ipv6
-      - force-ipv6
-      example: force-ipv4
-    Administrative_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
-    Administrative_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
   responses:
+    Administrative_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
     Administrative_API_500:
       description: Internal server error
       content:
@@ -921,32 +927,14 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Administrative_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Administrative_API_UnauthorizedError'
+    Administrative_API_204:
+      description: No content
     Administrative_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Administrative_API_Error'
-    Administrative_API_204:
-      description: No content
     Administrative_API_400:
       description: Bad Request
       content:
@@ -966,6 +954,18 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
+    Administrative_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Administrative_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   parameters:
     Administrative_API_AccountGroupIdPath:
       name: id

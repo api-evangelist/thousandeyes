@@ -168,12 +168,20 @@ paths:
       - Tests_API_BearerAuth: []
 components:
   responses:
+    Tests_API_204:
+      description: No content
     Tests_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
+    Tests_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_UnauthorizedError'
     Tests_API_400:
       description: Bad Request
       content:
@@ -193,40 +201,18 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Tests_API_204:
-      description: No content
-    Tests_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_GeneralError:
-      description: An error occurred
     Tests_API_502:
       description: Bad Gateway
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-    Tests_API_500:
-      description: Internal server error
+    Tests_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Tests_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Tests_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tests_API_UnauthorizedError'
     Tests_API_404:
       description: Not found
       content:
@@ -239,13 +225,20 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-  headers:
-    Tests_API_Location:
-      schema:
-        type: string
-        format: uri
-        example: https://api.thousandeyes.com/v7/link/to/resource/id
-      description: The absolute path to created resource.
+    Tests_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tests_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Tests_API_GeneralError:
+      description: An error occurred
   schemas:
     Tests_API_UnauthorizedError:
       type: object
@@ -256,27 +249,6 @@ components:
         error_description:
           type: string
           example: Invalid access token
-    Tests_API_InterfaceGroups:
-      type: object
-      properties:
-        pathVisInterfaceGroups:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tests_API_InterfaceGroup'
-        _links:
-          $ref: '#/components/schemas/Tests_API_SelfLinks'
-    Tests_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
     Tests_API_InterfaceGroup:
       type: object
       properties:
@@ -311,44 +283,6 @@ components:
           example:
           - aggr403b-1.iad3.rackspace.net
           - aggr403c-1.iad3.rackspace.net
-    Tests_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Tests_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
-    Tests_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Tests_API_Link'
-    Tests_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
     Tests_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -380,6 +314,65 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
+    Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Tests_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Tests_API_Link'
+    Tests_API_InterfaceGroups:
+      type: object
+      properties:
+        pathVisInterfaceGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tests_API_InterfaceGroup'
+        _links:
+          $ref: '#/components/schemas/Tests_API_SelfLinks'
+    Tests_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Tests_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Tests_API_ValidationErrorItem'
+    Tests_API_Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
   parameters:
     Tests_API_AccountGroupId:
       name: aid
@@ -397,6 +390,13 @@ components:
       schema:
         type: string
         example: '281474976710706'
+  headers:
+    Tests_API_Location:
+      schema:
+        type: string
+        format: uri
+        example: https://api.thousandeyes.com/v7/link/to/resource/id
+      description: The absolute path to created resource.
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

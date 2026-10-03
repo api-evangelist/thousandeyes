@@ -325,6 +325,12 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    Integrations_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Integrations_API_UnauthorizedError'
     Integrations_API_404:
       description: Not found
       content:
@@ -337,24 +343,17 @@ components:
             status: 404
             detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
-    Integrations_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Integrations_API_UnauthorizedError'
   schemas:
-    Integrations_API_Assignments:
+    Integrations_API_PanoramaConnectors:
       type: object
+      description: Collection of Panorama connectors.
       properties:
         items:
           type: array
           items:
-            type: string
-            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+            $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
         _links:
           $ref: '#/components/schemas/Integrations_API_SelfLinks'
-      description: A list of assigned items.
     Integrations_API_ValidationErrorItem:
       type: object
       properties:
@@ -367,15 +366,24 @@ components:
         message:
           type: string
           description: A short, human-readable summary of the error.
-    Integrations_API_UnauthorizedError:
+    Integrations_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Integrations_API_Link'
+    Integrations_API_Assignments:
       type: object
       properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
+        items:
+          type: array
+          items:
+            type: string
+            example: ca39314d-eb4f-496f-9435-b5d20b1bfbff
+        _links:
+          $ref: '#/components/schemas/Integrations_API_SelfLinks'
+      description: A list of assigned items.
     Integrations_API_Error:
       type: object
       properties:
@@ -394,75 +402,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Integrations_API_PanoramaConnectorAuth:
-      type: object
-      description: Authentication configuration for the Panorama connector.
-      discriminator:
-        propertyName: type
-        mapping:
-          other-token: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
-          pan-key-gen: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
-      oneOf:
-      - $ref: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
-      - $ref: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
-    Integrations_API_PanoramaConnectors:
-      type: object
-      description: Collection of Panorama connectors.
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Integrations_API_PanoramaConnector'
-        _links:
-          $ref: '#/components/schemas/Integrations_API_SelfLinks'
-    Integrations_API_PanoramaKeyGenAuthentication:
-      required:
-      - keyTtl
-      - password
-      - type
-      - username
-      type: object
-      description: Authentication using credentials to generate a Panorama API key.
-      properties:
-        username:
-          type: string
-          description: Username used to generate the Panorama API key.
-          example: panorama-user
-        password:
-          type: string
-          description: Password used to generate the Panorama API key.
-          format: password
-          writeOnly: true
-        keyTtl:
-          type: integer
-          description: Time to live for the generated Panorama API key, in minutes.
-          format: int64
-          minimum: 30
-          example: 40
-        type:
-          type: string
-          enum:
-          - pan-key-gen
-    Integrations_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Integrations_API_Link'
-    Integrations_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Integrations_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Integrations_API_ValidationErrorItem'
     Integrations_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -510,6 +449,19 @@ components:
           description: Authentication type.
           enum:
           - other-token
+    Integrations_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Integrations_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Integrations_API_ValidationErrorItem'
     Integrations_API_PanoramaConnector:
       description: Palo Alto Networks Panorama connector configuration.
       required:
@@ -548,6 +500,54 @@ components:
           $ref: '#/components/schemas/Integrations_API_PanoramaConnectorAuth'
         _links:
           $ref: '#/components/schemas/Integrations_API_SelfLinks'
+    Integrations_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Integrations_API_PanoramaKeyGenAuthentication:
+      required:
+      - keyTtl
+      - password
+      - type
+      - username
+      type: object
+      description: Authentication using credentials to generate a Panorama API key.
+      properties:
+        username:
+          type: string
+          description: Username used to generate the Panorama API key.
+          example: panorama-user
+        password:
+          type: string
+          description: Password used to generate the Panorama API key.
+          format: password
+          writeOnly: true
+        keyTtl:
+          type: integer
+          description: Time to live for the generated Panorama API key, in minutes.
+          format: int64
+          minimum: 30
+          example: 40
+        type:
+          type: string
+          enum:
+          - pan-key-gen
+    Integrations_API_PanoramaConnectorAuth:
+      type: object
+      description: Authentication configuration for the Panorama connector.
+      discriminator:
+        propertyName: type
+        mapping:
+          other-token: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
+          pan-key-gen: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
+      oneOf:
+      - $ref: '#/components/schemas/Integrations_API_PanoramaTokenAuthentication'
+      - $ref: '#/components/schemas/Integrations_API_PanoramaKeyGenAuthentication'
   parameters:
     Integrations_API_connectorIdPath:
       name: id
