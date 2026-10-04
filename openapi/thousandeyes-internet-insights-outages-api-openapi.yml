@@ -308,6 +308,80 @@ paths:
       - Internet_Insights_API_BearerAuth: []
 components:
   schemas:
+    Internet_Insights_API_ApiOutageFilter:
+      description: 'Advanced filter query used to filter the response. Can filter on: - outageScope (all, affected tests (e.g. my tests only)). - providerName - interfaceNetwork - applicationName - startDate, endDate - window'
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: Start of the time range. Must be paired with `endDate`.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T01:30:00Z'
+        endDate:
+          type: string
+          description: End of the time range. Must be paired with `startDate`.
+          format: yyyy-MM-ddTHH:mm[:ss]Z
+          example: '2022-03-01T23:30:15Z'
+        window:
+          type: string
+          description: Specify a time period in the past for which to retrieve data. Alternative to specifying `startDate` and `endDate`.
+          format: ^[0-9]+[smhdw]?
+          example: 1d
+        outageScope:
+          $ref: '#/components/schemas/Internet_Insights_API_OutageScope'
+        providerName:
+          type: array
+          description: The name used to identify the provider.
+          example:
+          - Telia
+          - Amazon
+          items:
+            type: string
+        applicationName:
+          type: array
+          description: The name to identify the application.
+          example:
+          - slack
+          - facebook
+          items:
+            type: string
+        interfaceNetwork:
+          type: array
+          description: The name of the ASN (Interface Network).
+          items:
+            type: string
+      example:
+        startDate: '2022-03-01T01:30:00Z'
+        endDate: '2022-03-01T23:30:15Z'
+        outageScope: all
+        providerName:
+        - Telia
+        - Amazon
+        interfaceNetwork:
+        - Telianet
+        - Cloudflare
+        applicationName:
+        - slack
+        - facebook
+    Internet_Insights_API_ApiApplicationOutageAffectedServer:
+      type: object
+      properties:
+        domain:
+          type: string
+          example: amazon.com
+        prefix:
+          type: string
+          example: 123.176.185.0/23
+    Internet_Insights_API_ApiApplicationOutageAffectedLocation:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/Internet_Insights_API_OutageLocation'
+        affectedServers:
+          type: array
+          description: The number of affected servers in this location.
+          items:
+            $ref: '#/components/schemas/Internet_Insights_API_ApiApplicationOutageAffectedServer'
     Internet_Insights_API_Error:
       type: object
       properties:
@@ -326,56 +400,17 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Internet_Insights_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Internet_Insights_API_Link'
-    Internet_Insights_API_ApiOutagesResponse:
-      type: object
-      properties:
-        outages:
-          type: array
-          description: List of application outages.
-          items:
-            $ref: '#/components/schemas/Internet_Insights_API_ApiOutage'
-        _links:
-          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
-    Internet_Insights_API_InternetInsightsApiAffectedTest:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 5
-        name:
-          type: string
-          example: amazon-test2
-    Internet_Insights_API_ApiApplicationOutageAffectedLocation:
+    Internet_Insights_API_ApiNetworkOutageAffectedLocation:
       type: object
       properties:
         location:
           $ref: '#/components/schemas/Internet_Insights_API_OutageLocation'
-        affectedServers:
+        affectedInterfaces:
           type: array
-          description: The number of affected servers in this location.
+          description: The affected interfaces in this location.
           items:
-            $ref: '#/components/schemas/Internet_Insights_API_ApiApplicationOutageAffectedServer'
-    Internet_Insights_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Internet_Insights_API_OutageLocation:
-      type: string
-      description: The affected location.
-      example: Chicago, Illinois, US
+            type: string
+            example: 50.51.52.53
     Internet_Insights_API_ApiNetworkOutageDetails:
       type: object
       properties:
@@ -451,6 +486,18 @@ components:
             $ref: '#/components/schemas/Internet_Insights_API_ApiNetworkOutageAffectedLocation'
         _links:
           $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
+    Internet_Insights_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
     Internet_Insights_API_ValidationError:
       type: object
       allOf:
@@ -464,154 +511,21 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Internet_Insights_API_ValidationErrorItem'
-    Internet_Insights_API_ValidationErrorItem:
+    Internet_Insights_API_OutageScope:
+      type: string
+      description: Scope of the outage
+      enum:
+      - all
+      - with-affected-test
+    Internet_Insights_API_UnauthorizedError:
       type: object
       properties:
-        code:
+        error:
           type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
+          example: invalid_token
+        error_description:
           type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Internet_Insights_API_ApiOutage:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The ID of the outage.
-          example: xxxxxxxxxxxxxxxxxx1
-        type:
-          type: string
-          description: The type of outage e.g. app.
-          example: app
-        providerName:
-          type: string
-          description: The name of the affected provider.
-          example: Google
-        providerType:
-          type: string
-          description: The type of the affected provider.
-          example: SAAS
-        name:
-          type: string
-          description: The name of the affected application.
-          example: Google
-        startDate:
-          type: string
-          description: Date and time when the outage started.
-          format: yyyy-MM-ddTHH:mm[:ss]Z
-          example: '2022-03-01T23:31:11Z'
-        startRoundId:
-          type: integer
-          description: Epoch time (seconds) when the outage started.
-          format: int64
-          example: 1646177400
-        endDate:
-          type: string
-          format: yyyy-MM-ddTHH:mm[:ss]Z
-          description: Date and time when the outage ended.
-          example: '2022-03-01T23:31:11Z'
-        endRoundId:
-          type: integer
-          description: Epoch time (seconds) when the outage ended.
-          format: int64
-          example: 1646177700
-        duration:
-          type: integer
-          description: Duration of the outage (seconds)
-          format: int64
-          example: 214
-        affectedTestsCount:
-          type: integer
-          description: The number of affected tests
-          format: int32
-          example: 1
-        affectedServersCount:
-          type: integer
-          description: The number of affected servers
-          format: int32
-          example: 2
-        affectedLocationsCount:
-          type: integer
-          description: The number of affected locations.
-          format: int32
-          example: 1
-        affectedInterfacesCount:
-          type: integer
-          description: The number of affected interfaces.
-          format: int32
-          example: 1
-        asn:
-          type: integer
-          description: ASN number.
-          example: 19994
-        _links:
-          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
-      description: List of outages.
-    Internet_Insights_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Internet_Insights_API_InternetInsightsApiAffectedAgent:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 11
-        name:
-          type: string
-          example: London, England
-    Internet_Insights_API_ApiNetworkOutageAffectedLocation:
-      type: object
-      properties:
-        location:
-          $ref: '#/components/schemas/Internet_Insights_API_OutageLocation'
-        affectedInterfaces:
-          type: array
-          description: The affected interfaces in this location.
-          items:
-            type: string
-            example: 50.51.52.53
-    Internet_Insights_API_ApiApplicationOutageAffectedServer:
-      type: object
-      properties:
-        domain:
-          type: string
-          example: amazon.com
-        prefix:
-          type: string
-          example: 123.176.185.0/23
+          example: Invalid access token
     Internet_Insights_API_ApiApplicationOutageDetails:
       type: object
       properties:
@@ -690,80 +604,154 @@ components:
             $ref: '#/components/schemas/Internet_Insights_API_ApiApplicationOutageAffectedLocation'
         _links:
           $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
-    Internet_Insights_API_OutageScope:
-      type: string
-      description: Scope of the outage
-      enum:
-      - all
-      - with-affected-test
-    Internet_Insights_API_ApiOutageFilter:
-      description: 'Advanced filter query used to filter the response. Can filter on: - outageScope (all, affected tests (e.g. my tests only)). - providerName - interfaceNetwork - applicationName - startDate, endDate - window'
+    Internet_Insights_API_InternetInsightsApiAffectedTest:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 5
+        name:
+          type: string
+          example: amazon-test2
+    Internet_Insights_API_OutageLocation:
+      type: string
+      description: The affected location.
+      example: Chicago, Illinois, US
+    Internet_Insights_API_InternetInsightsApiAffectedAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 11
+        name:
+          type: string
+          example: London, England
+    Internet_Insights_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Internet_Insights_API_Link'
+    Internet_Insights_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Internet_Insights_API_ApiOutage:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the outage.
+          example: xxxxxxxxxxxxxxxxxx1
+        type:
+          type: string
+          description: The type of outage e.g. app.
+          example: app
+        providerName:
+          type: string
+          description: The name of the affected provider.
+          example: Google
+        providerType:
+          type: string
+          description: The type of the affected provider.
+          example: SAAS
+        name:
+          type: string
+          description: The name of the affected application.
+          example: Google
         startDate:
           type: string
-          description: Start of the time range. Must be paired with `endDate`.
+          description: Date and time when the outage started.
           format: yyyy-MM-ddTHH:mm[:ss]Z
-          example: '2022-03-01T01:30:00Z'
+          example: '2022-03-01T23:31:11Z'
+        startRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage started.
+          format: int64
+          example: 1646177400
         endDate:
           type: string
-          description: End of the time range. Must be paired with `startDate`.
           format: yyyy-MM-ddTHH:mm[:ss]Z
-          example: '2022-03-01T23:30:15Z'
-        window:
-          type: string
-          description: Specify a time period in the past for which to retrieve data. Alternative to specifying `startDate` and `endDate`.
-          format: ^[0-9]+[smhdw]?
-          example: 1d
-        outageScope:
-          $ref: '#/components/schemas/Internet_Insights_API_OutageScope'
-        providerName:
+          description: Date and time when the outage ended.
+          example: '2022-03-01T23:31:11Z'
+        endRoundId:
+          type: integer
+          description: Epoch time (seconds) when the outage ended.
+          format: int64
+          example: 1646177700
+        duration:
+          type: integer
+          description: Duration of the outage (seconds)
+          format: int64
+          example: 214
+        affectedTestsCount:
+          type: integer
+          description: The number of affected tests
+          format: int32
+          example: 1
+        affectedServersCount:
+          type: integer
+          description: The number of affected servers
+          format: int32
+          example: 2
+        affectedLocationsCount:
+          type: integer
+          description: The number of affected locations.
+          format: int32
+          example: 1
+        affectedInterfacesCount:
+          type: integer
+          description: The number of affected interfaces.
+          format: int32
+          example: 1
+        asn:
+          type: integer
+          description: ASN number.
+          example: 19994
+        _links:
+          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
+      description: List of outages.
+    Internet_Insights_API_ApiOutagesResponse:
+      type: object
+      properties:
+        outages:
           type: array
-          description: The name used to identify the provider.
-          example:
-          - Telia
-          - Amazon
+          description: List of application outages.
           items:
-            type: string
-        applicationName:
-          type: array
-          description: The name to identify the application.
-          example:
-          - slack
-          - facebook
-          items:
-            type: string
-        interfaceNetwork:
-          type: array
-          description: The name of the ASN (Interface Network).
-          items:
-            type: string
-      example:
-        startDate: '2022-03-01T01:30:00Z'
-        endDate: '2022-03-01T23:30:15Z'
-        outageScope: all
-        providerName:
-        - Telia
-        - Amazon
-        interfaceNetwork:
-        - Telianet
-        - Cloudflare
-        applicationName:
-        - slack
-        - facebook
+            $ref: '#/components/schemas/Internet_Insights_API_ApiOutage'
+        _links:
+          $ref: '#/components/schemas/Internet_Insights_API_SelfLinks'
   responses:
-    Internet_Insights_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Internet_Insights_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
     Internet_Insights_API_429:
       description: Exhausted rate limit for the organization
       content:
@@ -782,8 +770,8 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    Internet_Insights_API_403:
-      description: Insufficient permissions to query endpoint
+    Internet_Insights_API_502:
+      description: Bad Gateway
       content:
         application/problem+json:
           schema:
@@ -807,10 +795,8 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Internet_Insights_API_GeneralError:
-      description: An error occurred
-    Internet_Insights_API_502:
-      description: Bad Gateway
+    Internet_Insights_API_403:
+      description: Insufficient permissions to query endpoint
       content:
         application/problem+json:
           schema:
@@ -821,6 +807,20 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Internet_Insights_API_UnauthorizedError'
+    Internet_Insights_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Internet_Insights_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Internet_Insights_API_GeneralError:
+      description: An error occurred
   parameters:
     Internet_Insights_API_AccountGroupId:
       name: aid

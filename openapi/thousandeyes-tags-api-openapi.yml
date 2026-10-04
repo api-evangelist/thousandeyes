@@ -265,67 +265,38 @@ paths:
       security:
       - Tags_API_BearerAuth: []
 components:
-  responses:
-    Tags_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tags_API_Error'
-    Tags_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tags_API_Error'
-    Tags_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tags_API_UnauthorizedError'
-    Tags_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tags_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Tags_API_204:
-      description: No content
-    Tags_API_400:
-      description: Bad Request
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Tags_API_ValidationError'
-          example:
-            type: about:blank
-            title: Request validation failed. There are invalid or missing fields
-            status: 400
-            detail: Your request object contains invalid fields.
-            instance: /v7
-            errors:
-            - code: AM-5432
-              field: firstName
-              message: firstName cannot have fancy characters
-            - code: DASH-5622
-              field: password
-              message: Password cannot be blank
   schemas:
-    Tags_API_AssignmentType:
+    Tags_API_Type:
       type: string
+      description: The nature of the tag - whether the tag is dynamically assigned to objects based on a filter rule or statically assigned to specified objects. Currently only `endpoint-agent` object types support dynamic assignment; all other object types (for example, `test`, `agent`) support only static assignment.
       enum:
-      - test
-      - v-agent
-      - endpoint-test
-      - dashboard
-      - connected-devices-test
+      - static
+      - dynamic
+      example: static
+    Tags_API_Tag:
+      allOf:
+      - $ref: '#/components/schemas/Tags_API_TagInfo'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Tags_API_SelfLinks'
+    Tags_API_TagMatchType:
+      description: 'Specifies how filters (tag keys) are applied (matched) to objects for tag assignment.
+
+        * `and`: All filters must be matched.
+
+        * `or`: Any of the filters should match.
+
+
+        Note: filtering and matching currently only apply to `endpoint-agent` object types, as these functions are used for dynamic tag assignment.
+
+        '
+      type: string
+      readOnly: false
+      enum:
+      - and
+      - or
+      example: and
     Tags_API_TagInfo:
       type: object
       properties:
@@ -408,6 +379,21 @@ components:
           readOnly: false
           items:
             $ref: '#/components/schemas/Tags_API_TagFilter'
+    Tags_API_TagFilterScope:
+      type: string
+      description: 'Scope of the filter.
+
+
+        * `default`: The filter is from the default set provided by ThousandEyes.
+
+        * `custom`: The filter is user-defined. Set in check-in metadata.
+
+        '
+      enum:
+      - default
+      - custom
+      example: custom
+      default: default
     Tags_API_TagFilter:
       type: object
       properties:
@@ -436,21 +422,157 @@ components:
           $ref: '#/components/schemas/Tags_API_TagFilterMode'
         scope:
           $ref: '#/components/schemas/Tags_API_TagFilterScope'
-    Tags_API_TagFilterScope:
+    Tags_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Tags_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Tags_API_AccessType:
       type: string
-      description: 'Scope of the filter.
-
-
-        * `default`: The filter is from the default set provided by ThousandEyes.
-
-        * `custom`: The filter is user-defined. Set in check-in metadata.
-
-        '
+      description: "The access level of the tag. The access level determines the label's visibility in the UI and the permissions required to modify it. Accepted values are:\n\n\n* `all`: The tag is visible and editable by any user in the account group with the standard **View tags** or **Edit tags** permission. Default for all user-created tags.\n\n* `partner`: The tag is owned by a specific integration partner. Only that partner can read or modify it. It's hidden from all regular account users and excluded from their GET responses.\n\n* `system`: Reserved for ThousandEyes internal use only. This value may appear in GET responses on internally managed tags but cannot be set by users or integration partners. \n"
       enum:
-      - default
-      - custom
-      example: custom
-      default: default
+      - all
+      - partner
+      - system
+      example: all
+    Tags_API_TagBulkCreateError:
+      type: object
+      properties:
+        tag:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Tags_API_TagInfo'
+        responseCode:
+          type: integer
+          example: 200
+          description: HTTP response code
+        message:
+          type: string
+          example: Object successfully created
+          description: Status / error message
+    Tags_API_AssignmentType:
+      type: string
+      enum:
+      - test
+      - v-agent
+      - endpoint-test
+      - dashboard
+      - connected-devices-test
+    Tags_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Tags_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Tags_API_ValidationErrorItem'
+    Tags_API_ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1679677853573
+        status:
+          type: integer
+          example: 500
+        errors:
+          type: string
+          example: Internal Server Error
+        path:
+          type: string
+          format: url
+          example: https://api.thousandeyes.com/v7/request/path
+    Tags_API_Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Object Id
+          example: '123'
+        type:
+          $ref: '#/components/schemas/Tags_API_AssignmentType'
+    Tags_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Tags_API_BulkTagResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tags_API_Tag'
+        errors:
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Tags_API_TagBulkCreateError'
+        _links:
+          $ref: '#/components/schemas/Tags_API_SelfLinks'
+    Tags_API_ExpandTagsOptions:
+      enum:
+      - assignments
+      type: string
+    Tags_API_ObjectType:
+      type: string
+      description: The object type associated with the tag
+      enum:
+      - test
+      - dashboard
+      - endpoint-test
+      - v-agent
+      - connected-devices-test
+      - endpoint-agent
+      example: test
     Tags_API_TagFilterMode:
       type: string
       description: 'Type of matching logic applied to the values:
@@ -490,152 +612,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Tags_API_AccessType:
-      type: string
-      description: "The access level of the tag. The access level determines the label's visibility in the UI and the permissions required to modify it. Accepted values are:\n\n\n* `all`: The tag is visible and editable by any user in the account group with the standard **View tags** or **Edit tags** permission. Default for all user-created tags.\n\n* `partner`: The tag is owned by a specific integration partner. Only that partner can read or modify it. It's hidden from all regular account users and excluded from their GET responses.\n\n* `system`: Reserved for ThousandEyes internal use only. This value may appear in GET responses on internally managed tags but cannot be set by users or integration partners. \n"
-      enum:
-      - all
-      - partner
-      - system
-      example: all
-    Tags_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Tags_API_TagBulkCreateError:
-      type: object
-      properties:
-        tag:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Tags_API_TagInfo'
-        responseCode:
-          type: integer
-          example: 200
-          description: HTTP response code
-        message:
-          type: string
-          example: Object successfully created
-          description: Status / error message
-    Tags_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Tags_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Tags_API_Type:
-      type: string
-      description: The nature of the tag - whether the tag is dynamically assigned to objects based on a filter rule or statically assigned to specified objects. Currently only `endpoint-agent` object types support dynamic assignment; all other object types (for example, `test`, `agent`) support only static assignment.
-      enum:
-      - static
-      - dynamic
-      example: static
-    Tags_API_Assignment:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Object Id
-          example: '123'
-        type:
-          $ref: '#/components/schemas/Tags_API_AssignmentType'
-    Tags_API_BulkTagResponse:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tags_API_Tag'
-        errors:
-          readOnly: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Tags_API_TagBulkCreateError'
-        _links:
-          $ref: '#/components/schemas/Tags_API_SelfLinks'
-    Tags_API_ObjectType:
-      type: string
-      description: The object type associated with the tag
-      enum:
-      - test
-      - dashboard
-      - endpoint-test
-      - v-agent
-      - connected-devices-test
-      - endpoint-agent
-      example: test
-    Tags_API_TagMatchType:
-      description: 'Specifies how filters (tag keys) are applied (matched) to objects for tag assignment.
-
-        * `and`: All filters must be matched.
-
-        * `or`: Any of the filters should match.
-
-
-        Note: filtering and matching currently only apply to `endpoint-agent` object types, as these functions are used for dynamic tag assignment.
-
-        '
-      type: string
-      readOnly: false
-      enum:
-      - and
-      - or
-      example: and
-    Tags_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Tags_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Tags_API_ValidationErrorItem'
     Tags_API_Tags:
       type: object
       properties:
@@ -645,35 +621,71 @@ components:
             $ref: '#/components/schemas/Tags_API_Tag'
         _links:
           $ref: '#/components/schemas/Tags_API_SelfLinks'
-    Tags_API_ExpandTagsOptions:
-      enum:
-      - assignments
-      type: string
-    Tags_API_ApiError:
-      type: object
-      properties:
-        timestamp:
-          type: integer
-          format: int64
-          example: 1679677853573
-        status:
-          type: integer
-          example: 500
-        errors:
-          type: string
-          example: Internal Server Error
-        path:
-          type: string
-          format: url
-          example: https://api.thousandeyes.com/v7/request/path
-    Tags_API_Tag:
-      allOf:
-      - $ref: '#/components/schemas/Tags_API_TagInfo'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Tags_API_SelfLinks'
+  responses:
+    Tags_API_400:
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_ValidationError'
+          example:
+            type: about:blank
+            title: Request validation failed. There are invalid or missing fields
+            status: 400
+            detail: Your request object contains invalid fields.
+            instance: /v7
+            errors:
+            - code: AM-5432
+              field: firstName
+              message: firstName cannot have fancy characters
+            - code: DASH-5622
+              field: password
+              message: Password cannot be blank
+    Tags_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+    Tags_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_UnauthorizedError'
+    Tags_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
+    Tags_API_204:
+      description: No content
+    Tags_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Tags_API_Error'
   parameters:
+    Tags_API_ExpandTags:
+      name: expand
+      in: query
+      description: Optional, to retrieve associated assignments. Only static tags will return object assignments.
+      required: false
+      schema:
+        example:
+        - assignments
+        items:
+          $ref: '#/components/schemas/Tags_API_ExpandTagsOptions'
+        type: array
+      style: form
     Tags_API_AccountGroupId:
       name: aid
       in: query
@@ -690,18 +702,6 @@ components:
       schema:
         type: string
       example: c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-    Tags_API_ExpandTags:
-      name: expand
-      in: query
-      description: Optional, to retrieve associated assignments. Only static tags will return object assignments.
-      required: false
-      schema:
-        example:
-        - assignments
-        items:
-          $ref: '#/components/schemas/Tags_API_ExpandTagsOptions'
-        type: array
-      style: form
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

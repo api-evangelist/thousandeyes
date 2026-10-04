@@ -59,14 +59,20 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Endpoint_Tests_API_Error'
+    Endpoint_Tests_API_GeneralError:
+      description: An error occurred
     Endpoint_Tests_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Endpoint_Tests_API_UnauthorizedError'
-    Endpoint_Tests_API_GeneralError:
-      description: An error occurred
+    Endpoint_Tests_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
     Endpoint_Tests_API_500:
       description: Internal server error
       content:
@@ -79,13 +85,66 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
-    Endpoint_Tests_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
   schemas:
+    Endpoint_Tests_API_EndpointRealUserTestsResponse:
+      type: object
+      required:
+      - realUserTests
+      properties:
+        realUserTests:
+          type: array
+          description: Real user test domain monitoring profiles.
+          items:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointRealUserTest'
+    Endpoint_Tests_API_EndpointMonitoringSettings:
+      type: object
+      required:
+      - monitoringSettingsType
+      example:
+        monitoringSettingsId: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
+        monitoringSettingsType: agent-tags
+        tagIds:
+        - 49d9e7d2-7df5-43df-9b37-aa596b929062
+        labelIds:
+        - '567'
+      properties:
+        monitoringSettingsId:
+          type:
+          - string
+          - 'null'
+          description: Unique ID of the monitoring settings.
+          example: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
+          readOnly: true
+        monitoringSettingsType:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointMonitoringSettingsType'
+        agentIds:
+          type:
+          - array
+          - 'null'
+          description: Endpoint Agent IDs selected by the monitoring settings.
+          items:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentId'
+        tagIds:
+          type:
+          - array
+          - 'null'
+          description: Endpoint Agent tag IDs selected by the monitoring settings.
+          example:
+          - 49d9e7d2-7df5-43df-9b37-aa596b929062
+          items:
+            type: string
+            format: uuid
+        labelIds:
+          type:
+          - array
+          - 'null'
+          description: Legacy Endpoint Agent label IDs selected by the monitoring settings.
+          example:
+          - '567'
+          items:
+            type: string
+            example: '567'
+            readOnly: true
     Endpoint_Tests_API_EndpointAgentId:
       type: string
       format: uuid
@@ -139,6 +198,10 @@ components:
             readOnly: true
         monitoringSettings:
           $ref: '#/components/schemas/Endpoint_Tests_API_EndpointMonitoringSettings'
+    Endpoint_Tests_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
     Endpoint_Tests_API_EndpointMonitoringSettingsType:
       type: string
       description: Endpoint Agent selector type used by the monitoring settings.
@@ -149,20 +212,6 @@ components:
       - agent-tags
       example: agent-tags
       readOnly: true
-    Endpoint_Tests_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Endpoint_Tests_API_EndpointRealUserTestsResponse:
-      type: object
-      required:
-      - realUserTests
-      properties:
-        realUserTests:
-          type: array
-          description: Real user test domain monitoring profiles.
-          items:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointRealUserTest'
     Endpoint_Tests_API_Error:
       type: object
       properties:
@@ -181,55 +230,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Endpoint_Tests_API_EndpointMonitoringSettings:
-      type: object
-      required:
-      - monitoringSettingsType
-      example:
-        monitoringSettingsId: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
-        monitoringSettingsType: agent-tags
-        tagIds:
-        - 49d9e7d2-7df5-43df-9b37-aa596b929062
-        labelIds:
-        - '567'
-      properties:
-        monitoringSettingsId:
-          type:
-          - string
-          - 'null'
-          description: Unique ID of the monitoring settings.
-          example: 1f5c1b5d-8a0d-4d6b-a3be-56b060f7f2c9
-          readOnly: true
-        monitoringSettingsType:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointMonitoringSettingsType'
-        agentIds:
-          type:
-          - array
-          - 'null'
-          description: Endpoint Agent IDs selected by the monitoring settings.
-          items:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentId'
-        tagIds:
-          type:
-          - array
-          - 'null'
-          description: Endpoint Agent tag IDs selected by the monitoring settings.
-          example:
-          - 49d9e7d2-7df5-43df-9b37-aa596b929062
-          items:
-            type: string
-            format: uuid
-        labelIds:
-          type:
-          - array
-          - 'null'
-          description: Legacy Endpoint Agent label IDs selected by the monitoring settings.
-          example:
-          - '567'
-          items:
-            type: string
-            example: '567'
-            readOnly: true
   parameters:
     Endpoint_Tests_API_AccountGroupId:
       name: aid

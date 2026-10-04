@@ -67,6 +67,15 @@ paths:
       - API_Token_Management_API_BearerAuth: []
 components:
   schemas:
+    API_Token_Management_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     API_Token_Management_API_ApiToken:
       type: object
       properties:
@@ -99,22 +108,7 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    API_Token_Management_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
   responses:
-    API_Token_Management_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/API_Token_Management_API_UnauthorizedError'
     API_Token_Management_API_403:
       description: Insufficient permissions to query endpoint
       content:
@@ -133,6 +127,12 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    API_Token_Management_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/API_Token_Management_API_UnauthorizedError'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

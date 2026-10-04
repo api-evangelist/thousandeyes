@@ -90,31 +90,83 @@ paths:
       - Agents_API_BearerAuth: []
 components:
   schemas:
-    Agents_API_NotificationRules:
+    Agents_API_SelfLinks:
       type: object
+      description: A links object containing the self link.
+      readOnly: true
       properties:
-        agentAlertRules:
+        self:
+          $ref: '#/components/schemas/Agents_API_Link'
+    Agents_API_Coordinates:
+      type: object
+      description: Geographic coordinates for agent location.
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: The latitude of the agent location in decimal degrees
+          example: 37.77493
+          readOnly: true
+        longitude:
+          type: number
+          format: double
+          description: The longitude of the agent location in decimal degrees
+          example: -122.41942
+          readOnly: true
+    Agents_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Agents_API_AgentNotification:
+      type: object
+      description: Alert notification object.
+      properties:
+        email:
+          $ref: '#/components/schemas/Agents_API_AlertEmail'
+        thirdParty:
           type: array
           items:
-            $ref: '#/components/schemas/Agents_API_NotificationRule'
-          example:
-          - ruleId: '281474976710706'
-            ruleName: Default Agent Offline Notification
-            expression: ((lastContact >= 30 min))
-            notifyOnClear: true
-            isDefault: false
-          - ruleId: '281474976710709'
-            ruleName: Test Rule
-            expression: ((lastContact >= 40 min))
-            notifyOnClear: true
-            isDefault: true
-    Agents_API_AlertIntegrationType:
-      type: string
-      description: Type of the alert integration
-      enum:
-      - pager-duty
-      - slack
-      example: slack
+            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
+        webhook:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
+    Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Agents_API_CloudEnterpriseAgentType:
       type: string
       description: Type of the agent.
@@ -124,55 +176,13 @@ components:
       - enterprise
       example: enterprise-cluster
       readOnly: true
-    Agents_API_ListNotificationRulesResponse:
-      allOf:
-      - $ref: '#/components/schemas/Agents_API_NotificationRules'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Agents_API_SelfLinks'
-    Agents_API_NotificationRule:
-      type: object
-      properties:
-        ruleId:
-          type: string
-          description: Agent notification rule ID
-          example: '281474976710706'
-          readOnly: true
-        ruleName:
-          type: string
-          description: Name of the agent notification rule
-          example: Default Agent Offline Notification
-        expression:
-          type: string
-          description: Expression of agent notification rule
-          example: ((lastContact >= 30 min))
-        notifyOnClear:
-          type: boolean
-          description: Send notification when notification clears
-          example: true
-        isDefault:
-          type: boolean
-          description: Agent notification rule will be automatically included on all new Enterprise Agents.
-          example: false
-    Agents_API_Error:
-      type: object
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-        status:
-          type: integer
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence of the problem.
+    Agents_API_AlertIntegrationType:
+      type: string
+      description: Type of the alert integration
+      enum:
+      - pager-duty
+      - slack
+      example: slack
     Agents_API_AlertIntegrationBase:
       type: object
       properties:
@@ -206,6 +216,30 @@ components:
           type: string
           description: (Slack only) Slack `#channel` or `@user`.
           example: '#slackChannel'
+    Agents_API_NotificationRule:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          description: Agent notification rule ID
+          example: '281474976710706'
+          readOnly: true
+        ruleName:
+          type: string
+          description: Name of the agent notification rule
+          example: Default Agent Offline Notification
+        expression:
+          type: string
+          description: Expression of agent notification rule
+          example: ((lastContact >= 30 min))
+        notifyOnClear:
+          type: boolean
+          description: Send notification when notification clears
+          example: true
+        isDefault:
+          type: boolean
+          description: Agent notification rule will be automatically included on all new Enterprise Agents.
+          example: false
     Agents_API_AlertEmail:
       type: object
       properties:
@@ -221,32 +255,73 @@ components:
           example:
           - user1@thousandeyes.com
           - user2@cisco.com
-    Agents_API_AgentBase:
+    Agents_API_NetworkProviderInfo:
+      type: object
+      description: Information about the network provider that owns the agent's public IP prefix.
+      readOnly: true
+      properties:
+        asn:
+          type: integer
+          format: int64
+          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
+          example: 7018
+          readOnly: true
+        name:
+          type: string
+          description: Name of the network provider organization.
+          example: AT&T Services, Inc.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/Agents_API_NetworkProviderType'
+    Agents_API_NotificationRules:
       type: object
       properties:
-        ipAddresses:
+        agentAlertRules:
           type: array
-          description: Array of private IP addresses.
-          readOnly: true
           items:
-            type: string
+            $ref: '#/components/schemas/Agents_API_NotificationRule'
           example:
-          - 99.139.65.220
-          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
-        publicIpAddresses:
-          type: array
-          description: Array of public IP addresses.
-          readOnly: true
-          items:
-            type: string
-          example:
-          - 192.168.1.78
-          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
-        network:
+          - ruleId: '281474976710706'
+            ruleName: Default Agent Offline Notification
+            expression: ((lastContact >= 30 min))
+            notifyOnClear: true
+            isDefault: false
+          - ruleId: '281474976710709'
+            ruleName: Test Rule
+            expression: ((lastContact >= 40 min))
+            notifyOnClear: true
+            isDefault: true
+    Agents_API_NotificationRuleDetail:
+      allOf:
+      - $ref: '#/components/schemas/Agents_API_NotificationRule'
+      - type: object
+        properties:
+          notifications:
+            $ref: '#/components/schemas/Agents_API_AgentNotification'
+          agents:
+            type: array
+            items:
+              $ref: '#/components/schemas/Agents_API_AgentResponse'
+          _links:
+            $ref: '#/components/schemas/Agents_API_SelfLinks'
+    Agents_API_Error:
+      type: object
+      properties:
+        type:
           type: string
-          description: Network (including ASN) of agent’s public IP.
-          example: AT&T Services, Inc. (AS 7018)
-          readOnly: true
+          description: A URI reference that identifies the problem type. When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
     Agents_API_SimpleAgent:
       type: object
       allOf:
@@ -296,19 +371,6 @@ components:
             description: Prefix containing agents public IP address.
             example: 99.128.0.0/11
             readOnly: true
-    Agents_API_NotificationRuleDetail:
-      allOf:
-      - $ref: '#/components/schemas/Agents_API_NotificationRule'
-      - type: object
-        properties:
-          notifications:
-            $ref: '#/components/schemas/Agents_API_AgentNotification'
-          agents:
-            type: array
-            items:
-              $ref: '#/components/schemas/Agents_API_AgentResponse'
-          _links:
-            $ref: '#/components/schemas/Agents_API_SelfLinks'
     Agents_API_NetworkProviderType:
       type: string
       description: Classification of the agent's network provider.
@@ -321,92 +383,32 @@ components:
       - carrier
       example: isp
       readOnly: true
-    Agents_API_Coordinates:
+    Agents_API_AgentBase:
       type: object
-      description: Geographic coordinates for agent location.
       properties:
-        latitude:
-          type: number
-          format: double
-          description: The latitude of the agent location in decimal degrees
-          example: 37.77493
-          readOnly: true
-        longitude:
-          type: number
-          format: double
-          description: The longitude of the agent location in decimal degrees
-          example: -122.41942
-          readOnly: true
-    Agents_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Agents_API_Link'
-    Agents_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Agents_API_NetworkProviderInfo:
-      type: object
-      description: Information about the network provider that owns the agent's public IP prefix.
-      readOnly: true
-      properties:
-        asn:
-          type: integer
-          format: int64
-          description: Autonomous System Number (ASN) announcing the agent's public IP prefix.
-          example: 7018
-          readOnly: true
-        name:
-          type: string
-          description: Name of the network provider organization.
-          example: AT&T Services, Inc.
-          readOnly: true
-        type:
-          $ref: '#/components/schemas/Agents_API_NetworkProviderType'
-    Agents_API_AgentNotification:
-      type: object
-      description: Alert notification object.
-      properties:
-        email:
-          $ref: '#/components/schemas/Agents_API_AlertEmail'
-        thirdParty:
+        ipAddresses:
           type: array
+          description: Array of private IP addresses.
+          readOnly: true
           items:
-            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
-        webhook:
+            type: string
+          example:
+          - 99.139.65.220
+          - 9bbd:8a0a:a257:5876:288b:6cb2:3f36:64ce
+        publicIpAddresses:
           type: array
+          description: Array of public IP addresses.
+          readOnly: true
           items:
-            $ref: '#/components/schemas/Agents_API_AlertIntegrationBase'
+            type: string
+          example:
+          - 192.168.1.78
+          - f9b2:3a21:f25c:d300:03f4:586d:f8d6:4e1c
+        network:
+          type: string
+          description: Network (including ASN) of agent’s public IP.
+          example: AT&T Services, Inc. (AS 7018)
+          readOnly: true
     Agents_API_AgentResponse:
       allOf:
       - required:
@@ -415,66 +417,13 @@ components:
           agentType:
             $ref: '#/components/schemas/Agents_API_CloudEnterpriseAgentType'
       - $ref: '#/components/schemas/Agents_API_SimpleAgent'
-    Agents_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-  responses:
-    Agents_API_500:
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Agents_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_UnauthorizedError'
-    Agents_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-    Agents_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-    Agents_API_GeneralError:
-      description: An error occurred
-    Agents_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-    Agents_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
+    Agents_API_ListNotificationRulesResponse:
+      allOf:
+      - $ref: '#/components/schemas/Agents_API_NotificationRules'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Agents_API_SelfLinks'
   parameters:
     Agents_API_AccountGroupId:
       name: aid
@@ -492,6 +441,57 @@ components:
       required: true
       schema:
         type: string
+  responses:
+    Agents_API_GeneralError:
+      description: An error occurred
+    Agents_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Agents_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_UnauthorizedError'
+    Agents_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
   securitySchemes:
     Tests_API_BearerAuth:
       type: http

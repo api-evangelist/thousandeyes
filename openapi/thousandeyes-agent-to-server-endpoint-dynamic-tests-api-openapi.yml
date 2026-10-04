@@ -207,230 +207,18 @@ paths:
       - Endpoint_Tests_API_BearerAuth: []
 components:
   schemas:
-    Endpoint_Tests_API_EndpointTestAgentSelectorType:
+    Endpoint_Tests_API_TestProbeModeResponse:
       type: string
       enum:
-      - all-agents
-      - specific-agents
-      - agent-labels
-      - agent-tags
-      description: "Specifies how agents are selected for the endpoint test.\n\nAgents can be selected from:\n  - all available agents\n  - a specific list of agents\n  - agents matching tags\n  - agents matching labels (deprecated)\n"
-      default: all-agents
-      example: all-agents
-    Endpoint_Tests_API_EndpointAgentTagsSelectorType:
-      type: string
-      example: agent-tags
-      pattern: ^agent-tags$
-    Endpoint_Tests_API_TestName:
-      type: string
-      description: Name of the test.
-      example: Test name
-    Endpoint_Tests_API_TestIsPrioritized:
-      type: boolean
-      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
-      default: false
-      example: false
-    Endpoint_Tests_API_TestHasPathTraceInSession:
-      type: boolean
-      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
-      example: true
-    Endpoint_Tests_API_EndpointSpecificAgentsSelectorType:
-      type: string
-      example: specific-agents
-      pattern: ^specific-agents$
-    Endpoint_Tests_API_AccountGroupId:
-      type: string
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
-      example: '1234'
-    Endpoint_Tests_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Endpoint_Tests_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Endpoint_Tests_API_TestHasTraceRoute:
-      type: boolean
-      description: Optional flag indicating if the test should run traceroute.
-      default: true
-    Endpoint_Tests_API_DynamicTests:
-      type: object
-      properties:
-        tests:
-          type: array
-          items:
-            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTest'
-        _links:
-          $ref: '#/components/schemas/Endpoint_Tests_API_SelfLinks'
-    Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig:
-      type: object
-      description: Specific agents selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
-        agents:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgents'
-      required:
-      - agentSelectorType
-    Endpoint_Tests_API_DynamicTestRequest:
-      allOf:
-      - type: object
-        required:
-        - testName
-        - application
-        properties:
-          agentSelectorType:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgentSelectorType'
-          agents:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgents'
-          endpointAgentLabels:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabels'
-          tagIds:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TagIds'
-          isPrioritized:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TestIsPrioritized'
-          interval:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TestInterval'
-          maxMachines:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
-          application:
-            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestApplication'
-          protocol:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestProtocol'
-          tcpProbeMode:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TestProbeMode'
-          testName:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TestName'
-          hasPathTraceInSession:
-            $ref: '#/components/schemas/Endpoint_Tests_API_TestHasPathTraceInSession'
-          ipVersion:
-            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointIpVersionIn'
-    Endpoint_Tests_API_EndpointAgentLabelsSelectorType:
-      type: string
-      example: agent-labels
-      pattern: ^agent-labels$
-    Endpoint_Tests_API_EndpointAllAgentsSelectorConfig:
-      type: object
-      description: Any agent selection object.
-      readOnly: true
-      properties:
-        agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorType'
-        maxMachines:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
-      required:
-      - agentSelectorType
-    Endpoint_Tests_API_EndpointAgentSelectorConfig:
-      type: object
-      description: Agents selection object based on agentSelectorType.
-      readOnly: true
-      oneOf:
-      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig'
-      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentTagsSelectorConfig'
-      discriminator:
-        propertyName: agentSelectorType
-        mapping:
-          all-agents: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorConfig'
-          specific-agents: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig'
-          agent-labels: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig'
-          agent-tags: '#/components/schemas/Endpoint_Tests_API_EndpointAgentTagsSelectorConfig'
-      required:
-      - agentSelectorType
-    Endpoint_Tests_API_DynamicTestApplication:
-      type: string
-      description: Which supported application to monitor, can be one of `webex`, `zoom`, `microsoft-teams`.
-      example: webex
-    Endpoint_Tests_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Endpoint_Tests_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Endpoint_Tests_API_ValidationErrorItem'
-    Endpoint_Tests_API_TestNetworkMeasurements:
-      type: boolean
-      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
-      default: true
-      example: true
-    Endpoint_Tests_API_TestHasPing:
-      type: boolean
-      description: Optional flag indicating if the test should run ping.
-      default: true
-    Endpoint_Tests_API_TagIds:
-      type: array
-      description: List of tag IDs (obtained from `/tags` endpoint).
-      items:
-        type: string
-        format: uuid
-      example:
-      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
-      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
-    Endpoint_Tests_API_EndpointAgentLabels:
-      type: array
-      deprecated: true
-      description: 'Deprecated. Use `tagIds` instead.
-
-
-        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
-
-        '
-      items:
-        type: string
-      example:
-      - '567'
-      - '214'
-    Endpoint_Tests_API_EndpointTestMaxMachines:
-      type: integer
-      description: Maximum number of agents which can execute the test.
-      default: 25
-      example: 25
+      - auto
+      - sack
+      - syn
+      - syn-pcap
+      - syn-socket
+      - unknown
+      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
+      default: auto
+      example: auto
     Endpoint_Tests_API_EndpointAgentTagsSelectorConfig:
       type: object
       description: Agent tags selection object.
@@ -446,30 +234,19 @@ components:
           $ref: '#/components/schemas/Endpoint_Tests_API_TagIds'
       required:
       - agentSelectorType
-    Endpoint_Tests_API_EndpointTestAgents:
-      type: array
-      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
-      items:
-        type: string
-        format: uuid
-      example:
-      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
-      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
-    Endpoint_Tests_API_TestProbeMode:
+    Endpoint_Tests_API_EndpointAgentTagsSelectorType:
       type: string
-      enum:
-      - auto
-      - sack
-      - syn
-      description: Probe mode used by network test, only valid when the protocol is set to TCP.
-      default: auto
-      example: auto
-    Endpoint_Tests_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
+      example: agent-tags
+      pattern: ^agent-tags$
+    Endpoint_Tests_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Endpoint_Tests_API_TestUpdate:
       type: object
       properties:
@@ -483,22 +260,58 @@ components:
           $ref: '#/components/schemas/Endpoint_Tests_API_TestIsEnabled'
         tcpProbeMode:
           $ref: '#/components/schemas/Endpoint_Tests_API_TestProbeMode'
-    Endpoint_Tests_API_DynamicTestLinks:
+    Endpoint_Tests_API_ValidationError:
       type: object
-      description: A list of links that can be accessed to get more information.
-      properties:
-        self:
-          $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestResults'
-      readOnly: true
-    Endpoint_Tests_API_EndpointDynamicTestUpdate:
       allOf:
-      - $ref: '#/components/schemas/Endpoint_Tests_API_TestUpdate'
+      - $ref: '#/components/schemas/Endpoint_Tests_API_Error'
       - type: object
         properties:
-          application:
-            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestApplication'
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Endpoint_Tests_API_ValidationErrorItem'
+    Endpoint_Tests_API_TestIsPrioritized:
+      type: boolean
+      description: Indicates whether the test should be prioritized when the number of tests assigned to an agent exceeds the license limit.
+      default: false
+      example: false
+    Endpoint_Tests_API_EndpointAllAgentsSelectorType:
+      type: string
+      example: all-agents
+      pattern: ^all-agents$
+    Endpoint_Tests_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Endpoint_Tests_API_TestIsEnabled:
+      type: boolean
+      description: Indicates if test is enabled.
+      example: true
+      default: true
+    Endpoint_Tests_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
     Endpoint_Tests_API_DynamicTest:
       type: object
       properties:
@@ -547,12 +360,37 @@ components:
           $ref: '#/components/schemas/Endpoint_Tests_API_TestName'
         labels:
           $ref: '#/components/schemas/Endpoint_Tests_API_TestLabels'
-    Endpoint_Tests_API_DynamicTestSelfLink:
-      allOf:
-      - description: The reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/dynamic-tests/agent-to-server/281474976710706
-      - $ref: '#/components/schemas/Endpoint_Tests_API_Link'
+    Endpoint_Tests_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
     Endpoint_Tests_API_SelfLinks:
       type: object
       description: A links object containing the self link.
@@ -560,34 +398,38 @@ components:
       properties:
         self:
           $ref: '#/components/schemas/Endpoint_Tests_API_Link'
-    Endpoint_Tests_API_DynamicTestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Endpoint_Tests_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/network/filter
-      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/pathvis
-    Endpoint_Tests_API_TestIsEnabled:
-      type: boolean
-      description: Indicates if test is enabled.
-      example: true
-      default: true
-    Endpoint_Tests_API_UnauthorizedError:
+    Endpoint_Tests_API_DynamicTests:
       type: object
       properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTest'
+        _links:
+          $ref: '#/components/schemas/Endpoint_Tests_API_SelfLinks'
+    Endpoint_Tests_API_EndpointAllAgentsSelectorConfig:
+      type: object
+      description: Any agent selection object.
+      readOnly: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
+      required:
+      - agentSelectorType
     Endpoint_Tests_API_TestLabels:
       type: array
       description: Labels to which the test is assigned. This field is not returned for Instant Tests.
       readOnly: true
       items:
         $ref: '#/components/schemas/Endpoint_Tests_API_TestLabel'
+    Endpoint_Tests_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
     Endpoint_Tests_API_TestLabel:
       type: object
       properties:
@@ -604,22 +446,80 @@ components:
         labelId: '961'
         name: Artem label
         isBuiltin: false
-    Endpoint_Tests_API_TestProbeModeResponse:
+    Endpoint_Tests_API_DynamicTestRequest:
+      allOf:
+      - type: object
+        required:
+        - testName
+        - application
+        properties:
+          agentSelectorType:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgentSelectorType'
+          agents:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgents'
+          endpointAgentLabels:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabels'
+          tagIds:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TagIds'
+          isPrioritized:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TestIsPrioritized'
+          interval:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TestInterval'
+          maxMachines:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
+          application:
+            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestApplication'
+          protocol:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestProtocol'
+          tcpProbeMode:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TestProbeMode'
+          testName:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TestName'
+          hasPathTraceInSession:
+            $ref: '#/components/schemas/Endpoint_Tests_API_TestHasPathTraceInSession'
+          ipVersion:
+            $ref: '#/components/schemas/Endpoint_Tests_API_EndpointIpVersionIn'
+    Endpoint_Tests_API_EndpointIpVersionIn:
+      description: For configuring network tests, the IP version of the test.
       type: string
       enum:
-      - auto
-      - sack
-      - syn
-      - syn-pcap
-      - syn-socket
-      - unknown
-      description: Probe mode returned by network test APIs, only valid when the protocol is set to TCP. Configuration responses return user-selectable values, while result responses may also return resolved driver values.
-      default: auto
-      example: auto
-    Endpoint_Tests_API_EndpointAllAgentsSelectorType:
+      - V4_ONLY
+      - V6_ONLY
+      - V6_PREFER
+      - OS_DEFAULT
+      example: V4_ONLY
+    Endpoint_Tests_API_EndpointIpVersionOut:
+      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
       type: string
-      example: all-agents
-      pattern: ^all-agents$
+      example: V4_ONLY
+    Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig:
+      type: object
+      description: Agent labels selection object.
+      readOnly: true
+      deprecated: true
+      properties:
+        agentSelectorType:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorType'
+        maxMachines:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
+        endpointAgentLabels:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabels'
+        tagIds:
+          $ref: '#/components/schemas/Endpoint_Tests_API_TagIds'
+      required:
+      - agentSelectorType
+    Endpoint_Tests_API_DynamicTestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Endpoint_Tests_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/network/filter
+      - href: https://api.thousandeyes.com/v7/endpoint/test-results/dynamic-tests/281474976710706/pathvis
+    Endpoint_Tests_API_EndpointAgentLabelsSelectorType:
+      type: string
+      example: agent-labels
+      pattern: ^agent-labels$
     Endpoint_Tests_API_EndpointTestProtocol:
       type: string
       enum:
@@ -632,19 +532,21 @@ components:
       description: Protocol requested for the test.
       default: icmp
       example: icmp
-    Endpoint_Tests_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
+    Endpoint_Tests_API_DynamicTestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information.
+      properties:
+        self:
+          $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestResults'
+      readOnly: true
+    Endpoint_Tests_API_DynamicTestSelfLink:
+      allOf:
+      - description: The reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/dynamic-tests/agent-to-server/281474976710706
+      - $ref: '#/components/schemas/Endpoint_Tests_API_Link'
     Endpoint_Tests_API_Error:
       type: object
       properties:
@@ -663,44 +565,185 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Endpoint_Tests_API_EndpointIpVersionOut:
-      description: For reading current network test configurations, the IP version of the test. Values include V4_ONLY, V6_ONLY, V6_PREFER, and OS_DEFAULT.
-      type: string
-      example: V4_ONLY
-    Endpoint_Tests_API_EndpointIpVersionIn:
-      description: For configuring network tests, the IP version of the test.
-      type: string
-      enum:
-      - V4_ONLY
-      - V6_ONLY
-      - V6_PREFER
-      - OS_DEFAULT
-      example: V4_ONLY
-    Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig:
+    Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig:
       type: object
-      description: Agent labels selection object.
+      description: Specific agents selection object.
       readOnly: true
-      deprecated: true
       properties:
         agentSelectorType:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorType'
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorType'
         maxMachines:
           $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestMaxMachines'
-        endpointAgentLabels:
-          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabels'
-        tagIds:
-          $ref: '#/components/schemas/Endpoint_Tests_API_TagIds'
+        agents:
+          $ref: '#/components/schemas/Endpoint_Tests_API_EndpointTestAgents'
       required:
       - agentSelectorType
+    Endpoint_Tests_API_DynamicTestApplication:
+      type: string
+      description: Which supported application to monitor, can be one of `webex`, `zoom`, `microsoft-teams`.
+      example: webex
+    Endpoint_Tests_API_EndpointAgentSelectorConfig:
+      type: object
+      description: Agents selection object based on agentSelectorType.
+      readOnly: true
+      oneOf:
+      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig'
+      - $ref: '#/components/schemas/Endpoint_Tests_API_EndpointAgentTagsSelectorConfig'
+      discriminator:
+        propertyName: agentSelectorType
+        mapping:
+          all-agents: '#/components/schemas/Endpoint_Tests_API_EndpointAllAgentsSelectorConfig'
+          specific-agents: '#/components/schemas/Endpoint_Tests_API_EndpointSpecificAgentsSelectorConfig'
+          agent-labels: '#/components/schemas/Endpoint_Tests_API_EndpointAgentLabelsSelectorConfig'
+          agent-tags: '#/components/schemas/Endpoint_Tests_API_EndpointAgentTagsSelectorConfig'
+      required:
+      - agentSelectorType
+    Endpoint_Tests_API_TestHasPing:
+      type: boolean
+      description: Optional flag indicating if the test should run ping.
+      default: true
+    Endpoint_Tests_API_TestName:
+      type: string
+      description: Name of the test.
+      example: Test name
+    Endpoint_Tests_API_EndpointDynamicTestUpdate:
+      allOf:
+      - $ref: '#/components/schemas/Endpoint_Tests_API_TestUpdate'
+      - type: object
+        properties:
+          application:
+            $ref: '#/components/schemas/Endpoint_Tests_API_DynamicTestApplication'
+    Endpoint_Tests_API_EndpointTestAgentSelectorType:
+      type: string
+      enum:
+      - all-agents
+      - specific-agents
+      - agent-labels
+      - agent-tags
+      description: "Specifies how agents are selected for the endpoint test.\n\nAgents can be selected from:\n  - all available agents\n  - a specific list of agents\n  - agents matching tags\n  - agents matching labels (deprecated)\n"
+      default: all-agents
+      example: all-agents
+    Endpoint_Tests_API_EndpointAgentLabels:
+      type: array
+      deprecated: true
+      description: 'Deprecated. Use `tagIds` instead.
+
+
+        List of endpoint agent label IDs (obtained from `/endpoint/labels` endpoint), required when `agentSelectorType` is set to `agent-labels`.
+
+        '
+      items:
+        type: string
+      example:
+      - '567'
+      - '214'
+    Endpoint_Tests_API_TagIds:
+      type: array
+      description: List of tag IDs (obtained from `/tags` endpoint).
+      items:
+        type: string
+        format: uuid
+      example:
+      - c6b78e57-81a2-4c5f-a11a-d96c3c664d55
+      - 5aeab5d5-0d34-4d44-a7ac-fb440185295c
+    Endpoint_Tests_API_TestProbeMode:
+      type: string
+      enum:
+      - auto
+      - sack
+      - syn
+      description: Probe mode used by network test, only valid when the protocol is set to TCP.
+      default: auto
+      example: auto
+    Endpoint_Tests_API_EndpointTestAgents:
+      type: array
+      description: List of endpoint agent IDs (obtained from `/endpoint/agents` endpoint). Required when `agentSelectorType` is set to `specific-agent`.
+      items:
+        type: string
+        format: uuid
+      example:
+      - 0a3b9998-dc3a-4ff2-b50d-ac4a7cd986e1
+      - 66eec0f1-72b4-4755-aa83-3aed61d17f3c
+    Endpoint_Tests_API_TestHasTraceRoute:
+      type: boolean
+      description: Optional flag indicating if the test should run traceroute.
+      default: true
+    Endpoint_Tests_API_EndpointSpecificAgentsSelectorType:
+      type: string
+      example: specific-agents
+      pattern: ^specific-agents$
+    Endpoint_Tests_API_EndpointTestMaxMachines:
+      type: integer
+      description: Maximum number of agents which can execute the test.
+      default: 25
+      example: 25
+    Endpoint_Tests_API_TestNetworkMeasurements:
+      type: boolean
+      description: Enable or disable network measurements. Set to true to enable or false to disable network measurements.
+      default: true
+      example: true
+    Endpoint_Tests_API_AccountGroupId:
+      type: string
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint.
+      example: '1234'
+    Endpoint_Tests_API_TestHasPathTraceInSession:
+      type: boolean
+      description: Enables "in session" path trace. When enabled, this option initiates a TCP session with the target server and sends path trace packets within the established TCP session.
+      example: true
+  parameters:
+    Endpoint_Tests_API_TestId:
+      name: testId
+      in: path
+      description: Unique ID of endpoint test.
+      example: '584739201'
+      required: true
+      schema:
+        type: string
+    Endpoint_Tests_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   responses:
+    Endpoint_Tests_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
     Endpoint_Tests_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Endpoint_Tests_API_UnauthorizedError'
+    Endpoint_Tests_API_204:
+      description: No content
+    Endpoint_Tests_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
     Endpoint_Tests_API_403:
       description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
+    Endpoint_Tests_API_429:
+      description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
@@ -738,49 +781,6 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
-    Endpoint_Tests_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
-    Endpoint_Tests_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Endpoint_Tests_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Endpoint_Tests_API_Error'
-    Endpoint_Tests_API_204:
-      description: No content
-  parameters:
-    Endpoint_Tests_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
-    Endpoint_Tests_API_TestId:
-      name: testId
-      in: path
-      description: Unique ID of endpoint test.
-      example: '584739201'
-      required: true
-      schema:
-        type: string
   headers:
     Endpoint_Tests_API_Location:
       schema:

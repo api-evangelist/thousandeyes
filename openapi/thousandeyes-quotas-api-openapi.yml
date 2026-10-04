@@ -179,7 +179,19 @@ paths:
       - Usage_API_BearerAuth: []
 components:
   schemas:
-    Usage_API_QuotasAssignResponse:
+    Usage_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Usage_API_QuotasAssignRequest:
       type: object
       properties:
         organizations:
@@ -187,10 +199,54 @@ components:
           items:
             $ref: '#/components/schemas/Usage_API_OrganizationQuota'
           example:
+          - value: 12000
           - orgId: '1234'
-            value: 12000
-          - orgId: '12345'
             value: 10000
+    Usage_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
+    Usage_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Usage_API_Link'
+    Usage_API_OrganizationQuotaAssignment:
+      type: object
+      properties:
+        orgId:
+          type: string
+          description: Unique identifier of the organization.
+          example: '1234'
+        accountGroups:
+          type: array
+          description: List of account groups quotas.
+          items:
+            $ref: '#/components/schemas/Usage_API_AccountGroupQuota'
+    Usage_API_Quotas:
+      type: object
+      properties:
+        quotas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage_API_Quota'
+        _links:
+          $ref: '#/components/schemas/Usage_API_SelfLinks'
+    Usage_API_AccountGroupIds:
+      type: array
+      description: List of account group IDs.
+      items:
+        type: string
+      example:
+      - '1234'
+      - '12345'
     Usage_API_Error:
       type: object
       properties:
@@ -209,105 +265,6 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Usage_API_OrganizationQuota:
-      type: object
-      required:
-      - value
-      properties:
-        value:
-          type: integer
-          format: int64
-          description: Value of the quota for the given Organization.
-          example: 22500
-        orgId:
-          type: string
-          description: Unique ID of the organization.
-          example: '10'
-    Usage_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Usage_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Usage_API_ValidationError:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Usage_API_Error'
-      - type: object
-        properties:
-          errors:
-            type:
-            - array
-            - 'null'
-            description: (Optional) When multiple errors occur, the details for each error are listed.
-            items:
-              $ref: '#/components/schemas/Usage_API_ValidationErrorItem'
-    Usage_API_QuotasAssignRequest:
-      type: object
-      properties:
-        organizations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Usage_API_OrganizationQuota'
-          example:
-          - value: 12000
-          - orgId: '1234'
-            value: 10000
-    Usage_API_Quota:
-      type: object
-      properties:
-        organizationQuota:
-          $ref: '#/components/schemas/Usage_API_OrganizationQuota'
-        accountGroupQuotas:
-          type: array
-          items:
-            $ref: '#/components/schemas/Usage_API_AccountGroupQuota'
-          example:
-          - value: 12000
-            aid: '1234'
-          - value: 10000
-            aid: '12345'
-    Usage_API_OrganizationsQuotasAssign:
-      type: object
-      properties:
-        organizations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Usage_API_OrganizationQuotaAssignment'
-    Usage_API_OrganizationQuotaAssignment:
-      type: object
-      properties:
-        orgId:
-          type: string
-          description: Unique identifier of the organization.
-          example: '1234'
-        accountGroups:
-          type: array
-          description: List of account groups quotas.
-          items:
-            $ref: '#/components/schemas/Usage_API_AccountGroupQuota'
-    Usage_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Usage_API_Link'
     Usage_API_QuotasUnassign:
       type: object
       properties:
@@ -318,32 +275,13 @@ components:
           example:
           - '1234'
           - '12345'
-    Usage_API_OrganizationQuotaUnassignment:
+    Usage_API_OrganizationsQuotasAssign:
       type: object
       properties:
-        orgId:
-          type: string
-          description: Unique identifier of the organization.
-          example: '1234'
-        accountGroups:
-          $ref: '#/components/schemas/Usage_API_AccountGroupIds'
-    Usage_API_Quotas:
-      type: object
-      properties:
-        quotas:
+        organizations:
           type: array
           items:
-            $ref: '#/components/schemas/Usage_API_Quota'
-        _links:
-          $ref: '#/components/schemas/Usage_API_SelfLinks'
-    Usage_API_AccountGroupIds:
-      type: array
-      description: List of account group IDs.
-      items:
-        type: string
-      example:
-      - '1234'
-      - '12345'
+            $ref: '#/components/schemas/Usage_API_OrganizationQuotaAssignment'
     Usage_API_AccountGroupQuota:
       type: object
       properties:
@@ -356,13 +294,18 @@ components:
           type: string
           description: Unique ID of the account group.
           example: '1234'
-    Usage_API_OrganizationsQuotasUnassign:
+    Usage_API_QuotasAssignResponse:
       type: object
       properties:
         organizations:
           type: array
           items:
-            $ref: '#/components/schemas/Usage_API_OrganizationQuotaUnassignment'
+            $ref: '#/components/schemas/Usage_API_OrganizationQuota'
+          example:
+          - orgId: '1234'
+            value: 12000
+          - orgId: '12345'
+            value: 10000
     Usage_API_Link:
       type: object
       description: A hyperlink from the containing resource to a URI.
@@ -394,45 +337,66 @@ components:
         hreflang:
           type: string
           description: Indicates the language of the target resource
+    Usage_API_ValidationError:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Usage_API_Error'
+      - type: object
+        properties:
+          errors:
+            type:
+            - array
+            - 'null'
+            description: (Optional) When multiple errors occur, the details for each error are listed.
+            items:
+              $ref: '#/components/schemas/Usage_API_ValidationErrorItem'
+    Usage_API_OrganizationQuotaUnassignment:
+      type: object
+      properties:
+        orgId:
+          type: string
+          description: Unique identifier of the organization.
+          example: '1234'
+        accountGroups:
+          $ref: '#/components/schemas/Usage_API_AccountGroupIds'
+    Usage_API_OrganizationQuota:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: integer
+          format: int64
+          description: Value of the quota for the given Organization.
+          example: 22500
+        orgId:
+          type: string
+          description: Unique ID of the organization.
+          example: '10'
+    Usage_API_Quota:
+      type: object
+      properties:
+        organizationQuota:
+          $ref: '#/components/schemas/Usage_API_OrganizationQuota'
+        accountGroupQuotas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage_API_AccountGroupQuota'
+          example:
+          - value: 12000
+            aid: '1234'
+          - value: 10000
+            aid: '12345'
+    Usage_API_OrganizationsQuotasUnassign:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage_API_OrganizationQuotaUnassignment'
   responses:
-    Usage_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Usage_API_Error'
     Usage_API_204:
       description: No content
-    Usage_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Usage_API_Error'
-    Usage_API_500:
-      description: Internal server error
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Usage_API_Error'
-          example:
-            type: about:blank
-            title: Internal server error
-            status: 500
-            detail: Optional detail about the internal error message.
-            instance: /v7
-    Usage_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Usage_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
     Usage_API_400:
       description: Bad Request
       content:
@@ -452,12 +416,48 @@ components:
             - code: DASH-5622
               field: password
               message: Password cannot be blank
+    Usage_API_500:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
+          example:
+            type: about:blank
+            title: Internal server error
+            status: 500
+            detail: Optional detail about the internal error message.
+            instance: /v7
+    Usage_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
+    Usage_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
     Usage_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Usage_API_UnauthorizedError'
+    Usage_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Usage_API_Error'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http
