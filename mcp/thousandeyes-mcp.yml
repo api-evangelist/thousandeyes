@@ -211,3 +211,19 @@ tools:
 - name: get_service_map
   category: Analysis
   description: Retrieve a distributed tracing service map for supported HTTP server tests.
+rfc9728:
+  endpoint: https://api.thousandeyes.com/mcp
+  metadata_url: https://api.thousandeyes.com/.well-known/oauth-protected-resource/mcp
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://api.thousandeyes.com
+    authorization_servers:
+    - https://api.thousandeyes.com
+    scopes_supported:
+    - mcp:manage
+    - offline_access
+    bearer_methods_supported:
+    - header

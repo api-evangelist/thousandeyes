@@ -66,3 +66,59 @@ probes:
   note: bot challenge; not readable by any non-browser client
 - url: https://www.cisco.com/c/en/us/products/collateral/security/cisco-thousandeyes-og.html
   status: 200
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: ThousandEyes Units
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Endpoint Experience Advantage
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Endpoint Experience Essentials
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Internet Insights
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Connected Device Agent License
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Cloud Insights Essentials
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
+  - name: Cloud Insights Advantage
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods: []
