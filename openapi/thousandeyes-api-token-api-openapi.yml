@@ -67,15 +67,6 @@ paths:
       - API_Token_Management_API_BearerAuth: []
 components:
   schemas:
-    API_Token_Management_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
     API_Token_Management_API_ApiToken:
       type: object
       properties:
@@ -90,6 +81,15 @@ components:
           description: The date and time when the generated API token will expire.
           example: '2024-12-31T23:59:59Z'
           readOnly: true
+    API_Token_Management_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     API_Token_Management_API_Error:
       type: object
       properties:
@@ -109,12 +109,6 @@ components:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
   responses:
-    API_Token_Management_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/API_Token_Management_API_Error'
     API_Token_Management_API_500:
       description: Internal server error
       content:
@@ -127,6 +121,12 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    API_Token_Management_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/API_Token_Management_API_Error'
     API_Token_Management_API_401:
       description: Unauthorized
       content:

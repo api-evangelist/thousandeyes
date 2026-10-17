@@ -185,118 +185,50 @@ paths:
       - Alerts_API_BearerAuth: []
 components:
   schemas:
-    Alerts_API_Enabled:
-      type: boolean
-      description: Test is enabled.
-      example: true
-      default: true
-    Alerts_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Alerts_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Alerts_API_ValidationErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
-        field:
-          type: string
-          description: Identifies the field that triggered this particular error.
-        message:
-          type: string
-          description: A short, human-readable summary of the error.
-    Alerts_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
+    Alerts_API_TestType:
+      type: string
+      enum:
+      - api
+      - agent-to-agent
+      - agent-to-server
+      - bgp
+      - http-server
+      - page-load
+      - web-transactions
+      - ftp-server
+      - dns-trace
+      - dns-server
+      - dnssec
+      - sip-server
+      - voice
+      description: This is a read only value, as test type is implicit in the test creation url.
       readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Alerts_API_Link'
-    Alerts_API_Repeat:
-      type: object
-      description: Repeat options.
-      properties:
-        type:
-          $ref: '#/components/schemas/Alerts_API_RepeatType'
-        intervalType:
-          $ref: '#/components/schemas/Alerts_API_IntervalType'
-        intervalLength:
-          type: integer
-          description: Number of `intervalTypes` to wait before reactivating the alert suppression window.
-          example: 2
-        daysOfWeek:
-          type: array
-          items:
-            $ref: '#/components/schemas/Alerts_API_DaysOfWeek'
-    Alerts_API_BaseAlertSuppressionWindow:
-      type: object
-      description: Alert suppression window.
-      properties:
-        alertSuppressionWindowId:
-          type: string
-          description: Unique ID of the alert suppression window.
-          example: '2411'
-          readOnly: true
-        name:
-          type: string
-          description: Name of the alert suppression window.
-          example: Monthly maintenance
-        isEnabled:
-          type: boolean
-          description: Set to `false` for `disabled`, `true` for `enabled`.
-          example: false
-        status:
-          $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindowState'
-        startDate:
-          type: string
-          format: date-time
-          description: The date/time when the alert suppression window starts (ISO date-time format).
-          example: '2017-07-01T05:00:00Z'
-        duration:
-          type: integer
-          description: Duration in seconds the suppression window is active.
-          example: 0
-        repeat:
-          $ref: '#/components/schemas/Alerts_API_Repeat'
-        endRepeat:
-          $ref: '#/components/schemas/Alerts_API_EndRepeat'
+      example: agent-to-server
+    Alerts_API_AlertSuppressionWindowDetail:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindow'
+      - type: object
+        properties:
+          tests:
+            type: array
+            description: List of tests assigned to the alert suppression window.
+            items:
+              $ref: '#/components/schemas/Alerts_API_SimpleTest'
+    Alerts_API_TestSelfLink:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_Link'
+      - description: Reference to the test.
+        example:
+          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
+    Alerts_API_AlertSuppressionWindowState:
+      type: string
+      enum:
+      - active
+      - inactive
+      - ended
+      description: Indicates the current status of the suppression window.
+      example: ended
+      readOnly: true
     Alerts_API_SimpleTest:
       description: Each test includes additional fields depending on its `type`. Refer `/tests/{type}` endpoint to know the set of fields returned by a given `type`.
       additionalProperties: true
@@ -356,57 +288,63 @@ components:
           $ref: '#/components/schemas/Alerts_API_TestType'
         _links:
           $ref: '#/components/schemas/Alerts_API_TestLinks'
-    Alerts_API_TestInterval:
-      type: integer
-      enum:
-      - 60
-      - 120
-      - 300
-      - 600
-      - 900
-      - 1800
-      - 3600
-      description: Interval between test runs in seconds.
-      default: 60
-      example: 60
-    Alerts_API_AlertSuppressionWindowDetail:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindow'
-      - type: object
-        properties:
-          tests:
-            type: array
-            description: List of tests assigned to the alert suppression window.
-            items:
-              $ref: '#/components/schemas/Alerts_API_SimpleTest'
-    Alerts_API_RepeatType:
-      type: string
-      description: Repeat options type.
-      enum:
-      - day
-      - week
-      - month
-      - custom
-      example: week
-    Alerts_API_TestType:
-      type: string
-      enum:
-      - api
-      - agent-to-agent
-      - agent-to-server
-      - bgp
-      - http-server
-      - page-load
-      - web-transactions
-      - ftp-server
-      - dns-trace
-      - dns-server
-      - dnssec
-      - sip-server
-      - voice
-      description: This is a read only value, as test type is implicit in the test creation url.
+    Alerts_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Alerts_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
       readOnly: true
-      example: agent-to-server
+      properties:
+        self:
+          $ref: '#/components/schemas/Alerts_API_Link'
+    Alerts_API_AlertSuppressionWindows:
+      type: object
+      description: Alert suppression windows.
+      properties:
+        alertSuppressionWindows:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindow'
+        _links:
+          $ref: '#/components/schemas/Alerts_API_SelfLinks'
+    Alerts_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Alerts_API_AlertSuppressionWindowRequest:
       allOf:
       - $ref: '#/components/schemas/Alerts_API_BaseAlertSuppressionWindow'
@@ -418,44 +356,77 @@ components:
             items:
               type: string
               example: '71687'
-    Alerts_API_DaysOfWeek:
-      type: string
-      description: Specifies the day to activate the alert suppression window. Applicable only when `intervalType` is set to `week`.
-      enum:
-      - sun
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-      - sat
-      example: sun
-    Alerts_API_TestResults:
-      type: array
-      description: Reference to the test results.
-      items:
-        $ref: '#/components/schemas/Alerts_API_Link'
-      example:
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
-      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
-    Alerts_API_TestCreatedDate:
-      type: string
-      format: date-time
-      description: UTC created date (ISO date-time format).
-      example: '2022-07-17T22:00:54Z'
-      readOnly: true
     Alerts_API_TestCreatedBy:
       type: string
       description: User that created the test.
       example: user@user.com
       readOnly: true
-    Alerts_API_AlertSuppressionWindow:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_BaseAlertSuppressionWindow'
-      - type: object
-        properties:
-          _links:
-            $ref: '#/components/schemas/Alerts_API_SelfLinks'
+    Alerts_API_BaseAlertSuppressionWindow:
+      type: object
+      description: Alert suppression window.
+      properties:
+        alertSuppressionWindowId:
+          type: string
+          description: Unique ID of the alert suppression window.
+          example: '2411'
+          readOnly: true
+        name:
+          type: string
+          description: Name of the alert suppression window.
+          example: Monthly maintenance
+        isEnabled:
+          type: boolean
+          description: Set to `false` for `disabled`, `true` for `enabled`.
+          example: false
+        status:
+          $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindowState'
+        startDate:
+          type: string
+          format: date-time
+          description: The date/time when the alert suppression window starts (ISO date-time format).
+          example: '2017-07-01T05:00:00Z'
+        duration:
+          type: integer
+          description: Duration in seconds the suppression window is active.
+          example: 0
+        repeat:
+          $ref: '#/components/schemas/Alerts_API_Repeat'
+        endRepeat:
+          $ref: '#/components/schemas/Alerts_API_EndRepeat'
+    Alerts_API_ValidationErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: (Optional) A unique error type/code that can be referenced in the documentation for further details.
+        field:
+          type: string
+          description: Identifies the field that triggered this particular error.
+        message:
+          type: string
+          description: A short, human-readable summary of the error.
+    Alerts_API_TestLinks:
+      type: object
+      description: A list of links that can be accessed to get more information
+      properties:
+        self:
+          $ref: '#/components/schemas/Alerts_API_TestSelfLink'
+        testResults:
+          $ref: '#/components/schemas/Alerts_API_TestResults'
+      readOnly: true
+    Alerts_API_RepeatType:
+      type: string
+      description: Repeat options type.
+      enum:
+      - day
+      - week
+      - month
+      - custom
+      example: week
+    Alerts_API_ExpandAlertTestOptions:
+      type: string
+      enum:
+      - test
     Alerts_API_EndRepeat:
       type: object
       description: End repeat options.
@@ -479,30 +450,18 @@ components:
       - never
       - date
       example: never
-    Alerts_API_TestSelfLink:
-      allOf:
-      - $ref: '#/components/schemas/Alerts_API_Link'
-      - description: Reference to the test.
-        example:
-          href: https://api.thousandeyes.com/v7/tests/{type}/281474976710706
-    Alerts_API_AlertSuppressionWindowState:
+    Alerts_API_DaysOfWeek:
       type: string
+      description: Specifies the day to activate the alert suppression window. Applicable only when `intervalType` is set to `week`.
       enum:
-      - active
-      - inactive
-      - ended
-      description: Indicates the current status of the suppression window.
-      example: ended
-      readOnly: true
-    Alerts_API_TestLinks:
-      type: object
-      description: A list of links that can be accessed to get more information
-      properties:
-        self:
-          $ref: '#/components/schemas/Alerts_API_TestSelfLink'
-        testResults:
-          $ref: '#/components/schemas/Alerts_API_TestResults'
-      readOnly: true
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      example: sun
     Alerts_API_ValidationError:
       type: object
       allOf:
@@ -516,10 +475,6 @@ components:
             description: (Optional) When multiple errors occur, the details for each error are listed.
             items:
               $ref: '#/components/schemas/Alerts_API_ValidationErrorItem'
-    Alerts_API_ExpandAlertTestOptions:
-      type: string
-      enum:
-      - test
     Alerts_API_IntervalType:
       type: string
       description: Repeat options interval type
@@ -528,6 +483,49 @@ components:
       - week
       - month
       example: day
+    Alerts_API_Repeat:
+      type: object
+      description: Repeat options.
+      properties:
+        type:
+          $ref: '#/components/schemas/Alerts_API_RepeatType'
+        intervalType:
+          $ref: '#/components/schemas/Alerts_API_IntervalType'
+        intervalLength:
+          type: integer
+          description: Number of `intervalTypes` to wait before reactivating the alert suppression window.
+          example: 2
+        daysOfWeek:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alerts_API_DaysOfWeek'
+    Alerts_API_TestCreatedDate:
+      type: string
+      format: date-time
+      description: UTC created date (ISO date-time format).
+      example: '2022-07-17T22:00:54Z'
+      readOnly: true
+    Alerts_API_TestInterval:
+      type: integer
+      enum:
+      - 60
+      - 120
+      - 300
+      - 600
+      - 900
+      - 1800
+      - 3600
+      description: Interval between test runs in seconds.
+      default: 60
+      example: 60
+    Alerts_API_TestResults:
+      type: array
+      description: Reference to the test results.
+      items:
+        $ref: '#/components/schemas/Alerts_API_Link'
+      example:
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/network
+      - href: https://api.thousandeyes.com/v7/test-results/281474976710706/path-vis
     Alerts_API_Error:
       type: object
       properties:
@@ -546,49 +544,27 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
-    Alerts_API_AlertSuppressionWindows:
-      type: object
-      description: Alert suppression windows.
-      properties:
-        alertSuppressionWindows:
-          type: array
-          items:
-            $ref: '#/components/schemas/Alerts_API_AlertSuppressionWindow'
-        _links:
-          $ref: '#/components/schemas/Alerts_API_SelfLinks'
+    Alerts_API_Enabled:
+      type: boolean
+      description: Test is enabled.
+      example: true
+      default: true
+    Alerts_API_AlertSuppressionWindow:
+      allOf:
+      - $ref: '#/components/schemas/Alerts_API_BaseAlertSuppressionWindow'
+      - type: object
+        properties:
+          _links:
+            $ref: '#/components/schemas/Alerts_API_SelfLinks'
   responses:
-    Alerts_API_401:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_UnauthorizedError'
-    Alerts_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Alerts_API_204:
-      description: No content
-    Alerts_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Alerts_API_Error'
     Alerts_API_429:
       description: Exhausted rate limit for the organization
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Alerts_API_Error'
+    Alerts_API_204:
+      description: No content
     Alerts_API_500:
       description: Internal server error
       content:
@@ -600,6 +576,30 @@ components:
             title: Internal server error
             status: 500
             detail: Optional detail about the internal error message.
+            instance: /v7
+    Alerts_API_401:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_UnauthorizedError'
+    Alerts_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_Error'
+    Alerts_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Alerts_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
             instance: /v7
     Alerts_API_400:
       description: Bad Request
@@ -621,18 +621,6 @@ components:
               field: password
               message: Password cannot be blank
   parameters:
-    Alerts_API_ExpandAlert:
-      name: expand
-      in: query
-      style: form
-      explode: false
-      description: Optional parameter on whether or not to expand alert related resources.  Without this parameter, there's no default expansion. For example, to expand the "tests" resource, use the `?expand=test` query.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/Alerts_API_ExpandAlertTestOptions'
-        example:
-        - test
     Alerts_API_AccountGroupId:
       name: aid
       in: query
@@ -649,6 +637,18 @@ components:
       required: true
       schema:
         type: string
+    Alerts_API_ExpandAlert:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      description: Optional parameter on whether or not to expand alert related resources.  Without this parameter, there's no default expansion. For example, to expand the "tests" resource, use the `?expand=test` query.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Alerts_API_ExpandAlertTestOptions'
+        example:
+        - test
   headers:
     Alerts_API_Location:
       schema:

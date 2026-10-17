@@ -57,22 +57,6 @@ paths:
       - Agents_API_BearerAuth: []
 components:
   schemas:
-    Agents_API_ProxyAuthType:
-      type: string
-      description: The type of authentication the proxy requires
-      enum:
-      - basic
-      - ntlm
-      - kerberos
-      - unknown
-      example: basic
-    Agents_API_SelfLinks:
-      type: object
-      description: A links object containing the self link.
-      readOnly: true
-      properties:
-        self:
-          $ref: '#/components/schemas/Agents_API_Link'
     Agents_API_Error:
       type: object
       properties:
@@ -91,6 +75,71 @@ components:
         instance:
           type: string
           description: A URI reference that identifies the specific occurrence of the problem.
+    Agents_API_SelfLinks:
+      type: object
+      description: A links object containing the self link.
+      readOnly: true
+      properties:
+        self:
+          $ref: '#/components/schemas/Agents_API_Link'
+    Agents_API_Link:
+      type: object
+      description: A hyperlink from the containing resource to a URI.
+      required:
+      - href
+      properties:
+        href:
+          type: string
+          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
+          example: https://api.thousandeyes.com/v7/link/to/resource/id
+        templated:
+          type: boolean
+          description: Should be true when the link object's "href" property is a URI template.
+        type:
+          type: string
+          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
+        deprecation:
+          type: string
+          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
+        name:
+          type: string
+          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
+        profile:
+          type: string
+          description: A URI that hints about the profile of the target resource.
+        title:
+          type: string
+          description: Intended for labelling the link with a human-readable identifier
+        hreflang:
+          type: string
+          description: Indicates the language of the target resource
+    Agents_API_AgentProxies:
+      type: object
+      properties:
+        agentProxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agents_API_AgentProxy'
+        _links:
+          $ref: '#/components/schemas/Agents_API_SelfLinks'
+    Agents_API_ProxyAuthType:
+      type: string
+      description: The type of authentication the proxy requires
+      enum:
+      - basic
+      - ntlm
+      - kerberos
+      - unknown
+      example: basic
+    Agents_API_UnauthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_token
+        error_description:
+          type: string
+          example: Invalid access token
     Agents_API_AgentProxy:
       type: object
       properties:
@@ -147,103 +196,15 @@ components:
       - static
       - pac
       example: static
-    Agents_API_Link:
-      type: object
-      description: A hyperlink from the containing resource to a URI.
-      required:
-      - href
-      properties:
-        href:
-          type: string
-          description: Its value is either a URI [RFC3986] or a URI template [RFC6570].
-          example: https://api.thousandeyes.com/v7/link/to/resource/id
-        templated:
-          type: boolean
-          description: Should be true when the link object's "href" property is a URI template.
-        type:
-          type: string
-          description: Used as a hint to indicate the media type expected when dereferencing the target resource.
-        deprecation:
-          type: string
-          description: Its presence indicates that the link is to be deprecated at a future date. Its value is a URL that should provide further information about the deprecation.
-        name:
-          type: string
-          description: Its value may be used as a secondary key for selecting link objects that share the same relation type.
-        profile:
-          type: string
-          description: A URI that hints about the profile of the target resource.
-        title:
-          type: string
-          description: Intended for labelling the link with a human-readable identifier
-        hreflang:
-          type: string
-          description: Indicates the language of the target resource
-    Agents_API_UnauthorizedError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_token
-        error_description:
-          type: string
-          example: Invalid access token
-    Agents_API_AgentProxies:
-      type: object
-      properties:
-        agentProxies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Agents_API_AgentProxy'
-        _links:
-          $ref: '#/components/schemas/Agents_API_SelfLinks'
-  parameters:
-    Agents_API_AccountGroupId:
-      name: aid
-      in: query
-      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
-      required: false
-      schema:
-        type: string
-        example: '1234'
   responses:
-    Agents_API_429:
-      description: Exhausted rate limit for the organization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_GeneralError:
+      description: An error occurred
     Agents_API_401:
       description: Unauthorized
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Agents_API_UnauthorizedError'
-    Agents_API_404:
-      description: Not found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-          example:
-            type: about:blank
-            title: URI Resource Not Found
-            status: 404
-            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
-            instance: /v7
-    Agents_API_403:
-      description: Insufficient permissions to query endpoint
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-    Agents_API_502:
-      description: Bad Gateway
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Agents_API_Error'
-    Agents_API_GeneralError:
-      description: An error occurred
     Agents_API_500:
       description: Internal server error
       content:
@@ -256,6 +217,45 @@ components:
             status: 500
             detail: Optional detail about the internal error message.
             instance: /v7
+    Agents_API_403:
+      description: Insufficient permissions to query endpoint
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_429:
+      description: Exhausted rate limit for the organization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_502:
+      description: Bad Gateway
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+    Agents_API_404:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Agents_API_Error'
+          example:
+            type: about:blank
+            title: URI Resource Not Found
+            status: 404
+            detail: Details explaining if the 404 error is related to an invalid URI or a wrong ID
+            instance: /v7
+  parameters:
+    Agents_API_AccountGroupId:
+      name: aid
+      in: query
+      description: A unique identifier associated with your account group. You can retrieve your `AccountGroupId` from the `/account-groups` endpoint. Note that you must be assigned to the target account group. Specifying this parameter without being assigned to the target account group will result in an error response.
+      required: false
+      schema:
+        type: string
+        example: '1234'
   securitySchemes:
     Tests_API_BearerAuth:
       type: http
