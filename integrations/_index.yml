@@ -58,3 +58,298 @@
     detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
+- slug: thousandeyes-go-module-proxy
+  label: Go module proxy
+  partner_name: Go module proxy
+  category: official SDK (Go)
+  type: register
+  channel: package-registry
+  evidence: https://pkg.go.dev/github.com/thousandeyes/thousandeyes-cli
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: Go module proxy (public registry JSON)
+    spec_file: null
+    language: Go
+    packages:
+    - name: github.com/thousandeyes/thousandeyes-cli
+      version: v0.0.0-20260629200336-497c6ecc65a9
+      released: '2026-06-29'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/thousandeyes/thousandeyes-cli
+      repo_leg: github-org:thousandeyes
+      publisher_leg: org:thousandeyes
+      matched_by: github-org
+    - name: github.com/thousandeyes/thousandeyes-sdk-go/v3
+      version: v3.2.0
+      released: '2026-09-04'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/thousandeyes/thousandeyes-sdk-go/v3
+      repo_leg: github-org:thousandeyes
+      publisher_leg: org:thousandeyes
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-maven-central
+  label: Maven Central
+  partner: maven-central
+  partner_name: Maven Central
+  category: official SDK (Java/JVM)
+  type: register
+  channel: package-registry
+  evidence: https://central.sonatype.com/artifact/com.thousandeyes.sdk/administrative
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: Maven Central (public registry JSON)
+    spec_file: null
+    language: Java/JVM
+    packages:
+    - name: com.thousandeyes.sdk:administrative
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/administrative
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:agents
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/agents
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:alerts
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/alerts
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:authentication
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/authentication
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:bgp-monitors
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/bgp-monitors
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:client
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/client
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:client-native
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/client-native
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:configuration
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/configuration
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:connectors
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/connectors
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:credentials
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/credentials
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:dashboards
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/dashboards
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:emulation
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/emulation
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:endpoint-agents
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-agents
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:endpoint-instant-tests
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-instant-tests
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:endpoint-labels
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-labels
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:endpoint-test-results
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-test-results
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:endpoint-tests
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/endpoint-tests
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:event-detection
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/event-detection
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:instant-tests
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/instant-tests
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:internet-insights
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/internet-insights
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:snapshots
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/snapshots
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:streaming
+      version: 5.1.0
+      released: '2026-09-04'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/streaming
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:tags
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/tags
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:test-results
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/test-results
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:tests
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/tests
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    - name: com.thousandeyes.sdk:usage
+      version: 6.1.0
+      released: '2026-10-09'
+      released_field: lastUpdated
+      lapsed: false
+      page: https://central.sonatype.com/artifact/com.thousandeyes.sdk/usage
+      repo_leg: github-org:thousandeyes
+      publisher_leg: groupId:thousandeyes.com
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
