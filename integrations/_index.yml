@@ -444,3 +444,105 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
+- slug: thousandeyes-sequoia-capital
+  label: Sequoia Capital
+  partner: sequoia-capital
+  partner_name: Sequoia Capital
+  category: vc portfolio participation
+  type: register
+  channel: standard-directory
+  evidence: https://sequoiacap.com/companies/thousandeyes
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: Sequoia Capital companies (sequoiacap.com/companies/<slug>, from the site's sitemap.xml)
+    standard: null
+    spec_file: null
+    role: vc-portfolio-company
+    registered_name: ThousandEyes
+    register_id: https://sequoiacap.com/companies/thousandeyes
+    register_country: null
+    register_website: https://www.thousandeyes.com
+    matched_domain: thousandeyes.com
+    matched_by: domain
+    signal_note: 'participation only: the venture firm''s own published portfolio lists the company (investment);
+      an ownership and participation record, not conformance or certification'
+    detected_by: sweep-vc-portfolios.py
+    detected: '2026-10-21'
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-logicmonitor
+  label: LogicMonitor
+  partner: logicmonitor
+  partner_name: LogicMonitor
+  category: AIOps, Monitoring & Performance
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/420402
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-netop-ai
+  label: NetOp AI
+  partner_name: NetOp AI
+  category: Agentic AI, Monitoring & Performance
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/391155
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-highlight-service-observability-platform
+  label: Highlight Service Observability Platform
+  partner_name: Highlight Service Observability Platform
+  category: AIOps, Documentation & Reporting, IT & Productivity Tools
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/456746
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-7signal-inc
+  label: 7SIGNAL, Inc.
+  partner: 7signalsolutions
+  partner_name: 7SIGNAL, Inc.
+  category: Client Analytics, Wireless Assurance
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/505874
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-panoramic-data-limited
+  label: Panoramic Data Limited
+  partner_name: Panoramic Data Limited
+  category: AIOps, IT & Productivity Tools
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/413636
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: thousandeyes-nobl9
+  label: Nobl9
+  partner: nobl9
+  partner_name: Nobl9
+  category: Monitoring & Performance
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.cisco.com/en-US/apps/792415
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
